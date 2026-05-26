@@ -3,20 +3,186 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>TELOCG</title>
-    <meta name="description" content="Sitio oficial de TELOCG.">
+    <title>TeloCorpGroup | Soluciones integrales por departamentos</title>
+    <meta
+      name="description"
+      content="TeloCorpGroup es una red integral de departamentos de servicios que conecta necesidades reales con soluciones coordinadas."
+    >
+    <meta property="og:title" content="TeloCorpGroup">
+    <meta
+      property="og:description"
+      content="Una puerta de entrada a servicios de venta, educación, mensajería, compras, soporte técnico, instalación y más."
+    >
+    <meta property="og:image" content="assets/telocorpgroup-logo.jpeg">
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
-    <main class="page">
-      <section class="hero" aria-label="Presentacion">
-        <p class="eyebrow">telocg.com</p>
-        <h1>TELOCG</h1>
-        <p class="lede">
-          Una nueva presencia web esta tomando forma.
+    <header class="site-header">
+      <a class="brand" href="#inicio" aria-label="TeloCorpGroup inicio">
+        <img src="assets/telocorpgroup-mark.jpeg" alt="" class="brand-logo">
+        <span>TeloCorpGroup</span>
+      </a>
+      <nav class="site-nav" aria-label="Navegacion principal">
+        <a href="#proposito">Propósito</a>
+        <a href="#departamentos">Departamentos</a>
+        <a href="#modelo">Modelo</a>
+        <a href="#contacto">Contacto</a>
+      </nav>
+    </header>
+
+    <main id="inicio">
+      <section class="hero" aria-labelledby="hero-title">
+        <img
+          src="assets/telocorpgroup-logo.jpeg"
+          alt="Logo de TeloCorpGroup"
+          class="hero-logo"
+        >
+        <div class="hero-copy">
+          <p class="eyebrow">Red integral de servicios</p>
+          <h1 id="hero-title">TeloCorpGroup</h1>
+          <p class="lede">
+            Una empresa por departamentos conectados que convierte necesidades
+            cotidianas y empresariales en soluciones concretas: vender,
+            aprender, mover, comprar, reparar, instalar y seguir creciendo desde
+            una misma puerta de entrada.
+          </p>
+          <div class="hero-actions" aria-label="Acciones principales">
+            <a class="button button-primary" href="#departamentos">Ver departamentos</a>
+            <a class="button button-secondary" href="mailto:hola@telocg.com">Contactar</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="intro" aria-label="Propuesta de valor">
+        <div class="intro-text">
+          <p>
+            TeloCorpGroup nace para reducir la fricción de buscar proveedores
+            aislados. Reúne departamentos especializados bajo una misma marca,
+            con la intención de escuchar una necesidad, entenderla bien y
+            conectarla con el equipo que puede resolverla mejor.
+          </p>
+        </div>
+        <dl class="metrics" aria-label="Areas clave">
+          <div>
+            <dt>1</dt>
+            <dd>puerta de entrada</dd>
+          </div>
+          <div>
+            <dt>6+</dt>
+            <dd>departamentos base</dd>
+          </div>
+          <div>
+            <dt>360</dt>
+            <dd>visión de servicio</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="purpose" id="proposito" aria-labelledby="purpose-title">
+        <div class="purpose-copy">
+          <p class="eyebrow">Razón de ser</p>
+          <h2 id="purpose-title">Hacer más simple resolver lo que la vida y los negocios necesitan</h2>
+          <p>
+            La mayoría de las personas no necesita “otro servicio” suelto:
+            necesita una ruta clara. TeloCorpGroup existe para ordenar esa ruta,
+            unir capacidades y construir una red confiable donde cada
+            departamento tenga un rol, pero todos trabajen con una misma
+            responsabilidad frente al usuario.
+          </p>
+        </div>
+        <div class="principles" aria-label="Principios de TeloCorpGroup">
+          <article>
+            <span>01</span>
+            <h3>Centralizar</h3>
+            <p>Una marca que recibe la necesidad y orienta al usuario hacia el departamento correcto.</p>
+          </article>
+          <article>
+            <span>02</span>
+            <h3>Coordinar</h3>
+            <p>Servicios que pueden trabajar juntos cuando una solución requiere más de una capacidad.</p>
+          </article>
+          <article>
+            <span>03</span>
+            <h3>Escalar</h3>
+            <p>Una estructura preparada para sumar nuevas unidades sin perder orden, identidad ni seguimiento.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="departments" id="departamentos" aria-labelledby="departments-title">
+        <div class="section-heading">
+          <p class="eyebrow">Departamentos de servicio</p>
+          <h2 id="departments-title">Un ecosistema de unidades con funciones claras</h2>
+        </div>
+
+        <div class="department-grid">
+          <article class="department-card sales">
+            <span class="service-code">TS</span>
+            <h3>TeloSales</h3>
+            <p>Ventas, prospección, gestión comercial y creación de oportunidades para usuarios, marcas y negocios.</p>
+          </article>
+          <article class="department-card education">
+            <span class="service-code">TE</span>
+            <h3>TeloEduca</h3>
+            <p>Entrenamiento práctico para desarrollar habilidades, formar equipos y elevar la calidad del servicio.</p>
+          </article>
+          <article class="department-card delivery">
+            <span class="service-code">TL</span>
+            <h3>TeloLleva</h3>
+            <p>Mensajería, entregas y movimiento de encargos con trazabilidad, rapidez y atención cercana.</p>
+          </article>
+          <article class="department-card marketplace">
+            <span class="service-code">TC</span>
+            <h3>TeloCompra</h3>
+            <p>Compras, intercambios y conexiones entre personas que quieren adquirir, vender, negociar o comparar.</p>
+          </article>
+          <article class="department-card repair">
+            <span class="service-code">TR</span>
+            <h3>TeloRepara</h3>
+            <p>Soporte técnico para diagnóstico, mantenimiento y reparación de equipos, hogares y espacios.</p>
+          </article>
+          <article class="department-card install">
+            <span class="service-code">TI</span>
+            <h3>TeloInstala</h3>
+            <p>Instalaciones y servicios en campo para proyectos domésticos, comerciales y operativos.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="model" id="modelo" aria-labelledby="model-title">
+        <div class="model-copy">
+          <p class="eyebrow">Modelo operativo</p>
+          <h2 id="model-title">La solución correcta empieza con una buena clasificación</h2>
+          <p>
+            Una solicitud puede comenzar como una compra, convertirse en una
+            instalación, requerir mensajería y terminar con soporte técnico.
+            Por eso el modelo no trata cada servicio como una isla: lo ordena,
+            lo asigna y lo acompaña hasta que el usuario tenga una respuesta.
+          </p>
+        </div>
+        <div class="flow" aria-label="Flujo de servicio">
+          <div>Escuchar</div>
+          <div>Clasificar</div>
+          <div>Resolver</div>
+          <div>Acompañar</div>
+        </div>
+      </section>
+
+      <section class="contact" id="contacto" aria-labelledby="contact-title">
+        <p class="eyebrow">Próxima etapa</p>
+        <h2 id="contact-title">Una marca diseñada para crecer por departamentos</h2>
+        <p>
+          Este sitio es el punto de partida para presentar la visión, ordenar
+          las unidades de servicio y abrir canales para clientes, aliados y
+          equipos que quieran construir dentro del ecosistema TeloCorpGroup.
         </p>
-        <a class="button" href="mailto:hola@telocg.com">Contactar</a>
+        <a class="button button-primary" href="mailto:hola@telocg.com">Iniciar conversación</a>
       </section>
     </main>
+
+    <footer class="site-footer">
+      <span>TeloCorpGroup</span>
+      <span>Soluciones integrales por departamentos</span>
+    </footer>
   </body>
 </html>
