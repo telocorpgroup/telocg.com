@@ -4,185 +4,363 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>TeloCorpGroup | Soluciones integrales por departamentos</title>
-    <meta
-      name="description"
-      content="TeloCorpGroup es una red integral de departamentos de servicios que conecta necesidades reales con soluciones coordinadas."
-    >
-    <meta property="og:title" content="TeloCorpGroup">
-    <meta
-      property="og:description"
-      content="Una puerta de entrada a servicios de venta, educación, mensajería, compras, soporte técnico, instalación y más."
-    >
-    <meta property="og:image" content="assets/telocorpgroup-logo.jpeg">
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="TeloCorpGroup es una red integral de departamentos de servicios que conecta necesidades reales con soluciones coordinadas y automatizadas.">
+    <meta name="keywords" content="TeloCorpGroup, TeloSales, TeloEduca, TeloLleva, TeloCompra, TeloRepara, TeloInstala, servicios integrados, soluciones corporativas">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://telocg.com/">
+    <meta property="og:title" content="TeloCorpGroup | Soluciones integrales por departamentos">
+    <meta property="og:description" content="Una puerta de entrada a servicios de venta, educación, mensajería, compras, soporte técnico, instalación y más bajo un mismo modelo operativo coordinado.">
+    <meta property="og:image" content="assets/telocorpgroup-logo.jpg">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://telocg.com/">
+    <meta property="twitter:title" content="TeloCorpGroup | Soluciones integrales por departamentos">
+    <meta property="twitter:description" content="Una puerta de entrada a servicios de venta, educación, mensajería, compras, soporte técnico, instalación y más bajo un mismo modelo operativo coordinado.">
+    <meta property="twitter:image" content="assets/telocorpgroup-logo.jpg">
+
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
+    
+    <!-- Cabecera de Navegación Premium -->
     <header class="site-header">
-      <a class="brand" href="#inicio" aria-label="TeloCorpGroup inicio">
-        <img src="assets/telocorpgroup-mark.jpeg" alt="" class="brand-logo">
+      <a class="brand" href="#inicio" aria-label="TeloCorpGroup inicio" id="header-brand-logo">
+        <img src="assets/telocorpgroup-mark.png" alt="Logo de TeloCorpGroup" class="brand-logo">
         <span>TeloCorpGroup</span>
       </a>
-      <nav class="site-nav" aria-label="Navegacion principal">
+      <nav class="site-nav" aria-label="Navegación principal" id="main-navigation">
+        <a href="#inicio">Inicio</a>
         <a href="#proposito">Propósito</a>
         <a href="#departamentos">Departamentos</a>
+        <a href="#ruteador">Ruteador</a>
         <a href="#modelo">Modelo</a>
         <a href="#contacto">Contacto</a>
       </nav>
     </header>
 
     <main id="inicio">
+      
+      <!-- Sección Hero -->
       <section class="hero" aria-labelledby="hero-title">
         <img
-          src="assets/telocorpgroup-logo.jpeg"
-          alt="Logo de TeloCorpGroup"
+          src="assets/telocorpgroup-logo.jpg"
+          alt="Logotipo Corporativo TeloCorpGroup"
           class="hero-logo"
         >
-        <div class="hero-copy">
+        <div class="hero-copy animate-on-scroll">
           <p class="eyebrow">Red integral de servicios</p>
-          <h1 id="hero-title">TeloCorpGroup</h1>
+          <h1 id="hero-title">
+            <span>TeloCorpGroup</span>
+          </h1>
           <p class="lede">
-            Una empresa por departamentos conectados que convierte necesidades
-            cotidianas y empresariales en soluciones concretas: vender,
-            aprender, mover, comprar, reparar, instalar y seguir creciendo desde
-            una misma puerta de entrada.
+            Un ecosistema de departamentos especializados y conectados que convierte necesidades
+            cotidianas y empresariales en soluciones integradas: vender,
+            aprender, mover, comprar, reparar e instalar, desde una misma puerta de entrada.
           </p>
           <div class="hero-actions" aria-label="Acciones principales">
-            <a class="button button-primary" href="#departamentos">Ver departamentos</a>
-            <a class="button button-secondary" href="mailto:hola@telocg.com">Contactar</a>
+            <a class="button button-primary" href="#ruteador">Probar Ruteador</a>
+            <a class="button button-secondary" href="#contacto">Iniciar Solicitud</a>
           </div>
         </div>
       </section>
 
-      <section class="intro" aria-label="Propuesta de valor">
-        <div class="intro-text">
+      <!-- Propuesta de Valor y Métricas -->
+      <section class="intro" aria-label="Propuesta de valor e indicadores clave">
+        <div class="intro-text animate-on-scroll delay-1">
           <p>
-            TeloCorpGroup nace para reducir la fricción de buscar proveedores
-            aislados. Reúne departamentos especializados bajo una misma marca,
-            con la intención de escuchar una necesidad, entenderla bien y
-            conectarla con el equipo que puede resolverla mejor.
+            TeloCorpGroup nace para reducir la fricción de buscar múltiples proveedores aislados. 
+            Reunimos departamentos especializados bajo una misma marca y modelo operativo con la firme 
+            intención de escuchar una necesidad comercial o personal, entenderla bien y conectarla de inmediato 
+            con el equipo que puede resolverla mejor.
           </p>
         </div>
-        <dl class="metrics" aria-label="Areas clave">
-          <div>
+        <div class="metrics animate-on-scroll delay-2" aria-label="Cifras clave">
+          <div class="metrics-card">
             <dt>1</dt>
-            <dd>puerta de entrada</dd>
+            <dd>Puerta de acceso</dd>
           </div>
-          <div>
+          <div class="metrics-card">
             <dt>6+</dt>
-            <dd>departamentos base</dd>
+            <dd>Departamentos base</dd>
           </div>
-          <div>
-            <dt>360</dt>
-            <dd>visión de servicio</dd>
+          <div class="metrics-card">
+            <dt>360°</dt>
+            <dd>Visión de servicio</dd>
           </div>
-        </dl>
+        </div>
       </section>
 
+      <!-- Sección Propósito y Principios -->
       <section class="purpose" id="proposito" aria-labelledby="purpose-title">
-        <div class="purpose-copy">
+        <div class="purpose-copy animate-on-scroll">
           <p class="eyebrow">Razón de ser</p>
           <h2 id="purpose-title">Hacer más simple resolver lo que la vida y los negocios necesitan</h2>
           <p>
-            La mayoría de las personas no necesita “otro servicio” suelto:
-            necesita una ruta clara. TeloCorpGroup existe para ordenar esa ruta,
-            unir capacidades y construir una red confiable donde cada
-            departamento tenga un rol, pero todos trabajen con una misma
-            responsabilidad frente al usuario.
+            La mayoría de las personas y empresas no necesitan servicios sueltos que no se comunican entre sí: 
+            necesitan una ruta clara y coordinada. TeloCorpGroup existe para ordenar esa ruta, 
+            unir capacidades operativas y construir una red de absoluta confianza donde cada departamento 
+            tiene un rol experto, pero todos trabajan bajo una misma responsabilidad de cara al usuario final.
           </p>
         </div>
-        <div class="principles" aria-label="Principios de TeloCorpGroup">
-          <article>
-            <span>01</span>
-            <h3>Centralizar</h3>
-            <p>Una marca que recibe la necesidad y orienta al usuario hacia el departamento correcto.</p>
-          </article>
-          <article>
-            <span>02</span>
-            <h3>Coordinar</h3>
-            <p>Servicios que pueden trabajar juntos cuando una solución requiere más de una capacidad.</p>
-          </article>
-          <article>
-            <span>03</span>
-            <h3>Escalar</h3>
-            <p>Una estructura preparada para sumar nuevas unidades sin perder orden, identidad ni seguimiento.</p>
-          </article>
+        <div class="principles animate-on-scroll delay-1" aria-label="Principios operativos de TeloCorpGroup">
+          <div class="principles-card">
+            <div class="step-num">01</div>
+            <div class="principles-content">
+              <h3>Centralizar</h3>
+              <p>Una marca unificada que recibe la necesidad y orienta eficientemente al usuario hacia el departamento indicado.</p>
+            </div>
+          </div>
+          <div class="principles-card">
+            <div class="step-num">02</div>
+            <div class="principles-content">
+              <h3>Coordinar</h3>
+              <p>Unidades operativas preparadas para trabajar juntas cuando una solución requiere más de una capacidad técnica.</p>
+            </div>
+          </div>
+          <div class="principles-card">
+            <div class="step-num">03</div>
+            <div class="principles-content">
+              <h3>Escalar</h3>
+              <p>Una estructura corporativa diseñada para sumar nuevas unidades de negocio sin perder orden, velocidad ni trazabilidad.</p>
+            </div>
+          </div>
         </div>
       </section>
 
+      <!-- Grid de Departamentos Oficiales -->
       <section class="departments" id="departamentos" aria-labelledby="departments-title">
-        <div class="section-heading">
+        <div class="section-heading animate-on-scroll">
           <p class="eyebrow">Departamentos de servicio</p>
           <h2 id="departments-title">Un ecosistema de unidades con funciones claras</h2>
         </div>
 
-        <div class="department-grid">
-          <article class="department-card sales">
+        <div class="department-grid animate-on-scroll delay-1">
+          <article class="department-card sales" id="card-telosales">
             <span class="service-code">TS</span>
             <h3>TeloSales</h3>
-            <p>Ventas, prospección, gestión comercial y creación de oportunidades para usuarios, marcas y negocios.</p>
+            <p>Estrategia de ventas, prospección, gestión comercial avanzada y creación de oportunidades para marcas y negocios en crecimiento.</p>
           </article>
-          <article class="department-card education">
+          <article class="department-card education" id="card-teloeduca">
             <span class="service-code">TE</span>
             <h3>TeloEduca</h3>
-            <p>Entrenamiento práctico para desarrollar habilidades, formar equipos y elevar la calidad del servicio.</p>
+            <p>Entrenamiento práctico de alta calidad para desarrollar habilidades técnicas, capacitar equipos comerciales y elevar el servicio.</p>
           </article>
-          <article class="department-card delivery">
+          <article class="department-card delivery" id="card-telolleva">
             <span class="service-code">TL</span>
             <h3>TeloLleva</h3>
-            <p>Mensajería, entregas y movimiento de encargos con trazabilidad, rapidez y atención cercana.</p>
+            <p>Mensajería corporativa, entregas y movimiento estratégico de encargos con trazabilidad digital, velocidad y atención cercana.</p>
           </article>
-          <article class="department-card marketplace">
+          <article class="department-card marketplace" id="card-telocompra">
             <span class="service-code">TC</span>
             <h3>TeloCompra</h3>
-            <p>Compras, intercambios y conexiones entre personas que quieren adquirir, vender, negociar o comparar.</p>
+            <p>Compras inteligentes, importaciones e intercambios comerciales entre marcas y personas que quieren adquirir de forma segura.</p>
           </article>
-          <article class="department-card repair">
+          <article class="department-card repair" id="card-telorepara">
             <span class="service-code">TR</span>
             <h3>TeloRepara</h3>
-            <p>Soporte técnico para diagnóstico, mantenimiento y reparación de equipos, hogares y espacios.</p>
+            <p>Soporte técnico informático y de hardware para diagnóstico, mantenimiento preventivo y reparación experta de equipos.</p>
           </article>
-          <article class="department-card install">
+          <article class="department-card install" id="card-teloinstala">
             <span class="service-code">TI</span>
             <h3>TeloInstala</h3>
-            <p>Instalaciones y servicios en campo para proyectos domésticos, comerciales y operativos.</p>
+            <p>Instalaciones operativas en campo, tendido de redes, configuraciones de sistemas y servicios operativos presenciales.</p>
           </article>
         </div>
       </section>
 
+      <!-- NUEVA SECCIÓN INTERACTIVA: Ruteador de Servicios -->
+      <section class="service-router-section" id="ruteador" aria-labelledby="router-title">
+        <div class="router-container animate-on-scroll">
+          <div class="section-heading">
+            <p class="eyebrow">Asistente Inteligente</p>
+            <h2 id="router-title">Ruteador de Servicios Integrados</h2>
+            <p class="lede" style="margin: 16px auto 0; font-size: 1.05rem;">
+              Simula tu necesidad comercial o cotidiana y observa cómo nuestro modelo operativo conecta y secuencia los departamentos en tiempo real.
+            </p>
+          </div>
+
+          <!-- Presets con casos comunes de ejemplo -->
+          <div class="router-presets">
+            <p>Selecciona un requerimiento de ejemplo:</p>
+            <div class="preset-btn-group">
+              <button class="preset-btn" data-query="Quiero vender laptops en internet, que las lleven a domicilio y capacitar a mi equipo">
+                💻 Vender en línea, enviar a domicilio y capacitar personal
+              </button>
+              <button class="preset-btn" data-query="Necesito reparar las computadoras de la oficina e instalar el cableado de red local">
+                🔌 Reparar computadoras e instalar cableado de red
+              </button>
+              <button class="preset-btn" data-query="Quiero comprar suministros para mi empresa y que me los envíen hoy mismo">
+                📦 Comprar suministros comerciales y recibirlos hoy
+              </button>
+            </div>
+          </div>
+
+          <!-- Barra de Búsqueda Manual -->
+          <div class="router-search-bar">
+            <input type="text" id="router-search" placeholder="Ej: Necesito comprar equipos de red, que los instalen y capaciten al personal..." aria-label="Escribe tu requerimiento personalizado">
+            <button class="button button-primary" id="router-submit-btn">Calcular Ruta</button>
+          </div>
+
+          <!-- Contenedor del Flujo de Salida -->
+          <div id="router-flow-output">
+            <div class="router-placeholder">
+              <p>Escribe tu necesidad o selecciona uno de los ejemplos de arriba para ver el flujo de departamentos automatizado.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Modelo Operativo -->
       <section class="model" id="modelo" aria-labelledby="model-title">
-        <div class="model-copy">
+        <div class="model-copy animate-on-scroll">
           <p class="eyebrow">Modelo operativo</p>
           <h2 id="model-title">La solución correcta empieza con una buena clasificación</h2>
           <p>
-            Una solicitud puede comenzar como una compra, convertirse en una
-            instalación, requerir mensajería y terminar con soporte técnico.
-            Por eso el modelo no trata cada servicio como una isla: lo ordena,
-            lo asigna y lo acompaña hasta que el usuario tenga una respuesta.
+            Una solicitud compleja puede comenzar como una simple compra de equipos, convertirse en una 
+            instalación técnica, requerir mensajería urgente y terminar con soporte post-venta. 
+            Por eso nuestro modelo corporativo no trata cada departamento como una isla independiente: 
+            lo ordena, lo asigna secuencialmente y lo acompaña en cada fase hasta que el usuario tenga la respuesta final.
           </p>
         </div>
-        <div class="flow" aria-label="Flujo de servicio">
-          <div>Escuchar</div>
-          <div>Clasificar</div>
-          <div>Resolver</div>
-          <div>Acompañar</div>
+        <div class="flow animate-on-scroll delay-1" aria-label="Flujo de servicio secuencial">
+          <div class="flow-item">
+            <span class="flow-num">01</span>
+            <div class="flow-content">
+              <h4>Escuchar</h4>
+              <p>Recibimos tu solicitud centralizada y analizamos el alcance de tus requerimientos.</p>
+            </div>
+          </div>
+          <div class="flow-item">
+            <span class="flow-num">02</span>
+            <div class="flow-content">
+              <h4>Clasificar</h4>
+              <p>Asignamos de forma estructurada los departamentos competentes para cada fase del servicio.</p>
+            </div>
+          </div>
+          <div class="flow-item">
+            <span class="flow-num">03</span>
+            <div class="flow-content">
+              <h4>Resolver</h4>
+              <p>Los equipos expertos ejecutan de forma coordinada las tareas operativas asignadas.</p>
+            </div>
+          </div>
+          <div class="flow-item">
+            <span class="flow-num">04</span>
+            <div class="flow-content">
+              <h4>Acompañar</h4>
+              <p>Realizamos el seguimiento post-servicio para asegurar la calidad y escalabilidad de la solución.</p>
+            </div>
+          </div>
         </div>
       </section>
 
-      <section class="contact" id="contacto" aria-labelledby="contact-title">
-        <p class="eyebrow">Próxima etapa</p>
-        <h2 id="contact-title">Una marca diseñada para crecer por departamentos</h2>
-        <p>
-          Este sitio es el punto de partida para presentar la visión, ordenar
-          las unidades de servicio y abrir canales para clientes, aliados y
-          equipos que quieran construir dentro del ecosistema TeloCorpGroup.
-        </p>
-        <a class="button button-primary" href="mailto:hola@telocg.com">Iniciar conversación</a>
+      <!-- Formulario de Contacto y Canales Activos -->
+      <section class="contact-section" id="contacto" aria-labelledby="contact-title">
+        <div class="contact-info animate-on-scroll">
+          <p class="eyebrow">Próxima etapa</p>
+          <h2 id="contact-title">Una marca diseñada para crecer contigo</h2>
+          <p>
+            Esta plataforma es el punto de partida para presentar nuestra visión, unificar las operaciones de 
+            los departamentos de servicio y abrir canales eficientes para clientes, aliados estratégicos y equipos 
+            que quieran expandirse dentro de la red corporativa TeloCorpGroup.
+          </p>
+          
+          <div class="contact-channels">
+            <div class="channel-card">
+              <div class="channel-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="24" height="24">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                  <polyline points="22,6 12,13 2,6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                </svg>
+              </div>
+              <div class="channel-details">
+                <h4>Correo Electrónico Oficial</h4>
+                <a href="mailto:hola@telocg.com">hola@telocg.com</a>
+              </div>
+            </div>
+            <div class="channel-card">
+              <div class="channel-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="24" height="24">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                  <line x1="2" y1="12" x2="22" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                </svg>
+              </div>
+              <div class="channel-details">
+                <h4>Dominio Corporativo</h4>
+                <a href="https://telocg.com" target="_blank" rel="noopener">www.telocg.com</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Formulario de Entrada Comercial -->
+        <div class="contact-form-container animate-on-scroll delay-1">
+          <h3>Formulario de Contacto</h3>
+          <form id="contact-form">
+            <div class="form-group-row">
+              <div class="form-group">
+                <label for="contact-name">Nombre completo *</label>
+                <input type="text" id="contact-name" placeholder="Ej: Juan Pérez" required>
+              </div>
+              <div class="form-group">
+                <label for="contact-email">Correo de contacto *</label>
+                <input type="email" id="contact-email" placeholder="Ej: juan@empresa.com" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="contact-message">Detalles del requerimiento *</label>
+              <textarea id="contact-message" placeholder="Describe brevemente tus necesidades operativas o comerciales para clasificar tu requerimiento..." required></textarea>
+            </div>
+            <button class="button button-primary" type="submit">Enviar Solicitud</button>
+          </form>
+        </div>
       </section>
     </main>
 
+    <!-- Footer Premium -->
     <footer class="site-footer">
-      <span>TeloCorpGroup</span>
-      <span>Soluciones integrales por departamentos</span>
+      <div class="footer-top">
+        <div class="footer-brand-info">
+          <a class="brand" href="#inicio" aria-label="TeloCorpGroup inicio">
+            <img src="assets/telocorpgroup-mark.png" alt="Logo de TeloCorpGroup" class="brand-logo">
+            <span>TeloCorpGroup</span>
+          </a>
+          <p>Unificando capacidades operativas y comerciales para ofrecer una única puerta de resolución a las marcas y personas.</p>
+        </div>
+        <div class="footer-links">
+          <div class="footer-col">
+            <h4>Navegación</h4>
+            <ul>
+              <li><a href="#inicio">Inicio</a></li>
+              <li><a href="#proposito">Propósito</a></li>
+              <li><a href="#departamentos">Departamentos</a></li>
+              <li><a href="#ruteador">Ruteador</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4>Operaciones</h4>
+            <ul>
+              <li><a href="#modelo">Modelo de Ruteo</a></li>
+              <li><a href="#contacto">Contacto Comercial</a></li>
+              <li><a href="mailto:hola@telocg.com">Asistencia Directa</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 TeloCorpGroup. Todos los derechos reservados.</span>
+        <span>Soluciones integrales por departamentos</span>
+      </div>
     </footer>
+
+    <!-- Scripts de Interactividad y Animaciones -->
+    <script src="script.js"></script>
   </body>
 </html>
