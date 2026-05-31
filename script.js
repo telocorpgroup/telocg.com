@@ -38,155 +38,2208 @@ const AppState = {
 // ==========================================
 const productsDatabase = [
   {
-    id: 'ts-101',
-    title: 'Cover Magnético Transparente (MagSafe)',
-    category: 'cases',
-    price: 650,
-    icon: '<img src="TeloCorp/IMG-20260515-WA0042.jpg" alt="Cover Magsafe">',
-    images: ['TeloCorp/IMG-20260515-WA0042.jpg', 'TeloCorp/IMG-20260515-WA0044.jpg'],
-    description: 'Estuche transparente ultra resistente con imanes MagSafe alineados para una carga inalámbrica más rápida y segura. Protege contra caídas sin ocultar el diseño original de tu dispositivo.',
-    specs: {
-      'Compatibilidad': 'iPhone 13, 14, 15 (Pro / Pro Max)',
-      'Material': 'Policarbonato rígido y TPU flexible',
-      'Protección': 'Antigolpes certificado militar',
-      'Tecnología': 'Alineación magnética MagSafe'
+    "id": "ts-cat-100",
+    "title": "Cover Silicona Diseño Exclusivo N°1",
+    "category": "cases",
+    "price": 500,
+    "icon": "<img src=\"TeloCorp/images/image1.png\" alt=\"Cover Silicona Diseño Exclusivo N°1\">",
+    "images": [
+      "TeloCorp/images/image1.png"
+    ],
+    "description": "Funda de silicona soft-touch con interior de microfibra para evitar rayones. Disponible en varios colores pastel.",
+    "specs": {
+      "Material": "Silicona líquida flexible",
+      "Compatibilidad": "Modelos iPhone y Samsung",
+      "Interior": "Forro de microfibra suave",
+      "Diseño": "Ultra delgado"
     },
-    reviews: [
-      { user: 'Carlos M.', rating: 5, date: '28 May 2026', text: 'Excelente calidad. Los imanes se adhieren muy fuerte y el cover no se pone amarillo en los bordes.' },
-      { user: 'Ana P.', rating: 4, date: '15 May 2026', text: 'Muy bueno, protege bien las lentes de las cámaras traseras.' }
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
     ]
   },
   {
-    id: 'ts-102',
-    title: 'Cover de Chupón Multi-color',
-    category: 'cases',
-    price: 450,
-    icon: '<img src="TeloCorp/IMG-20260515-WA0041.jpg" alt="Cover Chupón">',
-    images: ['TeloCorp/IMG-20260515-WA0041.jpg', 'TeloCorp/IMG-20260515-WA0043.jpg'],
-    description: 'Divertido protector con ventosas integradas ("chupones") que permiten adherir temporalmente el celular a superficies lisas como espejos o azulejos. Ideal para tomar selfies o grabar videos cómodamente.',
-    specs: {
-      'Compatibilidad': 'Universal iPhone y Samsung S-Series',
-      'Material': 'Silicona suave flexible',
-      'Ventosas': '24 mini ventosas de succión fuerte',
-      'Bordes': 'Elevados para protección de pantalla'
+    "id": "ts-cat-101",
+    "title": "Cover Protector De Diseño Especial",
+    "category": "cases",
+    "price": 600,
+    "icon": "<img src=\"TeloCorp/images/image2.png\" alt=\"Cover Protector De Diseño Especial\">",
+    "images": [
+      "TeloCorp/images/image2.png"
+    ],
+    "description": "Forro protector de alta resistencia contra caídas y arañazos. Diseño ergonómico adaptado para un agarre cómodo y firme.",
+    "specs": {
+      "Material": "Silicona / TPU de alta densidad",
+      "Protección": "Antigolpes certificado",
+      "Bordes": "Cámara y pantalla sobreelevados",
+      "Estilo": "Diseño exclusivo TeloSales"
     },
-    reviews: [
-      { user: 'Julio R.', rating: 5, date: '20 May 2026', text: 'Perfecto para grabar contenidos frente al espejo sin usar trípode.' }
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
     ]
   },
   {
-    id: 'ts-103',
-    title: 'Cover Básico TPU Variados',
-    category: 'cases',
-    price: 300,
-    icon: '<img src="TeloCorp/IMG-20260515-WA0044.jpg" alt="Cover Basico">',
-    images: ['TeloCorp/IMG-20260515-WA0044.jpg', 'TeloCorp/IMG-20260515-WA0040.jpg'],
-    description: 'El forro estándar de alta durabilidad. Delgado, ligero y con textura antideslizante para evitar caídas accidentales. Fácil de limpiar y de colocar.',
-    specs: {
-      'Compatibilidad': 'Todos los modelos de iPhone y Android',
-      'Material': 'TPU (Poliuretano termoplástico) flexible',
-      'Acabado': 'Mate anti-huellas',
-      'Grosor': '1.2 mm ultra liviano'
+    "id": "ts-cat-102",
+    "title": "Cover Silicona Diseño Stitch",
+    "category": "cases",
+    "price": 550,
+    "icon": "<img src=\"TeloCorp/images/image3.png\" alt=\"Cover Silicona Diseño Stitch\">",
+    "images": [
+      "TeloCorp/images/image3.png"
+    ],
+    "description": "Forro protector de alta resistencia contra caídas y arañazos. Diseño ergonómico adaptado para un agarre cómodo y firme.",
+    "specs": {
+      "Material": "Silicona / TPU de alta densidad",
+      "Protección": "Antigolpes certificado",
+      "Bordes": "Cámara y pantalla sobreelevados",
+      "Estilo": "Diseño exclusivo TeloSales"
     },
-    reviews: [
-      { user: 'Diana B.', rating: 4, date: '10 May 2026', text: 'Sencillo, cumple su función de protección a un precio inigualable.' }
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
     ]
   },
   {
-    id: 'ts-104',
-    title: 'Cover "Anti-Gravedad" Adhesivo',
-    category: 'cases',
-    price: 500,
-    icon: '<img src="TeloCorp/IMG-20260515-WA0040.jpg" alt="Anti-Gravity">',
-    images: ['TeloCorp/IMG-20260515-WA0040.jpg', 'TeloCorp/IMG-20260515-WA0042.jpg'],
-    description: 'Forro premium con tecnología de micro-succión nano-métrica que se adhiere a ventanas, espejos, pizarras y metales sin dejar ningún residuo pegajoso en la superficie.',
-    specs: {
-      'Compatibilidad': 'iPhone 12 / 13 / 14 / 15',
-      'Material': 'Nano-material autoadherente y TPU',
-      'Mantenimiento': 'Lavable con agua simple para reactivar agarre',
-      'Tecnología': 'Micro-succión al vacío'
+    "id": "ts-cat-103",
+    "title": "Cover Silicona Diseño Exclusivo N°4",
+    "category": "cases",
+    "price": 500,
+    "icon": "<img src=\"TeloCorp/images/image4.png\" alt=\"Cover Silicona Diseño Exclusivo N°4\">",
+    "images": [
+      "TeloCorp/images/image4.png"
+    ],
+    "description": "Funda de silicona soft-touch con interior de microfibra para evitar rayones. Disponible en varios colores pastel.",
+    "specs": {
+      "Material": "Silicona líquida flexible",
+      "Compatibilidad": "Modelos iPhone y Samsung",
+      "Interior": "Forro de microfibra suave",
+      "Diseño": "Ultra delgado"
     },
-    reviews: [
-      { user: 'Marcos T.', rating: 5, date: '18 May 2026', text: 'Sorprendente, se pega en los espejos del gym de forma firme para grabarse.' }
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
     ]
   },
   {
-    id: 'ts-105',
-    title: 'Cover de Cuero Premium MagSafe',
-    category: 'cases',
-    price: 850,
-    icon: '<img src="TeloCorp/IMG-20260515-WA0043.jpg" alt="Cuero Premium">',
-    images: ['TeloCorp/IMG-20260515-WA0043.jpg', 'TeloCorp/IMG-20260515-WA0041.jpg'],
-    description: 'Estuche de cuero sintético italiano de alta calidad con textura agradable al tacto. Admite carga inalámbrica MagSafe y posee un recubrimiento interno de microfibra para no rayar el dispositivo.',
-    specs: {
-      'Compatibilidad': 'iPhone 14 / 15 Pro y Pro Max',
-      'Material': 'Cuero sintético eco-friendly y microfibra',
-      'Sensación': 'Soft-touch de alta gama',
-      'Corte': 'Botones de aluminio mecanizado'
+    "id": "ts-cat-104",
+    "title": "Cover Silicona Diseño Exclusivo N°5",
+    "category": "cases",
+    "price": 500,
+    "icon": "<img src=\"TeloCorp/images/image5.png\" alt=\"Cover Silicona Diseño Exclusivo N°5\">",
+    "images": [
+      "TeloCorp/images/image5.png"
+    ],
+    "description": "Funda de silicona soft-touch con interior de microfibra para evitar rayones. Disponible en varios colores pastel.",
+    "specs": {
+      "Material": "Silicona líquida flexible",
+      "Compatibilidad": "Modelos iPhone y Samsung",
+      "Interior": "Forro de microfibra suave",
+      "Diseño": "Ultra delgado"
     },
-    reviews: [
-      { user: 'Roberto S.', rating: 5, date: '30 May 2026', text: 'Se siente muy premium. El empaque y los acabados son excelentes.' }
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
     ]
   },
   {
-    id: 'ts-106',
-    title: 'Cover Armor con Anillo Metálico',
-    category: 'cases',
-    price: 700,
-    icon: '<img src="TeloCorp/IMG-20260515-WA0045.jpg" alt="Armor Ring">',
-    images: ['TeloCorp/IMG-20260515-WA0045.jpg', 'TeloCorp/IMG-20260515-WA0042.jpg'],
-    description: 'Funda de protección extrema blindada para caídas industriales de alto impacto. Cuenta con un soporte de anillo giratorio de 360 grados integrado y placa metálica compatible con soportes magnéticos de autos.',
-    specs: {
-      'Compatibilidad': 'iPhone, Samsung A & S Series',
-      'Material': 'Chasis de Policarbonato y TPU híbrido militar',
-      'Anillo': 'Girable 360° soporte horizontal',
-      'Metal': 'Placa integrada para imán de vehículo'
+    "id": "ts-cat-105",
+    "title": "Cover Silicona Diseño Exclusivo N°6",
+    "category": "cases",
+    "price": 500,
+    "icon": "<img src=\"TeloCorp/images/image6.png\" alt=\"Cover Silicona Diseño Exclusivo N°6\">",
+    "images": [
+      "TeloCorp/images/image6.png"
+    ],
+    "description": "Funda de silicona soft-touch con interior de microfibra para evitar rayones. Disponible en varios colores pastel.",
+    "specs": {
+      "Material": "Silicona líquida flexible",
+      "Compatibilidad": "Modelos iPhone y Samsung",
+      "Interior": "Forro de microfibra suave",
+      "Diseño": "Ultra delgado"
     },
-    reviews: [
-      { user: 'Wilson N.', rating: 4, date: '22 May 2026', text: 'Super resistente. Ideal para los que trabajamos al aire libre. Un poco pesado pero vale la pena.' }
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
     ]
   },
   {
-    id: 'ts-201',
-    title: 'Cargador Rápido 20W Type-C',
-    category: 'tech',
-    price: 800,
-    icon: '🔌',
-    images: [],
-    description: 'Adaptador de corriente USB-C de 20W ultra eficiente. Ofrece una carga rápida y segura para teléfonos móviles y tabletas, permitiendo cargar hasta el 50% de batería en solo 30 minutos.',
-    specs: {
-      'Conector': 'USB-C hembra',
-      'Potencia': '20W Máxima entrega',
-      'Voltajes': '5V/3A, 9V/2.22A',
-      'Certificados': 'CE, FCC, RoHS protección térmica'
+    "id": "ts-cat-106",
+    "title": "Cover Silicona Diseño Exclusivo N°7",
+    "category": "cases",
+    "price": 500,
+    "icon": "<img src=\"TeloCorp/images/image7.png\" alt=\"Cover Silicona Diseño Exclusivo N°7\">",
+    "images": [
+      "TeloCorp/images/image7.png"
+    ],
+    "description": "Funda de silicona soft-touch con interior de microfibra para evitar rayones. Disponible en varios colores pastel.",
+    "specs": {
+      "Material": "Silicona líquida flexible",
+      "Compatibilidad": "Modelos iPhone y Samsung",
+      "Interior": "Forro de microfibra suave",
+      "Diseño": "Ultra delgado"
     },
-    reviews: [
-      { user: 'Gabriela M.', rating: 5, date: '29 May 2026', text: 'Carga super rápido mi teléfono y no se calienta nada.' }
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
     ]
   },
   {
-    id: 'ts-202',
-    title: 'Audífonos Inalámbricos Pro',
-    category: 'tech',
-    price: 1500,
-    icon: '🎧',
-    images: [],
-    description: 'Audífonos in-ear de conexión inalámbrica Bluetooth 5.3 estable. Ofrecen sonido de alta fidelidad, cancelación pasiva de ruido y hasta 24 horas de reproducción total utilizando el estuche de carga inteligente.',
-    specs: {
-      'Conexión': 'Bluetooth 5.3 alcance 10 metros',
-      'Autonomía': '6 horas uso continuo (+18 horas con estuche)',
-      'Batería': 'Estuche recargable vía Type-C',
-      'Extras': 'Sensores táctiles y micrófono integrado HD'
+    "id": "ts-cat-107",
+    "title": "Cover Silicona Diseño Exclusivo N°8",
+    "category": "cases",
+    "price": 500,
+    "icon": "<img src=\"TeloCorp/images/image8.png\" alt=\"Cover Silicona Diseño Exclusivo N°8\">",
+    "images": [
+      "TeloCorp/images/image8.png"
+    ],
+    "description": "Funda de silicona soft-touch con interior de microfibra para evitar rayones. Disponible en varios colores pastel.",
+    "specs": {
+      "Material": "Silicona líquida flexible",
+      "Compatibilidad": "Modelos iPhone y Samsung",
+      "Interior": "Forro de microfibra suave",
+      "Diseño": "Ultra delgado"
     },
-    reviews: [
-      { user: 'Esteban F.', rating: 4, date: '27 May 2026', text: 'El sonido es nítido y la batería dura un montón. Se emparejan rapidísimo.' }
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-108",
+    "title": "Cover Silicona Diseño Exclusivo N°9",
+    "category": "cases",
+    "price": 500,
+    "icon": "<img src=\"TeloCorp/images/image9.png\" alt=\"Cover Silicona Diseño Exclusivo N°9\">",
+    "images": [
+      "TeloCorp/images/image9.png"
+    ],
+    "description": "Funda de silicona soft-touch con interior de microfibra para evitar rayones. Disponible en varios colores pastel.",
+    "specs": {
+      "Material": "Silicona líquida flexible",
+      "Compatibilidad": "Modelos iPhone y Samsung",
+      "Interior": "Forro de microfibra suave",
+      "Diseño": "Ultra delgado"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-109",
+    "title": "Cover Silicona Diseño Exclusivo N°10",
+    "category": "cases",
+    "price": 500,
+    "icon": "<img src=\"TeloCorp/images/image10.png\" alt=\"Cover Silicona Diseño Exclusivo N°10\">",
+    "images": [
+      "TeloCorp/images/image10.png"
+    ],
+    "description": "Funda de silicona soft-touch con interior de microfibra para evitar rayones. Disponible en varios colores pastel.",
+    "specs": {
+      "Material": "Silicona líquida flexible",
+      "Compatibilidad": "Modelos iPhone y Samsung",
+      "Interior": "Forro de microfibra suave",
+      "Diseño": "Ultra delgado"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-110",
+    "title": "Cover Silicona Diseño Exclusivo N°11",
+    "category": "cases",
+    "price": 500,
+    "icon": "<img src=\"TeloCorp/images/image11.png\" alt=\"Cover Silicona Diseño Exclusivo N°11\">",
+    "images": [
+      "TeloCorp/images/image11.png"
+    ],
+    "description": "Funda de silicona soft-touch con interior de microfibra para evitar rayones. Disponible en varios colores pastel.",
+    "specs": {
+      "Material": "Silicona líquida flexible",
+      "Compatibilidad": "Modelos iPhone y Samsung",
+      "Interior": "Forro de microfibra suave",
+      "Diseño": "Ultra delgado"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-111",
+    "title": "Cover Silicona Diseño Exclusivo N°12",
+    "category": "cases",
+    "price": 500,
+    "icon": "<img src=\"TeloCorp/images/image12.png\" alt=\"Cover Silicona Diseño Exclusivo N°12\">",
+    "images": [
+      "TeloCorp/images/image12.png"
+    ],
+    "description": "Funda de silicona soft-touch con interior de microfibra para evitar rayones. Disponible en varios colores pastel.",
+    "specs": {
+      "Material": "Silicona líquida flexible",
+      "Compatibilidad": "Modelos iPhone y Samsung",
+      "Interior": "Forro de microfibra suave",
+      "Diseño": "Ultra delgado"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-112",
+    "title": "Cover Silicona Diseño Exclusivo N°13",
+    "category": "cases",
+    "price": 500,
+    "icon": "<img src=\"TeloCorp/images/image13.png\" alt=\"Cover Silicona Diseño Exclusivo N°13\">",
+    "images": [
+      "TeloCorp/images/image13.png"
+    ],
+    "description": "Funda de silicona soft-touch con interior de microfibra para evitar rayones. Disponible en varios colores pastel.",
+    "specs": {
+      "Material": "Silicona líquida flexible",
+      "Compatibilidad": "Modelos iPhone y Samsung",
+      "Interior": "Forro de microfibra suave",
+      "Diseño": "Ultra delgado"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-113",
+    "title": "Cable D06 Ip Tipo C V8 Tipo C A Tipo C 60W Tipo C A iPhone 30W",
+    "category": "tech",
+    "price": 450,
+    "icon": "<img src=\"TeloCorp/images/image14.png\" alt=\"Cable D06 Ip Tipo C V8 Tipo C A Tipo C 60W Tipo C A iPhone 30W\">",
+    "images": [
+      "TeloCorp/images/image14.png"
+    ],
+    "description": "Cable premium ultra resistente de alta conductividad. Ideal para carga rápida y transferencia de datos sin pérdida de señal.",
+    "specs": {
+      "Conexión": "USB o USB-C según modelo",
+      "Longitud": "1 Metro o 2 Metros",
+      "Corriente": "3A / 60W / 100W",
+      "Material": "Nylon trenzado reforzado"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-114",
+    "title": "Cover 360 Colorido Blindado",
+    "category": "cases",
+    "price": 700,
+    "icon": "<img src=\"TeloCorp/images/image15.png\" alt=\"Cover 360 Colorido Blindado\">",
+    "images": [
+      "TeloCorp/images/image15.png"
+    ],
+    "description": "Forro protector de alta resistencia contra caídas y arañazos. Diseño ergonómico adaptado para un agarre cómodo y firme.",
+    "specs": {
+      "Material": "Silicona / TPU de alta densidad",
+      "Protección": "Antigolpes certificado",
+      "Bordes": "Cámara y pantalla sobreelevados",
+      "Estilo": "Diseño exclusivo TeloSales"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-115",
+    "title": "Cover Silicona Diseño Exclusivo N°16",
+    "category": "cases",
+    "price": 500,
+    "icon": "<img src=\"TeloCorp/images/image16.png\" alt=\"Cover Silicona Diseño Exclusivo N°16\">",
+    "images": [
+      "TeloCorp/images/image16.png"
+    ],
+    "description": "Funda de silicona soft-touch con interior de microfibra para evitar rayones. Disponible en varios colores pastel.",
+    "specs": {
+      "Material": "Silicona líquida flexible",
+      "Compatibilidad": "Modelos iPhone y Samsung",
+      "Interior": "Forro de microfibra suave",
+      "Diseño": "Ultra delgado"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-116",
+    "title": "Cover De Chupón Succión Especial",
+    "category": "cases",
+    "price": 450,
+    "icon": "<img src=\"TeloCorp/images/image17.png\" alt=\"Cover De Chupón Succión Especial\">",
+    "images": [
+      "TeloCorp/images/image17.png"
+    ],
+    "description": "Forro protector de alta resistencia contra caídas y arañazos. Diseño ergonómico adaptado para un agarre cómodo y firme.",
+    "specs": {
+      "Material": "Silicona / TPU de alta densidad",
+      "Protección": "Antigolpes certificado",
+      "Bordes": "Cámara y pantalla sobreelevados",
+      "Estilo": "Diseño exclusivo TeloSales"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-117",
+    "title": "Cover Silicona Diseño Exclusivo N°18",
+    "category": "cases",
+    "price": 500,
+    "icon": "<img src=\"TeloCorp/images/image18.png\" alt=\"Cover Silicona Diseño Exclusivo N°18\">",
+    "images": [
+      "TeloCorp/images/image18.png"
+    ],
+    "description": "Funda de silicona soft-touch con interior de microfibra para evitar rayones. Disponible en varios colores pastel.",
+    "specs": {
+      "Material": "Silicona líquida flexible",
+      "Compatibilidad": "Modelos iPhone y Samsung",
+      "Interior": "Forro de microfibra suave",
+      "Diseño": "Ultra delgado"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-118",
+    "title": "Cover Silicona Diseño Exclusivo N°19",
+    "category": "cases",
+    "price": 500,
+    "icon": "<img src=\"TeloCorp/images/image19.png\" alt=\"Cover Silicona Diseño Exclusivo N°19\">",
+    "images": [
+      "TeloCorp/images/image19.png"
+    ],
+    "description": "Funda de silicona soft-touch con interior de microfibra para evitar rayones. Disponible en varios colores pastel.",
+    "specs": {
+      "Material": "Silicona líquida flexible",
+      "Compatibilidad": "Modelos iPhone y Samsung",
+      "Interior": "Forro de microfibra suave",
+      "Diseño": "Ultra delgado"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-119",
+    "title": "Cover Premium Edición Limitada N°20",
+    "category": "cases",
+    "price": 650,
+    "icon": "<img src=\"TeloCorp/images/image20.png\" alt=\"Cover Premium Edición Limitada N°20\">",
+    "images": [
+      "TeloCorp/images/image20.png"
+    ],
+    "description": "Estuche de alto rendimiento con esquinas reforzadas para absorción de impactos. Estilo moderno translúcido.",
+    "specs": {
+      "Material": "TPU flexible y acrílico rígido",
+      "Esquinas": "Air-bag integrados contra caídas",
+      "Botones": "Sensación táctil clicky",
+      "Perfil": "Slim protector"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-120",
+    "title": "Cable D02 Tipo C A Tipo C 2M Cable D02 Tipo C A Ip &Nbsp;30W 2M",
+    "category": "tech",
+    "price": 450,
+    "icon": "<img src=\"TeloCorp/images/image21.png\" alt=\"Cable D02 Tipo C A Tipo C 2M Cable D02 Tipo C A Ip &Nbsp;30W 2M\">",
+    "images": [
+      "TeloCorp/images/image21.png"
+    ],
+    "description": "Cable premium ultra resistente de alta conductividad. Ideal para carga rápida y transferencia de datos sin pérdida de señal.",
+    "specs": {
+      "Conexión": "USB o USB-C según modelo",
+      "Longitud": "1 Metro o 2 Metros",
+      "Corriente": "3A / 60W / 100W",
+      "Material": "Nylon trenzado reforzado"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-121",
+    "title": "Cover Premium Edición Limitada N°22",
+    "category": "cases",
+    "price": 650,
+    "icon": "<img src=\"TeloCorp/images/image22.png\" alt=\"Cover Premium Edición Limitada N°22\">",
+    "images": [
+      "TeloCorp/images/image22.png"
+    ],
+    "description": "Estuche de alto rendimiento con esquinas reforzadas para absorción de impactos. Estilo moderno translúcido.",
+    "specs": {
+      "Material": "TPU flexible y acrílico rígido",
+      "Esquinas": "Air-bag integrados contra caídas",
+      "Botones": "Sensación táctil clicky",
+      "Perfil": "Slim protector"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-122",
+    "title": "Cover Premium Edición Limitada N°23",
+    "category": "cases",
+    "price": 650,
+    "icon": "<img src=\"TeloCorp/images/image23.png\" alt=\"Cover Premium Edición Limitada N°23\">",
+    "images": [
+      "TeloCorp/images/image23.png"
+    ],
+    "description": "Estuche de alto rendimiento con esquinas reforzadas para absorción de impactos. Estilo moderno translúcido.",
+    "specs": {
+      "Material": "TPU flexible y acrílico rígido",
+      "Esquinas": "Air-bag integrados contra caídas",
+      "Botones": "Sensación táctil clicky",
+      "Perfil": "Slim protector"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-123",
+    "title": "Cover Premium Edición Limitada N°24",
+    "category": "cases",
+    "price": 650,
+    "icon": "<img src=\"TeloCorp/images/image24.png\" alt=\"Cover Premium Edición Limitada N°24\">",
+    "images": [
+      "TeloCorp/images/image24.png"
+    ],
+    "description": "Estuche de alto rendimiento con esquinas reforzadas para absorción de impactos. Estilo moderno translúcido.",
+    "specs": {
+      "Material": "TPU flexible y acrílico rígido",
+      "Esquinas": "Air-bag integrados contra caídas",
+      "Botones": "Sensación táctil clicky",
+      "Perfil": "Slim protector"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-124",
+    "title": "Cover Premium Edición Limitada N°25",
+    "category": "cases",
+    "price": 650,
+    "icon": "<img src=\"TeloCorp/images/image25.png\" alt=\"Cover Premium Edición Limitada N°25\">",
+    "images": [
+      "TeloCorp/images/image25.png"
+    ],
+    "description": "Estuche de alto rendimiento con esquinas reforzadas para absorción de impactos. Estilo moderno translúcido.",
+    "specs": {
+      "Material": "TPU flexible y acrílico rígido",
+      "Esquinas": "Air-bag integrados contra caídas",
+      "Botones": "Sensación táctil clicky",
+      "Perfil": "Slim protector"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-125",
+    "title": "Cargador Rápido T16 Inteligente",
+    "category": "tech",
+    "price": 850,
+    "icon": "<img src=\"TeloCorp/images/image26.png\" alt=\"Cargador Rápido T16 Inteligente\">",
+    "images": [
+      "TeloCorp/images/image26.png"
+    ],
+    "description": "Cargador de pared con protección térmica inteligente contra cortocircuitos y sobrecargas. Compatible con carga rápida para dispositivos móviles.",
+    "specs": {
+      "Potencia": "20W / 45W / 100W",
+      "Puertos": "USB-C y USB-A duales",
+      "Eficiencia": "Carga rápida Power Delivery 3.0",
+      "Protección": "Chip inteligente anticaídas de voltaje"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-126",
+    "title": "Cover Premium Edición Limitada N°27",
+    "category": "cases",
+    "price": 650,
+    "icon": "<img src=\"TeloCorp/images/image27.png\" alt=\"Cover Premium Edición Limitada N°27\">",
+    "images": [
+      "TeloCorp/images/image27.png"
+    ],
+    "description": "Estuche de alto rendimiento con esquinas reforzadas para absorción de impactos. Estilo moderno translúcido.",
+    "specs": {
+      "Material": "TPU flexible y acrílico rígido",
+      "Esquinas": "Air-bag integrados contra caídas",
+      "Botones": "Sensación táctil clicky",
+      "Perfil": "Slim protector"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-127",
+    "title": "Cargador Rápido T13 Completo 20W",
+    "category": "tech",
+    "price": 850,
+    "icon": "<img src=\"TeloCorp/images/image28.png\" alt=\"Cargador Rápido T13 Completo 20W\">",
+    "images": [
+      "TeloCorp/images/image28.png"
+    ],
+    "description": "Cargador de pared con protección térmica inteligente contra cortocircuitos y sobrecargas. Compatible con carga rápida para dispositivos móviles.",
+    "specs": {
+      "Potencia": "20W / 45W / 100W",
+      "Puertos": "USB-C y USB-A duales",
+      "Eficiencia": "Carga rápida Power Delivery 3.0",
+      "Protección": "Chip inteligente anticaídas de voltaje"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-128",
+    "title": "Cover Premium Edición Limitada N°29",
+    "category": "cases",
+    "price": 650,
+    "icon": "<img src=\"TeloCorp/images/image29.png\" alt=\"Cover Premium Edición Limitada N°29\">",
+    "images": [
+      "TeloCorp/images/image29.png"
+    ],
+    "description": "Estuche de alto rendimiento con esquinas reforzadas para absorción de impactos. Estilo moderno translúcido.",
+    "specs": {
+      "Material": "TPU flexible y acrílico rígido",
+      "Esquinas": "Air-bag integrados contra caídas",
+      "Botones": "Sensación táctil clicky",
+      "Perfil": "Slim protector"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-129",
+    "title": "Cover Premium Edición Limitada N°30",
+    "category": "cases",
+    "price": 650,
+    "icon": "<img src=\"TeloCorp/images/image30.png\" alt=\"Cover Premium Edición Limitada N°30\">",
+    "images": [
+      "TeloCorp/images/image30.png"
+    ],
+    "description": "Estuche de alto rendimiento con esquinas reforzadas para absorción de impactos. Estilo moderno translúcido.",
+    "specs": {
+      "Material": "TPU flexible y acrílico rígido",
+      "Esquinas": "Air-bag integrados contra caídas",
+      "Botones": "Sensación táctil clicky",
+      "Perfil": "Slim protector"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-130",
+    "title": "Cover Premium Edición Limitada N°31",
+    "category": "cases",
+    "price": 650,
+    "icon": "<img src=\"TeloCorp/images/image31.png\" alt=\"Cover Premium Edición Limitada N°31\">",
+    "images": [
+      "TeloCorp/images/image31.png"
+    ],
+    "description": "Estuche de alto rendimiento con esquinas reforzadas para absorción de impactos. Estilo moderno translúcido.",
+    "specs": {
+      "Material": "TPU flexible y acrílico rígido",
+      "Esquinas": "Air-bag integrados contra caídas",
+      "Botones": "Sensación táctil clicky",
+      "Perfil": "Slim protector"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-131",
+    "title": "Cover Premium Edición Limitada N°32",
+    "category": "cases",
+    "price": 650,
+    "icon": "<img src=\"TeloCorp/images/image32.png\" alt=\"Cover Premium Edición Limitada N°32\">",
+    "images": [
+      "TeloCorp/images/image32.png"
+    ],
+    "description": "Estuche de alto rendimiento con esquinas reforzadas para absorción de impactos. Estilo moderno translúcido.",
+    "specs": {
+      "Material": "TPU flexible y acrílico rígido",
+      "Esquinas": "Air-bag integrados contra caídas",
+      "Botones": "Sensación táctil clicky",
+      "Perfil": "Slim protector"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-132",
+    "title": "Cover Premium Edición Limitada N°33",
+    "category": "cases",
+    "price": 650,
+    "icon": "<img src=\"TeloCorp/images/image33.png\" alt=\"Cover Premium Edición Limitada N°33\">",
+    "images": [
+      "TeloCorp/images/image33.png"
+    ],
+    "description": "Estuche de alto rendimiento con esquinas reforzadas para absorción de impactos. Estilo moderno translúcido.",
+    "specs": {
+      "Material": "TPU flexible y acrílico rígido",
+      "Esquinas": "Air-bag integrados contra caídas",
+      "Botones": "Sensación táctil clicky",
+      "Perfil": "Slim protector"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-133",
+    "title": "Cargador Rápido T13 Completo 20W",
+    "category": "tech",
+    "price": 850,
+    "icon": "<img src=\"TeloCorp/images/image34.png\" alt=\"Cargador Rápido T13 Completo 20W\">",
+    "images": [
+      "TeloCorp/images/image34.png"
+    ],
+    "description": "Cargador de pared con protección térmica inteligente contra cortocircuitos y sobrecargas. Compatible con carga rápida para dispositivos móviles.",
+    "specs": {
+      "Potencia": "20W / 45W / 100W",
+      "Puertos": "USB-C y USB-A duales",
+      "Eficiencia": "Carga rápida Power Delivery 3.0",
+      "Protección": "Chip inteligente anticaídas de voltaje"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-134",
+    "title": "Cable D16",
+    "category": "tech",
+    "price": 450,
+    "icon": "<img src=\"TeloCorp/images/image35.png\" alt=\"Cable D16\">",
+    "images": [
+      "TeloCorp/images/image35.png"
+    ],
+    "description": "Cable premium ultra resistente de alta conductividad. Ideal para carga rápida y transferencia de datos sin pérdida de señal.",
+    "specs": {
+      "Conexión": "USB o USB-C según modelo",
+      "Longitud": "1 Metro o 2 Metros",
+      "Corriente": "3A / 60W / 100W",
+      "Material": "Nylon trenzado reforzado"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-135",
+    "title": "Cable D16",
+    "category": "tech",
+    "price": 450,
+    "icon": "<img src=\"TeloCorp/images/image36.png\" alt=\"Cable D16\">",
+    "images": [
+      "TeloCorp/images/image36.png"
+    ],
+    "description": "Cable premium ultra resistente de alta conductividad. Ideal para carga rápida y transferencia de datos sin pérdida de señal.",
+    "specs": {
+      "Conexión": "USB o USB-C según modelo",
+      "Longitud": "1 Metro o 2 Metros",
+      "Corriente": "3A / 60W / 100W",
+      "Material": "Nylon trenzado reforzado"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-136",
+    "title": "Cover Premium Edición Limitada N°37",
+    "category": "cases",
+    "price": 650,
+    "icon": "<img src=\"TeloCorp/images/image37.png\" alt=\"Cover Premium Edición Limitada N°37\">",
+    "images": [
+      "TeloCorp/images/image37.png"
+    ],
+    "description": "Estuche de alto rendimiento con esquinas reforzadas para absorción de impactos. Estilo moderno translúcido.",
+    "specs": {
+      "Material": "TPU flexible y acrílico rígido",
+      "Esquinas": "Air-bag integrados contra caídas",
+      "Botones": "Sensación táctil clicky",
+      "Perfil": "Slim protector"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-137",
+    "title": "Cover Premium Edición Limitada N°38",
+    "category": "cases",
+    "price": 650,
+    "icon": "<img src=\"TeloCorp/images/image38.png\" alt=\"Cover Premium Edición Limitada N°38\">",
+    "images": [
+      "TeloCorp/images/image38.png"
+    ],
+    "description": "Estuche de alto rendimiento con esquinas reforzadas para absorción de impactos. Estilo moderno translúcido.",
+    "specs": {
+      "Material": "TPU flexible y acrílico rígido",
+      "Esquinas": "Air-bag integrados contra caídas",
+      "Botones": "Sensación táctil clicky",
+      "Perfil": "Slim protector"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-138",
+    "title": "Cover Premium Edición Limitada N°39",
+    "category": "cases",
+    "price": 650,
+    "icon": "<img src=\"TeloCorp/images/image39.png\" alt=\"Cover Premium Edición Limitada N°39\">",
+    "images": [
+      "TeloCorp/images/image39.png"
+    ],
+    "description": "Estuche de alto rendimiento con esquinas reforzadas para absorción de impactos. Estilo moderno translúcido.",
+    "specs": {
+      "Material": "TPU flexible y acrílico rígido",
+      "Esquinas": "Air-bag integrados contra caídas",
+      "Botones": "Sensación táctil clicky",
+      "Perfil": "Slim protector"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-139",
+    "title": "Cable Técnico Reforzado N°40",
+    "category": "tech",
+    "price": 350,
+    "icon": "<img src=\"TeloCorp/images/image40.png\" alt=\"Cable Técnico Reforzado N°40\">",
+    "images": [
+      "TeloCorp/images/image40.png"
+    ],
+    "description": "Cable trenzado de alto rendimiento para carga y transferencia de datos a alta velocidad. Soporta carga súper rápida.",
+    "specs": {
+      "Conector": "Tipo-C a USB-A o Tipo-C a Lightning",
+      "Material": "Aluminio anodizado y trenzado de nylon",
+      "Velocidad": "480 Mbps transferencia",
+      "Garantía": "Durabilidad probada de 10,000 dobleces"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-140",
+    "title": "Cable Técnico Reforzado N°41",
+    "category": "tech",
+    "price": 350,
+    "icon": "<img src=\"TeloCorp/images/image41.png\" alt=\"Cable Técnico Reforzado N°41\">",
+    "images": [
+      "TeloCorp/images/image41.png"
+    ],
+    "description": "Cable trenzado de alto rendimiento para carga y transferencia de datos a alta velocidad. Soporta carga súper rápida.",
+    "specs": {
+      "Conector": "Tipo-C a USB-A o Tipo-C a Lightning",
+      "Material": "Aluminio anodizado y trenzado de nylon",
+      "Velocidad": "480 Mbps transferencia",
+      "Garantía": "Durabilidad probada de 10,000 dobleces"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-141",
+    "title": "Cable Técnico Reforzado N°42",
+    "category": "tech",
+    "price": 350,
+    "icon": "<img src=\"TeloCorp/images/image42.png\" alt=\"Cable Técnico Reforzado N°42\">",
+    "images": [
+      "TeloCorp/images/image42.png"
+    ],
+    "description": "Cable trenzado de alto rendimiento para carga y transferencia de datos a alta velocidad. Soporta carga súper rápida.",
+    "specs": {
+      "Conector": "Tipo-C a USB-A o Tipo-C a Lightning",
+      "Material": "Aluminio anodizado y trenzado de nylon",
+      "Velocidad": "480 Mbps transferencia",
+      "Garantía": "Durabilidad probada de 10,000 dobleces"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-142",
+    "title": "Cable Técnico Reforzado N°43",
+    "category": "tech",
+    "price": 350,
+    "icon": "<img src=\"TeloCorp/images/image43.png\" alt=\"Cable Técnico Reforzado N°43\">",
+    "images": [
+      "TeloCorp/images/image43.png"
+    ],
+    "description": "Cable trenzado de alto rendimiento para carga y transferencia de datos a alta velocidad. Soporta carga súper rápida.",
+    "specs": {
+      "Conector": "Tipo-C a USB-A o Tipo-C a Lightning",
+      "Material": "Aluminio anodizado y trenzado de nylon",
+      "Velocidad": "480 Mbps transferencia",
+      "Garantía": "Durabilidad probada de 10,000 dobleces"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-143",
+    "title": "Cable Técnico Reforzado N°44",
+    "category": "tech",
+    "price": 350,
+    "icon": "<img src=\"TeloCorp/images/image44.png\" alt=\"Cable Técnico Reforzado N°44\">",
+    "images": [
+      "TeloCorp/images/image44.png"
+    ],
+    "description": "Cable trenzado de alto rendimiento para carga y transferencia de datos a alta velocidad. Soporta carga súper rápida.",
+    "specs": {
+      "Conector": "Tipo-C a USB-A o Tipo-C a Lightning",
+      "Material": "Aluminio anodizado y trenzado de nylon",
+      "Velocidad": "480 Mbps transferencia",
+      "Garantía": "Durabilidad probada de 10,000 dobleces"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-144",
+    "title": "Cable Técnico Reforzado N°45",
+    "category": "tech",
+    "price": 350,
+    "icon": "<img src=\"TeloCorp/images/image45.png\" alt=\"Cable Técnico Reforzado N°45\">",
+    "images": [
+      "TeloCorp/images/image45.png"
+    ],
+    "description": "Cable trenzado de alto rendimiento para carga y transferencia de datos a alta velocidad. Soporta carga súper rápida.",
+    "specs": {
+      "Conector": "Tipo-C a USB-A o Tipo-C a Lightning",
+      "Material": "Aluminio anodizado y trenzado de nylon",
+      "Velocidad": "480 Mbps transferencia",
+      "Garantía": "Durabilidad probada de 10,000 dobleces"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-145",
+    "title": "Cable Técnico Reforzado N°46",
+    "category": "tech",
+    "price": 350,
+    "icon": "<img src=\"TeloCorp/images/image46.png\" alt=\"Cable Técnico Reforzado N°46\">",
+    "images": [
+      "TeloCorp/images/image46.png"
+    ],
+    "description": "Cable trenzado de alto rendimiento para carga y transferencia de datos a alta velocidad. Soporta carga súper rápida.",
+    "specs": {
+      "Conector": "Tipo-C a USB-A o Tipo-C a Lightning",
+      "Material": "Aluminio anodizado y trenzado de nylon",
+      "Velocidad": "480 Mbps transferencia",
+      "Garantía": "Durabilidad probada de 10,000 dobleces"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-146",
+    "title": "Cable Técnico Reforzado N°47",
+    "category": "tech",
+    "price": 350,
+    "icon": "<img src=\"TeloCorp/images/image47.png\" alt=\"Cable Técnico Reforzado N°47\">",
+    "images": [
+      "TeloCorp/images/image47.png"
+    ],
+    "description": "Cable trenzado de alto rendimiento para carga y transferencia de datos a alta velocidad. Soporta carga súper rápida.",
+    "specs": {
+      "Conector": "Tipo-C a USB-A o Tipo-C a Lightning",
+      "Material": "Aluminio anodizado y trenzado de nylon",
+      "Velocidad": "480 Mbps transferencia",
+      "Garantía": "Durabilidad probada de 10,000 dobleces"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-147",
+    "title": "Cable Técnico Reforzado N°48",
+    "category": "tech",
+    "price": 350,
+    "icon": "<img src=\"TeloCorp/images/image48.png\" alt=\"Cable Técnico Reforzado N°48\">",
+    "images": [
+      "TeloCorp/images/image48.png"
+    ],
+    "description": "Cable trenzado de alto rendimiento para carga y transferencia de datos a alta velocidad. Soporta carga súper rápida.",
+    "specs": {
+      "Conector": "Tipo-C a USB-A o Tipo-C a Lightning",
+      "Material": "Aluminio anodizado y trenzado de nylon",
+      "Velocidad": "480 Mbps transferencia",
+      "Garantía": "Durabilidad probada de 10,000 dobleces"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-148",
+    "title": "Cover Magnético En Cristal MagSafe",
+    "category": "cases",
+    "price": 800,
+    "icon": "<img src=\"TeloCorp/images/image49.png\" alt=\"Cover Magnético En Cristal MagSafe\">",
+    "images": [
+      "TeloCorp/images/image49.png"
+    ],
+    "description": "Forro protector de alta resistencia contra caídas y arañazos. Diseño ergonómico adaptado para un agarre cómodo y firme.",
+    "specs": {
+      "Material": "Silicona / TPU de alta densidad",
+      "Protección": "Antigolpes certificado",
+      "Bordes": "Cámara y pantalla sobreelevados",
+      "Estilo": "Diseño exclusivo TeloSales"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-149",
+    "title": "Cable Técnico Reforzado N°50",
+    "category": "tech",
+    "price": 350,
+    "icon": "<img src=\"TeloCorp/images/image50.png\" alt=\"Cable Técnico Reforzado N°50\">",
+    "images": [
+      "TeloCorp/images/image50.png"
+    ],
+    "description": "Cable trenzado de alto rendimiento para carga y transferencia de datos a alta velocidad. Soporta carga súper rápida.",
+    "specs": {
+      "Conector": "Tipo-C a USB-A o Tipo-C a Lightning",
+      "Material": "Aluminio anodizado y trenzado de nylon",
+      "Velocidad": "480 Mbps transferencia",
+      "Garantía": "Durabilidad probada de 10,000 dobleces"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-150",
+    "title": "Cable Técnico Reforzado N°51",
+    "category": "tech",
+    "price": 350,
+    "icon": "<img src=\"TeloCorp/images/image51.png\" alt=\"Cable Técnico Reforzado N°51\">",
+    "images": [
+      "TeloCorp/images/image51.png"
+    ],
+    "description": "Cable trenzado de alto rendimiento para carga y transferencia de datos a alta velocidad. Soporta carga súper rápida.",
+    "specs": {
+      "Conector": "Tipo-C a USB-A o Tipo-C a Lightning",
+      "Material": "Aluminio anodizado y trenzado de nylon",
+      "Velocidad": "480 Mbps transferencia",
+      "Garantía": "Durabilidad probada de 10,000 dobleces"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-151",
+    "title": "Cable Técnico Reforzado N°52",
+    "category": "tech",
+    "price": 350,
+    "icon": "<img src=\"TeloCorp/images/image52.png\" alt=\"Cable Técnico Reforzado N°52\">",
+    "images": [
+      "TeloCorp/images/image52.png"
+    ],
+    "description": "Cable trenzado de alto rendimiento para carga y transferencia de datos a alta velocidad. Soporta carga súper rápida.",
+    "specs": {
+      "Conector": "Tipo-C a USB-A o Tipo-C a Lightning",
+      "Material": "Aluminio anodizado y trenzado de nylon",
+      "Velocidad": "480 Mbps transferencia",
+      "Garantía": "Durabilidad probada de 10,000 dobleces"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-152",
+    "title": "Cable D16",
+    "category": "tech",
+    "price": 450,
+    "icon": "<img src=\"TeloCorp/images/image53.png\" alt=\"Cable D16\">",
+    "images": [
+      "TeloCorp/images/image53.png"
+    ],
+    "description": "Cable premium ultra resistente de alta conductividad. Ideal para carga rápida y transferencia de datos sin pérdida de señal.",
+    "specs": {
+      "Conexión": "USB o USB-C según modelo",
+      "Longitud": "1 Metro o 2 Metros",
+      "Corriente": "3A / 60W / 100W",
+      "Material": "Nylon trenzado reforzado"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-153",
+    "title": "Cable Técnico Reforzado N°54",
+    "category": "tech",
+    "price": 350,
+    "icon": "<img src=\"TeloCorp/images/image54.png\" alt=\"Cable Técnico Reforzado N°54\">",
+    "images": [
+      "TeloCorp/images/image54.png"
+    ],
+    "description": "Cable trenzado de alto rendimiento para carga y transferencia de datos a alta velocidad. Soporta carga súper rápida.",
+    "specs": {
+      "Conector": "Tipo-C a USB-A o Tipo-C a Lightning",
+      "Material": "Aluminio anodizado y trenzado de nylon",
+      "Velocidad": "480 Mbps transferencia",
+      "Garantía": "Durabilidad probada de 10,000 dobleces"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-154",
+    "title": "Batería Portátil Telocorp 20,000 Mah",
+    "category": "tech",
+    "price": 1950,
+    "icon": "<img src=\"TeloCorp/images/image55.png\" alt=\"Batería Portátil Telocorp 20,000 Mah\">",
+    "images": [
+      "TeloCorp/images/image55.png"
+    ],
+    "description": "Batería portátil de alta capacidad para recargar tus dispositivos en cualquier lugar. Incluye display indicador de porcentaje de carga.",
+    "specs": {
+      "Capacidad": "10,000 mAh / 20,000 mAh",
+      "Salidas": "2 puertos USB 5V/2.4A",
+      "Entradas": "Micro-USB y Tipo-C",
+      "Indicador": "Pantalla digital LED"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-155",
+    "title": "Cover 360 Colorido Blindado",
+    "category": "cases",
+    "price": 700,
+    "icon": "<img src=\"TeloCorp/images/image56.png\" alt=\"Cover 360 Colorido Blindado\">",
+    "images": [
+      "TeloCorp/images/image56.png"
+    ],
+    "description": "Forro protector de alta resistencia contra caídas y arañazos. Diseño ergonómico adaptado para un agarre cómodo y firme.",
+    "specs": {
+      "Material": "Silicona / TPU de alta densidad",
+      "Protección": "Antigolpes certificado",
+      "Bordes": "Cámara y pantalla sobreelevados",
+      "Estilo": "Diseño exclusivo TeloSales"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-156",
+    "title": "Cable Técnico Reforzado N°57",
+    "category": "tech",
+    "price": 350,
+    "icon": "<img src=\"TeloCorp/images/image57.png\" alt=\"Cable Técnico Reforzado N°57\">",
+    "images": [
+      "TeloCorp/images/image57.png"
+    ],
+    "description": "Cable trenzado de alto rendimiento para carga y transferencia de datos a alta velocidad. Soporta carga súper rápida.",
+    "specs": {
+      "Conector": "Tipo-C a USB-A o Tipo-C a Lightning",
+      "Material": "Aluminio anodizado y trenzado de nylon",
+      "Velocidad": "480 Mbps transferencia",
+      "Garantía": "Durabilidad probada de 10,000 dobleces"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-157",
+    "title": "Cable D34",
+    "category": "tech",
+    "price": 450,
+    "icon": "<img src=\"TeloCorp/images/image58.png\" alt=\"Cable D34\">",
+    "images": [
+      "TeloCorp/images/image58.png"
+    ],
+    "description": "Cable premium ultra resistente de alta conductividad. Ideal para carga rápida y transferencia de datos sin pérdida de señal.",
+    "specs": {
+      "Conexión": "USB o USB-C según modelo",
+      "Longitud": "1 Metro o 2 Metros",
+      "Corriente": "3A / 60W / 100W",
+      "Material": "Nylon trenzado reforzado"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-158",
+    "title": "Cable D09 Tipo C A Ip 30W Cable D09 Tipo C A Tipo C 100W",
+    "category": "tech",
+    "price": 450,
+    "icon": "<img src=\"TeloCorp/images/image59.png\" alt=\"Cable D09 Tipo C A Ip 30W Cable D09 Tipo C A Tipo C 100W\">",
+    "images": [
+      "TeloCorp/images/image59.png"
+    ],
+    "description": "Cable premium ultra resistente de alta conductividad. Ideal para carga rápida y transferencia de datos sin pérdida de señal.",
+    "specs": {
+      "Conexión": "USB o USB-C según modelo",
+      "Longitud": "1 Metro o 2 Metros",
+      "Corriente": "3A / 60W / 100W",
+      "Material": "Nylon trenzado reforzado"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-159",
+    "title": "Cargador Compacto De Viaje N°60",
+    "category": "tech",
+    "price": 900,
+    "icon": "<img src=\"TeloCorp/images/image60.png\" alt=\"Cargador Compacto De Viaje N°60\">",
+    "images": [
+      "TeloCorp/images/image60.png"
+    ],
+    "description": "Cargador de pared compacto ideal para viajes. Carga inteligente de alta velocidad para dispositivos Android y Apple.",
+    "specs": {
+      "Potencia": "20W carga eficiente",
+      "Dimensiones": "Diseño compacto mini",
+      "Enchufe": "Pines planos estándar",
+      "Tecnología": "Smart IQ reconocimiento automático"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-160",
+    "title": "Cargador Compacto De Viaje N°61",
+    "category": "tech",
+    "price": 900,
+    "icon": "<img src=\"TeloCorp/images/image61.png\" alt=\"Cargador Compacto De Viaje N°61\">",
+    "images": [
+      "TeloCorp/images/image61.png"
+    ],
+    "description": "Cargador de pared compacto ideal para viajes. Carga inteligente de alta velocidad para dispositivos Android y Apple.",
+    "specs": {
+      "Potencia": "20W carga eficiente",
+      "Dimensiones": "Diseño compacto mini",
+      "Enchufe": "Pines planos estándar",
+      "Tecnología": "Smart IQ reconocimiento automático"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-161",
+    "title": "Cargador Compacto De Viaje N°62",
+    "category": "tech",
+    "price": 900,
+    "icon": "<img src=\"TeloCorp/images/image62.png\" alt=\"Cargador Compacto De Viaje N°62\">",
+    "images": [
+      "TeloCorp/images/image62.png"
+    ],
+    "description": "Cargador de pared compacto ideal para viajes. Carga inteligente de alta velocidad para dispositivos Android y Apple.",
+    "specs": {
+      "Potencia": "20W carga eficiente",
+      "Dimensiones": "Diseño compacto mini",
+      "Enchufe": "Pines planos estándar",
+      "Tecnología": "Smart IQ reconocimiento automático"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-162",
+    "title": "Cargador Compacto De Viaje N°63",
+    "category": "tech",
+    "price": 900,
+    "icon": "<img src=\"TeloCorp/images/image63.png\" alt=\"Cargador Compacto De Viaje N°63\">",
+    "images": [
+      "TeloCorp/images/image63.png"
+    ],
+    "description": "Cargador de pared compacto ideal para viajes. Carga inteligente de alta velocidad para dispositivos Android y Apple.",
+    "specs": {
+      "Potencia": "20W carga eficiente",
+      "Dimensiones": "Diseño compacto mini",
+      "Enchufe": "Pines planos estándar",
+      "Tecnología": "Smart IQ reconocimiento automático"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-163",
+    "title": "Cargador Compacto De Viaje N°64",
+    "category": "tech",
+    "price": 900,
+    "icon": "<img src=\"TeloCorp/images/image64.png\" alt=\"Cargador Compacto De Viaje N°64\">",
+    "images": [
+      "TeloCorp/images/image64.png"
+    ],
+    "description": "Cargador de pared compacto ideal para viajes. Carga inteligente de alta velocidad para dispositivos Android y Apple.",
+    "specs": {
+      "Potencia": "20W carga eficiente",
+      "Dimensiones": "Diseño compacto mini",
+      "Enchufe": "Pines planos estándar",
+      "Tecnología": "Smart IQ reconocimiento automático"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-164",
+    "title": "Cargador Compacto De Viaje N°65",
+    "category": "tech",
+    "price": 900,
+    "icon": "<img src=\"TeloCorp/images/image65.png\" alt=\"Cargador Compacto De Viaje N°65\">",
+    "images": [
+      "TeloCorp/images/image65.png"
+    ],
+    "description": "Cargador de pared compacto ideal para viajes. Carga inteligente de alta velocidad para dispositivos Android y Apple.",
+    "specs": {
+      "Potencia": "20W carga eficiente",
+      "Dimensiones": "Diseño compacto mini",
+      "Enchufe": "Pines planos estándar",
+      "Tecnología": "Smart IQ reconocimiento automático"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-165",
+    "title": "Cargador Compacto De Viaje N°66",
+    "category": "tech",
+    "price": 900,
+    "icon": "<img src=\"TeloCorp/images/image66.png\" alt=\"Cargador Compacto De Viaje N°66\">",
+    "images": [
+      "TeloCorp/images/image66.png"
+    ],
+    "description": "Cargador de pared compacto ideal para viajes. Carga inteligente de alta velocidad para dispositivos Android y Apple.",
+    "specs": {
+      "Potencia": "20W carga eficiente",
+      "Dimensiones": "Diseño compacto mini",
+      "Enchufe": "Pines planos estándar",
+      "Tecnología": "Smart IQ reconocimiento automático"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-166",
+    "title": "Cargador Compacto De Viaje N°67",
+    "category": "tech",
+    "price": 900,
+    "icon": "<img src=\"TeloCorp/images/image67.png\" alt=\"Cargador Compacto De Viaje N°67\">",
+    "images": [
+      "TeloCorp/images/image67.png"
+    ],
+    "description": "Cargador de pared compacto ideal para viajes. Carga inteligente de alta velocidad para dispositivos Android y Apple.",
+    "specs": {
+      "Potencia": "20W carga eficiente",
+      "Dimensiones": "Diseño compacto mini",
+      "Enchufe": "Pines planos estándar",
+      "Tecnología": "Smart IQ reconocimiento automático"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-167",
+    "title": "Cargador Compacto De Viaje N°68",
+    "category": "tech",
+    "price": 900,
+    "icon": "<img src=\"TeloCorp/images/image68.png\" alt=\"Cargador Compacto De Viaje N°68\">",
+    "images": [
+      "TeloCorp/images/image68.png"
+    ],
+    "description": "Cargador de pared compacto ideal para viajes. Carga inteligente de alta velocidad para dispositivos Android y Apple.",
+    "specs": {
+      "Potencia": "20W carga eficiente",
+      "Dimensiones": "Diseño compacto mini",
+      "Enchufe": "Pines planos estándar",
+      "Tecnología": "Smart IQ reconocimiento automático"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-168",
+    "title": "Cargador Compacto De Viaje N°69",
+    "category": "tech",
+    "price": 900,
+    "icon": "<img src=\"TeloCorp/images/image69.png\" alt=\"Cargador Compacto De Viaje N°69\">",
+    "images": [
+      "TeloCorp/images/image69.png"
+    ],
+    "description": "Cargador de pared compacto ideal para viajes. Carga inteligente de alta velocidad para dispositivos Android y Apple.",
+    "specs": {
+      "Potencia": "20W carga eficiente",
+      "Dimensiones": "Diseño compacto mini",
+      "Enchufe": "Pines planos estándar",
+      "Tecnología": "Smart IQ reconocimiento automático"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-169",
+    "title": "Cargador Compacto De Viaje N°70",
+    "category": "tech",
+    "price": 900,
+    "icon": "<img src=\"TeloCorp/images/image70.png\" alt=\"Cargador Compacto De Viaje N°70\">",
+    "images": [
+      "TeloCorp/images/image70.png"
+    ],
+    "description": "Cargador de pared compacto ideal para viajes. Carga inteligente de alta velocidad para dispositivos Android y Apple.",
+    "specs": {
+      "Potencia": "20W carga eficiente",
+      "Dimensiones": "Diseño compacto mini",
+      "Enchufe": "Pines planos estándar",
+      "Tecnología": "Smart IQ reconocimiento automático"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-170",
+    "title": "Cargador Compacto De Viaje N°71",
+    "category": "tech",
+    "price": 900,
+    "icon": "<img src=\"TeloCorp/images/image71.png\" alt=\"Cargador Compacto De Viaje N°71\">",
+    "images": [
+      "TeloCorp/images/image71.png"
+    ],
+    "description": "Cargador de pared compacto ideal para viajes. Carga inteligente de alta velocidad para dispositivos Android y Apple.",
+    "specs": {
+      "Potencia": "20W carga eficiente",
+      "Dimensiones": "Diseño compacto mini",
+      "Enchufe": "Pines planos estándar",
+      "Tecnología": "Smart IQ reconocimiento automático"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 4,
+        "date": "08 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+      }
     ]
   }
 ];
 
-// ==========================================
-// CATÁLOGO DE CURSOS (TELOEDUCA ACADEMY)
-// ==========================================
 const coursesDatabase = [
   {
     id: 'te-01',
