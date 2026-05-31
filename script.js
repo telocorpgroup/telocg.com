@@ -625,8 +625,8 @@ window.submitProductReview = function() {
 const cartDrawer = document.getElementById('cart-drawer');
 const cartOverlay = document.getElementById('cart-overlay');
 
-document.getElementById('global-cart-btn')?.addEventListener('click', window.toggleCart);
-cartOverlay?.addEventListener('click', window.toggleCart);
+document.getElementById('global-cart-btn')?.addEventListener('click', () => window.toggleCart());
+cartOverlay?.addEventListener('click', () => window.toggleCart());
 
 window.toggleCart = function() {
   if(!cartDrawer) return;
