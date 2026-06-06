@@ -12,17 +12,31 @@ const AppState = {
   courses: [],
   completedClasses: [],
   customReviews: {},
+  integrations: {
+    supabaseUrl: '',
+    supabaseKey: '',
+    stripeEnabled: false,
+    stripeKey: '',
+    stripeWebhook: '',
+    n8nLeadsUrl: '',
+    n8nOrdersUrl: '',
+    n8nServicesUrl: ''
+  },
   
   loadState: function() {
     const savedCart = localStorage.getItem('teloCart');
     const savedCourses = localStorage.getItem('teloCourses');
     const savedCompleted = localStorage.getItem('teloCompletedClasses');
     const savedReviews = localStorage.getItem('teloCustomReviews');
+    const savedIntegrations = localStorage.getItem('teloIntegrations');
     
     if(savedCart) this.cart = JSON.parse(savedCart);
     if(savedCourses) this.courses = JSON.parse(savedCourses);
     if(savedCompleted) this.completedClasses = JSON.parse(savedCompleted);
     if(savedReviews) this.customReviews = JSON.parse(savedReviews);
+    if(savedIntegrations) {
+      this.integrations = { ...this.integrations, ...JSON.parse(savedIntegrations) };
+    }
   },
   
   saveState: function() {
@@ -30,6 +44,7 @@ const AppState = {
     localStorage.setItem('teloCourses', JSON.stringify(this.courses));
     localStorage.setItem('teloCompletedClasses', JSON.stringify(this.completedClasses));
     localStorage.setItem('teloCustomReviews', JSON.stringify(this.customReviews));
+    localStorage.setItem('teloIntegrations', JSON.stringify(this.integrations));
   }
 };
 
@@ -2372,6 +2387,9 @@ document.addEventListener('DOMContentLoaded', () => {
   updateCartUI();
   setupContactForm();
   setupPlatziDashboard();
+  if (window.setupIntegrationsUI) {
+    window.setupIntegrationsUI();
+  }
   
   // Mostrar la vista de inicio por defecto
   window.switchAppView('home-view');
@@ -2406,6 +2424,10 @@ window.switchAppView = function(viewId) {
   if(viewId !== 'educa-classroom-view' && isVideoPlaying) {
     window.togglePlayPauseVideo();
   }
+  
+  if (viewId === 'integrations-view' && window.setupIntegrationsUI) {
+    window.setupIntegrationsUI();
+  }
 
   // Ocultar todas las vistas
   document.querySelectorAll('.app-view').forEach(view => {
@@ -2433,7 +2455,8 @@ window.switchAppView = function(viewId) {
     'lleva-view': 'Logística TeloLleva',
     'repara-view': 'Soporte Técnico TeloRepara',
     'instala-view': 'Instalaciones TeloInstala',
-    'support-view': 'Hub Administrativo Central'
+    'support-view': 'Hub Administrativo Central',
+    'integrations-view': 'Conectores e Integraciones de Servicios'
   };
   const titleEl = document.getElementById('current-view-title');
   if(titleEl && titleMap[viewId]) {
@@ -2743,16 +2766,174 @@ window.checkoutCart = function() {
     window.showToast('El carrito está vacío', 'error');
     return;
   }
-  window.showToast('Simulando procesamiento de pago...', 'success');
-  setTimeout(() => {
-    AppState.cart = [];
-    AppState.saveState();
-    updateCartUI();
-    window.toggleCart();
-    window.showToast('¡Compra simulada con éxito!', 'success');
-    const activeFilter = document.querySelector('.filter-chip.active')?.getAttribute('data-cat') || 'all';
-    renderProducts(activeFilter);
-  }, 1500);
+  
+  const totalAmount = parseFloat(document.getElementById('cart-total-price').innerText.replace('RD$', '').replace(/,/g, '').trim());
+  
+  // Si Stripe está habilitado, validamos datos
+  if (AppState.integrations && AppState.integrations.stripeEnabled) {
+    const cardName = document.getElementById('stripe-card-name').value.trim();
+    const cardNumber = document.getElementById('stripe-card-number').value.trim();
+    const cardExpiry = document.getElementById('stripe-card-expiry').value.trim();
+    const cardCvc = document.getElementById('stripe-card-cvc').value.trim();
+    
+    if (!cardName || !cardNumber || !cardExpiry || !cardCvc) {
+      window.showToast('Por favor completa todos los campos de pago de Stripe', 'error');
+      return;
+    }
+    
+    const checkoutBtn = document.querySelector('.cart-footer button');
+    const oldText = checkoutBtn.innerText;
+    checkoutBtn.innerText = 'Procesando Stripe...';
+    checkoutBtn.disabled = true;
+    
+    window.showToast('Conectando con pasarela Stripe...', 'success');
+    
+    const payload = {
+      paymentMethod: "Stripe Credit Card",
+      cardholderName: cardName,
+      cardNumberMasked: cardNumber.slice(0, 4) + " **** **** " + cardNumber.slice(-4),
+      amount: totalAmount,
+      currency: "DOP",
+      items: AppState.cart,
+      stripeKey: AppState.integrations.stripeKey,
+      timestamp: new Date().toISOString()
+    };
+    
+    const targetUrl = AppState.integrations.stripeWebhook || AppState.integrations.n8nOrdersUrl;
+    
+    if (targetUrl) {
+      if (window.logToDiagnosticConsole) {
+        window.logToDiagnosticConsole('out', `Procesando Cobro Stripe Webhook: ${targetUrl}`, JSON.stringify(payload, null, 2));
+      }
+      
+      fetch(targetUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      .then(async (response) => {
+        const respText = await response.text();
+        if (response.ok) {
+          window.showToast('¡Pago de Stripe procesado e integrado con éxito!', 'success');
+          if (window.logToDiagnosticConsole) {
+            window.logToDiagnosticConsole('success', `Stripe aprobó el pago (HTTP ${response.status})`, respText);
+          }
+          
+          // Limpiar carrito
+          AppState.cart = [];
+          AppState.saveState();
+          updateCartUI();
+          window.toggleCart();
+          
+          // Limpiar form de tarjeta
+          document.getElementById('stripe-card-name').value = '';
+          document.getElementById('stripe-card-number').value = '';
+          document.getElementById('stripe-card-expiry').value = '';
+          document.getElementById('stripe-card-cvc').value = '';
+          
+          const activeFilter = document.querySelector('.filter-chip.active')?.getAttribute('data-cat') || 'all';
+          renderProducts(activeFilter);
+        } else {
+          window.showToast(`Error en la pasarela Stripe (HTTP ${response.status})`, 'error');
+          if (window.logToDiagnosticConsole) {
+            window.logToDiagnosticConsole('error', `Stripe rechazó el cargo (HTTP ${response.status})`, respText);
+          }
+        }
+      })
+      .catch(error => {
+        console.error(error);
+        window.showToast('Error de red al conectar con Stripe/n8n.', 'error');
+        if (window.logToDiagnosticConsole) {
+          window.logToDiagnosticConsole('error', `Fallo de conexión en pasarela Stripe: ${error.message}`);
+        }
+      })
+      .finally(() => {
+        checkoutBtn.innerText = oldText;
+        checkoutBtn.disabled = false;
+      });
+      
+    } else {
+      // Si Stripe está activo pero no configuraron Webhook
+      setTimeout(() => {
+        window.showToast('Pago aprobado (Modo Local / Sin Webhook)', 'success');
+        if (window.logToDiagnosticConsole) {
+          window.logToDiagnosticConsole('warn', 'Cobro aprobado localmente. Configura Stripe Webhook para conectar con n8n/Odoo.');
+        }
+        AppState.cart = [];
+        AppState.saveState();
+        updateCartUI();
+        window.toggleCart();
+        
+        // Limpiar form
+        document.getElementById('stripe-card-name').value = '';
+        document.getElementById('stripe-card-number').value = '';
+        document.getElementById('stripe-card-expiry').value = '';
+        document.getElementById('stripe-card-cvc').value = '';
+        
+        const activeFilter = document.querySelector('.filter-chip.active')?.getAttribute('data-cat') || 'all';
+        renderProducts(activeFilter);
+        checkoutBtn.innerText = oldText;
+        checkoutBtn.disabled = false;
+      }, 1500);
+    }
+    
+  } else {
+    // Cobro simulado tradicional (sin Stripe)
+    window.showToast('Simulando procesamiento de pago...', 'success');
+    
+    // Si tienen webhook general de órdenes, lo disparamos en background
+    if (AppState.integrations && AppState.integrations.n8nOrdersUrl) {
+      const payload = {
+        paymentMethod: "Simulated Order",
+        amount: totalAmount,
+        currency: "DOP",
+        items: AppState.cart,
+        timestamp: new Date().toISOString()
+      };
+      
+      if (window.logToDiagnosticConsole) {
+        window.logToDiagnosticConsole('out', `Disparando Orden a n8n Ventas Webhook: ${AppState.integrations.n8nOrdersUrl}`, JSON.stringify(payload, null, 2));
+      }
+      
+      fetch(AppState.integrations.n8nOrdersUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      .then(async (response) => {
+        const respText = await response.text();
+        if (response.ok) {
+          if (window.logToDiagnosticConsole) {
+            window.logToDiagnosticConsole('success', `Orden sincronizada en n8n/Odoo (HTTP ${response.status})`, respText);
+          }
+        } else {
+          if (window.logToDiagnosticConsole) {
+            window.logToDiagnosticConsole('error', `n8n rechazó la orden (HTTP ${response.status})`, respText);
+          }
+        }
+      })
+      .catch(error => {
+        console.error(error);
+        if (window.logToDiagnosticConsole) {
+          window.logToDiagnosticConsole('error', `Fallo al enviar orden en background: ${error.message}`);
+        }
+      });
+    } else {
+      if (window.logToDiagnosticConsole) {
+        window.logToDiagnosticConsole('warn', 'Orden simulada localmente (Webhook de Ventas no configurado)');
+      }
+    }
+    
+    setTimeout(() => {
+      AppState.cart = [];
+      AppState.saveState();
+      updateCartUI();
+      window.toggleCart();
+      window.showToast('¡Compra simulada con éxito!', 'success');
+      const activeFilter = document.querySelector('.filter-chip.active')?.getAttribute('data-cat') || 'all';
+      renderProducts(activeFilter);
+    }, 1500);
+  }
 };
 
 // ==========================================
@@ -3535,38 +3716,102 @@ function setupContactForm() {
     e.preventDefault();
     
     const formData = new FormData(form);
+    const dataObj = {};
+    formData.forEach((value, key) => {
+      if(key !== 'access_key' && key !== 'botcheck') {
+        dataObj[key] = value;
+      }
+    });
+    dataObj.timestamp = new Date().toISOString();
+    
     const btn = document.getElementById('form-submit-btn');
     const oldText = btn.innerText;
     
     btn.innerText = 'Enviando...';
     btn.disabled = true;
     
-    fetch('https://api.web3forms.com/submit', {
-      method: 'POST',
-      body: formData
-    })
-    .then(async (response) => {
-      if (response.status === 200) {
-        window.showToast('Mensaje enviado exitosamente a la central.', 'success');
-        form.reset();
-      } else {
-        const data = await response.json();
-        if(data.message && data.message.includes('Invalid Access Key')) {
-            window.showToast('Modo de Prueba: Simulación de envío exitosa. (Cambia el Access Key para envío real)', 'success');
-            form.reset();
-        } else {
-            window.showToast('Error al enviar el formulario.', 'error');
-        }
+    // Si tenemos configurado el Webhook de Leads en n8n
+    if (AppState.integrations && AppState.integrations.n8nLeadsUrl) {
+      if (window.logToDiagnosticConsole) {
+        window.logToDiagnosticConsole('out', `Enviando Lead a n8n CRM Webhook: ${AppState.integrations.n8nLeadsUrl}`, JSON.stringify(dataObj, null, 2));
       }
-    })
-    .catch(error => {
-      console.error(error);
-      window.showToast('Error de conexión.', 'error');
-    })
-    .finally(() => {
-      btn.innerText = oldText;
-      btn.disabled = false;
-    });
+      
+      fetch(AppState.integrations.n8nLeadsUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dataObj)
+      })
+      .then(async (response) => {
+        const respText = await response.text();
+        if (response.ok) {
+          window.showToast('Mensaje enviado exitosamente vía n8n webhook.', 'success');
+          if (window.logToDiagnosticConsole) {
+            window.logToDiagnosticConsole('success', `Lead recibido por n8n (HTTP ${response.status})`, respText);
+          }
+          form.reset();
+        } else {
+          window.showToast(`Error al enviar el lead (HTTP ${response.status})`, 'error');
+          if (window.logToDiagnosticConsole) {
+            window.logToDiagnosticConsole('error', `n8n rechazó el lead (HTTP ${response.status})`, respText);
+          }
+        }
+      })
+      .catch(error => {
+        console.error(error);
+        window.showToast('Error de conexión con n8n.', 'error');
+        if (window.logToDiagnosticConsole) {
+          window.logToDiagnosticConsole('error', `Fallo de conexión al enviar lead: ${error.message}`);
+        }
+      })
+      .finally(() => {
+        btn.innerText = oldText;
+        btn.disabled = false;
+      });
+    } else {
+      // Fallback a Web3Forms
+      if (window.logToDiagnosticConsole) {
+        window.logToDiagnosticConsole('warn', 'Disparando lead a Web3Forms (Webhook n8n no configurado)');
+      }
+      
+      fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        body: formData
+      })
+      .then(async (response) => {
+        if (response.status === 200) {
+          window.showToast('Mensaje enviado exitosamente a la central.', 'success');
+          if (window.logToDiagnosticConsole) {
+            window.logToDiagnosticConsole('success', 'Web3Forms recibió el lead con éxito (HTTP 200)');
+          }
+          form.reset();
+        } else {
+          const data = await response.json();
+          if(data.message && data.message.includes('Invalid Access Key')) {
+              window.showToast('Modo de Prueba: Simulación de envío exitosa. (Cambia el Access Key para envío real)', 'success');
+              if (window.logToDiagnosticConsole) {
+                window.logToDiagnosticConsole('warn', 'Simulación de Web3Forms completada (Access Key de prueba)');
+              }
+              form.reset();
+          } else {
+              window.showToast('Error al enviar el formulario.', 'error');
+              if (window.logToDiagnosticConsole) {
+                window.logToDiagnosticConsole('error', 'Web3Forms devolvió un error', JSON.stringify(data));
+              }
+          }
+        }
+      })
+      .catch(error => {
+        console.error(error);
+        window.showToast('Error de conexión.', 'error');
+        if (window.logToDiagnosticConsole) {
+          window.logToDiagnosticConsole('error', `Fallo de red al conectar con Web3Forms: ${error.message}`);
+        }
+      })
+      .finally(() => {
+        btn.innerText = oldText;
+        btn.disabled = false;
+      });
+    }
   });
 }
 
@@ -3630,10 +3875,54 @@ window.bookReparaService = function() {
     else s.classList.remove('active');
   });
   
+  const priceVal = document.getElementById('repara-quote-price').innerText;
+  const timeVal = document.getElementById('repara-quote-time').innerText;
+  
   document.getElementById('rep-date-1').innerText = "Hoy • " + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
   document.getElementById('repara-tech-log').innerText = `Solicitud de diagnóstico recibida para: ${deviceText} (Falla: ${issueText}). Buscando mensajero para retiro del equipo en ${address}.`;
   
   window.showToast("Servicio agendado con éxito", "success");
+  
+  // Sincronizar reserva de servicio vía n8n webhook
+  if (AppState.integrations && AppState.integrations.n8nServicesUrl) {
+    const payload = {
+      serviceType: "TeloRepara",
+      device: deviceText,
+      issue: issueText,
+      address: address,
+      estimatedPrice: priceVal,
+      estimatedTime: timeVal,
+      timestamp: new Date().toISOString()
+    };
+    
+    if (window.logToDiagnosticConsole) {
+      window.logToDiagnosticConsole('out', `Enviando Reserva TeloRepara a n8n: ${AppState.integrations.n8nServicesUrl}`, JSON.stringify(payload, null, 2));
+    }
+    
+    fetch(AppState.integrations.n8nServicesUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+    .then(async (response) => {
+      const respText = await response.text();
+      if (response.ok) {
+        if (window.logToDiagnosticConsole) {
+          window.logToDiagnosticConsole('success', `Reserva recibida por n8n (HTTP ${response.status})`, respText);
+        }
+      } else {
+        if (window.logToDiagnosticConsole) {
+          window.logToDiagnosticConsole('error', `n8n rechazó la reserva (HTTP ${response.status})`, respText);
+        }
+      }
+    })
+    .catch(error => {
+      console.error(error);
+      if (window.logToDiagnosticConsole) {
+        window.logToDiagnosticConsole('error', `Fallo de red al enviar reserva a n8n: ${error.message}`);
+      }
+    });
+  }
   
   clearTimeout(reparaSimTimer1);
   clearTimeout(reparaSimTimer2);
@@ -3702,4 +3991,382 @@ window.bookInstalaService = function() {
   document.getElementById('instala-booked-price').innerText = priceText;
   
   window.showToast(`¡Cita agendada con Ramón Abreu para el ${formattedDate}!`, "success");
+  
+  // Sincronizar reserva de instalación vía n8n webhook
+  if (AppState.integrations && AppState.integrations.n8nServicesUrl) {
+    const payload = {
+      serviceType: "TeloInstala",
+      serviceName: serviceText,
+      date: formattedDate,
+      timeSlot: timeText,
+      price: priceText,
+      assignedTechnician: "Ramón Abreu",
+      timestamp: new Date().toISOString()
+    };
+    
+    if (window.logToDiagnosticConsole) {
+      window.logToDiagnosticConsole('out', `Enviando Reserva TeloInstala a n8n: ${AppState.integrations.n8nServicesUrl}`, JSON.stringify(payload, null, 2));
+    }
+    
+    fetch(AppState.integrations.n8nServicesUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+    .then(async (response) => {
+      const respText = await response.text();
+      if (response.ok) {
+        if (window.logToDiagnosticConsole) {
+          window.logToDiagnosticConsole('success', `Reserva recibida por n8n (HTTP ${response.status})`, respText);
+        }
+      } else {
+        if (window.logToDiagnosticConsole) {
+          window.logToDiagnosticConsole('error', `n8n rechazó la reserva (HTTP ${response.status})`, respText);
+        }
+      }
+    })
+    .catch(error => {
+      console.error(error);
+      if (window.logToDiagnosticConsole) {
+        window.logToDiagnosticConsole('error', `Fallo de red al enviar reserva a n8n: ${error.message}`);
+      }
+    });
+  }
+};
+
+// ==========================================
+// CONFIGURACIÓN DE CONECTORES Y SERVICIOS
+// ==========================================
+window.setupIntegrationsUI = function() {
+  const urlEl = document.getElementById('int-supabase-url');
+  const keyEl = document.getElementById('int-supabase-key');
+  const stripeEnabledEl = document.getElementById('int-stripe-enabled');
+  const stripeKeyEl = document.getElementById('int-stripe-key');
+  const stripeWebhookEl = document.getElementById('int-stripe-webhook');
+  const n8nLeadsUrlEl = document.getElementById('int-n8n-leads-url');
+  const n8nOrdersUrlEl = document.getElementById('int-n8n-orders-url');
+  const n8nServicesUrlEl = document.getElementById('int-n8n-services-url');
+  
+  if(!urlEl) return; // Si no estamos en la página correcta todavía
+  
+  // Rellenar valores guardados
+  urlEl.value = AppState.integrations.supabaseUrl || '';
+  keyEl.value = AppState.integrations.supabaseKey || '';
+  stripeEnabledEl.checked = AppState.integrations.stripeEnabled || false;
+  stripeKeyEl.value = AppState.integrations.stripeKey || '';
+  stripeWebhookEl.value = AppState.integrations.stripeWebhook || '';
+  n8nLeadsUrlEl.value = AppState.integrations.n8nLeadsUrl || '';
+  n8nOrdersUrlEl.value = AppState.integrations.n8nOrdersUrl || '';
+  n8nServicesUrlEl.value = AppState.integrations.n8nServicesUrl || '';
+  
+  // Actualizar visibilidad de form de tarjeta en el carrito
+  const ccFormContainer = document.getElementById('stripe-checkout-form-container');
+  if(ccFormContainer) {
+    ccFormContainer.style.display = AppState.integrations.stripeEnabled ? 'block' : 'none';
+  }
+  
+  // Actualizar estatus visual de Supabase si hay URL cargada
+  const statusSupabase = document.getElementById('status-supabase');
+  if(statusSupabase) {
+    if(AppState.integrations.supabaseUrl && AppState.integrations.supabaseKey) {
+      statusSupabase.className = "connection-status-pill connected";
+      statusSupabase.innerText = "Configurado";
+    } else {
+      statusSupabase.className = "connection-status-pill disconnected";
+      statusSupabase.innerText = "Desconectado";
+    }
+  }
+};
+
+window.saveSupabaseConfig = function() {
+  const url = document.getElementById('int-supabase-url').value.trim();
+  const key = document.getElementById('int-supabase-key').value.trim();
+  
+  AppState.integrations.supabaseUrl = url;
+  AppState.integrations.supabaseKey = key;
+  AppState.saveState();
+  
+  window.showToast("Conexión Supabase guardada", "success");
+  
+  const statusSupabase = document.getElementById('status-supabase');
+  if (url && key) {
+    statusSupabase.className = "connection-status-pill connected";
+    statusSupabase.innerText = "Configurado";
+    window.testSupabaseConnection(); // Probar automáticamente
+  } else {
+    statusSupabase.className = "connection-status-pill disconnected";
+    statusSupabase.innerText = "Desconectado";
+  }
+};
+
+window.saveStripeConfig = function() {
+  const key = document.getElementById('int-stripe-key').value.trim();
+  const webhook = document.getElementById('int-stripe-webhook').value.trim();
+  
+  AppState.integrations.stripeKey = key;
+  AppState.integrations.stripeWebhook = webhook;
+  AppState.saveState();
+  
+  window.showToast("Configuración de Stripe guardada", "success");
+  
+  if (window.logToDiagnosticConsole) {
+    window.logToDiagnosticConsole('success', "Stripe Config Actualizada", `Publishable Key: ${key ? key.slice(0, 12) + "..." : 'No configurada'}\nWebhook Endpoint: ${webhook || 'No configurado'}`);
+  }
+};
+
+window.saveN8NConfig = function() {
+  const leads = document.getElementById('int-n8n-leads-url').value.trim();
+  const orders = document.getElementById('int-n8n-orders-url').value.trim();
+  const services = document.getElementById('int-n8n-services-url').value.trim();
+  
+  AppState.integrations.n8nLeadsUrl = leads;
+  AppState.integrations.n8nOrdersUrl = orders;
+  AppState.integrations.n8nServicesUrl = services;
+  AppState.saveState();
+  
+  window.showToast("Webhooks de n8n guardados", "success");
+  
+  if (window.logToDiagnosticConsole) {
+    window.logToDiagnosticConsole('success', "Orquestador n8n Webhooks Actualizados", `Leads CRM URL: ${leads || 'No configurada'}\nVentas/Orders URL: ${orders || 'No configurada'}\nServicios URL: ${services || 'No configurada'}`);
+  }
+};
+
+window.toggleStripeIntegration = function() {
+  const stripeEnabledEl = document.getElementById('int-stripe-enabled');
+  const isEnabled = stripeEnabledEl.checked;
+  
+  AppState.integrations.stripeEnabled = isEnabled;
+  AppState.saveState();
+  
+  const ccFormContainer = document.getElementById('stripe-checkout-form-container');
+  if(ccFormContainer) {
+    ccFormContainer.style.display = isEnabled ? 'block' : 'none';
+  }
+  
+  window.showToast(isEnabled ? "Pasarela Stripe habilitada" : "Pasarela Stripe deshabilitada", "success");
+  
+  if (window.logToDiagnosticConsole) {
+    window.logToDiagnosticConsole('warn', isEnabled ? "Stripe activado para pagos. El checkout requerirá datos de tarjeta." : "Stripe desactivado. El checkout usará simulación local.");
+  }
+};
+
+// ==========================================
+// CONEXIÓN Y DIAGNÓSTICO (DEBUG LOGGER)
+// ==========================================
+window.testSupabaseConnection = function() {
+  const url = AppState.integrations.supabaseUrl;
+  const key = AppState.integrations.supabaseKey;
+  
+  if (!url || !key) {
+    window.showToast("Completa la URL y Anon Key primero", "error");
+    return;
+  }
+  
+  window.showToast("Probando conexión a Supabase...", "success");
+  
+  if (window.logToDiagnosticConsole) {
+    window.logToDiagnosticConsole('out', `GET Solicitud de ping a Supabase REST: ${url}/rest/v1/`, `Headers:\n- apikey: ${key.slice(0, 15)}...\n- Authorization: Bearer ${key.slice(0, 15)}...`);
+  }
+  
+  fetch(`${url}/rest/v1/?apikey=${key}`, {
+    method: 'GET'
+  })
+  .then(async (response) => {
+    const statusEl = document.getElementById('status-supabase');
+    if (response.ok || response.status === 401 || response.status === 200 || response.status === 400) {
+      // Supabase responde incluso con 401 si no hay auth pero la URL es correcta
+      if(statusEl) {
+        statusEl.className = "connection-status-pill connected";
+        statusEl.innerText = "Conectado";
+      }
+      window.showToast("Supabase respondiendo correctamente", "success");
+      if (window.logToDiagnosticConsole) {
+        window.logToDiagnosticConsole('success', `Conectado a Supabase (HTTP ${response.status})`, `Respuesta verificada. Endpoint vivo.`);
+      }
+    } else {
+      if(statusEl) {
+        statusEl.className = "connection-status-pill disconnected";
+        statusEl.innerText = "Fallo";
+      }
+      window.showToast(`Error al conectar (HTTP ${response.status})`, "error");
+      if (window.logToDiagnosticConsole) {
+        window.logToDiagnosticConsole('error', `Supabase devolvió error (HTTP ${response.status})`);
+      }
+    }
+  })
+  .catch(error => {
+    console.error(error);
+    const statusEl = document.getElementById('status-supabase');
+    if(statusEl) {
+      statusEl.className = "connection-status-pill disconnected";
+      statusEl.innerText = "Error Red";
+    }
+    window.showToast("Error de conexión a la base de datos", "error");
+    if (window.logToDiagnosticConsole) {
+      window.logToDiagnosticConsole('error', `Fallo de red al conectar con Supabase REST URL: ${error.message}`, "Verifica si la URL es correcta o si existen restricciones de CORS en el bucket.");
+    }
+  });
+};
+
+window.clearDiagnosticConsole = function() {
+  const consoleEl = document.getElementById('debug-console-output');
+  if(consoleEl) {
+    consoleEl.innerHTML = '> Esperando interacción... Configura un webhook y haz clic en probar o realiza una acción en la app para registrar llamadas a la red.';
+    window.showToast("Consola de depuración limpia", "success");
+  }
+};
+
+window.logToDiagnosticConsole = function(type, message, details = '') {
+  const consoleEl = document.getElementById('debug-console-output');
+  if(!consoleEl) return;
+  
+  if (consoleEl.innerText.startsWith('> Esperando')) {
+    consoleEl.innerHTML = '';
+  }
+  
+  const timestamp = new Date().toLocaleTimeString();
+  let typeClass = 'log-out';
+  if(type === 'in') typeClass = 'log-in';
+  else if(type === 'success') typeClass = 'log-success';
+  else if(type === 'error') typeClass = 'log-error';
+  else if(type === 'warn') typeClass = 'log-warn';
+  
+  let html = `<div class="log-entry">
+    <span class="log-time" style="color:var(--text-muted); font-size:0.75rem;">[${timestamp}]</span> 
+    <span class="${typeClass}"><strong>${type.toUpperCase()}:</strong> ${message}</span>`;
+  if(details) {
+    html += `<pre style="margin:4px 0 0 0; padding:6px; background:rgba(0,0,0,0.4); border-radius:3px; font-size:0.75rem; color:#cbd5e1; max-height:160px; overflow-y:auto; font-family:monospace;">${details}</pre>`;
+  }
+  html += `</div>`;
+  
+  consoleEl.innerHTML += html;
+  consoleEl.scrollTop = consoleEl.scrollHeight;
+};
+
+// Webhook testers
+window.testTriggerLeadWebhook = function() {
+  const url = AppState.integrations.n8nLeadsUrl;
+  if(!url) {
+    window.showToast("Configura y guarda la URL del Webhook de Leads primero", "error");
+    return;
+  }
+  
+  const payload = {
+    name: "Diana Prince",
+    email: "diana@consorcio.org",
+    department: "TeloSales",
+    message: "Hola, me interesa solicitar una cotización formal de covers personalizados e iguala técnica corporativa para nuestra empresa.",
+    timestamp: new Date().toISOString()
+  };
+  
+  window.showToast("Enviando lead de prueba a n8n...", "success");
+  window.logToDiagnosticConsole('out', `POST Trigger Lead Test: ${url}`, JSON.stringify(payload, null, 2));
+  
+  fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  })
+  .then(async (response) => {
+    const text = await response.text();
+    if(response.ok) {
+      window.showToast("Webhook de Leads disparado con éxito", "success");
+      window.logToDiagnosticConsole('success', `n8n respondió con éxito (HTTP ${response.status})`, text);
+    } else {
+      window.showToast(`Error del servidor (HTTP ${response.status})`, "error");
+      window.logToDiagnosticConsole('error', `n8n rechazó la petición (HTTP ${response.status})`, text);
+    }
+  })
+  .catch(error => {
+    console.error(error);
+    window.showToast("Fallo al conectar con el webhook", "error");
+    window.logToDiagnosticConsole('error', `Error de red al conectar con n8n Leads Webhook: ${error.message}`);
+  });
+};
+
+window.testTriggerOrderWebhook = function() {
+  const url = AppState.integrations.n8nOrdersUrl;
+  if(!url) {
+    window.showToast("Configura y guarda la URL del Webhook de Ventas primero", "error");
+    return;
+  }
+  
+  const payload = {
+    paymentMethod: "Stripe Test Card",
+    cardholderName: "Bruce Wayne",
+    cardNumberMasked: "4242 **** **** 4242",
+    amount: 1100.00,
+    currency: "DOP",
+    items: [
+      { id: "ts-cat-100", title: "Cover Silicona N°1", quantity: 1, price: 500 },
+      { id: "ts-cat-101", title: "Cover Protector Especial", quantity: 1, price: 600 }
+    ],
+    timestamp: new Date().toISOString()
+  };
+  
+  window.showToast("Enviando orden de prueba a n8n...", "success");
+  window.logToDiagnosticConsole('out', `POST Trigger Order Test: ${url}`, JSON.stringify(payload, null, 2));
+  
+  fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  })
+  .then(async (response) => {
+    const text = await response.text();
+    if(response.ok) {
+      window.showToast("Webhook de Ventas disparado con éxito", "success");
+      window.logToDiagnosticConsole('success', `n8n procesó la orden con éxito (HTTP ${response.status})`, text);
+    } else {
+      window.showToast(`Error del servidor (HTTP ${response.status})`, "error");
+      window.logToDiagnosticConsole('error', `n8n rechazó la orden (HTTP ${response.status})`, text);
+    }
+  })
+  .catch(error => {
+    console.error(error);
+    window.showToast("Fallo al conectar con el webhook", "error");
+    window.logToDiagnosticConsole('error', `Error de red al conectar con n8n Orders Webhook: ${error.message}`);
+  });
+};
+
+window.testTriggerServiceWebhook = function() {
+  const url = AppState.integrations.n8nServicesUrl;
+  if(!url) {
+    window.showToast("Configura y guarda la URL del Webhook de Servicios primero", "error");
+    return;
+  }
+  
+  const payload = {
+    serviceType: "TeloRepara",
+    device: "Laptop / Computadora",
+    issue: "No enciende / Problema de alimentación",
+    address: "Wayne Manor, Gotham City",
+    estimatedPrice: "RD$ 1,500.00",
+    estimatedTime: "24-48 horas",
+    timestamp: new Date().toISOString()
+  };
+  
+  window.showToast("Enviando reserva de prueba a n8n...", "success");
+  window.logToDiagnosticConsole('out', `POST Trigger Service Test: ${url}`, JSON.stringify(payload, null, 2));
+  
+  fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  })
+  .then(async (response) => {
+    const text = await response.text();
+    if(response.ok) {
+      window.showToast("Webhook de Servicios disparado con éxito", "success");
+      window.logToDiagnosticConsole('success', `n8n registró el servicio con éxito (HTTP ${response.status})`, text);
+    } else {
+      window.showToast(`Error del servidor (HTTP ${response.status})`, "error");
+      window.logToDiagnosticConsole('error', `n8n rechazó la reserva de servicio (HTTP ${response.status})`, text);
+    }
+  })
+  .catch(error => {
+    console.error(error);
+    window.showToast("Fallo al conectar con el webhook", "error");
+    window.logToDiagnosticConsole('error', `Error de red al conectar con n8n Services Webhook: ${error.message}`);
+  });
 };

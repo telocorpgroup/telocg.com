@@ -53,6 +53,10 @@
           <span class="nav-icon">🎧</span>
           <span class="nav-label">Soporte</span>
         </button>
+        <button class="nav-item" data-target="integrations-view">
+          <span class="nav-icon">🔌</span>
+          <span class="nav-label">Integración</span>
+        </button>
       </nav>
     </aside>
 
@@ -601,6 +605,123 @@
           </div>
         </section>
 
+        <!-- VISTA: INTEGRACIONES Y CONECTORES DE SERVICIOS -->
+        <section class="app-view" id="integrations-view">
+          <div class="view-header">
+            <h2>Configuración de Servicios Conectados</h2>
+            <p>Configura las credenciales y webhooks para sincronizar TELOCG en tiempo real con Supabase, Stripe y tus automatizaciones de n8n / Odoo ERP.</p>
+          </div>
+          
+          <div class="integrations-grid">
+            <!-- Columna Izquierda: Configuración de Conectores -->
+            <div class="integrations-settings-panel">
+              
+              <!-- Conector A: Supabase Cloud -->
+              <div class="card panel-card integration-card" id="supabase-connector-card">
+                <div class="integration-card-header">
+                  <div class="integration-title-wrapper">
+                    <span class="integration-icon">🗄️</span>
+                    <h3>Base de Datos Supabase</h3>
+                  </div>
+                  <span class="connection-status-pill disconnected" id="status-supabase">Desconectado</span>
+                </div>
+                <p class="integration-desc">Sincroniza y persiste clientes, transacciones y progresos de aprendizaje en tu base de datos central en la nube.</p>
+                <div class="form-group">
+                  <label>Supabase URL</label>
+                  <input type="text" id="int-supabase-url" placeholder="https://xxxxxxxxxxxxxx.supabase.co" class="integration-input">
+                </div>
+                <div class="form-group">
+                  <label>Supabase Anon Key</label>
+                  <input type="password" id="int-supabase-key" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." class="integration-input">
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                  <button class="btn btn-secondary btn-sm" onclick="window.testSupabaseConnection()">Probar Conexión</button>
+                  <button class="btn btn-primary btn-sm" onclick="window.saveSupabaseConfig()">Guardar</button>
+                </div>
+              </div>
+
+              <!-- Conector B: Pasarela de Pago Stripe -->
+              <div class="card panel-card integration-card" id="stripe-connector-card">
+                <div class="integration-card-header">
+                  <div class="integration-title-wrapper">
+                    <span class="integration-icon">💳</span>
+                    <h3>Pasarela Stripe (Tarjetas)</h3>
+                  </div>
+                  <div class="switch-container">
+                    <label class="switch">
+                      <input type="checkbox" id="int-stripe-enabled" onchange="window.toggleStripeIntegration()">
+                      <span class="slider round"></span>
+                    </label>
+                  </div>
+                </div>
+                <p class="integration-desc">Habilita pagos reales o sandbox de tarjeta de crédito/débito para TeloSales Store usando Stripe Elements.</p>
+                <div class="form-group">
+                  <label>Stripe Publishable Key (pk_test/...)</label>
+                  <input type="text" id="int-stripe-key" placeholder="pk_test_xxxxxxxxxxxxxxxxxxxxxxxx" class="integration-input">
+                </div>
+                <div class="form-group">
+                  <label>Stripe Webhook URL (n8n Payment Intent)</label>
+                  <input type="text" id="int-stripe-webhook" placeholder="https://n8n.tuconsorcio.com/webhook/stripe-payments" class="integration-input">
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                  <button class="btn btn-primary btn-sm" onclick="window.saveStripeConfig()">Guardar</button>
+                </div>
+              </div>
+
+              <!-- Conector C: Orquestador n8n / Webhooks Odoo -->
+              <div class="card panel-card integration-card" id="n8n-connector-card">
+                <div class="integration-card-header">
+                  <div class="integration-title-wrapper">
+                    <span class="integration-icon">⚙️</span>
+                    <h3>Orquestación n8n & Odoo ERP</h3>
+                  </div>
+                  <span class="connection-status-pill active">Webhook Activo</span>
+                </div>
+                <p class="integration-desc">Define los endpoints de automatización de n8n. El orquestador enviará los payloads y los sincronizará en Odoo CRM, Ventas y Facturación.</p>
+                <div class="form-group">
+                  <label>n8n Webhook CRM Leads (Soporte)</label>
+                  <input type="text" id="int-n8n-leads-url" placeholder="https://n8n.tuconsorcio.com/webhook/sales-leads" class="integration-input">
+                </div>
+                <div class="form-group">
+                  <label>n8n Webhook Ventas/Órdenes (TeloSales)</label>
+                  <input type="text" id="int-n8n-orders-url" placeholder="https://n8n.tuconsorcio.com/webhook/telo-orders" class="integration-input">
+                </div>
+                <div class="form-group">
+                  <label>n8n Webhook Reservas de Servicios (Repara/Instala)</label>
+                  <input type="text" id="int-n8n-services-url" placeholder="https://n8n.tuconsorcio.com/webhook/telo-bookings" class="integration-input">
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                  <button class="btn btn-primary btn-sm" onclick="window.saveN8NConfig()">Guardar Webhooks</button>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Columna Derecha: Consola de Diagnóstico y Pruebas -->
+            <div class="integrations-diagnostic-panel">
+              <div class="card panel-card diagnostic-card">
+                <h3>Consola de Diagnóstico de Red (HTTP Logs)</h3>
+                <p class="integration-desc" style="margin-bottom: 15px;">Dispara solicitudes HTTP POST simuladas o reales y observa la respuesta del servidor en tiempo real. Útil para depurar endpoints de n8n, Supabase y CORS.</p>
+                
+                <div class="diagnostic-actions">
+                  <button class="btn btn-secondary btn-sm" onclick="window.testTriggerLeadWebhook()">Probar Leads</button>
+                  <button class="btn btn-secondary btn-sm" onclick="window.testTriggerOrderWebhook()">Probar Ventas</button>
+                  <button class="btn btn-secondary btn-sm" onclick="window.testTriggerServiceWebhook()">Probar Servicios</button>
+                  <button class="btn btn-secondary btn-sm btn-clear-console" onclick="window.clearDiagnosticConsole()">Limpiar</button>
+                </div>
+
+                <div class="console-wrapper">
+                  <div class="console-header">
+                    <span>TELOCG Debug Console v1.0.0</span>
+                    <span class="console-pulse">● Ready</span>
+                  </div>
+                  <pre class="debug-console" id="debug-console-output">> Esperando interacción... Configura un webhook y haz clic en probar o realiza una acción en la app para registrar llamadas a la red.</pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
       </div>
     </main>
 
@@ -626,6 +747,10 @@
         <span class="nav-icon">🎧</span>
         <span class="nav-label">Soporte</span>
       </button>
+      <button class="nav-item" data-target="integrations-view">
+        <span class="nav-icon">🔌</span>
+        <span class="nav-label">Integras.</span>
+      </button>
     </nav>
   </div>
 
@@ -638,6 +763,33 @@
     </div>
     <div class="cart-items" id="cart-items-container">
       <!-- Items por JS -->
+    </div>
+    <!-- Formulario de Tarjeta de Crédito (Stripe) -->
+    <div id="stripe-checkout-form-container" style="display: none; padding: 15px; border-top: 1px solid var(--border-color); background: rgba(255,255,255,0.02);">
+      <h4 style="margin-bottom: 10px; color: var(--color-sales); font-size: 0.95rem; display: flex; align-items: center; gap: 6px;">
+        <span>💳</span> Información de Pago (Stripe Elements)
+      </h4>
+      <div class="form-group" style="margin-bottom: 8px;">
+        <label style="font-size: 0.75rem; color: var(--text-muted);">Nombre en la Tarjeta</label>
+        <input type="text" id="stripe-card-name" placeholder="Ej. Juan Pérez" style="padding: 6px 10px; font-size: 0.85rem; width: 100%; box-sizing: border-box; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-color); border-radius: 4px;">
+      </div>
+      <div class="form-group" style="margin-bottom: 8px;">
+        <label style="font-size: 0.75rem; color: var(--text-muted);">Número de Tarjeta</label>
+        <div style="position: relative;">
+          <input type="text" id="stripe-card-number" placeholder="4242 4242 4242 4242" maxlength="19" style="padding: 6px 10px; font-size: 0.85rem; width: 100%; box-sizing: border-box; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-color); border-radius: 4px; padding-right: 30px;">
+          <span style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); font-size: 1rem; opacity: 0.7;">💳</span>
+        </div>
+      </div>
+      <div style="display: flex; gap: 10px;">
+        <div class="form-group" style="flex: 1; margin-bottom: 0;">
+          <label style="font-size: 0.75rem; color: var(--text-muted);">Vencimiento</label>
+          <input type="text" id="stripe-card-expiry" placeholder="MM/AA" maxlength="5" style="padding: 6px 10px; font-size: 0.85rem; width: 100%; box-sizing: border-box; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-color); border-radius: 4px;">
+        </div>
+        <div class="form-group" style="flex: 1; margin-bottom: 0;">
+          <label style="font-size: 0.75rem; color: var(--text-muted);">CVC</label>
+          <input type="text" id="stripe-card-cvc" placeholder="123" maxlength="4" style="padding: 6px 10px; font-size: 0.85rem; width: 100%; box-sizing: border-box; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-color); border-radius: 4px;">
+        </div>
+      </div>
     </div>
     <div class="cart-footer">
       <div class="cart-total-row">
