@@ -6,7 +6,7 @@
   <title>TeloCorpGroup | Super App Dashboard</title>
   
   <!-- SEO & Meta Tags -->
-  <meta name="description" content="TeloCorpGroup: Super App del Cluster Digital. Accede a TeloSales, TeloEduca y TeloLleva desde un solo lugar.">
+  <meta name="description" content="TeloCorpGroup: Super App del Clúster Digital (conglomerado de empresas). Accede a TeloSales, TeloEduca y TeloLleva desde un solo lugar.">
   <meta name="theme-color" content="#06090e">
   
   <link rel="stylesheet" href="styles.css">
@@ -66,9 +66,12 @@
       <!-- Topbar Superior -->
       <header class="app-topbar">
         <div class="topbar-title">
-          <h1 id="current-view-title">Bienvenido al Cluster</h1>
+          <h1 id="current-view-title">Bienvenido al Clúster</h1>
         </div>
         <div class="topbar-actions">
+          <button class="action-btn wishlist-btn" id="global-wishlist-btn" onclick="window.toggleWishlist()" aria-label="Lista de deseos" style="margin-right: 10px; background: transparent; border: none; font-size: 1.4rem; cursor: pointer; position: relative; padding: 4px;">
+            ❤️ <span class="wishlist-badge" id="global-wishlist-badge" style="position: absolute; top: -5px; right: -5px; background: var(--color-repara); color: white; border-radius: 50%; padding: 1px 5px; font-size: 0.65rem; font-weight: bold; min-width: 14px; text-align: center;">0</span>
+          </button>
           <button class="action-btn cart-btn" id="global-cart-btn" aria-label="Carrito de compras">
             🛒 <span class="cart-badge" id="global-cart-badge">0</span>
           </button>
@@ -82,8 +85,8 @@
         <section class="app-view active" id="home-view">
           <div class="hero-card">
             <img src="assets/telocorpgroup-logo.jpg" alt="TeloCorpGroup Logo">
-            <h2>Cluster de Empresas Digitales</h2>
-            <p>Operaciones independientes conectadas por una misma marca e infraestructura tecnológica.</p>
+            <h2>Clúster de Empresas Digitales</h2>
+            <p>Conglomerado de empresas independientes conectadas por una misma marca e infraestructura tecnológica.</p>
           </div>
           
           <div class="hubs-grid">
@@ -122,6 +125,23 @@
             <p>Catálogo de covers y tecnología premium. Haz clic en un producto para ver especificaciones y opiniones reales.</p>
           </div>
           
+          <!-- Barra de Búsqueda y Ordenamiento Avanzado -->
+          <div class="sales-controls-bar" style="margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); padding: 12px 16px; border: 1px solid var(--border-color); border-radius: 8px;">
+            <div class="search-input-wrapper" style="position: relative; flex: 1; min-width: 250px;">
+              <span class="search-icon" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); opacity: 0.5; font-size: 0.9rem;">🔍</span>
+              <input type="search" id="sales-search" placeholder="Buscar covers, cables, cargadores..." oninput="window.filterAndSortProducts()" style="width: 100%; box-sizing: border-box; padding: 8px 12px 8px 34px; font-size: 0.9rem; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-color); border-radius: 4px; outline: none; transition: border-color 0.2s;">
+            </div>
+            <div class="sort-select-wrapper" style="display: flex; align-items: center; gap: 8px; font-size: 0.9rem; color: var(--text-muted);">
+              <span>Ordenar por:</span>
+              <select id="sales-sort" onchange="window.filterAndSortProducts()" style="padding: 8px 12px; font-size: 0.9rem; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-color); border-radius: 4px; outline: none; cursor: pointer;">
+                <option value="featured">Destacados</option>
+                <option value="price-asc">Precio: Bajo a Alto</option>
+                <option value="price-desc">Precio: Alto a Bajo</option>
+                <option value="rating-desc">Mejor Valorados</option>
+              </select>
+            </div>
+          </div>
+
           <div class="filters-scroll">
             <button class="filter-chip active" data-cat="all">Todos</button>
             <button class="filter-chip" data-cat="cases">Covers & Casos</button>
@@ -210,6 +230,7 @@
                       <div class="player-progress-filled" id="player-progress-filled" style="width: 0%;"></div>
                     </div>
                     <span class="player-time-display" id="player-time-display">00:00 / 10:00</span>
+                    <button class="btn-player-cinema" onclick="window.toggleCinemaMode()" title="Modo Cine" style="background: transparent; border: none; color: white; cursor: pointer; font-size: 1.1rem; padding: 0 4px; transition: var(--transition); outline: none;">🎬</button>
                     <button class="btn-player-fullscreen" onclick="window.toggleVideoFullscreen()">📺</button>
                   </div>
                 </div>
@@ -224,6 +245,7 @@
                 <div class="tab-headers">
                   <button class="tab-header-btn active" onclick="window.switchClassroomTab(event, 'tab-resources')">Recursos de Clase</button>
                   <button class="tab-header-btn" onclick="window.switchClassroomTab(event, 'tab-forum')">Comunidad y Preguntas</button>
+                  <button class="tab-header-btn" onclick="window.switchClassroomTab(event, 'tab-notes')">Mis Apuntes 📝</button>
                 </div>
                 
                 <div class="tab-content active" id="tab-resources">
@@ -246,6 +268,18 @@
                     <button class="btn btn-primary" onclick="window.postForumQuestion()">Preguntar</button>
                   </div>
                 </div>
+                
+                <div class="tab-content" id="tab-notes">
+                  <div class="notes-container" style="display: flex; flex-direction: column; gap: 12px;">
+                    <h4 style="margin: 0; font-size: 1.05rem;">Apuntes de la Clase 📝</h4>
+                    <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">Escribe aquí tus notas importantes de la lección. Se guardarán automáticamente por clase.</p>
+                    <textarea id="classroom-notes-textarea" rows="8" placeholder="Escribe tus apuntes aquí... Ej: Fórmulas de Excel se inician siempre con '='..." style="width: 100%; box-sizing: border-box; padding: 12px; font-family: monospace; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-color); border-radius: 6px; resize: vertical; outline: none; line-height: 1.4;" oninput="window.saveCurrentClassNotes()"></textarea>
+                    <div style="display: flex; justify-content: flex-end;">
+                      <button class="btn btn-secondary btn-sm" onclick="window.downloadClassNotes()">📥 Descargar Apuntes (.txt)</button>
+                    </div>
+                  </div>
+                </div>
+
               </div>
             </div>
             
@@ -306,6 +340,26 @@
                   <label>¿Qué envías?</label>
                   <input type="text" id="indrive-item" placeholder="Ej. Documentos, Ropa, Electrónicos" value="Documentos Importantes">
                 </div>
+                <div class="form-group">
+                  <label>Tipo de Vehículo</label>
+                  <div class="vehicle-select-container" style="display: flex; gap: 8px; margin-top: 6px;">
+                    <div class="vehicle-option active" data-type="moto" onclick="window.selectIndriveVehicle('moto')" style="flex: 1; text-align: center; padding: 10px 6px; border: 1px solid var(--color-lleva); background: rgba(245,158,11,0.08); border-radius: 6px; cursor: pointer; transition: all 0.2s;">
+                      <span style="font-size: 1.4rem; display: block; margin-bottom: 2px;">🏍️</span>
+                      <strong style="font-size: 0.8rem; display: block; color: var(--color-lleva);">Moto</strong>
+                      <small style="font-size: 0.65rem; color: var(--text-muted); display: block;">Rápido</small>
+                    </div>
+                    <div class="vehicle-option" data-type="car" onclick="window.selectIndriveVehicle('car')" style="flex: 1; text-align: center; padding: 10px 6px; border: 1px solid var(--border-color); background: var(--bg-card); border-radius: 6px; cursor: pointer; transition: all 0.2s;">
+                      <span style="font-size: 1.4rem; display: block; margin-bottom: 2px;">🚗</span>
+                      <strong style="font-size: 0.8rem; display: block;">Carro</strong>
+                      <small style="font-size: 0.65rem; color: var(--text-muted); display: block;">Protegido</small>
+                    </div>
+                    <div class="vehicle-option" data-type="cargo" onclick="window.selectIndriveVehicle('cargo')" style="flex: 1; text-align: center; padding: 10px 6px; border: 1px solid var(--border-color); background: var(--bg-card); border-radius: 6px; cursor: pointer; transition: all 0.2s;">
+                      <span style="font-size: 1.4rem; display: block; margin-bottom: 2px;">📦</span>
+                      <strong style="font-size: 0.8rem; display: block;">Furgón</strong>
+                      <small style="font-size: 0.65rem; color: var(--text-muted); display: block;">Pesado</small>
+                    </div>
+                  </div>
+                </div>
                 <div class="indrive-fare-box">
                   <div class="suggested-price">Tarifa Recomendada: <strong id="indrive-suggested-label">RD$ 250</strong></div>
                   <div class="form-group">
@@ -337,6 +391,14 @@
                 </div>
                 <div class="driver-profile-mini" id="indrive-assigned-driver-info">
                   <!-- Perfil inyectado -->
+                </div>
+                
+                <!-- Respuestas rápidas -->
+                <div class="chat-quick-replies" style="display: flex; gap: 6px; overflow-x: auto; margin-bottom: 8px; padding-bottom: 4px; scrollbar-width: none; -ms-overflow-style: none;">
+                  <span onclick="window.sendQuickChatMessage('Ya salgo con el paquete')" style="background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; cursor: pointer; white-space: nowrap; transition: var(--transition);">🏃‍♂️ Ya salgo</span>
+                  <span onclick="window.sendQuickChatMessage('Estoy en la entrada principal')" style="background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; cursor: pointer; white-space: nowrap; transition: var(--transition);">🏢 Estoy en la entrada</span>
+                  <span onclick="window.sendQuickChatMessage('¿Necesita cambio de efectivo?')" style="background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; cursor: pointer; white-space: nowrap; transition: var(--transition);">💵 ¿Tiene cambio?</span>
+                  <span onclick="window.sendQuickChatMessage('El paquete está listo')" style="background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; cursor: pointer; white-space: nowrap; transition: var(--transition);">📦 Paquete listo</span>
                 </div>
                 
                 <!-- Chat con el conductor -->
@@ -445,49 +507,95 @@
               <button class="btn btn-primary w-100 mt-2" onclick="window.bookReparaService()">Reservar Servicio de Reparación</button>
             </div>
             
-            <!-- Diagnóstico / Seguimiento (Oculto inicialmente) -->
-            <div class="card panel-card" id="repara-tracker-card" style="display:none;">
-              <h3>Seguimiento del Diagnóstico</h3>
-              <div class="repara-steps">
-                <div class="repara-step active" id="rep-step-1">
-                  <div class="step-num">1</div>
-                  <div class="step-desc">
-                    <strong>Servicio Solicitado</strong>
-                    <p id="rep-date-1">Hoy</p>
-                  </div>
-                </div>
-                <div class="repara-step" id="rep-step-2">
-                  <div class="step-num">2</div>
-                  <div class="step-desc">
-                    <strong>Mensajero en Camino</strong>
-                    <p>Retiro de dispositivo a domicilio</p>
-                  </div>
-                </div>
-                <div class="repara-step" id="rep-step-3">
-                  <div class="step-num">3</div>
-                  <div class="step-desc">
-                    <strong>En Diagnóstico Técnico</strong>
-                    <p>Evaluación de placa y componentes</p>
-                  </div>
-                </div>
-                <div class="repara-step" id="rep-step-4">
-                  <div class="step-num">4</div>
-                  <div class="step-desc">
-                    <strong>Reparación Finalizada</strong>
-                    <p>Pruebas de calidad y testeo</p>
-                  </div>
+            <!-- Columna Derecha: Hardware SVG o Tracker -->
+            <div class="repara-right-column" style="display: flex; flex-direction: column; gap: 32px; width: 100%;">
+              <!-- Visualizador de Hardware (SVG Clickable) -->
+              <div class="card panel-card" id="repara-hardware-card" style="text-align: center;">
+                <h3>Mapa Físico de Fallas</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px; line-height: 1.4;">Haz clic en el componente defectuoso del celular para diagnosticar la falla al instante.</p>
+                <div class="phone-svg-wrapper" style="max-width: 170px; margin: 0 auto; position: relative;">
+                  <svg viewBox="0 0 200 400" width="100%" height="auto" style="filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5)); transition: var(--transition);">
+                    <!-- Cuerpo del Celular -->
+                    <rect x="10" y="10" width="180" height="380" rx="25" fill="#090d16" stroke="var(--color-repara)" stroke-width="3" />
+                    <!-- Pantalla (Clicable) -->
+                    <rect id="svg-part-screen" x="18" y="40" width="164" height="300" rx="8" fill="rgba(139, 92, 246, 0.05)" stroke="rgba(139, 92, 246, 0.3)" stroke-width="2" style="cursor: pointer; transition: all 0.3s;" onclick="window.selectHardwareFault('screen')" onmouseover="window.showHardwareLabel('Pantalla táctil y cristal')" onmouseout="window.clearHardwareLabel()" />
+                    <!-- Altavoz / Botón Superior -->
+                    <rect x="80" y="22" width="40" height="6" rx="3" fill="#334155" />
+                    <!-- Cámara Frontal -->
+                    <circle cx="65" cy="25" r="4" fill="#1e293b" />
+                    
+                    <!-- Batería Interna (Clicable) -->
+                    <g id="svg-part-battery" style="cursor: pointer; transition: all 0.3s;" onclick="window.selectHardwareFault('battery')" onmouseover="window.showHardwareLabel('Batería / Sistema de alimentación')" onmouseout="window.clearHardwareLabel()">
+                      <rect x="35" y="70" width="130" height="90" rx="6" fill="rgba(16, 185, 129, 0.05)" stroke="rgba(16, 185, 129, 0.3)" stroke-width="1.5" />
+                      <text x="75" y="122" fill="#10b981" font-size="10" font-family="sans-serif" font-weight="bold" opacity="0.6">BATERÍA</text>
+                      <rect x="85" y="85" width="30" height="15" fill="none" stroke="#10b981" stroke-dasharray="2,2" stroke-width="1.5" />
+                    </g>
+                    
+                    <!-- Tarjeta Madre / Sistema (Clicable) -->
+                    <g id="svg-part-system" style="cursor: pointer; transition: all 0.3s;" onclick="window.selectHardwareFault('system')" onmouseover="window.showHardwareLabel('Placa base y Microprocesador')" onmouseout="window.clearHardwareLabel()">
+                      <rect x="35" y="175" width="130" height="90" rx="6" fill="rgba(239, 68, 68, 0.05)" stroke="rgba(239, 68, 68, 0.3)" stroke-width="1.5" />
+                      <text x="63" y="227" fill="#ef4444" font-size="10" font-family="sans-serif" font-weight="bold" opacity="0.6">PLACA MADRE</text>
+                      <circle cx="100" cy="200" r="10" fill="none" stroke="#ef4444" stroke-dasharray="2,2" stroke-width="1.5" />
+                    </g>
+                    
+                    <!-- Puerto de Carga (Clicable) -->
+                    <g id="svg-part-port" style="cursor: pointer; transition: all 0.3s;" onclick="window.selectHardwareFault('port')" onmouseover="window.showHardwareLabel('Puerto de carga USB-C / Jack')" onmouseout="window.clearHardwareLabel()">
+                      <path d="M 80 320 L 120 320 L 115 340 L 85 340 Z" fill="rgba(245, 158, 11, 0.05)" stroke="rgba(245, 158, 11, 0.3)" stroke-width="1.5" />
+                      <text x="70" y="312" fill="#f59e0b" font-size="8" font-family="sans-serif" font-weight="bold" opacity="0.6">PUERTO CARGA</text>
+                    </g>
+                    
+                    <!-- Cristal roto (Decorativo, brilla si selecciona screen) -->
+                    <path id="svg-screen-crack" d="M 30 50 L 70 110 M 70 110 L 120 90 M 70 110 L 90 220" fill="none" stroke="#ffffff" stroke-width="1" opacity="0" style="pointer-events: none; transition: opacity 0.3s;" />
+                  </svg>
+                  <!-- Leyenda Hover -->
+                  <div id="svg-hover-label" style="margin-top: 15px; font-size: 0.8rem; font-weight: bold; color: var(--color-repara); min-height: 18px; transition: color 0.2s;">Pasa el cursor sobre el teléfono...</div>
                 </div>
               </div>
-              <div class="repara-tech-report mt-3">
-                <h4>Reporte del Técnico Asignado</h4>
-                <div class="tech-profile-mini">
-                  <span style="font-size:2rem;">👨‍🔧</span>
-                  <div>
-                    <strong>Téc. Ing. Carlos Medina</strong>
-                    <p style="font-size:0.8rem; color:var(--text-muted);">Especialista Certificado en Microelectrónica</p>
+
+              <!-- Diagnóstico / Seguimiento (Oculto inicialmente) -->
+              <div class="card panel-card" id="repara-tracker-card" style="display:none;">
+                <h3>Seguimiento del Diagnóstico</h3>
+                <div class="repara-steps">
+                  <div class="repara-step active" id="rep-step-1">
+                    <div class="step-num">1</div>
+                    <div class="step-desc">
+                      <strong>Servicio Solicitado</strong>
+                      <p id="rep-date-1">Hoy</p>
+                    </div>
+                  </div>
+                  <div class="repara-step" id="rep-step-2">
+                    <div class="step-num">2</div>
+                    <div class="step-desc">
+                      <strong>Mensajero en Camino</strong>
+                      <p>Retiro de dispositivo a domicilio</p>
+                    </div>
+                  </div>
+                  <div class="repara-step" id="rep-step-3">
+                    <div class="step-num">3</div>
+                    <div class="step-desc">
+                      <strong>En Diagnóstico Técnico</strong>
+                      <p>Evaluación de placa y componentes</p>
+                    </div>
+                  </div>
+                  <div class="repara-step" id="rep-step-4">
+                    <div class="step-num">4</div>
+                    <div class="step-desc">
+                      <strong>Reparación Finalizada</strong>
+                      <p>Pruebas de calidad y testeo</p>
+                    </div>
                   </div>
                 </div>
-                <p class="tech-log" id="repara-tech-log">Esperando recepción del dispositivo para iniciar diagnóstico.</p>
+                <div class="repara-tech-report mt-3">
+                  <h4>Reporte del Técnico Asignado</h4>
+                  <div class="tech-profile-mini">
+                    <span style="font-size:2rem;">👨‍🔧</span>
+                    <div>
+                      <strong>Téc. Ing. Carlos Medina</strong>
+                      <p style="font-size:0.8rem; color:var(--text-muted);">Especialista Certificado en Microelectrónica</p>
+                    </div>
+                  </div>
+                  <p class="tech-log" id="repara-tech-log">Esperando recepción del dispositivo para iniciar diagnóstico.</p>
+                </div>
               </div>
             </div>
           </div>
@@ -529,19 +637,56 @@
                 <div class="suggested-price">Costo del Servicio: <strong id="instala-quote-price">RD$ 1,200</strong></div>
                 <p style="font-size:0.8rem; color:var(--text-muted); text-align:center; margin-top:4px;">Incluye: Mano de obra especializada y garantía de 30 días.</p>
               </div>
+
+              <!-- Selector de Técnicos -->
+              <div class="form-group mt-2" style="margin-bottom: 15px;">
+                <label>Selecciona el Técnico Certificado</label>
+                <div class="tech-select-grid" style="display: flex; flex-direction: column; gap: 8px; margin-top: 6px;">
+                  <div class="tech-option active" data-tech="ramon" onclick="window.selectInstalaTech('ramon')" style="display: flex; align-items: center; gap: 10px; padding: 8px 12px; border: 1px solid var(--color-instala); background: rgba(236,72,153,0.08); border-radius: 6px; cursor: pointer; transition: all 0.2s;">
+                    <span style="font-size: 1.8rem;">👷‍♂️</span>
+                    <div style="flex: 1;">
+                      <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <strong style="font-size: 0.85rem; color: var(--color-instala);">Ramón Abreu</strong>
+                        <span style="font-size: 0.75rem; color: #fbbf24;">★★★★★ 4.9</span>
+                      </div>
+                      <small style="font-size: 0.7rem; color: var(--text-muted);">Instalador Senior • TV & AC</small>
+                    </div>
+                  </div>
+                  <div class="tech-option" data-tech="carlos" onclick="window.selectInstalaTech('carlos')" style="display: flex; align-items: center; gap: 10px; padding: 8px 12px; border: 1px solid var(--border-color); background: var(--bg-card); border-radius: 6px; cursor: pointer; transition: all 0.2s;">
+                    <span style="font-size: 1.8rem;">👨‍🔧</span>
+                    <div style="flex: 1;">
+                      <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <strong style="font-size: 0.85rem;">Carlos Medina</strong>
+                        <span style="font-size: 0.75rem; color: #fbbf24;">★★★★☆ 4.7</span>
+                      </div>
+                      <small style="font-size: 0.7rem; color: var(--text-muted);">Especialista • Redes & Domótica</small>
+                    </div>
+                  </div>
+                  <div class="tech-option" data-tech="laura" onclick="window.selectInstalaTech('laura')" style="display: flex; align-items: center; gap: 10px; padding: 8px 12px; border: 1px solid var(--border-color); background: var(--bg-card); border-radius: 6px; cursor: pointer; transition: all 0.2s;">
+                    <span style="font-size: 1.8rem;">👩‍🔧</span>
+                    <div style="flex: 1;">
+                      <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <strong style="font-size: 0.85rem;">Laura Rijo</strong>
+                        <span style="font-size: 0.75rem; color: #fbbf24;">★★★★★ 4.8</span>
+                      </div>
+                      <small style="font-size: 0.7rem; color: var(--text-muted);">Técnica • Cerraduras & Smart Home</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
               
-              <button class="btn btn-primary w-100 mt-2" onclick="window.bookInstalaService()">Agendar Instalador</button>
+              <button class="btn btn-primary w-100" onclick="window.bookInstalaService()">Agendar Instalador</button>
             </div>
             
             <!-- Confirmación / Agenda (Oculto inicialmente) -->
             <div class="card panel-card" id="instala-summary-card" style="display:none;">
               <h3>Instalador Asignado</h3>
               <div class="tech-profile-mini">
-                <span style="font-size:2.5rem;">👷‍♂️</span>
+                <span id="instala-summary-tech-avatar" style="font-size:2.5rem;">👷‍♂️</span>
                 <div style="flex:1;">
-                  <h4>Ramón Abreu</h4>
-                  <p style="font-size:0.8rem; color:var(--text-muted);">Instalador Senior • Certificación TeloInstala</p>
-                  <span class="stars-display">★★★★★ 4.9</span>
+                  <h4 id="instala-summary-tech-name">Ramón Abreu</h4>
+                  <p id="instala-summary-tech-desc" style="font-size:0.8rem; color:var(--text-muted);">Instalador Senior • Certificación TeloInstala</p>
+                  <span id="instala-summary-tech-rating" class="stars-display">★★★★★ 4.9</span>
                 </div>
               </div>
               
@@ -792,11 +937,32 @@
       </div>
     </div>
     <div class="cart-footer">
+      <!-- Fila de Cupón de Descuento -->
+      <div class="cart-coupon-row" style="margin-bottom: 12px; display: flex; gap: 8px; border-top: 1px solid var(--border-color); padding-top: 12px;">
+        <input type="text" id="cart-coupon-input" placeholder="Código de Cupón" style="flex: 1; padding: 6px 10px; font-size: 0.8rem; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-color); border-radius: 4px; outline: none; text-transform: uppercase;">
+        <button class="btn btn-secondary btn-sm" onclick="window.applyCartCoupon()" style="padding: 6px 12px; font-size: 0.8rem;">Aplicar</button>
+      </div>
+      <div id="cart-coupon-discount-row" style="display: none; justify-content: space-between; font-size: 0.85rem; color: var(--color-success); margin-bottom: 8px;">
+        <span>Descuento aplicado:</span>
+        <strong id="cart-coupon-discount-value">-RD$ 0.00</strong>
+      </div>
       <div class="cart-total-row">
         <span>Total:</span>
         <strong id="cart-total-price">RD$ 0.00</strong>
       </div>
       <button class="btn btn-primary w-100" onclick="window.checkoutCart()">Procesar Pedido</button>
+    </div>
+  </aside>
+
+  <!-- Cajón de la Lista de Deseos (Wishlist) -->
+  <div class="wishlist-overlay" id="wishlist-overlay" onclick="window.toggleWishlist()"></div>
+  <aside class="wishlist-drawer" id="wishlist-drawer">
+    <div class="wishlist-header">
+      <h3>Mis Favoritos ❤️</h3>
+      <button class="close-wishlist" onclick="window.toggleWishlist()">×</button>
+    </div>
+    <div class="wishlist-items" id="wishlist-items-container">
+      <!-- Items de wishlist por JS -->
     </div>
   </aside>
 
@@ -829,7 +995,10 @@
       <!-- Derecha: Compra, Info y Opiniones -->
       <div class="product-modal-right">
         <div class="modal-seller-badge">Vendido por TeloSales Central ✓</div>
-        <h2 id="modal-product-title">Título del Producto</h2>
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-top: 4px;">
+          <h2 id="modal-product-title" style="margin: 0; font-size: 1.35rem; line-height: 1.2;">Título del Producto</h2>
+          <button id="modal-wishlist-btn" onclick="window.toggleModalProductWishlist()" style="background: transparent; border: none; font-size: 1.8rem; cursor: pointer; padding: 0; transition: transform 0.2s; outline: none;" title="Añadir a favoritos">🤍</button>
+        </div>
         <div class="modal-rating-row">
           <span class="stars-display" id="modal-product-stars">★★★★★</span>
           <span class="reviews-count" id="modal-product-reviews-count">(0 reseñas)</span>
@@ -870,6 +1039,25 @@
           </div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- Modal de Quiz de TeloEduca -->
+  <div class="certificate-modal-overlay" id="quiz-modal-overlay" onclick="window.closeQuizModal()"></div>
+  <div class="certificate-modal" id="quiz-modal" style="max-width: 500px; padding: 30px; border: 1px solid var(--color-educa);">
+    <button class="close-modal" onclick="window.closeQuizModal()">×</button>
+    <h3 style="color: var(--color-educa); margin-top: 0; display: flex; align-items: center; gap: 8px; font-size: 1.25rem;">
+      <span>📝</span> Examen de Certificación
+    </h3>
+    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px; line-height: 1.4;">Responde correctamente las siguientes preguntas basadas en el temario del curso para desbloquear tu certificado oficial.</p>
+    
+    <div id="quiz-questions-container" style="display: flex; flex-direction: column; gap: 20px; text-align: left;">
+      <!-- Inyectado por JS -->
+    </div>
+    
+    <div style="margin-top: 24px; display: flex; gap: 10px; justify-content: flex-end;">
+      <button class="btn btn-secondary btn-sm" onclick="window.closeQuizModal()">Cancelar</button>
+      <button class="btn btn-primary btn-sm" onclick="window.submitCourseQuiz()">Enviar Respuestas</button>
     </div>
   </div>
 

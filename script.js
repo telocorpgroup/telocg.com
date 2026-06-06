@@ -12,6 +12,10 @@ const AppState = {
   courses: [],
   completedClasses: [],
   customReviews: {},
+  wishlist: [],
+  classNotes: {},
+  appliedCoupon: null,
+  passedQuizzes: [],
   integrations: {
     supabaseUrl: '',
     supabaseKey: '',
@@ -28,12 +32,20 @@ const AppState = {
     const savedCourses = localStorage.getItem('teloCourses');
     const savedCompleted = localStorage.getItem('teloCompletedClasses');
     const savedReviews = localStorage.getItem('teloCustomReviews');
+    const savedWishlist = localStorage.getItem('teloWishlist');
+    const savedNotes = localStorage.getItem('teloClassNotes');
+    const savedCoupon = localStorage.getItem('teloAppliedCoupon');
+    const savedQuizzes = localStorage.getItem('teloPassedQuizzes');
     const savedIntegrations = localStorage.getItem('teloIntegrations');
     
     if(savedCart) this.cart = JSON.parse(savedCart);
     if(savedCourses) this.courses = JSON.parse(savedCourses);
     if(savedCompleted) this.completedClasses = JSON.parse(savedCompleted);
     if(savedReviews) this.customReviews = JSON.parse(savedReviews);
+    if(savedWishlist) this.wishlist = JSON.parse(savedWishlist);
+    if(savedNotes) this.classNotes = JSON.parse(savedNotes);
+    if(savedCoupon) this.appliedCoupon = JSON.parse(savedCoupon);
+    if(savedQuizzes) this.passedQuizzes = JSON.parse(savedQuizzes);
     if(savedIntegrations) {
       this.integrations = { ...this.integrations, ...JSON.parse(savedIntegrations) };
     }
@@ -44,6 +56,10 @@ const AppState = {
     localStorage.setItem('teloCourses', JSON.stringify(this.courses));
     localStorage.setItem('teloCompletedClasses', JSON.stringify(this.completedClasses));
     localStorage.setItem('teloCustomReviews', JSON.stringify(this.customReviews));
+    localStorage.setItem('teloWishlist', JSON.stringify(this.wishlist));
+    localStorage.setItem('teloClassNotes', JSON.stringify(this.classNotes));
+    localStorage.setItem('teloAppliedCoupon', JSON.stringify(this.appliedCoupon));
+    localStorage.setItem('teloPassedQuizzes', JSON.stringify(this.passedQuizzes));
     localStorage.setItem('teloIntegrations', JSON.stringify(this.integrations));
   }
 };
@@ -2385,6 +2401,9 @@ document.addEventListener('DOMContentLoaded', () => {
   renderProducts('all');
   renderPlatziCourses('all');
   updateCartUI();
+  if (window.updateWishlistUI) {
+    window.updateWishlistUI();
+  }
   setupContactForm();
   setupPlatziDashboard();
   if (window.setupIntegrationsUI) {
@@ -2414,7 +2433,11 @@ function initNavigation() {
     chip.addEventListener('click', (e) => {
       filterChips.forEach(c => c.classList.remove('active'));
       e.currentTarget.classList.add('active');
-      renderProducts(e.currentTarget.getAttribute('data-cat'));
+      if (window.filterAndSortProducts) {
+        window.filterAndSortProducts();
+      } else {
+        renderProducts(e.currentTarget.getAttribute('data-cat'));
+      }
     });
   });
 }
@@ -2448,7 +2471,7 @@ window.switchAppView = function(viewId) {
   
   // Actualizar título global si existe
   const titleMap = {
-    'home-view': 'Bienvenido al Cluster',
+    'home-view': 'Bienvenido al Clúster',
     'sales-view': 'TeloSales Store',
     'educa-view': 'Academia TeloEduca',
     'educa-classroom-view': 'Aula de Clases TeloEduca',
@@ -2472,23 +2495,55 @@ function renderProducts(category) {
   if(!grid) return;
   grid.innerHTML = '';
   
-  const filtered = category === 'all' 
-    ? productsDatabase 
+  const searchQuery = document.getElementById('sales-search')?.value.trim().toLowerCase() || '';
+  const sortBy = document.getElementById('sales-sort')?.value || 'featured';
+  
+  let filtered = category === 'all' 
+    ? [...productsDatabase] 
     : productsDatabase.filter(p => p.category === category);
     
+  if (searchQuery) {
+    filtered = filtered.filter(p => 
+      p.title.toLowerCase().includes(searchQuery) || 
+      p.description.toLowerCase().includes(searchQuery)
+    );
+  }
+  
+  if (sortBy === 'price-asc') {
+    filtered.sort((a, b) => a.price - b.price);
+  } else if (sortBy === 'price-desc') {
+    filtered.sort((a, b) => b.price - a.price);
+  } else if (sortBy === 'rating-desc') {
+    filtered.sort((a, b) => {
+      const getAvgRating = p => p.reviews && p.reviews.length 
+        ? (p.reviews.reduce((sum, r) => sum + r.rating, 0) / p.reviews.length) 
+        : 0;
+      return getAvgRating(b) - getAvgRating(a);
+    });
+  }
+  
   if(filtered.length === 0) {
-    grid.innerHTML = `<p style="color:var(--text-muted)">No hay productos en esta categoría.</p>`;
+    grid.innerHTML = `<p style="color:var(--text-muted); padding: 20px;">No hay productos que coincidan con tu búsqueda.</p>`;
     return;
   }
   
   filtered.forEach(product => {
     const isAdded = AppState.cart.find(item => item.id === product.id);
     const btnText = isAdded ? 'Añadir Más' : 'Agregar al Carrito';
+    const isFavorite = AppState.wishlist.includes(product.id);
+    const stock = (product.price % 7) + 2;
+    const stockHtml = stock <= 4 
+      ? `<div class="product-stock urgent" style="font-size:0.75rem; color:#ef4444; font-weight:600; margin-bottom:6px;">⚠️ ¡Solo quedan ${stock} unidades!</div>`
+      : `<div class="product-stock" style="font-size:0.75rem; color:#10b981; font-weight:600; margin-bottom:6px;">🟢 En stock (${stock} uds.)</div>`;
     
     grid.innerHTML += `
-      <div class="product-card">
+      <div class="product-card" style="position: relative;">
+        <button class="product-wishlist-heart ${isFavorite ? 'active' : ''}" onclick="event.stopPropagation(); window.toggleProductWishlist('${product.id}')" title="${isFavorite ? 'Eliminar de favoritos' : 'Añadir a favoritos'}" style="outline: none;">
+          ${isFavorite ? '❤️' : '🤍'}
+        </button>
         <div class="product-image" onclick="window.openProductModal('${product.id}')" style="cursor:pointer;">${product.icon}</div>
         <div class="product-info">
+          ${stockHtml}
           <h3 class="product-title" onclick="window.openProductModal('${product.id}')" style="cursor:pointer;">${product.title}</h3>
           <span class="product-price">RD$ ${product.price.toFixed(2)}</span>
           <button class="btn btn-primary" onclick="window.addToCart('${product.id}')">${btnText}</button>
@@ -2573,6 +2628,14 @@ window.openProductModal = function(productId) {
   
   // Render Reviews
   renderModalReviews();
+  
+  // Set wishlist heart state in modal
+  const modalHeart = document.getElementById('modal-wishlist-btn');
+  if (modalHeart) {
+    const isFavorite = AppState.wishlist.includes(productId);
+    modalHeart.innerText = isFavorite ? '❤️' : '🤍';
+    modalHeart.title = isFavorite ? 'Eliminar de favoritos' : 'Añadir a favoritos';
+  }
   
   // Display Modal
   document.getElementById('product-modal-overlay').classList.add('active');
@@ -2745,9 +2808,156 @@ function updateCartUI() {
     });
   }
   
+  // Recalcular cupón si está aplicado
+  let discountAmount = 0;
+  const couponDiscountRow = document.getElementById('cart-coupon-discount-row');
+  const couponDiscountValue = document.getElementById('cart-coupon-discount-value');
+  const couponInput = document.getElementById('cart-coupon-input');
+  
+  if (AppState.appliedCoupon && totalPrice > 0) {
+    discountAmount = totalPrice * AppState.appliedCoupon.discountPct;
+    totalPrice -= discountAmount;
+    
+    if (couponDiscountRow && couponDiscountValue) {
+      couponDiscountRow.style.display = 'flex';
+      couponDiscountValue.innerText = `-RD$ ${discountAmount.toFixed(2)}`;
+    }
+    if (couponInput) {
+      couponInput.value = AppState.appliedCoupon.code;
+    }
+  } else {
+    if (couponDiscountRow) {
+      couponDiscountRow.style.display = 'none';
+    }
+    if (couponInput && totalPrice === 0) {
+      couponInput.value = '';
+    }
+  }
+  
   badge.innerText = totalItems;
   totalPriceEl.innerText = `RD$ ${totalPrice.toFixed(2)}`;
 }
+
+// ==========================================
+// TELOSALES: MOTOR DE CUPONES Y WISHLIST
+// ==========================================
+window.applyCartCoupon = function() {
+  const inputEl = document.getElementById('cart-coupon-input');
+  if (!inputEl) return;
+  const code = inputEl.value.trim().toUpperCase();
+  
+  if (!code) {
+    if (AppState.appliedCoupon) {
+      AppState.appliedCoupon = null;
+      AppState.saveState();
+      updateCartUI();
+      window.showToast("Cupón removido", "success");
+    } else {
+      window.showToast("Introduce un código de cupón", "error");
+    }
+    return;
+  }
+  
+  let discountPct = 0;
+  if (code === 'TELO10') {
+    discountPct = 0.10;
+  } else if (code === 'SUPERAPP') {
+    discountPct = 0.15;
+  } else {
+    window.showToast("Cupón inválido", "error");
+    return;
+  }
+  
+  AppState.appliedCoupon = { code, discountPct };
+  AppState.saveState();
+  updateCartUI();
+  window.showToast(`Cupón ${code} aplicado con éxito (Descuento del ${discountPct * 100}%)`, "success");
+};
+
+window.toggleWishlist = function() {
+  const drawer = document.getElementById('wishlist-drawer');
+  const overlay = document.getElementById('wishlist-overlay');
+  if (drawer && overlay) {
+    drawer.classList.toggle('active');
+    overlay.classList.toggle('active');
+  }
+};
+
+window.toggleProductWishlist = function(productId) {
+  if (!AppState.wishlist) AppState.wishlist = [];
+  const index = AppState.wishlist.indexOf(productId);
+  if (index > -1) {
+    AppState.wishlist.splice(index, 1);
+    window.showToast("Eliminado de la lista de deseos", "success");
+  } else {
+    AppState.wishlist.push(productId);
+    window.showToast("Añadido a la lista de deseos", "success");
+  }
+  AppState.saveState();
+  window.updateWishlistUI();
+  
+  // Re-renderizar productos en grilla
+  const activeFilter = document.querySelector('.filter-chip.active')?.getAttribute('data-cat') || 'all';
+  renderProducts(activeFilter);
+  
+  // Si el modal detallado del producto está abierto y es el mismo producto, actualizar el botón
+  const modalHeart = document.getElementById('modal-wishlist-btn');
+  if (modalHeart && modalActiveProductId === productId) {
+    const isFavorite = AppState.wishlist.includes(productId);
+    modalHeart.innerText = isFavorite ? '❤️' : '🤍';
+    modalHeart.title = isFavorite ? 'Eliminar de favoritos' : 'Añadir a favoritos';
+  }
+};
+
+window.toggleModalProductWishlist = function() {
+  if (modalActiveProductId) {
+    window.toggleProductWishlist(modalActiveProductId);
+  }
+};
+
+window.updateWishlistUI = function() {
+  const container = document.getElementById('wishlist-items-container');
+  const badge = document.getElementById('global-wishlist-badge');
+  if (!container) return;
+  
+  if (!AppState.wishlist) AppState.wishlist = [];
+  
+  if (badge) {
+    badge.innerText = AppState.wishlist.length;
+  }
+  
+  if (AppState.wishlist.length === 0) {
+    container.innerHTML = `<p style="color:var(--text-muted); text-align:center; margin-top:20px;">Tu lista de deseos está vacía.</p>`;
+    return;
+  }
+  
+  container.innerHTML = '';
+  AppState.wishlist.forEach(productId => {
+    const product = productsDatabase.find(p => p.id === productId);
+    if (!product) return;
+    
+    container.innerHTML += `
+      <div class="wishlist-item" id="wishlist-item-${product.id}">
+        <div class="wishlist-item-img">
+          ${product.icon}
+        </div>
+        <div class="wishlist-item-info">
+          <div class="wishlist-item-title" onclick="window.openProductModal('${product.id}'); window.toggleWishlist();" style="cursor:pointer;" title="Ver producto">${product.title}</div>
+          <div class="wishlist-item-price">RD$ ${product.price.toFixed(2)}</div>
+        </div>
+        <div class="wishlist-item-actions">
+          <button class="btn-wishlist-remove" onclick="window.toggleProductWishlist('${product.id}')" title="Eliminar de favoritos">×</button>
+          <button class="btn btn-primary" onclick="window.addToCart('${product.id}')" style="padding: 4px 8px; font-size: 0.75rem;">Agregar</button>
+        </div>
+      </div>
+    `;
+  });
+};
+
+window.filterAndSortProducts = function() {
+  const activeFilter = document.querySelector('.filter-chip.active')?.getAttribute('data-cat') || 'all';
+  renderProducts(activeFilter);
+};
 
 window.updateQuantity = function(id, delta) {
   const item = AppState.cart.find(i => i.id === id);
@@ -3126,6 +3336,13 @@ function loadClassroomContent() {
   
   // Load Comments
   loadForumComments();
+
+  // Load classroom notes
+  const notesTextarea = document.getElementById('classroom-notes-textarea');
+  if (notesTextarea) {
+    if (!AppState.classNotes) AppState.classNotes = {};
+    notesTextarea.value = AppState.classNotes[activeLectureId] || '';
+  }
 }
 
 function renderSyllabus() {
@@ -3380,10 +3597,223 @@ window.postForumQuestion = function() {
   loadForumComments();
 };
 
+window.saveCurrentClassNotes = function() {
+  const notesTextarea = document.getElementById('classroom-notes-textarea');
+  if (!notesTextarea) return;
+  
+  if (!AppState.classNotes) AppState.classNotes = {};
+  AppState.classNotes[activeLectureId] = notesTextarea.value;
+  AppState.saveState();
+};
+
+window.downloadClassNotes = function() {
+  const notesTextarea = document.getElementById('classroom-notes-textarea');
+  if (!notesTextarea) return;
+  const content = notesTextarea.value;
+  
+  if (!content.trim()) {
+    window.showToast("No hay apuntes escritos para descargar", "error");
+    return;
+  }
+  
+  const course = coursesDatabase.find(c => c.id === activeCourseId);
+  let activeLecture = null;
+  if (course) {
+    course.modules.forEach(m => {
+      const found = m.classes.find(c => c.id === activeLectureId);
+      if (found) activeLecture = found;
+    });
+  }
+  
+  const lectureTitle = activeLecture ? activeLecture.title : activeLectureId;
+  const courseTitle = course ? course.title : "TeloEduca";
+  const filename = `${courseTitle.replace(/\s+/g, '_')}_${lectureTitle.replace(/\s+/g, '_')}_apuntes.txt`;
+  
+  const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+  
+  window.showToast("Notas descargadas con éxito", "success");
+};
+
+window.toggleCinemaMode = function() {
+  document.body.classList.toggle('cinema-mode-active');
+  const isActive = document.body.classList.contains('cinema-mode-active');
+  window.showToast(isActive ? "Modo Cine Activado (Presiona Esc o el botón para salir)" : "Modo Cine Desactivado", "success");
+};
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && document.body.classList.contains('cinema-mode-active')) {
+    window.toggleCinemaMode();
+  }
+});
+
 // ==========================================
 // TELOEDUCA: CERTIFICADO DE FINALIZACIÓN
 // ==========================================
-window.showCertificate = function() {
+const courseQuizzes = {
+  'te-01': [
+    {
+      q: '1. ¿Con qué símbolo inician todas las fórmulas en Excel?',
+      options: ['A) +', 'B) =', 'C) *'],
+      correct: 1
+    },
+    {
+      q: '2. ¿Qué función de Excel es más moderna y flexible que BUSCARV?',
+      options: ['A) BUSCARX', 'B) BUSCARH', 'C) COINCIDIR'],
+      correct: 0
+    },
+    {
+      q: '3. ¿Cómo se abre el editor de Visual Basic para Aplicaciones (VBA) en Excel?',
+      options: ['A) Ctrl + F8', 'B) Alt + F11', 'C) Shift + Enter'],
+      correct: 1
+    }
+  ],
+  'te-02': [
+    {
+      q: '1. Which greeting is most appropriate and professional when answering an inbound customer service call?',
+      options: [
+        'A) "Hey! What\'s up?"',
+        'B) "Thank you for calling customer care, my name is John. How may I help you today?"',
+        'C) "Hello, what do you want?"'
+      ],
+      correct: 1
+    },
+    {
+      q: '2. What does "de-escalation" mean in customer support?',
+      options: [
+        'A) Hanging up on an angry customer.',
+        'B) Using empathy and active listening to reduce a customer\'s anger.',
+        'C) Transferring the call to a different department.'
+      ],
+      correct: 1
+    },
+    {
+      q: '3. If a customer is complaining about a delayed shipment, what is the best empathetic response?',
+      options: [
+        'A) "I completely understand your frustration, let me check the status right away."',
+        'B) "It is not our fault, it is the courier\'s fault."',
+        'C) "Please wait until tomorrow."'
+      ],
+      correct: 0
+    }
+  ],
+  'te-03': [
+    {
+      q: '1. ¿Qué significa "Few-shot prompting"?',
+      options: [
+        'A) Proporcionar algunos ejemplos en el prompt para guiar la respuesta del modelo.',
+        'B) No darle ningún ejemplo al modelo.',
+        'C) Darle instrucciones de una sola línea.'
+      ],
+      correct: 0
+    },
+    {
+      q: '2. En ingeniería de prompts, ¿qué técnica le pide al modelo "pensar paso a paso"?',
+      options: ['A) Role Prompting', 'B) Chain-of-Thought', 'C) Meta-prompting'],
+      correct: 1
+    },
+    {
+      q: '3. ¿Qué es la "alucinación" en un modelo de lenguaje (LLM)?',
+      options: [
+        'A) Cuando el modelo responde muy rápido.',
+        'B) Cuando el modelo genera información falsa de manera convincente.',
+        'C) Cuando el modelo se apaga.'
+      ],
+      correct: 1
+    }
+  ]
+};
+
+window.openQuizModal = function() {
+  const container = document.getElementById('quiz-questions-container');
+  if (!container) return;
+  
+  const quiz = courseQuizzes[activeCourseId];
+  if (!quiz) return;
+  
+  container.innerHTML = '';
+  quiz.forEach((qObj, qIdx) => {
+    let optionsHtml = '';
+    qObj.options.forEach((opt, oIdx) => {
+      optionsHtml += `
+        <label style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; cursor: pointer; padding: 6px 10px; border-radius: 4px; transition: background 0.2s; background: rgba(255,255,255,0.02); margin-top: 4px; border: 1px solid var(--border-color);" class="quiz-option-label">
+          <input type="radio" name="quiz-q-${qIdx}" value="${oIdx}" style="accent-color: var(--color-educa); cursor: pointer;">
+          <span>${opt}</span>
+        </label>
+      `;
+    });
+    
+    container.innerHTML += `
+      <div class="quiz-question-block" id="quiz-qblock-${qIdx}" style="padding: 10px; border-radius: 6px; border-left: 3px solid transparent; transition: all 0.2s;">
+        <h4 style="margin: 0 0 8px 0; font-size: 0.9rem; font-weight: 600; line-height: 1.4;">${qObj.q}</h4>
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          ${optionsHtml}
+        </div>
+      </div>
+    `;
+  });
+  
+  document.getElementById('quiz-modal-overlay').classList.add('active');
+  document.getElementById('quiz-modal').classList.add('active');
+};
+
+window.closeQuizModal = function() {
+  document.getElementById('quiz-modal-overlay').classList.remove('active');
+  document.getElementById('quiz-modal').classList.remove('active');
+};
+
+window.submitCourseQuiz = function() {
+  const quiz = courseQuizzes[activeCourseId];
+  if (!quiz) return;
+  
+  let allCorrect = true;
+  let score = 0;
+  
+  quiz.forEach((qObj, qIdx) => {
+    const selected = document.querySelector(`input[name="quiz-q-${qIdx}"]:checked`);
+    const block = document.getElementById(`quiz-qblock-${qIdx}`);
+    if (block) {
+      block.style.borderLeftColor = 'transparent';
+      block.style.background = '';
+    }
+    
+    if (selected && parseInt(selected.value) === qObj.correct) {
+      score++;
+      if (block) {
+        block.style.borderLeftColor = 'var(--color-success)';
+        block.style.background = 'rgba(16, 185, 129, 0.04)';
+      }
+    } else {
+      allCorrect = false;
+      if (block) {
+        block.style.borderLeftColor = '#ef4444';
+        block.style.background = 'rgba(239, 68, 68, 0.04)';
+      }
+    }
+  });
+  
+  if (score === quiz.length) {
+    window.showToast("¡Felicidades! Has aprobado el examen con 100% de aciertos.", "success");
+    if (!AppState.passedQuizzes) AppState.passedQuizzes = [];
+    if (!AppState.passedQuizzes.includes(activeCourseId)) {
+      AppState.passedQuizzes.push(activeCourseId);
+      AppState.saveState();
+    }
+    window.closeQuizModal();
+    openCertificateModalDirectly();
+  } else {
+    window.showToast(`Calificación: ${score}/${quiz.length} correctas. Por favor revisa tus respuestas y vuelve a intentar.`, "error");
+  }
+};
+
+function openCertificateModalDirectly() {
   let name = localStorage.getItem('teloStudentName');
   if(!name) {
     name = prompt("Escribe tu nombre completo para el diploma:");
@@ -3411,6 +3841,14 @@ window.showCertificate = function() {
   // Show Modal
   document.getElementById('certificate-modal-overlay').classList.add('active');
   document.getElementById('certificate-modal').classList.add('active');
+}
+
+window.showCertificate = function() {
+  if (AppState.passedQuizzes && AppState.passedQuizzes.includes(activeCourseId)) {
+    openCertificateModalDirectly();
+  } else {
+    window.openQuizModal();
+  }
 };
 
 window.closeCertificateModal = function() {
@@ -3427,6 +3865,31 @@ window.printCertificate = function() {
 // ==========================================
 let indriveBiddingTimer = null;
 let indriveActiveDriver = null;
+let currentIndriveVehicle = 'moto';
+
+window.selectIndriveVehicle = function(type) {
+  currentIndriveVehicle = type;
+  
+  // Actualizar UI
+  document.querySelectorAll('.vehicle-option').forEach(opt => {
+    opt.classList.remove('active');
+    opt.style.borderColor = 'var(--border-color)';
+    opt.style.background = 'var(--bg-card)';
+    const strong = opt.querySelector('strong');
+    if (strong) strong.style.color = '';
+  });
+  
+  const selectedOpt = document.querySelector(`.vehicle-option[data-type="${type}"]`);
+  if (selectedOpt) {
+    selectedOpt.classList.add('active');
+    selectedOpt.style.borderColor = 'var(--color-lleva)';
+    selectedOpt.style.background = 'rgba(245,158,11,0.08)';
+    const strong = selectedOpt.querySelector('strong');
+    if (strong) strong.style.color = 'var(--color-lleva)';
+  }
+  
+  window.updateIndrivePrice();
+};
 
 window.updateIndrivePrice = function() {
   const origen = document.getElementById('indrive-origen').value;
@@ -3448,8 +3911,18 @@ window.updateIndrivePrice = function() {
     basePrice = 1500;
   }
   
-  document.getElementById('indrive-suggested-label').innerText = `RD$ ${basePrice}`;
-  document.getElementById('indrive-user-fare').value = basePrice;
+  // Aplicar multiplicadores según vehículo
+  let multiplier = 1.0;
+  if (currentIndriveVehicle === 'car') {
+    multiplier = 1.5;
+  } else if (currentIndriveVehicle === 'cargo') {
+    multiplier = 2.5;
+  }
+  
+  const finalPrice = Math.round((basePrice * multiplier) / 10) * 10;
+  
+  document.getElementById('indrive-suggested-label').innerText = `RD$ ${finalPrice}`;
+  document.getElementById('indrive-user-fare').value = finalPrice;
 };
 
 window.adjustIndriveOffer = function(delta) {
@@ -3484,11 +3957,26 @@ window.startIndriveNegotiation = function() {
 
   // Simulate counter offers in 2 seconds
   indriveBiddingTimer = setTimeout(() => {
-    const drivers = [
-      { name: 'Yohan Cabrera', avatar: '🏍️', rating: '4.9 ★', vehicle: 'Motor Honda Civ (SD Express)', price: userFare, distance: '6 mins' },
-      { name: 'Manuel Ortiz', avatar: '🚗', rating: '4.8 ★', vehicle: 'Kia Picanto (Aire acondicionado)', price: Math.round(userFare * 1.2 / 10) * 10, distance: '8 mins' },
-      { name: 'José Luis Medina', avatar: '⚡', rating: '5.0 ★', vehicle: 'Super-Motor Eléctrico (Super Rápido)', price: Math.round(userFare * 1.1 / 10) * 10, distance: '4 mins' }
-    ];
+    let drivers = [];
+    if (currentIndriveVehicle === 'moto') {
+      drivers = [
+        { name: 'Yohan Cabrera', avatar: '🏍️', rating: '4.9 ★', vehicle: 'Motor Honda CGL (SD Express)', price: userFare, distance: '3 mins' },
+        { name: 'José Luis Medina', avatar: '⚡', rating: '5.0 ★', vehicle: 'Super-Motor Eléctrico (Súper Rápido)', price: Math.round(userFare * 1.05 / 10) * 10, distance: '2 mins' },
+        { name: 'Carlos Abreu', avatar: '🛵', rating: '4.7 ★', vehicle: 'Scooter Delivery (Económico)', price: Math.round(userFare * 0.95 / 10) * 10, distance: '5 mins' }
+      ];
+    } else if (currentIndriveVehicle === 'car') {
+      drivers = [
+        { name: 'Manuel Ortiz', avatar: '🚗', rating: '4.8 ★', vehicle: 'Kia Picanto (Aire acondicionado)', price: userFare, distance: '5 mins' },
+        { name: 'Ricardo Gómez', avatar: '🚘', rating: '4.9 ★', vehicle: 'Toyota Corolla (Confort Premium)', price: Math.round(userFare * 1.15 / 10) * 10, distance: '7 mins' },
+        { name: 'Ana Peralta', avatar: '🚕', rating: '4.6 ★', vehicle: 'Hyundai Sonata (Conductora Gold)', price: Math.round(userFare * 0.95 / 10) * 10, distance: '6 mins' }
+      ];
+    } else { // cargo/furgón
+      drivers = [
+        { name: 'Ramón Valdez', avatar: '🚚', rating: '4.9 ★', vehicle: 'Furgoneta Hyundai Porter (1.5 Ton)', price: userFare, distance: '10 mins' },
+        { name: 'Julio Batista', avatar: '🚛', rating: '5.0 ★', vehicle: 'Camioneta Daihatsu Hijet (Carga Abierta)', price: Math.round(userFare * 0.9 / 10) * 10, distance: '12 mins' },
+        { name: 'Héctor Rosario', avatar: '📦', rating: '4.8 ★', vehicle: 'Van de Carga Cerrada (Protección de Lluvia)', price: Math.round(userFare * 1.1 / 10) * 10, distance: '8 mins' }
+      ];
+    }
     
     // Remove pulse text
     const pulsing = offersCard.querySelector('.searching-pulse');
@@ -3642,6 +4130,26 @@ window.triggerSendChatMessage = function() {
       const randomAnswer = answers[Math.floor(Math.random() * answers.length)];
       appendIndriveChatMessage(indriveActiveDriver.name, randomAnswer, 'driver');
     }, 1500);
+  }
+};
+
+window.sendQuickChatMessage = function(text) {
+  if(!text) return;
+  
+  appendIndriveChatMessage('Tú', text, 'user');
+  
+  if(indriveActiveDriver) {
+    setTimeout(() => {
+      const answers = [
+        "¡Excelente, copiado!",
+        "Entendido. Estoy en camino sin retraso.",
+        "Perfecto, ya estoy llegando al punto.",
+        "¡Recibido! Le aviso inmediatamente al entregar.",
+        "Sin problemas, voy con cuidado."
+      ];
+      const randomAnswer = answers[Math.floor(Math.random() * answers.length)];
+      appendIndriveChatMessage(indriveActiveDriver.name, randomAnswer, 'driver');
+    }, 1200);
   }
 };
 
@@ -3818,6 +4326,62 @@ function setupContactForm() {
 // ==========================================
 // TELOREPARA: COTIZACIONES & DIAGNÓSTICO EN VIVO
 // ==========================================
+window.selectHardwareFault = function(part) {
+  const deviceSelect = document.getElementById('repara-device');
+  const issueSelect = document.getElementById('repara-issue');
+  if (!deviceSelect || !issueSelect) return;
+  
+  // Force device to phone since we clicked a smartphone schema
+  deviceSelect.value = 'phone';
+  
+  let issueValue = 'screen';
+  if (part === 'screen') issueValue = 'screen';
+  else if (part === 'battery') issueValue = 'battery';
+  else if (part === 'system') issueValue = 'system';
+  else if (part === 'port') issueValue = 'battery'; // Port mapped to battery/charging issues
+  
+  issueSelect.value = issueValue;
+  window.updateReparaQuote();
+  window.showToast(`Falla seleccionada en cotizador: ${issueSelect.options[issueSelect.selectedIndex].text}`, "success");
+  
+  // Highlight chosen part on SVG
+  document.querySelectorAll('#svg-part-screen, #svg-part-battery, #svg-part-system, #svg-part-port').forEach(el => {
+    el.style.filter = '';
+  });
+  
+  let targetEl;
+  if (part === 'screen') targetEl = document.getElementById('svg-part-screen');
+  else if (part === 'battery') targetEl = document.getElementById('svg-part-battery');
+  else if (part === 'system') targetEl = document.getElementById('svg-part-system');
+  else if (part === 'port') targetEl = document.getElementById('svg-part-port');
+  
+  if (targetEl) {
+    targetEl.style.filter = 'drop-shadow(0 0 8px var(--color-repara))';
+  }
+  
+  // Animate glass crack visibility if screen selected
+  const crack = document.getElementById('svg-screen-crack');
+  if (crack) {
+    crack.style.opacity = (part === 'screen') ? '0.7' : '0';
+  }
+};
+
+window.showHardwareLabel = function(text) {
+  const label = document.getElementById('svg-hover-label');
+  if (label) {
+    label.innerText = text;
+    label.style.color = 'var(--color-repara)';
+  }
+};
+
+window.clearHardwareLabel = function() {
+  const label = document.getElementById('svg-hover-label');
+  if (label) {
+    label.innerText = 'Pasa el cursor sobre el teléfono...';
+    label.style.color = 'var(--text-muted)';
+  }
+};
+
 window.updateReparaQuote = function() {
   const device = document.getElementById('repara-device').value;
   const issue = document.getElementById('repara-issue').value;
@@ -3963,6 +4527,37 @@ window.updateInstalaPrice = function() {
   document.getElementById('instala-quote-price').innerText = `RD$ ${price.toLocaleString()}`;
 };
 
+let selectedInstalaTech = 'ramon';
+
+window.selectInstalaTech = function(techId) {
+  selectedInstalaTech = techId;
+  
+  // Actualizar UI
+  document.querySelectorAll('.tech-option').forEach(opt => {
+    opt.classList.remove('active');
+    opt.style.borderColor = 'var(--border-color)';
+    opt.style.background = 'var(--bg-card)';
+    const strong = opt.querySelector('strong');
+    if (strong) strong.style.color = '';
+  });
+  
+  const selectedOpt = document.querySelector(`.tech-option[data-tech="${techId}"]`);
+  if (selectedOpt) {
+    selectedOpt.classList.add('active');
+    selectedOpt.style.borderColor = 'var(--color-instala)';
+    selectedOpt.style.background = 'rgba(236,72,153,0.08)';
+    const strong = selectedOpt.querySelector('strong');
+    if (strong) strong.style.color = 'var(--color-instala)';
+  }
+  
+  const techNames = {
+    'ramon': 'Ramón Abreu',
+    'carlos': 'Carlos Medina',
+    'laura': 'Laura Rijo'
+  };
+  window.showToast(`Técnico seleccionado: ${techNames[techId]}`, "success");
+};
+
 window.bookInstalaService = function() {
   const serviceSelect = document.getElementById('instala-service');
   const serviceText = serviceSelect.options[serviceSelect.selectedIndex].text;
@@ -3979,6 +4574,25 @@ window.bookInstalaService = function() {
   const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
   const formattedDate = dateObj.toLocaleDateString('es-ES', dateOptions);
   
+  const techDetails = {
+    'ramon': { name: 'Ramón Abreu', avatar: '👷‍♂️', desc: 'Instalador Senior • TV & AC', rating: '★★★★★ 4.9' },
+    'carlos': { name: 'Carlos Medina', avatar: '👨‍🔧', desc: 'Especialista • Redes & Domótica', rating: '★★★★☆ 4.7' },
+    'laura': { name: 'Laura Rijo', avatar: '👩‍🔧', desc: 'Técnica • Cerraduras & Smart Home', rating: '★★★★★ 4.8' }
+  };
+  
+  const tech = techDetails[selectedInstalaTech] || techDetails['ramon'];
+  
+  // Update technician summary elements in index.html
+  const summaryAvatar = document.getElementById('instala-summary-tech-avatar');
+  const summaryName = document.getElementById('instala-summary-tech-name');
+  const summaryDesc = document.getElementById('instala-summary-tech-desc');
+  const summaryRating = document.getElementById('instala-summary-tech-rating');
+  
+  if (summaryAvatar) summaryAvatar.innerText = tech.avatar;
+  if (summaryName) summaryName.innerText = tech.name;
+  if (summaryDesc) summaryDesc.innerText = tech.desc;
+  if (summaryRating) summaryRating.innerText = tech.rating;
+  
   const summaryCard = document.getElementById('instala-summary-card');
   summaryCard.style.display = 'block';
   summaryCard.scrollIntoView({ behavior: 'smooth' });
@@ -3990,7 +4604,7 @@ window.bookInstalaService = function() {
   document.getElementById('instala-booked-time').innerText = timeText;
   document.getElementById('instala-booked-price').innerText = priceText;
   
-  window.showToast(`¡Cita agendada con Ramón Abreu para el ${formattedDate}!`, "success");
+  window.showToast(`¡Cita agendada con ${tech.name} para el ${formattedDate}!`, "success");
   
   // Sincronizar reserva de instalación vía n8n webhook
   if (AppState.integrations && AppState.integrations.n8nServicesUrl) {
@@ -4000,7 +4614,7 @@ window.bookInstalaService = function() {
       date: formattedDate,
       timeSlot: timeText,
       price: priceText,
-      assignedTechnician: "Ramón Abreu",
+      assignedTechnician: tech.name,
       timestamp: new Date().toISOString()
     };
     
