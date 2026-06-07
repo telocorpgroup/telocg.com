@@ -70,32 +70,31 @@ const AppState = {
 const productsDatabase = [
   {
     "id": "ts-cat-100",
-    "title": "Cable D09 Tipo C a Lightning 30W (Rojo)",
+    "title": "Diagrama de Núcleo de Cobre: Cables D09",
     "category": "tech",
     "price": 450,
-    "icon": "<img src=\"TeloCorp/images/image1.png\" alt=\"Cable D09 Tipo C a Lightning 30W (Rojo)\">",
+    "icon": "<img src=\"TeloCorp/images/image1.png\" alt=\"Diagrama de Núcleo de Cobre: Cables D09\">",
     "images": [
       "TeloCorp/images/image1.png"
     ],
-    "description": "Cable premium ultra resistente de alta conductividad en color rojo. Ideal para carga ultra rápida y transferencia de datos de alta velocidad sin pérdida de señal.",
+    "description": "Diagrama explicativo de la estructura interna del cable D09. Muestra el núcleo de cobre estañado de alta conductividad, el aislamiento de protección y la cubierta de TPE suave.",
     "specs": {
-      "Conectores": "USB-C a Lightning (iPhone)",
-      "Longitud": "1.2 Metros",
-      "Potencia": "30W Power Delivery",
-      "Material": "TPE reforzado de alta resistencia"
+      "Material": "Cobre estañado y TPE",
+      "Función": "Visualización técnica de alta fidelidad",
+      "Compatibilidad": "Todos los cables D09"
     },
     "reviews": [
       {
-        "user": "Elena F.",
+        "user": "Miguel B.",
         "rating": 5,
-        "date": "10 May 2026",
-        "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "05 Jun 2026",
+        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
       },
       {
-        "user": "Sofía T.",
-        "rating": 4,
-        "date": "14 May 2026",
-        "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
+        "user": "Lucía H.",
+        "rating": 5,
+        "date": "24 May 2026",
+        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
       }
     ]
   },
@@ -117,16 +116,16 @@ const productsDatabase = [
     },
     "reviews": [
       {
-        "user": "Elena F.",
+        "user": "Laura R.",
         "rating": 5,
-        "date": "02 Jun 2026",
-        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
+        "date": "29 May 2026",
+        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
       },
       {
-        "user": "Jorge V.",
+        "user": "Daniel A.",
         "rating": 5,
-        "date": "10 May 2026",
-        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
+        "date": "02 Jun 2026",
+        "text": "Cumple su función perfectamente, el material se nota duradero y robusto."
       }
     ]
   },
@@ -148,109 +147,111 @@ const productsDatabase = [
     },
     "reviews": [
       {
-        "user": "Laura R.",
+        "user": "Pedro S.",
         "rating": 5,
-        "date": "29 May 2026",
-        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
+        "date": "10 May 2026",
+        "text": "Muy satisfecho con la compra, el material es excelente y llegó a tiempo."
       },
       {
-        "user": "María L.",
+        "user": "Laura R.",
         "rating": 4,
-        "date": "02 Jun 2026",
+        "date": "10 May 2026",
         "text": "Muy práctico y útil. La calidad es buena por el precio."
       }
     ]
   },
   {
     "id": "ts-cat-103",
-    "title": "Cover Silicona Diseño Astronauta 3D",
-    "category": "cases",
-    "price": 550,
-    "icon": "<img src=\"TeloCorp/images/image4.png\" alt=\"Cover Silicona Diseño Astronauta 3D\">",
+    "title": "Nevera Exhibidora Comercial Traulsen Premium",
+    "category": "equipos",
+    "price": 45000,
+    "icon": "<img src=\"TeloCorp/images/image4.png\" alt=\"Nevera Exhibidora Comercial Traulsen Premium\">",
     "images": [
       "TeloCorp/images/image4.png"
     ],
-    "description": "Funda protectora de silicona líquida flexible con un encantador y divertido diseño de astronauta 3d en relieve 3D. Aporta un toque alegre y único a tu móvil, con una gran protección anticaídas.",
+    "description": "Refrigerador y exhibidor comercial Traulsen de grado profesional con puerta de vidrio templado. Estructura de acero inoxidable ultra resistente, ideal para supermercados, cafeterías, restaurantes y negocios de comida.",
     "specs": {
-      "Material": "Silicona líquida blanda ultra suave",
-      "Diseño": "Personaje de Astronauta 3D en relieve 3D",
-      "Protección": "Antigolpes certificado con tacto agradable",
-      "Bordes": "Cámara y pantalla sobreelevados para evitar rayones"
+      "Marca/Modelo": "Traulsen Commercial Glass Door Refrigerator",
+      "Material": "Acero inoxidable y vidrio templado doble panel",
+      "Control": "Termostato digital de alta precisión",
+      "Voltaje": "110V/220V 60Hz (Enchufe industrial)"
     },
     "reviews": [
       {
-        "user": "Ana G.",
+        "user": "Daniel A.",
         "rating": 5,
         "date": "14 May 2026",
         "text": "Me encantó el diseño y la resistencia. Ajusta perfecto y se ve muy estético."
       },
       {
-        "user": "Elena F.",
-        "rating": 5,
-        "date": "05 Jun 2026",
-        "text": "Muy buen producto, se siente resistente aunque demoró un día más en llegar."
+        "user": "Ana G.",
+        "rating": 4,
+        "date": "02 Jun 2026",
+        "text": "Buen empaque y presentación. Se adapta perfectamente a lo descrito."
       }
     ]
   },
   {
     "id": "ts-cat-104",
-    "title": "Cable D09 Tipo C a Lightning 30W (Negro)",
-    "category": "tech",
-    "price": 450,
-    "icon": "<img src=\"TeloCorp/images/image5.png\" alt=\"Cable D09 Tipo C a Lightning 30W (Negro)\">",
+    "title": "Audífonos Deportivos Miccell BH96 Sports",
+    "category": "audio",
+    "price": 1200,
+    "icon": "<img src=\"TeloCorp/images/image5.png\" alt=\"Audífonos Deportivos Miccell BH96 Sports\">",
     "images": [
       "TeloCorp/images/image5.png"
     ],
-    "description": "Cable premium ultra resistente de alta conductividad en color negro. Ideal para carga ultra rápida y transferencia de datos de alta velocidad sin pérdida de señal.",
+    "description": "Auriculares inalámbricos deportivos ligeros con ganchos flexibles para las orejas. Diseñados para deportes, con resistencia al sudor, bluetooth 5.4 de alta velocidad y doble pantalla LED digital en el estuche.",
     "specs": {
-      "Conectores": "USB-C a Lightning (iPhone)",
-      "Longitud": "1.2 Metros",
-      "Potencia": "30W Power Delivery",
-      "Material": "TPE reforzado de alta resistencia"
+      "Modelo": "VQ-BH96 (Sports Stereo Earbuds)",
+      "Versión BT": "BT 5.4 de alta definición y bajo consumo",
+      "Batería Auricular": "40 mAh (hasta 5.5 horas de música continua)",
+      "Batería Estuche": "400 mAh (hasta 24 horas de uso total)",
+      "Códec Soportado": "AAC / SBC de alta fidelidad"
     },
     "reviews": [
       {
-        "user": "David P.",
-        "rating": 5,
-        "date": "24 May 2026",
-        "text": "Muy satisfecho con la compra, el material es excelente y llegó a tiempo."
-      },
-      {
-        "user": "Sofía T.",
-        "rating": 4,
-        "date": "14 May 2026",
-        "text": "Cumple su función perfectamente, el material se nota duradero y robusto."
-      }
-    ]
-  },
-  {
-    "id": "ts-cat-105",
-    "title": "Cable D09 Tipo C a Tipo C 100W (Rojo)",
-    "category": "tech",
-    "price": 450,
-    "icon": "<img src=\"TeloCorp/images/image6.png\" alt=\"Cable D09 Tipo C a Tipo C 100W (Rojo)\">",
-    "images": [
-      "TeloCorp/images/image6.png"
-    ],
-    "description": "Cable premium ultra resistente de alta conductividad en color rojo. Ideal para carga ultra rápida y transferencia de datos de alta velocidad sin pérdida de señal.",
-    "specs": {
-      "Conectores": "USB-C a USB-C",
-      "Longitud": "1.2 Metros",
-      "Potencia": "100W (Carga laptops, tablets y móviles)",
-      "Material": "TPE reforzado de alta resistencia"
-    },
-    "reviews": [
-      {
-        "user": "Jorge V.",
+        "user": "Laura R.",
         "rating": 5,
         "date": "10 May 2026",
         "text": "Me encantó el diseño y la resistencia. Ajusta perfecto y se ve muy estético."
       },
       {
-        "user": "Carlos M.",
+        "user": "Lucía H.",
         "rating": 5,
-        "date": "05 Jun 2026",
-        "text": "Cumple su función perfectamente, el material se nota duradero y robusto."
+        "date": "14 May 2026",
+        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-105",
+    "title": "Altavoz Inalámbrico Miccell VQ-SP63 (1200mAh)",
+    "category": "audio",
+    "price": 1500,
+    "icon": "<img src=\"TeloCorp/images/image6.png\" alt=\"Altavoz Inalámbrico Miccell VQ-SP63 (1200mAh)\">",
+    "images": [
+      "TeloCorp/images/image6.png"
+    ],
+    "description": "Altavoz bluetooth portátil súper dinámico con sonido estéreo 3D y luces LED integradas. Su tamaño compacto es perfecto para llevar a cualquier lugar con su correa integrada.",
+    "specs": {
+      "Modelo": "VQ-SP63 (Altavoz Recargable)",
+      "Capacidad Batería": "1200 mAh (hasta 5 horas de reproducción)",
+      "Entradas": "Bluetooth, USB, Tarjeta TF, Auxiliar",
+      "Sonido": "Estéreo Omnidireccional con graves dinámicos",
+      "Carga": "Puerto Tipo-C moderno"
+    },
+    "reviews": [
+      {
+        "user": "Elena F.",
+        "rating": 5,
+        "date": "18 May 2026",
+        "text": "Muy satisfecho con la compra, el material es excelente y llegó a tiempo."
+      },
+      {
+        "user": "Ana G.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Buen empaque y presentación. Se adapta perfectamente a lo descrito."
       }
     ]
   },
@@ -265,54 +266,53 @@ const productsDatabase = [
     ],
     "description": "Cargador de pared completo T13 de 20W con cable incluido. Conector Tipo C a Lightning 20W. Cabezal con chip inteligente para proteger el móvil contra sobrecalentamiento.",
     "specs": {
-      "Potencia de Salida": "20W Máximo",
-      "Voltaje de Entrada": "100-240V 50/60Hz (Universal)",
-      "Cable Incluido": "1.0 Metro de alta velocidad",
-      "Protección": "Chip inteligente contra cortocircuito y sobrevoltaje"
+      "Potencia": "20W Máximo",
+      "Cable": "1.0m USB-C a Lightning",
+      "Voltaje": "100-240V"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "David P.",
         "rating": 5,
         "date": "02 Jun 2026",
         "text": "Me encantó el diseño y la resistencia. Ajusta perfecto y se ve muy estético."
       },
       {
-        "user": "Miguel B.",
-        "rating": 4,
-        "date": "24 May 2026",
-        "text": "Muy satisfecho con la compra, el material es excelente y llegó a tiempo."
+        "user": "María L.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Cumple su función perfectamente, el material se nota duradero y robusto."
       }
     ]
   },
   {
     "id": "ts-cat-107",
-    "title": "Cover Silicona Diseño Oso Teddy Soft",
-    "category": "cases",
-    "price": 550,
-    "icon": "<img src=\"TeloCorp/images/image8.png\" alt=\"Cover Silicona Diseño Oso Teddy Soft\">",
+    "title": "Freidora de Papas Industrial Vevor de Doble Tanque",
+    "category": "equipos",
+    "price": 8500,
+    "icon": "<img src=\"TeloCorp/images/image8.png\" alt=\"Freidora de Papas Industrial Vevor de Doble Tanque\">",
     "images": [
       "TeloCorp/images/image8.png"
     ],
-    "description": "Funda protectora de silicona líquida flexible con un encantador y divertido diseño de oso teddy soft en relieve 3D. Aporta un toque alegre y único a tu móvil, con una gran protección anticaídas.",
+    "description": "Freidora eléctrica comercial Vevor de doble tina (tanque dual). Fabricada en acero inoxidable grado alimenticio. Cada tina cuenta con control de temperatura independiente para freír papas, pollo o empanadas.",
     "specs": {
-      "Material": "Silicona líquida blanda ultra suave",
-      "Diseño": "Personaje de Oso Teddy Soft en relieve 3D",
-      "Protección": "Antigolpes certificado con tacto agradable",
-      "Bordes": "Cámara y pantalla sobreelevados para evitar rayones"
+      "Marca": "Vevor Professional Kitchen Gear",
+      "Capacidad": "6L + 6L (12 Litros de capacidad total)",
+      "Potencia": "1500W + 1500W de calentamiento ultra rápido",
+      "Material": "Acero inoxidable 304 de fácil limpieza y drenado"
     },
     "reviews": [
       {
-        "user": "Elena F.",
+        "user": "María L.",
         "rating": 5,
-        "date": "29 May 2026",
+        "date": "18 May 2026",
         "text": "Muy satisfecho con la compra, el material es excelente y llegó a tiempo."
       },
       {
-        "user": "Miguel B.",
-        "rating": 4,
-        "date": "02 Jun 2026",
-        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
+        "user": "Jorge V.",
+        "rating": 5,
+        "date": "29 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
       }
     ]
   },
@@ -328,53 +328,53 @@ const productsDatabase = [
     "description": "Batería externa ultra delgada premium de 10,000 mAh para recarga rápida. Su tamaño compacto permite llevarla en el bolsillo. Cuenta con display LED de porcentaje.",
     "specs": {
       "Capacidad": "10,000 mAh",
-      "Puertos de Salida": "2x USB-A (5V/2.4A)",
-      "Puertos de Entrada": "1x USB-C y 1x Micro-USB",
-      "Indicador": "Pantalla digital inteligente LED"
+      "Salidas": "2x USB-A (5V/2.4A)",
+      "Indicador": "Pantalla digital LED"
     },
     "reviews": [
       {
-        "user": "Sofía T.",
+        "user": "Ana G.",
         "rating": 5,
-        "date": "10 May 2026",
-        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
+        "date": "14 May 2026",
+        "text": "Muy satisfecho con la compra, el material es excelente y llegó a tiempo."
       },
       {
         "user": "Jorge V.",
-        "rating": 5,
-        "date": "18 May 2026",
+        "rating": 4,
+        "date": "24 May 2026",
         "text": "Cumple su función perfectamente, el material se nota duradero y robusto."
       }
     ]
   },
   {
     "id": "ts-cat-109",
-    "title": "Cable D09 Tipo C a Tipo C 100W (Negro)",
-    "category": "tech",
-    "price": 450,
-    "icon": "<img src=\"TeloCorp/images/image10.png\" alt=\"Cable D09 Tipo C a Tipo C 100W (Negro)\">",
+    "title": "Altavoz Inalámbrico Miccell VQ-SP64 (2400mAh)",
+    "category": "audio",
+    "price": 2200,
+    "icon": "<img src=\"TeloCorp/images/image10.png\" alt=\"Altavoz Inalámbrico Miccell VQ-SP64 (2400mAh)\">",
     "images": [
       "TeloCorp/images/image10.png"
     ],
-    "description": "Cable premium ultra resistente de alta conductividad en color negro. Ideal para carga ultra rápida y transferencia de datos de alta velocidad sin pérdida de señal.",
+    "description": "Altavoz bluetooth portátil de tamaño mediano con batería doble de 2400mAh. Ideal para exteriores, ofrece un sonido potente y nítido con radiadores pasivos duales y luces de colores.",
     "specs": {
-      "Conectores": "USB-C a USB-C",
-      "Longitud": "1.2 Metros",
-      "Potencia": "100W (Carga laptops, tablets y móviles)",
-      "Material": "TPE reforzado de alta resistencia"
+      "Modelo": "VQ-SP64 (Altavoz de Exterior)",
+      "Capacidad Batería": "2400 mAh (hasta 8 horas de reproducción)",
+      "Potencia de Salida": "10W RMS con graves reforzados",
+      "Conectividad": "Bluetooth 5.3, USB, Aux, Ranura TF",
+      "Características": "Protección contra salpicaduras y golpes"
     },
     "reviews": [
       {
-        "user": "Carlos M.",
+        "user": "Elena F.",
         "rating": 5,
-        "date": "18 May 2026",
-        "text": "Muy satisfecho con la compra, el material es excelente y llegó a tiempo."
+        "date": "29 May 2026",
+        "text": "Me encantó el diseño y la resistencia. Ajusta perfecto y se ve muy estético."
       },
       {
-        "user": "Sofía T.",
+        "user": "Carlos M.",
         "rating": 5,
-        "date": "02 Jun 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "date": "05 Jun 2026",
+        "text": "Cumple su función perfectamente, el material se nota duradero y robusto."
       }
     ]
   },
@@ -396,16 +396,16 @@ const productsDatabase = [
     },
     "reviews": [
       {
-        "user": "Miguel B.",
+        "user": "Carlos M.",
         "rating": 5,
         "date": "02 Jun 2026",
-        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
+        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
       },
       {
-        "user": "Lucía H.",
+        "user": "David P.",
         "rating": 4,
-        "date": "14 May 2026",
-        "text": "Cumple su función perfectamente, el material se nota duradero y robusto."
+        "date": "10 May 2026",
+        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
       }
     ]
   },
@@ -427,47 +427,48 @@ const productsDatabase = [
     },
     "reviews": [
       {
-        "user": "Elena F.",
+        "user": "Daniel A.",
         "rating": 5,
-        "date": "02 Jun 2026",
-        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
+        "date": "29 May 2026",
+        "text": "Me encantó el diseño y la resistencia. Ajusta perfecto y se ve muy estético."
       },
       {
-        "user": "Laura R.",
+        "user": "Jorge V.",
         "rating": 5,
         "date": "05 Jun 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "text": "Muy buen producto, se siente resistente aunque demoró un día más en llegar."
       }
     ]
   },
   {
     "id": "ts-cat-112",
-    "title": "Cable D09 Tipo C a Lightning 30W (Naranja)",
-    "category": "tech",
-    "price": 450,
-    "icon": "<img src=\"TeloCorp/images/image13.png\" alt=\"Cable D09 Tipo C a Lightning 30W (Naranja)\">",
+    "title": "Altavoz Boombox Profesional Miccell SP56 (30000mAh)",
+    "category": "audio",
+    "price": 4500,
+    "icon": "<img src=\"TeloCorp/images/image13.png\" alt=\"Altavoz Boombox Profesional Miccell SP56 (30000mAh)\">",
     "images": [
       "TeloCorp/images/image13.png"
     ],
-    "description": "Cable premium ultra resistente de alta conductividad en color naranja. Ideal para carga ultra rápida y transferencia de datos de alta velocidad sin pérdida de señal.",
+    "description": "Altavoz inalámbrico gigante de alta potencia para fiestas y karaoke. Batería integrada de súper alta capacidad de 30000mAh para hasta 10 horas de uso. Incluye chip DSP inteligente para filtrado de ruido y efecto KTV.",
     "specs": {
-      "Conectores": "USB-C a Lightning (iPhone)",
-      "Longitud": "1.2 Metros",
-      "Potencia": "30W Power Delivery",
-      "Material": "TPE reforzado de alta resistencia"
+      "Modelo": "Miccell SP56 Boombox",
+      "Capacidad Batería": "30000 mAh (Funciona como Powerbank)",
+      "Tecnología Sonido": "Chip DSP incorporado con eco KTV",
+      "Autonomía": "6 a 8 horas a volumen alto, hasta 10 horas regular",
+      "Potencia": "Amplificador Digital Inteligente de Alto Rendimiento"
     },
     "reviews": [
       {
         "user": "Laura R.",
         "rating": 5,
-        "date": "05 Jun 2026",
-        "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "02 Jun 2026",
+        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
       },
       {
-        "user": "Ana G.",
-        "rating": 5,
-        "date": "18 May 2026",
-        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
+        "user": "Lucía H.",
+        "rating": 4,
+        "date": "10 May 2026",
+        "text": "Cumple su función perfectamente, el material se nota duradero y robusto."
       }
     ]
   },
@@ -482,23 +483,22 @@ const productsDatabase = [
     ],
     "description": "Cable económico y duradero modelo D06. Variante Lightning (iPhone) Blanco. Excelente relación calidad-precio, ideal para llevar en la mochila o tener de repuesto.",
     "specs": {
-      "Conectores": "Modelos Lightning / Tipo C / V8",
+      "Conectores": "USB-A a Lightning",
       "Longitud": "1.0 Metro",
-      "Material": "PVC reforzado ultra flexible",
-      "Garantía": "Durabilidad probada contra flexión"
+      "Material": "PVC reforzado"
     },
     "reviews": [
       {
-        "user": "David P.",
-        "rating": 5,
-        "date": "18 May 2026",
-        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
-      },
-      {
-        "user": "Elena F.",
+        "user": "Daniel A.",
         "rating": 5,
         "date": "24 May 2026",
-        "text": "Buen empaque y presentación. Se adapta perfectamente a lo descrito."
+        "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "24 May 2026",
+        "text": "Muy satisfecho con la compra, el material es excelente y llegó a tiempo."
       }
     ]
   },
@@ -520,47 +520,47 @@ const productsDatabase = [
     },
     "reviews": [
       {
-        "user": "Carlos M.",
+        "user": "Elena F.",
         "rating": 5,
-        "date": "18 May 2026",
-        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
+        "date": "05 Jun 2026",
+        "text": "Muy satisfecho con la compra, el material es excelente y llegó a tiempo."
       },
       {
-        "user": "Sofía T.",
+        "user": "Jorge V.",
         "rating": 5,
-        "date": "02 Jun 2026",
-        "text": "Muy práctico y útil. La calidad es buena por el precio."
+        "date": "14 May 2026",
+        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
       }
     ]
   },
   {
     "id": "ts-cat-115",
-    "title": "Cable D09 Tipo C a Tipo C 100W (Rojo)",
-    "category": "tech",
-    "price": 450,
-    "icon": "<img src=\"TeloCorp/images/image16.png\" alt=\"Cable D09 Tipo C a Tipo C 100W (Rojo)\">",
+    "title": "Altavoz Portátil Impermeable Miccell IPX7",
+    "category": "audio",
+    "price": 1800,
+    "icon": "<img src=\"TeloCorp/images/image16.png\" alt=\"Altavoz Portátil Impermeable Miccell IPX7\">",
     "images": [
       "TeloCorp/images/image16.png"
     ],
-    "description": "Cable premium ultra resistente de alta conductividad en color rojo. Ideal para carga ultra rápida y transferencia de datos de alta velocidad sin pérdida de señal.",
+    "description": "Altavoz robusto totalmente resistente al agua (Certificación IPX7), ideal para usar bajo la ducha, en la playa, río o piscina sin preocupaciones. Puede sumergirse temporalmente.",
     "specs": {
-      "Conectores": "USB-C a USB-C",
-      "Longitud": "1.2 Metros",
-      "Potencia": "100W (Carga laptops, tablets y móviles)",
-      "Material": "TPE reforzado de alta resistencia"
+      "Certificación": "IPX7 (Sumergible hasta 1 metro por 30 min)",
+      "Material": "Goma amortiguadora y tela de malla impermeable",
+      "Conexión": "Bluetooth 5.3 con rango de hasta 15 metros",
+      "Autonomía": "Hasta 6 horas de música continua"
     },
     "reviews": [
       {
         "user": "Ana G.",
         "rating": 5,
-        "date": "18 May 2026",
-        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
+        "date": "10 May 2026",
+        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
       },
       {
-        "user": "Carlos M.",
-        "rating": 5,
+        "user": "Daniel A.",
+        "rating": 4,
         "date": "10 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
       }
     ]
   },
@@ -573,7 +573,7 @@ const productsDatabase = [
     "images": [
       "TeloCorp/images/image17.png"
     ],
-    "description": "Funda protectora con ventosas (chupón) de succión especial para adherir tu teléfono a superficies planas como espejos, azulejos o vidrios. Ideal para creadores de contenido y videollamadas.",
+    "description": "Funda protectora con ventosas (chupón) de succión especial para adherir tu teléfono a surfaces planas como espejos, azulejos o vidrios. Ideal para creadores de contenido y videollamadas.",
     "specs": {
       "Material": "Silicona flexible y ventosas de alta succión",
       "Compatibilidad": "iPhone 7 Plus hasta 17 Pro Max",
@@ -582,102 +582,39 @@ const productsDatabase = [
     },
     "reviews": [
       {
-        "user": "Carlos M.",
+        "user": "María L.",
         "rating": 5,
-        "date": "02 Jun 2026",
-        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
+        "date": "10 May 2026",
+        "text": "Me encantó el diseño y la resistencia. Ajusta perfecto y se ve muy estético."
       },
       {
-        "user": "David P.",
+        "user": "Elena F.",
         "rating": 5,
-        "date": "29 May 2026",
-        "text": "Me encantó el diseño y la resistencia. Ajusta perfecto y se ve muy estético."
+        "date": "02 Jun 2026",
+        "text": "Cumple su función perfectamente, el material se nota duradero y robusto."
       }
     ]
   },
   {
     "id": "ts-cat-117",
-    "title": "Cargador Rápido T13 Completo (Tipo C a Lightning 20W)",
+    "title": "Cargador Rápido T13 Completo (Tipo C a Tipo C 20W)",
     "category": "tech",
     "price": 850,
-    "icon": "<img src=\"TeloCorp/images/image18.png\" alt=\"Cargador Rápido T13 Completo (Tipo C a Lightning 20W)\">",
+    "icon": "<img src=\"TeloCorp/images/image18.png\" alt=\"Cargador Rápido T13 Completo (Tipo C a Tipo C 20W)\">",
     "images": [
       "TeloCorp/images/image18.png"
     ],
-    "description": "Cargador de pared completo T13 de 20W con cable incluido. Conector Tipo C a Lightning 20W. Cabezal con chip inteligente para proteger el móvil contra sobrecalentamiento.",
+    "description": "Cargador de pared completo T13 de 20W con cable incluido. Conector Tipo C a Tipo C 20W. Ideal para celulares modernos Android y tabletas.",
     "specs": {
-      "Potencia de Salida": "20W Máximo",
-      "Voltaje de Entrada": "100-240V 50/60Hz (Universal)",
-      "Cable Incluido": "1.0 Metro de alta velocidad",
-      "Protección": "Chip inteligente contra cortocircuito y sobrevoltaje"
+      "Potencia": "20W",
+      "Cable": "1.0m USB-C a USB-C",
+      "Protección": "Chip inteligente anticaídas de voltaje"
     },
     "reviews": [
       {
-        "user": "Miguel B.",
-        "rating": 5,
-        "date": "24 May 2026",
-        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
-      },
-      {
-        "user": "Sofía T.",
-        "rating": 4,
-        "date": "02 Jun 2026",
-        "text": "Muy práctico y útil. La calidad es buena por el precio."
-      }
-    ]
-  },
-  {
-    "id": "ts-cat-118",
-    "title": "Cable D09 Tipo C a Lightning 30W (Blanco Puro)",
-    "category": "tech",
-    "price": 450,
-    "icon": "<img src=\"TeloCorp/images/image19.png\" alt=\"Cable D09 Tipo C a Lightning 30W (Blanco Puro)\">",
-    "images": [
-      "TeloCorp/images/image19.png"
-    ],
-    "description": "Cable premium ultra resistente de alta conductividad en color blanco puro. Ideal para carga ultra rápida y transferencia de datos de alta velocidad sin pérdida de señal.",
-    "specs": {
-      "Conectores": "USB-C a Lightning (iPhone)",
-      "Longitud": "1.2 Metros",
-      "Potencia": "30W Power Delivery",
-      "Material": "TPE reforzado de alta resistencia"
-    },
-    "reviews": [
-      {
-        "user": "Sofía T.",
+        "user": "Laura R.",
         "rating": 5,
         "date": "05 Jun 2026",
-        "text": "Muy satisfecho con la compra, el material es excelente y llegó a tiempo."
-      },
-      {
-        "user": "Jorge V.",
-        "rating": 5,
-        "date": "24 May 2026",
-        "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
-      }
-    ]
-  },
-  {
-    "id": "ts-cat-119",
-    "title": "Cable D09 Tipo C a Tipo C 100W (Negro)",
-    "category": "tech",
-    "price": 450,
-    "icon": "<img src=\"TeloCorp/images/image20.png\" alt=\"Cable D09 Tipo C a Tipo C 100W (Negro)\">",
-    "images": [
-      "TeloCorp/images/image20.png"
-    ],
-    "description": "Cable premium ultra resistente de alta conductividad en color negro. Ideal para carga ultra rápida y transferencia de datos de alta velocidad sin pérdida de señal.",
-    "specs": {
-      "Conectores": "USB-C a USB-C",
-      "Longitud": "1.2 Metros",
-      "Potencia": "100W (Carga laptops, tablets y móviles)",
-      "Material": "TPE reforzado de alta resistencia"
-    },
-    "reviews": [
-      {
-        "user": "David P.",
-        "rating": 5,
-        "date": "02 Jun 2026",
         "text": "Muy satisfecho con la compra, el material es excelente y llegó a tiempo."
       },
       {
@@ -685,6 +622,69 @@ const productsDatabase = [
         "rating": 4,
         "date": "29 May 2026",
         "text": "Cumple su función perfectamente, el material se nota duradero y robusto."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-118",
+    "title": "Comparativa Altavoces Miccell VQ-SP63/64/65 (Ficha)",
+    "category": "audio",
+    "price": 2500,
+    "icon": "<img src=\"TeloCorp/images/image19.png\" alt=\"Comparativa Altavoces Miccell VQ-SP63/64/65 (Ficha)\">",
+    "images": [
+      "TeloCorp/images/image19.png"
+    ],
+    "description": "Ficha informativa y de selección rápida para los altavoces de la serie VQ-SP. Compara las capacidades de 1200mAh (SP63), 2400mAh (SP64) y 4000mAh (SP65) para que elijas el tamaño idóneo.",
+    "specs": {
+      "Modelos Comparados": "VQ-SP63 / VQ-SP64 / VQ-SP65",
+      "Baterías": "1200mAh / 2400mAh / 4000mAh",
+      "Graves": "Refuerzo dinámico de graves en los tres modelos",
+      "Uso Recomendado": "Hogar (SP63) / Paseos (SP64) / Fiestas (SP65)"
+    },
+    "reviews": [
+      {
+        "user": "Daniel A.",
+        "rating": 5,
+        "date": "10 May 2026",
+        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
+      },
+      {
+        "user": "Sofía T.",
+        "rating": 5,
+        "date": "02 Jun 2026",
+        "text": "Buen empaque y presentación. Se adapta perfectamente a lo descrito."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-119",
+    "title": "Audífonos Inalámbricos TWS Miccell VQ-BH105",
+    "category": "audio",
+    "price": 1100,
+    "icon": "<img src=\"TeloCorp/images/image20.png\" alt=\"Audífonos Inalámbricos TWS Miccell VQ-BH105\">",
+    "images": [
+      "TeloCorp/images/image20.png"
+    ],
+    "description": "Audífonos estéreo verdaderamente inalámbricos (TWS) modelo VQ-BH105. Cuentan con emparejamiento súper rápido, control táctil inteligente y aletas de silicona ergonómicas de ajuste perfecto para evitar caídas.",
+    "specs": {
+      "Modelo": "VQ-BH105 Stereo Earbuds",
+      "Bluetooth": "BT V5.3 de alta fidelidad de sonido",
+      "Operación": "Control táctil fingerprint de alta sensibilidad",
+      "Diseño": "Ajuste ergonómico ultraligero (feel no weight)",
+      "Compatibilidad": "Universal Android / iOS / PC"
+    },
+    "reviews": [
+      {
+        "user": "Ana G.",
+        "rating": 5,
+        "date": "02 Jun 2026",
+        "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Laura R.",
+        "rating": 4,
+        "date": "14 May 2026",
+        "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
       }
     ]
   },
@@ -699,54 +699,53 @@ const productsDatabase = [
     ],
     "description": "Cable de carga extra largo de 2 metros modelo D02. Ideal para carga de laptops, iPads y móviles a distancia sin comprometer la velocidad.",
     "specs": {
-      "Conectores": "USB-C a USB-C / Lightning (30W)",
-      "Longitud": "2.0 Metros (Largo especial)",
-      "Carga Rápida": "Power Delivery (PD)",
-      "Material": "TPE flexible de alta durabilidad"
+      "Conectores": "USB-C a USB-C / Lightning",
+      "Longitud": "2.0 Metros",
+      "Carga Rápida": "Power Delivery (PD)"
     },
     "reviews": [
       {
-        "user": "Elena F.",
+        "user": "Carlos M.",
         "rating": 5,
-        "date": "29 May 2026",
-        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
+        "date": "18 May 2026",
+        "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
       },
       {
-        "user": "Laura R.",
+        "user": "Ana G.",
         "rating": 4,
-        "date": "18 May 2026",
-        "text": "Muy práctico y útil. La calidad es buena por el precio."
+        "date": "24 May 2026",
+        "text": "Muy buen producto, se siente resistente aunque demoró un día más en llegar."
       }
     ]
   },
   {
     "id": "ts-cat-121",
-    "title": "Cable D09 Tipo C a Tipo C 100W (Amarillo)",
-    "category": "tech",
-    "price": 450,
-    "icon": "<img src=\"TeloCorp/images/image22.png\" alt=\"Cable D09 Tipo C a Tipo C 100W (Amarillo)\">",
+    "title": "Ficha Técnica: Sonido Estéreo 3D - Earbuds BH96",
+    "category": "audio",
+    "price": 1200,
+    "icon": "<img src=\"TeloCorp/images/image22.png\" alt=\"Ficha Técnica: Sonido Estéreo 3D - Earbuds BH96\">",
     "images": [
       "TeloCorp/images/image22.png"
     ],
-    "description": "Cable premium ultra resistente de alta conductividad en color amarillo. Ideal para carga ultra rápida y transferencia de datos de alta velocidad sin pérdida de señal.",
+    "description": "Ficha descriptiva del sistema de altavoz de doble cámara de 13 mm integrado en los auriculares BH96. Explica cómo la tecnología de audio logra un sonido excepcional, bien equilibrado y graves tridimensionales.",
     "specs": {
-      "Conectores": "USB-C a USB-C",
-      "Longitud": "1.2 Metros",
-      "Potencia": "100W (Carga laptops, tablets y móviles)",
-      "Material": "TPE reforzado de alta resistencia"
+      "Tamaño Altavoz": "Controlador dinámico de doble cámara de 13 mm",
+      "Tecnología": "Sonido Estéreo Tridimensional (3D Spatial)",
+      "Llamadas": "Cancelación pasiva del ruido para voz cristalina",
+      "Frecuencia": "20Hz - 20kHz de respuesta lineal"
     },
     "reviews": [
       {
-        "user": "Lucía H.",
+        "user": "Elena F.",
         "rating": 5,
-        "date": "10 May 2026",
-        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
+        "date": "02 Jun 2026",
+        "text": "Muy satisfecho con la compra, el material es excelente y llegó a tiempo."
       },
       {
-        "user": "Daniel A.",
-        "rating": 5,
-        "date": "10 May 2026",
-        "text": "Muy satisfecho con la compra, el material es excelente y llegó a tiempo."
+        "user": "Lucía H.",
+        "rating": 4,
+        "date": "14 May 2026",
+        "text": "Muy práctico y útil. La calidad es buena por el precio."
       }
     ]
   },
@@ -768,16 +767,16 @@ const productsDatabase = [
     },
     "reviews": [
       {
-        "user": "Sofía T.",
+        "user": "Daniel A.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "18 May 2026",
+        "text": "Muy satisfecho con la compra, el material es excelente y llegó a tiempo."
       },
       {
-        "user": "Laura R.",
+        "user": "Sofía T.",
         "rating": 4,
-        "date": "10 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "date": "24 May 2026",
+        "text": "Muy satisfecho con la compra, el material es excelente y llegó a tiempo."
       }
     ]
   },
@@ -792,54 +791,53 @@ const productsDatabase = [
     ],
     "description": "Cable económico y duradero modelo D06. Variante Tipo C Blanco. Excelente relación calidad-precio, ideal para llevar en la mochila o tener de repuesto.",
     "specs": {
-      "Conectores": "Modelos Lightning / Tipo C / V8",
+      "Conectores": "USB-A a Tipo-C",
       "Longitud": "1.0 Metro",
-      "Material": "PVC reforzado ultra flexible",
-      "Garantía": "Durabilidad probada contra flexión"
+      "Material": "PVC flexible"
     },
     "reviews": [
       {
-        "user": "Lucía H.",
+        "user": "María L.",
         "rating": 5,
-        "date": "05 Jun 2026",
-        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
+        "date": "14 May 2026",
+        "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
       },
       {
-        "user": "Carlos M.",
+        "user": "Elena F.",
         "rating": 5,
-        "date": "29 May 2026",
-        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
+        "date": "02 Jun 2026",
+        "text": "Buen empaque y presentación. Se adapta perfectamente a lo descrito."
       }
     ]
   },
   {
     "id": "ts-cat-124",
-    "title": "Cable D09 Tipo C a Lightning 30W (Negro)",
-    "category": "tech",
-    "price": 450,
-    "icon": "<img src=\"TeloCorp/images/image25.png\" alt=\"Cable D09 Tipo C a Lightning 30W (Negro)\">",
+    "title": "Panel de Control y Puertos: Altavoces Miccell (Ficha)",
+    "category": "audio",
+    "price": 1600,
+    "icon": "<img src=\"TeloCorp/images/image25.png\" alt=\"Panel de Control y Puertos: Altavoces Miccell (Ficha)\">",
     "images": [
       "TeloCorp/images/image25.png"
     ],
-    "description": "Cable premium ultra resistente de alta conductividad en color negro. Ideal para carga ultra rápida y transferencia de datos de alta velocidad sin pérdida de señal.",
+    "description": "Imagen detallada del panel de mandos trasero de los altavoces Miccell, mostrando los puertos protegidos por solapa de goma: Entrada Auxiliar de 3.5mm, Ranura de Tarjeta TF, Puerto USB normal y entrada de carga Tipo-C.",
     "specs": {
-      "Conectores": "USB-C a Lightning (iPhone)",
-      "Longitud": "1.2 Metros",
-      "Potencia": "30W Power Delivery",
-      "Material": "TPE reforzado de alta resistencia"
+      "Interfaz de Conexión": "Auxiliar, Tarjeta TF, USB-A y USB-C",
+      "Botones Físicos": "Control de volumen, Encendido, Luces LED y Play",
+      "Protección": "Solapa de goma hermética contra polvo y agua",
+      "Compatibilidad": "Carga Tipo-C universal"
     },
     "reviews": [
       {
-        "user": "Miguel B.",
+        "user": "Elena F.",
         "rating": 5,
-        "date": "24 May 2026",
-        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
+        "date": "10 May 2026",
+        "text": "Muy satisfecho con la compra, el material es excelente y llegó a tiempo."
       },
       {
         "user": "Lucía H.",
         "rating": 4,
-        "date": "02 Jun 2026",
-        "text": "Cumple su función perfectamente, el material se nota duradero y robusto."
+        "date": "10 May 2026",
+        "text": "Buen empaque y presentación. Se adapta perfectamente a lo descrito."
       }
     ]
   },
@@ -854,178 +852,178 @@ const productsDatabase = [
     ],
     "description": "Cargador de pared inteligente modelo T16 de 30W con regulación de corriente automática para proteger la vida útil de la batería. Incluye puertos duales para cargar dos dispositivos.",
     "specs": {
-      "Potencia": "30W Max de salida",
+      "Potencia": "30W Max",
       "Puertos": "1x USB-C (PD) y 1x USB-A (QC 3.0)",
-      "Protección": "Smart Control de temperatura constante",
-      "Certificación": "Seguridad eléctrica CE/FCC"
-    },
-    "reviews": [
-      {
-        "user": "Pedro S.",
-        "rating": 5,
-        "date": "29 May 2026",
-        "text": "Me encantó el diseño y la resistencia. Ajusta perfecto y se ve muy estético."
-      },
-      {
-        "user": "Jorge V.",
-        "rating": 4,
-        "date": "14 May 2026",
-        "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
-      }
-    ]
-  },
-  {
-    "id": "ts-cat-126",
-    "title": "Cable D09 Tipo C a Lightning 30W (Amarillo)",
-    "category": "tech",
-    "price": 450,
-    "icon": "<img src=\"TeloCorp/images/image27.png\" alt=\"Cable D09 Tipo C a Lightning 30W (Amarillo)\">",
-    "images": [
-      "TeloCorp/images/image27.png"
-    ],
-    "description": "Cable premium ultra resistente de alta conductividad en color amarillo. Ideal para carga ultra rápida y transferencia de datos de alta velocidad sin pérdida de señal.",
-    "specs": {
-      "Conectores": "USB-C a Lightning (iPhone)",
-      "Longitud": "1.2 Metros",
-      "Potencia": "30W Power Delivery",
-      "Material": "TPE reforzado de alta resistencia"
+      "Certificación": "CE/FCC"
     },
     "reviews": [
       {
         "user": "Miguel B.",
         "rating": 5,
-        "date": "29 May 2026",
-        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
+        "date": "05 Jun 2026",
+        "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
       },
       {
-        "user": "Elena F.",
-        "rating": 4,
-        "date": "10 May 2026",
+        "user": "María L.",
+        "rating": 5,
+        "date": "24 May 2026",
+        "text": "Muy práctico y útil. La calidad es buena por el precio."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-126",
+    "title": "Mini Altavoz Portátil Miccell VQ-SP55 (3000mAh)",
+    "category": "audio",
+    "price": 1300,
+    "icon": "<img src=\"TeloCorp/images/image27.png\" alt=\"Mini Altavoz Portátil Miccell VQ-SP55 (3000mAh)\">",
+    "images": [
+      "TeloCorp/images/image27.png"
+    ],
+    "description": "Mini altavoz bluetooth ultra-compacto modelo VQ-SP55 con batería de 3000mAh de larga duración. Ofrece sonido omnidireccional de 360 grados, graves súper potentes y correa de mano deportiva.",
+    "specs": {
+      "Modelo": "VQ-SP55 Mini Speaker",
+      "Capacidad Batería": "3000 mAh (hasta 10 horas de autonomía)",
+      "Distribución Audio": "Sonido omnidireccional de 360 grados",
+      "Tamaño": "Bolsillo (fácil de sujetar y colgar)",
+      "Luces": "Anillo LED multicolor dinámico"
+    },
+    "reviews": [
+      {
+        "user": "Carlos M.",
+        "rating": 5,
+        "date": "24 May 2026",
         "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "29 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
       }
     ]
   },
   {
     "id": "ts-cat-127",
-    "title": "Cargador Rápido T13 Completo (Tipo C a Tipo C 20W)",
+    "title": "Cargador Rápido T13 Completo (Tipo C a Tipo C 20W con USB)",
     "category": "tech",
     "price": 850,
-    "icon": "<img src=\"TeloCorp/images/image28.png\" alt=\"Cargador Rápido T13 Completo (Tipo C a Tipo C 20W)\">",
+    "icon": "<img src=\"TeloCorp/images/image28.png\" alt=\"Cargador Rápido T13 Completo (Tipo C a Tipo C 20W con USB)\">",
     "images": [
       "TeloCorp/images/image28.png"
     ],
     "description": "Cargador de pared completo T13 de 20W con cable incluido. Conector Tipo C a Tipo C 20W. Cabezal con chip inteligente para proteger el móvil contra sobrecalentamiento.",
     "specs": {
-      "Potencia de Salida": "20W Máximo",
-      "Voltaje de Entrada": "100-240V 50/60Hz (Universal)",
-      "Cable Incluido": "1.0 Metro de alta velocidad",
-      "Protección": "Chip inteligente contra cortocircuito y sobrevoltaje"
+      "Potencia": "20W",
+      "Cable": "1.0m USB-C a USB-C",
+      "Protección": "Smart Control"
     },
     "reviews": [
       {
-        "user": "Laura R.",
+        "user": "Miguel B.",
         "rating": 5,
-        "date": "10 May 2026",
-        "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
-      },
-      {
-        "user": "Ana G.",
-        "rating": 4,
-        "date": "29 May 2026",
+        "date": "05 Jun 2026",
         "text": "Me encantó el diseño y la resistencia. Ajusta perfecto y se ve muy estético."
-      }
-    ]
-  },
-  {
-    "id": "ts-cat-128",
-    "title": "Cover Silicona Diseño Dinosaurio Baby",
-    "category": "cases",
-    "price": 550,
-    "icon": "<img src=\"TeloCorp/images/image29.png\" alt=\"Cover Silicona Diseño Dinosaurio Baby\">",
-    "images": [
-      "TeloCorp/images/image29.png"
-    ],
-    "description": "Funda protectora de silicona líquida flexible con un encantador y divertido diseño de dinosaurio baby en relieve 3D. Aporta un toque alegre y único a tu móvil, con una gran protección anticaídas.",
-    "specs": {
-      "Material": "Silicona líquida blanda ultra suave",
-      "Diseño": "Personaje de Dinosaurio Baby en relieve 3D",
-      "Protección": "Antigolpes certificado con tacto agradable",
-      "Bordes": "Cámara y pantalla sobreelevados para evitar rayones"
-    },
-    "reviews": [
-      {
-        "user": "Laura R.",
-        "rating": 5,
-        "date": "29 May 2026",
-        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
       },
       {
-        "user": "Elena F.",
-        "rating": 5,
+        "user": "Daniel A.",
+        "rating": 4,
         "date": "14 May 2026",
         "text": "Buen empaque y presentación. Se adapta perfectamente a lo descrito."
       }
     ]
   },
   {
-    "id": "ts-cat-129",
-    "title": "Cable D09 Tipo C a Tipo C 100W (Negro)",
-    "category": "tech",
-    "price": 450,
-    "icon": "<img src=\"TeloCorp/images/image30.png\" alt=\"Cable D09 Tipo C a Tipo C 100W (Negro)\">",
+    "id": "ts-cat-128",
+    "title": "Vitrina Calentadora Exhibidora de Alimentos",
+    "category": "equipos",
+    "price": 12000,
+    "icon": "<img src=\"TeloCorp/images/image29.png\" alt=\"Vitrina Calentadora Exhibidora de Alimentos\">",
     "images": [
-      "TeloCorp/images/image30.png"
+      "TeloCorp/images/image29.png"
     ],
-    "description": "Cable premium ultra resistente de alta conductividad en color negro. Ideal para carga ultra rápida y transferencia de datos de alta velocidad sin pérdida de señal.",
+    "description": "Vitrina exhibidora caliente (Food Display Warmer Cabinet) de acero inoxidable y cristales templados con 3 niveles de parrilla. Mantiene las empanadas, pizzas y repostería calientes a temperatura constante.",
     "specs": {
-      "Conectores": "USB-C a USB-C",
-      "Longitud": "1.2 Metros",
-      "Potencia": "100W (Carga laptops, tablets y móviles)",
-      "Material": "TPE reforzado de alta resistencia"
+      "Niveles": "3 bandejas de rejillas ajustables",
+      "Rango Temperatura": "30°C - 85°C con termostato inteligente",
+      "Estructura": "Acero inoxidable pulido y cristales panorámicos",
+      "Iluminación": "Luz LED interna para exhibición premium"
     },
     "reviews": [
       {
-        "user": "Laura R.",
+        "user": "Jorge V.",
         "rating": 5,
-        "date": "10 May 2026",
+        "date": "18 May 2026",
         "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
       },
       {
-        "user": "David P.",
+        "user": "Sofía T.",
         "rating": 5,
-        "date": "18 May 2026",
-        "text": "Buen empaque y presentación. Se adapta perfectamente a lo descrito."
+        "date": "14 May 2026",
+        "text": "Muy práctico y útil. La calidad es buena por el precio."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-129",
+    "title": "Altavoz Estéreo TWS Miccell Bang SE 1+1",
+    "category": "audio",
+    "price": 2800,
+    "icon": "<img src=\"TeloCorp/images/image30.png\" alt=\"Altavoz Estéreo TWS Miccell Bang SE 1+1\">",
+    "images": [
+      "TeloCorp/images/image30.png"
+    ],
+    "description": "Altavoz inalámbrico premium serie Bang SE con capacidad TWS (True Wireless Stereo). Permite emparejar 2 altavoces Bang SE en paralelo para duplicar la potencia y disfrutar de un sonido estéreo espectacular.",
+    "specs": {
+      "Serie": "Bang SE (Capacidad 1+1)",
+      "Características": "Función de emparejamiento estéreo inalámbrico TWS",
+      "Diseño": "Asa superior integrada y laterales iluminados RGB",
+      "Sonido": "Claridad acústica superior con woofer dedicado"
+    },
+    "reviews": [
+      {
+        "user": "Jorge V.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
+      },
+      {
+        "user": "David P.",
+        "rating": 4,
+        "date": "14 May 2026",
+        "text": "Muy práctico y útil. La calidad es buena por el precio."
       }
     ]
   },
   {
     "id": "ts-cat-130",
-    "title": "Cable D09 Tipo C a Lightning 30W (Rojo)",
-    "category": "tech",
-    "price": 450,
-    "icon": "<img src=\"TeloCorp/images/image31.png\" alt=\"Cable D09 Tipo C a Lightning 30W (Rojo)\">",
+    "title": "Altavoz Inalámbrico Miccell VQ-SP65 (4000mAh)",
+    "category": "audio",
+    "price": 2900,
+    "icon": "<img src=\"TeloCorp/images/image31.png\" alt=\"Altavoz Inalámbrico Miccell VQ-SP65 (4000mAh)\">",
     "images": [
       "TeloCorp/images/image31.png"
     ],
-    "description": "Cable premium ultra resistente de alta conductividad en color rojo. Ideal para carga ultra rápida y transferencia de datos de alta velocidad sin pérdida de señal.",
+    "description": "El altavoz inalámbrico de mayor potencia de la serie VQ-SP, equipado con una gran batería de 4000mAh. Ofrece la máxima potencia de volumen y duración de batería de la línea, excelente para camping y paseos.",
     "specs": {
-      "Conectores": "USB-C a Lightning (iPhone)",
-      "Longitud": "1.2 Metros",
-      "Potencia": "30W Power Delivery",
-      "Material": "TPE reforzado de alta resistencia"
+      "Modelo": "VQ-SP65 (Máxima Autonomía)",
+      "Capacidad Batería": "4000 mAh (hasta 12 horas de duración)",
+      "Potencia de Altavoz": "15W RMS de alta presión de sonido",
+      "Conexiones": "Bluetooth 5.3, USB, Aux, Entrada de Micrófono",
+      "Diseño": "Robusto con correa de nailon reforzada"
     },
     "reviews": [
       {
-        "user": "David P.",
-        "rating": 5,
-        "date": "10 May 2026",
-        "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
-      },
-      {
-        "user": "María L.",
+        "user": "Elena F.",
         "rating": 5,
         "date": "02 Jun 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
+      },
+      {
+        "user": "Pedro S.",
+        "rating": 4,
+        "date": "10 May 2026",
+        "text": "Muy práctico y útil. La calidad es buena por el precio."
       }
     ]
   },
@@ -1040,54 +1038,53 @@ const productsDatabase = [
     ],
     "description": "Cable económico y duradero modelo D06. Variante Micro USB V8 Blanco. Excelente relación calidad-precio, ideal para llevar en la mochila o tener de repuesto.",
     "specs": {
-      "Conectores": "Modelos Lightning / Tipo C / V8",
+      "Conectores": "USB-A a Micro-USB V8",
       "Longitud": "1.0 Metro",
-      "Material": "PVC reforzado ultra flexible",
-      "Garantía": "Durabilidad probada contra flexión"
+      "Material": "PVC blando"
     },
     "reviews": [
       {
-        "user": "Laura R.",
+        "user": "David P.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
+        "date": "05 Jun 2026",
+        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
       },
       {
-        "user": "Miguel B.",
-        "rating": 5,
-        "date": "14 May 2026",
-        "text": "Cumple su función perfectamente, el material se nota duradero y robusto."
+        "user": "Laura R.",
+        "rating": 4,
+        "date": "29 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
       }
     ]
   },
   {
     "id": "ts-cat-132",
-    "title": "Cable D09 Tipo C a Lightning 30W (Naranja)",
-    "category": "tech",
-    "price": 450,
-    "icon": "<img src=\"TeloCorp/images/image33.png\" alt=\"Cable D09 Tipo C a Lightning 30W (Naranja)\">",
+    "title": "Altavoz Portátil Acuático Miccell VQ-SP62 IPX6",
+    "category": "audio",
+    "price": 1950,
+    "icon": "<img src=\"TeloCorp/images/image33.png\" alt=\"Altavoz Portátil Acuático Miccell VQ-SP62 IPX6\">",
     "images": [
       "TeloCorp/images/image33.png"
     ],
-    "description": "Cable premium ultra resistente de alta conductividad en color naranja. Ideal para carga ultra rápida y transferencia de datos de alta velocidad sin pérdida de señal.",
+    "description": "Altavoz bluetooth cilíndrico portátil recubierto de material textil de alta resistencia anticaídas y protección IPX6 contra agua. Ideal para relajarse junto a la piscina, playa o ducha.",
     "specs": {
-      "Conectores": "USB-C a Lightning (iPhone)",
-      "Longitud": "1.2 Metros",
-      "Potencia": "30W Power Delivery",
-      "Material": "TPE reforzado de alta resistencia"
+      "Modelo": "VQ-SP62 (Acuático)",
+      "Protección": "Certificación IPX6 contra chorros de agua a presión",
+      "Resistencia": "Malla textil anti-impactos de alta calidad",
+      "Sonido": "Graves pasivos en los extremos con efecto de luz"
     },
     "reviews": [
       {
-        "user": "Pedro S.",
+        "user": "Daniel A.",
+        "rating": 5,
+        "date": "29 May 2026",
+        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
+      },
+      {
+        "user": "Elena F.",
         "rating": 5,
         "date": "14 May 2026",
         "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
-      },
-      {
-        "user": "Lucía H.",
-        "rating": 4,
-        "date": "10 May 2026",
-        "text": "Muy práctico y útil. La calidad es buena por el precio."
       }
     ]
   },
@@ -1102,23 +1099,22 @@ const productsDatabase = [
     ],
     "description": "Cargador de pared completo T13 de 20W con cable incluido. Conector Tipo C USB 20W Dual. Cabezal con chip inteligente para proteger el móvil contra sobrecalentamiento.",
     "specs": {
-      "Potencia de Salida": "20W Máximo",
-      "Voltaje de Entrada": "100-240V 50/60Hz (Universal)",
-      "Cable Incluido": "1.0 Metro de alta velocidad",
-      "Protección": "Chip inteligente contra cortocircuito y sobrevoltaje"
+      "Potencia": "20W",
+      "Cable": "1.0m USB-C a Lightning",
+      "Puertos": "Dual USB-A y USB-C"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Pedro S.",
         "rating": 5,
-        "date": "10 May 2026",
-        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
+        "date": "29 May 2026",
+        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
       },
       {
-        "user": "Laura R.",
-        "rating": 5,
-        "date": "24 May 2026",
-        "text": "Buen empaque y presentación. Se adapta perfectamente a lo descrito."
+        "user": "Elena F.",
+        "rating": 4,
+        "date": "18 May 2026",
+        "text": "Muy buen producto, se siente resistente aunque demoró un día más en llegar."
       }
     ]
   },
@@ -1134,22 +1130,21 @@ const productsDatabase = [
     "description": "Cable reforzado D16 de alta velocidad en acabado negro clásico. Compatible con entradas USB y Tipo C, con salidas de Lightning de 30W y Tipo C de 60W.",
     "specs": {
       "Conectores": "USB-A a USB-C y Lightning",
-      "Corriente": "3A de carga rápida segura",
-      "Longitud": "1.2 Metros",
-      "Material": "Nylon trenzado reforzado ultra resistente"
+      "Corriente": "3A",
+      "Longitud": "1.2 Metros"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "David P.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Me encantó el diseño y la resistencia. Ajusta perfecto y se ve muy estético."
+        "date": "10 May 2026",
+        "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
       },
       {
-        "user": "Jorge V.",
-        "rating": 5,
-        "date": "18 May 2026",
-        "text": "Buen empaque y presentación. Se adapta perfectamente a lo descrito."
+        "user": "Sofía T.",
+        "rating": 4,
+        "date": "10 May 2026",
+        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
       }
     ]
   },
@@ -1165,207 +1160,206 @@ const productsDatabase = [
     "description": "Cable reforzado D16 de alta velocidad en acabado rojo deportivo. Compatible con entradas USB y Tipo C, con salidas de Lightning de 30W y Tipo C de 60W.",
     "specs": {
       "Conectores": "USB-A a USB-C y Lightning",
-      "Corriente": "3A de carga rápida segura",
-      "Longitud": "1.2 Metros",
-      "Material": "Nylon trenzado reforzado ultra resistente"
+      "Corriente": "3A",
+      "Longitud": "1.2 Metros"
     },
     "reviews": [
       {
-        "user": "Sofía T.",
+        "user": "Carlos M.",
         "rating": 5,
-        "date": "24 May 2026",
-        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
+        "date": "02 Jun 2026",
+        "text": "Me encantó el diseño y la resistencia. Ajusta perfecto y se ve muy estético."
       },
       {
         "user": "David P.",
         "rating": 5,
         "date": "14 May 2026",
-        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
+        "text": "Cumple su función perfectamente, el material se nota duradero y robusto."
       }
     ]
   },
   {
     "id": "ts-cat-136",
-    "title": "Cable D09 Tipo C a Lightning 30W (Amarillo)",
-    "category": "tech",
-    "price": 450,
-    "icon": "<img src=\"TeloCorp/images/image37.png\" alt=\"Cable D09 Tipo C a Lightning 30W (Amarillo)\">",
+    "title": "Altavoz de Cápsula Transparente Miccell 10W",
+    "category": "audio",
+    "price": 1750,
+    "icon": "<img src=\"TeloCorp/images/image37.png\" alt=\"Altavoz de Cápsula Transparente Miccell 10W\">",
     "images": [
       "TeloCorp/images/image37.png"
     ],
-    "description": "Cable premium ultra resistente de alta conductividad en color amarillo. Ideal para carga ultra rápida y transferencia de datos de alta velocidad sin pérdida de señal.",
+    "description": "Altavoz inalámbrico de diseño futurista con cubierta de cápsula de cristal transparente que deja ver los componentes internos y cuenta con un espectacular juego de luces LED dinámicas al ritmo de la música.",
     "specs": {
-      "Conectores": "USB-C a Lightning (iPhone)",
-      "Longitud": "1.2 Metros",
-      "Potencia": "30W Power Delivery",
-      "Material": "TPE reforzado de alta resistencia"
+      "Potencia": "10W de salida digital limpia",
+      "Estética": "Cápsula de policarbonato ópticamente transparente",
+      "Iluminación": "Luces LED RGB de ritmo dinámico 360",
+      "Batería": "1500 mAh recargable por USB-C"
     },
     "reviews": [
       {
-        "user": "María L.",
-        "rating": 5,
-        "date": "29 May 2026",
-        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
-      },
-      {
-        "user": "Jorge V.",
+        "user": "David P.",
         "rating": 5,
         "date": "10 May 2026",
-        "text": "Me encantó el diseño y la resistencia. Ajusta perfecto y se ve muy estético."
+        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
+      },
+      {
+        "user": "Sofía T.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Muy buen producto, se siente resistente aunque demoró un día más en llegar."
       }
     ]
   },
   {
     "id": "ts-cat-137",
-    "title": "Cover Silicona Diseño Gatito de la Suerte",
-    "category": "cases",
-    "price": 550,
-    "icon": "<img src=\"TeloCorp/images/image38.png\" alt=\"Cover Silicona Diseño Gatito de la Suerte\">",
+    "title": "Base Dispensadora Fría de Bebidas Crathco",
+    "category": "equipos",
+    "price": 15000,
+    "icon": "<img src=\"TeloCorp/images/image38.png\" alt=\"Base Dispensadora Fría de Bebidas Crathco\">",
     "images": [
       "TeloCorp/images/image38.png"
     ],
-    "description": "Funda protectora de silicona líquida flexible con un encantador y divertido diseño de gatito de la suerte en relieve 3D. Aporta un toque alegre y único a tu móvil, con una gran protección anticaídas.",
+    "description": "Base de enfriamiento y dispensación de bebidas frías Crathco (Cold Beverage Dispenser Cooling Base). Unidad de compresión de alta eficiencia que mantiene jugos o té frío helados y en constante agitación.",
     "specs": {
-      "Material": "Silicona líquida blanda ultra suave",
-      "Diseño": "Personaje de Gatito de la Suerte en relieve 3D",
-      "Protección": "Antigolpes certificado con tacto agradable",
-      "Bordes": "Cámara y pantalla sobreelevados para evitar rayones"
+      "Marca": "Crathco Professional Systems",
+      "Sistema": "Compresor de refrigeración comercial de alta velocidad",
+      "Material": "Base de acero inoxidable y bandejas de goteo extraíbles",
+      "Voltaje": "110V estándar de bajo consumo"
     },
     "reviews": [
       {
-        "user": "Lucía H.",
+        "user": "Ana G.",
         "rating": 5,
-        "date": "05 Jun 2026",
+        "date": "14 May 2026",
         "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
       },
       {
         "user": "Carlos M.",
-        "rating": 4,
-        "date": "29 May 2026",
-        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
+        "rating": 5,
+        "date": "24 May 2026",
+        "text": "Muy buen producto, se siente resistente aunque demoró un día más en llegar."
       }
     ]
   },
   {
     "id": "ts-cat-138",
-    "title": "Cable D09 Tipo C a Lightning 30W (Blanco Puro)",
-    "category": "tech",
-    "price": 450,
-    "icon": "<img src=\"TeloCorp/images/image39.png\" alt=\"Cable D09 Tipo C a Lightning 30W (Blanco Puro)\">",
+    "title": "Audífonos Inalámbricos Miccell ANC+ENC TWS",
+    "category": "audio",
+    "price": 1500,
+    "icon": "<img src=\"TeloCorp/images/image39.png\" alt=\"Audífonos Inalámbricos Miccell ANC+ENC TWS\">",
     "images": [
       "TeloCorp/images/image39.png"
     ],
-    "description": "Cable premium ultra resistente de alta conductividad en color blanco puro. Ideal para carga ultra rápida y transferencia de datos de alta velocidad sin pérdida de señal.",
+    "description": "Auriculares inalámbricos premium de Miccell con cancelación activa de ruido (ANC) y cancelación de ruido ambiental (ENC) para llamadas. Pantalla digital inteligente en el estuche que muestra el nivel de carga individual.",
     "specs": {
-      "Conectores": "USB-C a Lightning (iPhone)",
-      "Longitud": "1.2 Metros",
-      "Potencia": "30W Power Delivery",
-      "Material": "TPE reforzado de alta resistencia"
+      "Tecnología": "Cancelación de Ruido Híbrida ANC + ENC",
+      "Pantalla Estuche": "Indicador digital LED de batería (L y R)",
+      "Autonomía": "Hasta 40 horas de reproducción total con estuche",
+      "Bluetooth": "BT 5.3 de emparejamiento instantáneo y baja latencia"
     },
     "reviews": [
       {
-        "user": "Jorge V.",
+        "user": "Sofía T.",
         "rating": 5,
-        "date": "29 May 2026",
+        "date": "05 Jun 2026",
         "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
       },
       {
-        "user": "David P.",
-        "rating": 4,
-        "date": "24 May 2026",
-        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
+        "user": "Laura R.",
+        "rating": 5,
+        "date": "05 Jun 2026",
+        "text": "Muy satisfecho con la compra, el material es excelente y llegó a tiempo."
       }
     ]
   },
   {
     "id": "ts-cat-139",
-    "title": "Cover Silicona Diseño Minnie Mouse 3D",
-    "category": "cases",
-    "price": 550,
-    "icon": "<img src=\"TeloCorp/images/image40.png\" alt=\"Cover Silicona Diseño Minnie Mouse 3D\">",
+    "title": "Barra de Ensaladas Countertop Bain Marie (5 Pans)",
+    "category": "equipos",
+    "price": 14000,
+    "icon": "<img src=\"TeloCorp/images/image40.png\" alt=\"Barra de Ensaladas Countertop Bain Marie (5 Pans)\">",
     "images": [
       "TeloCorp/images/image40.png"
     ],
-    "description": "Funda protectora de silicona líquida flexible con un encantador y divertido diseño de minnie mouse 3d en relieve 3D. Aporta un toque alegre y único a tu móvil, con una gran protección anticaídas.",
+    "description": "Mesa fría/caliente countertop tipo Bain Marie con sneeze guard (protector de estornudos de vidrio) y capacidad para 5 insertos (bandejas). Ideal para self-service, ensaladas, aderezos o comida caliente.",
     "specs": {
-      "Material": "Silicona líquida blanda ultra suave",
-      "Diseño": "Personaje de Minnie Mouse 3D en relieve 3D",
-      "Protección": "Antigolpes certificado con tacto agradable",
-      "Bordes": "Cámara y pantalla sobreelevados para evitar rayones"
-    },
-    "reviews": [
-      {
-        "user": "Laura R.",
-        "rating": 5,
-        "date": "29 May 2026",
-        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
-      },
-      {
-        "user": "María L.",
-        "rating": 4,
-        "date": "24 May 2026",
-        "text": "Muy práctico y útil. La calidad es buena por el precio."
-      }
-    ]
-  },
-  {
-    "id": "ts-cat-140",
-    "title": "Cable D09 Tipo C a Lightning 30W (Rojo)",
-    "category": "tech",
-    "price": 450,
-    "icon": "<img src=\"TeloCorp/images/image41.png\" alt=\"Cable D09 Tipo C a Lightning 30W (Rojo)\">",
-    "images": [
-      "TeloCorp/images/image41.png"
-    ],
-    "description": "Cable premium ultra resistente de alta conductividad en color rojo. Ideal para carga ultra rápida y transferencia de datos de alta velocidad sin pérdida de señal.",
-    "specs": {
-      "Conectores": "USB-C a Lightning (iPhone)",
-      "Longitud": "1.2 Metros",
-      "Potencia": "30W Power Delivery",
-      "Material": "TPE reforzado de alta resistencia"
+      "Capacidad": "5 insertos de acero inoxidable con tapa incluidos",
+      "Protección": "Cúpula de vidrio protectora (Sneeze Guard) templado",
+      "Material": "Estructura completa de acero inoxidable grado alimenticio",
+      "Uso": "Mesa fría de ensaladas / Baño María caliente"
     },
     "reviews": [
       {
         "user": "Lucía H.",
         "rating": 5,
         "date": "18 May 2026",
-        "text": "Muy satisfecho con la compra, el material es excelente y llegó a tiempo."
+        "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
       },
       {
-        "user": "Laura R.",
+        "user": "Ana G.",
+        "rating": 4,
+        "date": "18 May 2026",
+        "text": "Muy práctico y útil. La calidad es buena por el precio."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-140",
+    "title": "Altavoz Recargable de Viaje Miccell VQ-SP62 (3000mAh)",
+    "category": "audio",
+    "price": 1900,
+    "icon": "<img src=\"TeloCorp/images/image41.png\" alt=\"Altavoz Recargable de Viaje Miccell VQ-SP62 (3000mAh)\">",
+    "images": [
+      "TeloCorp/images/image41.png"
+    ],
+    "description": "Altavoz inalámbrico de tamaño medio modelo VQ-SP62 con batería de 3000mAh. Ofrece un excelente equilibrio entre potencia acústica, graves resonantes y facilidad de transporte para viajes y camping.",
+    "specs": {
+      "Modelo": "VQ-SP62 (Edición de Viaje)",
+      "Capacidad Batería": "3000 mAh (hasta 9 horas de reproducción)",
+      "Graves": "Radiadores pasivos duales en los laterales",
+      "Material": "Cuerpo envuelto en tela tejida y extremos de silicona"
+    },
+    "reviews": [
+      {
+        "user": "Daniel A.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
+        "date": "05 Jun 2026",
+        "text": "Me encantó el diseño y la resistencia. Ajusta perfecto y se ve muy estético."
+      },
+      {
+        "user": "Elena F.",
+        "rating": 5,
+        "date": "05 Jun 2026",
+        "text": "Buen empaque y presentación. Se adapta perfectamente a lo descrito."
       }
     ]
   },
   {
     "id": "ts-cat-141",
-    "title": "Cover Silicona Diseño Mickey Mouse Clásico",
-    "category": "cases",
-    "price": 550,
-    "icon": "<img src=\"TeloCorp/images/image42.png\" alt=\"Cover Silicona Diseño Mickey Mouse Clásico\">",
+    "title": "Bicicleta Estática de Spinning X-Bike Premium",
+    "category": "equipos",
+    "price": 9500,
+    "icon": "<img src=\"TeloCorp/images/image42.png\" alt=\"Bicicleta Estática de Spinning X-Bike Premium\">",
     "images": [
       "TeloCorp/images/image42.png"
     ],
-    "description": "Funda protectora de silicona líquida flexible con un encantador y divertido diseño de mickey mouse clásico en relieve 3D. Aporta un toque alegre y único a tu móvil, con una gran protección anticaídas.",
+    "description": "Bicicleta estacionaria de spinning y fitness (X-Bike) en color amarillo y blanco. Estructura de acero reforzado de alta estabilidad, manubrio ajustable, monitor digital de métricas y sillín ergonómico de gel.",
     "specs": {
-      "Material": "Silicona líquida blanda ultra suave",
-      "Diseño": "Personaje de Mickey Mouse Clásico en relieve 3D",
-      "Protección": "Antigolpes certificado con tacto agradable",
-      "Bordes": "Cámara y pantalla sobreelevados para evitar rayones"
+      "Tipo": "Spinning / Ciclismo Estacionario de Alta Resistencia",
+      "Monitor": "Pantalla LCD (Tiempo, Velocidad, Distancia, Calorías y Pulso)",
+      "Resistencia": "Fricción magnética regulable de forma continua",
+      "Características": "Soporte para tablet/móvil y ruedas de transporte"
     },
     "reviews": [
       {
         "user": "Elena F.",
         "rating": 5,
-        "date": "02 Jun 2026",
-        "text": "Muy satisfecho con la compra, el material es excelente y llegó a tiempo."
+        "date": "18 May 2026",
+        "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
       },
       {
-        "user": "Pedro S.",
-        "rating": 5,
-        "date": "05 Jun 2026",
+        "user": "Carlos M.",
+        "rating": 4,
+        "date": "18 May 2026",
         "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
       }
     ]
@@ -1388,16 +1382,16 @@ const productsDatabase = [
     },
     "reviews": [
       {
-        "user": "Pedro S.",
+        "user": "Ana G.",
         "rating": 5,
-        "date": "29 May 2026",
-        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
+        "date": "10 May 2026",
+        "text": "Muy satisfecho con la compra, el material es excelente y llegó a tiempo."
       },
       {
-        "user": "Jorge V.",
+        "user": "María L.",
         "rating": 4,
-        "date": "29 May 2026",
-        "text": "Muy satisfecho con la compra, el material es excelente y llegó a tiempo."
+        "date": "10 May 2026",
+        "text": "Buen empaque y presentación. Se adapta perfectamente a lo descrito."
       }
     ]
   },
@@ -1412,115 +1406,114 @@ const productsDatabase = [
     ],
     "description": "Cable económico y duradero modelo D06. Variante Tipo C a Tipo C 60W. Excelente relación calidad-precio, ideal para llevar en la mochila o tener de repuesto.",
     "specs": {
-      "Conectores": "Modelos Lightning / Tipo C / V8",
+      "Conectores": "USB-C a USB-C",
       "Longitud": "1.0 Metro",
-      "Material": "PVC reforzado ultra flexible",
-      "Garantía": "Durabilidad probada contra flexión"
+      "Potencia": "60W Power Delivery"
     },
     "reviews": [
       {
-        "user": "Carlos M.",
+        "user": "Ana G.",
         "rating": 5,
-        "date": "18 May 2026",
+        "date": "05 Jun 2026",
         "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
       },
       {
-        "user": "Sofía T.",
+        "user": "Carlos M.",
         "rating": 5,
-        "date": "18 May 2026",
-        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
+        "date": "02 Jun 2026",
+        "text": "Buen empaque y presentación. Se adapta perfectamente a lo descrito."
       }
     ]
   },
   {
     "id": "ts-cat-144",
-    "title": "Cable D16 USB a Lightning & Tipo-C 3A (Gris Metálico)",
+    "title": "Cable de Carga Múltiple 4 en 1 Miccell 240W",
     "category": "tech",
-    "price": 400,
-    "icon": "<img src=\"TeloCorp/images/image45.png\" alt=\"Cable D16 USB a Lightning & Tipo-C 3A (Gris Metálico)\">",
+    "price": 600,
+    "icon": "<img src=\"TeloCorp/images/image45.png\" alt=\"Cable de Carga Múltiple 4 en 1 Miccell 240W\">",
     "images": [
       "TeloCorp/images/image45.png"
     ],
-    "description": "Cable reforzado D16 de alta velocidad en acabado gris metálico. Compatible con entradas USB y Tipo C, con salidas de Lightning de 30W y Tipo C de 60W.",
+    "description": "Cable trenzado premium multiconector 4 en 1 de Miccell. Permite alternar entradas USB-A / USB-C y salidas Lightning / USB-C, soportando carga ultra rápida de hasta 240W para laptops y móviles.",
     "specs": {
-      "Conectores": "USB-A a USB-C y Lightning",
-      "Corriente": "3A de carga rápida segura",
-      "Longitud": "1.2 Metros",
-      "Material": "Nylon trenzado reforzado ultra resistente"
+      "Entradas": "USB-A y USB-C",
+      "Salidas": "Lightning y USB-C",
+      "Potencia Máxima": "240W",
+      "Material": "Nylon trenzado reforzado"
     },
     "reviews": [
       {
-        "user": "David P.",
+        "user": "Sofía T.",
         "rating": 5,
         "date": "18 May 2026",
-        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
-      },
-      {
-        "user": "Elena F.",
-        "rating": 4,
-        "date": "02 Jun 2026",
-        "text": "Cumple su función perfectamente, el material se nota duradero y robusto."
-      }
-    ]
-  },
-  {
-    "id": "ts-cat-145",
-    "title": "Cover Silicona Diseño Cactus Alegre 3D",
-    "category": "cases",
-    "price": 550,
-    "icon": "<img src=\"TeloCorp/images/image46.png\" alt=\"Cover Silicona Diseño Cactus Alegre 3D\">",
-    "images": [
-      "TeloCorp/images/image46.png"
-    ],
-    "description": "Funda protectora de silicona líquida flexible con un encantador y divertido diseño de cactus alegre 3d en relieve 3D. Aporta un toque alegre y único a tu móvil, con una gran protección anticaídas.",
-    "specs": {
-      "Material": "Silicona líquida blanda ultra suave",
-      "Diseño": "Personaje de Cactus Alegre 3D en relieve 3D",
-      "Protección": "Antigolpes certificado con tacto agradable",
-      "Bordes": "Cámara y pantalla sobreelevados para evitar rayones"
-    },
-    "reviews": [
-      {
-        "user": "Elena F.",
-        "rating": 5,
-        "date": "10 May 2026",
         "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
       },
       {
-        "user": "Sofía T.",
-        "rating": 4,
-        "date": "10 May 2026",
+        "user": "David P.",
+        "rating": 5,
+        "date": "05 Jun 2026",
         "text": "Muy buen producto, se siente resistente aunque demoró un día más en llegar."
       }
     ]
   },
   {
-    "id": "ts-cat-146",
-    "title": "Cable D09 Tipo C a Lightning 30W (Amarillo)",
-    "category": "tech",
-    "price": 450,
-    "icon": "<img src=\"TeloCorp/images/image47.png\" alt=\"Cable D09 Tipo C a Lightning 30W (Amarillo)\">",
+    "id": "ts-cat-145",
+    "title": "Máquina Silenciosa de Hacer Hielo Manitowoc UYF0140A",
+    "category": "equipos",
+    "price": 28000,
+    "icon": "<img src=\"TeloCorp/images/image46.png\" alt=\"Máquina Silenciosa de Hacer Hielo Manitowoc UYF0140A\">",
     "images": [
-      "TeloCorp/images/image47.png"
+      "TeloCorp/images/image46.png"
     ],
-    "description": "Cable premium ultra resistente de alta conductividad en color amarillo. Ideal para carga ultra rápida y transferencia de datos de alta velocidad sin pérdida de señal.",
+    "description": "Máquina industrial de hacer hielo Manitowoc (Modelo UYF0140A). Produce hielo tipo media luna o cubos compactos de alta densidad de manera automática y silenciosa. Ideal para restaurantes, bares y hoteles.",
     "specs": {
-      "Conectores": "USB-C a Lightning (iPhone)",
-      "Longitud": "1.2 Metros",
-      "Potencia": "30W Power Delivery",
-      "Material": "TPE reforzado de alta resistencia"
+      "Marca/Modelo": "Manitowoc Ice Machine UYF0140A",
+      "Capacidad Producción": "Hasta 130 lbs de hielo por día",
+      "Capacidad Almacenamiento": "Depósito de almacenamiento integrado de 80 lbs",
+      "Material": "Acero inoxidable con recubrimiento protector anti-huellas"
     },
     "reviews": [
       {
-        "user": "Sofía T.",
+        "user": "Lucía H.",
         "rating": 5,
-        "date": "18 May 2026",
+        "date": "02 Jun 2026",
+        "text": "Me encantó el diseño y la resistencia. Ajusta perfecto y se ve muy estético."
+      },
+      {
+        "user": "Sofía T.",
+        "rating": 4,
+        "date": "24 May 2026",
+        "text": "Muy práctico y útil. La calidad es buena por el precio."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-146",
+    "title": "Ficha Técnica: Batería 24h - Earbuds ANC+ENC",
+    "category": "audio",
+    "price": 1400,
+    "icon": "<img src=\"TeloCorp/images/image47.png\" alt=\"Ficha Técnica: Batería 24h - Earbuds ANC+ENC\">",
+    "images": [
+      "TeloCorp/images/image47.png"
+    ],
+    "description": "Infografía descriptiva del rendimiento energético de los auriculares Miccell ANC+ENC. Detalla las 24 horas de uso con el estuche de carga inteligente, tiempo de carga de 2 horas y hasta 6 horas de reproducción continua.",
+    "specs": {
+      "Tiempo de Carga": "2 Horas para carga completa",
+      "Estuche de Carga": "24 Horas de batería adicionales",
+      "Carga Única": "Hasta 6 horas de música por carga",
+      "Indicador": "Nivel porcentual LED en pantalla del estuche"
+    },
+    "reviews": [
+      {
+        "user": "María L.",
+        "rating": 5,
+        "date": "10 May 2026",
         "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
       },
       {
-        "user": "Laura R.",
-        "rating": 5,
-        "date": "14 May 2026",
+        "user": "Carlos M.",
+        "rating": 4,
+        "date": "05 Jun 2026",
         "text": "Cumple su función perfectamente, el material se nota duradero y robusto."
       }
     ]
@@ -1536,23 +1529,22 @@ const productsDatabase = [
     ],
     "description": "Cargador de pared completo T13 de 20W con cable incluido. Conector Tipo C a iPhone 20W con USB. Cabezal con chip inteligente para proteger el móvil contra sobrecalentamiento.",
     "specs": {
-      "Potencia de Salida": "20W Máximo",
-      "Voltaje de Entrada": "100-240V 50/60Hz (Universal)",
-      "Cable Incluido": "1.0 Metro de alta velocidad",
-      "Protección": "Chip inteligente contra cortocircuito y sobrevoltaje"
+      "Potencia": "20W",
+      "Cable": "1.0m USB-C a Lightning",
+      "Entrada Extra": "USB-A"
     },
     "reviews": [
       {
-        "user": "Lucía H.",
+        "user": "Pedro S.",
         "rating": 5,
-        "date": "24 May 2026",
+        "date": "02 Jun 2026",
         "text": "Muy satisfecho con la compra, el material es excelente y llegó a tiempo."
       },
       {
-        "user": "María L.",
-        "rating": 4,
-        "date": "02 Jun 2026",
-        "text": "Cumple su función perfectamente, el material se nota duradero y robusto."
+        "user": "Elena F.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Buen empaque y presentación. Se adapta perfectamente a lo descrito."
       }
     ]
   },
@@ -1574,16 +1566,16 @@ const productsDatabase = [
     },
     "reviews": [
       {
-        "user": "María L.",
-        "rating": 5,
-        "date": "10 May 2026",
-        "text": "Muy satisfecho con la compra, el material es excelente y llegó a tiempo."
-      },
-      {
         "user": "Laura R.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Muy práctico y útil. La calidad es buena por el precio."
+        "date": "05 Jun 2026",
+        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
+      },
+      {
+        "user": "Lucía H.",
+        "rating": 4,
+        "date": "24 May 2026",
+        "text": "Me encantó el diseño y la resistencia. Ajusta perfecto y se ve muy estético."
       }
     ]
   },
@@ -1598,23 +1590,22 @@ const productsDatabase = [
     ],
     "description": "Cable económico y duradero modelo D06. Variante Tipo C a Lightning 30W. Excelente relación calidad-precio, ideal para llevar en la mochila o tener de repuesto.",
     "specs": {
-      "Conectores": "Modelos Lightning / Tipo C / V8",
+      "Conectores": "USB-C a Lightning",
       "Longitud": "1.0 Metro",
-      "Material": "PVC reforzado ultra flexible",
-      "Garantía": "Durabilidad probada contra flexión"
+      "Potencia": "30W Power Delivery"
     },
     "reviews": [
       {
-        "user": "David P.",
+        "user": "Jorge V.",
         "rating": 5,
-        "date": "24 May 2026",
-        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
+        "date": "29 May 2026",
+        "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
       },
       {
-        "user": "María L.",
-        "rating": 4,
-        "date": "10 May 2026",
-        "text": "Muy buen producto, se siente resistente aunque demoró un día más en llegar."
+        "user": "David P.",
+        "rating": 5,
+        "date": "18 May 2026",
+        "text": "Buen empaque y presentación. Se adapta perfectamente a lo descrito."
       }
     ]
   },
@@ -1629,54 +1620,53 @@ const productsDatabase = [
     ],
     "description": "Cabezales individuales de cargador de pared T13. Disponibles en potencias desde 20W hasta 100W para satisfacer la carga súper rápida de laptops y móviles de gama alta. Utiliza tecnología GaN avanzada.",
     "specs": {
-      "Tecnología": "GaN (Nitruro de Galio) de última generación",
-      "Potencias Disponibles": "20W, 45W, 65W, 100W",
-      "Puertos": "USB-C (Power Delivery 3.0)",
-      "Tamaño": "Ultra compacto y ligero"
+      "Tecnología": "GaN (Nitruro de Galio)",
+      "Potencias": "20W, 45W, 65W, 100W",
+      "Puertos": "USB-C"
     },
     "reviews": [
       {
-        "user": "Lucía H.",
-        "rating": 5,
-        "date": "10 May 2026",
-        "text": "Muy satisfecho con la compra, el material es excelente y llegó a tiempo."
-      },
-      {
-        "user": "Elena F.",
-        "rating": 4,
-        "date": "24 May 2026",
-        "text": "Muy satisfecho con la compra, el material es excelente y llegó a tiempo."
-      }
-    ]
-  },
-  {
-    "id": "ts-cat-151",
-    "title": "Cover Silicona Diseño Aguacate Tierno",
-    "category": "cases",
-    "price": 550,
-    "icon": "<img src=\"TeloCorp/images/image52.png\" alt=\"Cover Silicona Diseño Aguacate Tierno\">",
-    "images": [
-      "TeloCorp/images/image52.png"
-    ],
-    "description": "Funda protectora de silicona líquida flexible con un encantador y divertido diseño de aguacate tierno en relieve 3D. Aporta un toque alegre y único a tu móvil, con una gran protección anticaídas.",
-    "specs": {
-      "Material": "Silicona líquida blanda ultra suave",
-      "Diseño": "Personaje de Aguacate Tierno en relieve 3D",
-      "Protección": "Antigolpes certificado con tacto agradable",
-      "Bordes": "Cámara y pantalla sobreelevados para evitar rayones"
-    },
-    "reviews": [
-      {
-        "user": "Daniel A.",
+        "user": "Carlos M.",
         "rating": 5,
         "date": "05 Jun 2026",
         "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
       },
       {
+        "user": "Miguel B.",
+        "rating": 4,
+        "date": "05 Jun 2026",
+        "text": "Muy práctico y útil. La calidad es buena por el precio."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-151",
+    "title": "Vitrina Exhibidora de Pastelería Spartan Cristal Curvo",
+    "category": "equipos",
+    "price": 35000,
+    "icon": "<img src=\"TeloCorp/images/image52.png\" alt=\"Vitrina Exhibidora de Pastelería Spartan Cristal Curvo\">",
+    "images": [
+      "TeloCorp/images/image52.png"
+    ],
+    "description": "Vitrina exhibidora refrigerada Spartan con cristal frontal curvo templado de doble panel. Diseñada con elegantes acabados en acero inoxidable y repisas de vidrio flotado para pastelería fina, postres y cafetería.",
+    "specs": {
+      "Marca": "Spartan Display Cases",
+      "Cristal": "Frontal curvo anti-empañamiento panorámico",
+      "Sistema Enfriamiento": "Flujo de aire forzado para temperatura uniforme",
+      "Repisas": "3 niveles ajustables con iluminación LED en cada nivel"
+    },
+    "reviews": [
+      {
+        "user": "Lucía H.",
+        "rating": 5,
+        "date": "05 Jun 2026",
+        "text": "Me encantó el diseño y la resistencia. Ajusta perfecto y se ve muy estético."
+      },
+      {
         "user": "Ana G.",
         "rating": 4,
         "date": "02 Jun 2026",
-        "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
+        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
       }
     ]
   },
@@ -1689,25 +1679,24 @@ const productsDatabase = [
     "images": [
       "TeloCorp/images/image53.png"
     ],
-    "description": "Cable reforzado D16 de alta velocidad en acabado azul marino. Compatible con entradas USB y Tipo C, con salidas de Lightning de 30W y Tipo C de 60W.",
+    "description": "Cable de nylon trenzado reforzado D16 de alta velocidad en color azul marino. Soporta hasta 3A para carga rápida segura de dos dispositivos a la vez.",
     "specs": {
       "Conectores": "USB-A a USB-C y Lightning",
-      "Corriente": "3A de carga rápida segura",
-      "Longitud": "1.2 Metros",
-      "Material": "Nylon trenzado reforzado ultra resistente"
+      "Corriente": "3A",
+      "Longitud": "1.2 Metros"
     },
     "reviews": [
       {
-        "user": "Daniel A.",
+        "user": "Jorge V.",
         "rating": 5,
-        "date": "05 Jun 2026",
-        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
+        "date": "10 May 2026",
+        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
       },
       {
-        "user": "Pedro S.",
+        "user": "Daniel A.",
         "rating": 4,
-        "date": "14 May 2026",
-        "text": "Muy buen producto, se siente resistente aunque demoró un día más en llegar."
+        "date": "29 May 2026",
+        "text": "Muy satisfecho con la compra, el material es excelente y llegó a tiempo."
       }
     ]
   },
@@ -1722,23 +1711,22 @@ const productsDatabase = [
     ],
     "description": "Cable económico y duradero modelo D06. Variante Lightning (iPhone) Negro. Excelente relación calidad-precio, ideal para llevar en la mochila o tener de repuesto.",
     "specs": {
-      "Conectores": "Modelos Lightning / Tipo C / V8",
+      "Conectores": "USB-A a Lightning",
       "Longitud": "1.0 Metro",
-      "Material": "PVC reforzado ultra flexible",
-      "Garantía": "Durabilidad probada contra flexión"
+      "Material": "PVC reforzado negro"
     },
     "reviews": [
       {
-        "user": "Ana G.",
+        "user": "Lucía H.",
         "rating": 5,
-        "date": "10 May 2026",
-        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
+        "date": "29 May 2026",
+        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
       },
       {
-        "user": "Daniel A.",
-        "rating": 5,
-        "date": "05 Jun 2026",
-        "text": "Muy buen producto, se siente resistente aunque demoró un día más en llegar."
+        "user": "David P.",
+        "rating": 4,
+        "date": "29 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
       }
     ]
   },
@@ -1754,22 +1742,21 @@ const productsDatabase = [
     "description": "Batería externa premium de 20,000 mAh de súper alta capacidad, ideal para viajes largos, camping o carga de múltiples dispositivos. Soporta carga rápida bidireccional.",
     "specs": {
       "Capacidad": "20,000 mAh",
-      "Puertos de Salida": "2x USB-A (QC 3.0) y 1x USB-C (PD 22.5W)",
-      "Puertos de Entrada": "1x USB-C (PD rápido)",
-      "Protección": "Chip Multi-Protección contra sobrecargas"
+      "Salidas": "2x USB-A (QC 3.0) y 1x USB-C (PD 22.5W)",
+      "Protección": "Chip Multi-Protección"
     },
     "reviews": [
       {
-        "user": "Sofía T.",
+        "user": "Laura R.",
         "rating": 5,
         "date": "14 May 2026",
         "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
       },
       {
-        "user": "Pedro S.",
+        "user": "Miguel B.",
         "rating": 4,
         "date": "05 Jun 2026",
-        "text": "Muy buen producto, se siente resistente aunque demoró un día más en llegar."
+        "text": "Muy práctico y útil. La calidad es buena por el precio."
       }
     ]
   },
@@ -1791,16 +1778,16 @@ const productsDatabase = [
     },
     "reviews": [
       {
-        "user": "Pedro S.",
+        "user": "Carlos M.",
         "rating": 5,
-        "date": "18 May 2026",
-        "text": "Muy satisfecho con la compra, el material es excelente y llegó a tiempo."
+        "date": "24 May 2026",
+        "text": "Me encantó el diseño y la resistencia. Ajusta perfecto y se ve muy estético."
       },
       {
-        "user": "Laura R.",
+        "user": "Daniel A.",
         "rating": 4,
-        "date": "10 May 2026",
-        "text": "Buen empaque y presentación. Se adapta perfectamente a lo descrito."
+        "date": "14 May 2026",
+        "text": "Me encantó el diseño y la resistencia. Ajusta perfecto y se ve muy estético."
       }
     ]
   },
@@ -1815,22 +1802,21 @@ const productsDatabase = [
     ],
     "description": "Cargador de pared completo T13 de 20W con cable incluido. Conector Tipo C Doble Salida 20W. Cabezal con chip inteligente para proteger el móvil contra sobrecalentamiento.",
     "specs": {
-      "Potencia de Salida": "20W Máximo",
-      "Voltaje de Entrada": "100-240V 50/60Hz (Universal)",
-      "Cable Incluido": "1.0 Metro de alta velocidad",
-      "Protección": "Chip inteligente contra cortocircuito y sobrevoltaje"
+      "Potencia": "20W",
+      "Cable": "1.0m USB-C a USB-C",
+      "Puertos": "2x USB-C"
     },
     "reviews": [
       {
-        "user": "Daniel A.",
+        "user": "Ana G.",
         "rating": 5,
-        "date": "18 May 2026",
+        "date": "24 May 2026",
         "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
       },
       {
-        "user": "Sofía T.",
+        "user": "Carlos M.",
         "rating": 5,
-        "date": "02 Jun 2026",
+        "date": "05 Jun 2026",
         "text": "Muy práctico y útil. La calidad es buena por el precio."
       }
     ]
@@ -1846,177 +1832,175 @@ const productsDatabase = [
     ],
     "description": "Cable multifuncional D34 de carga rápida con conectores intercambiables. Soporta hasta 3A para USB normal y hasta 100W para Tipo C a Tipo C. El único cable que necesitas.",
     "specs": {
-      "Conectores Entrada": "USB-A y USB-C intercambiables",
-      "Conectores Salida": "Lightning (iPhone) y USB-C",
-      "Corriente Máxima": "3A / 100W Carga Inteligente",
-      "Material": "TPE reforzado de alta durabilidad y protección contra dobleces"
+      "Entradas": "USB-A y USB-C",
+      "Salidas": "Lightning y USB-C",
+      "Corriente": "3A / 100W Max"
     },
     "reviews": [
       {
-        "user": "Daniel A.",
+        "user": "Sofía T.",
         "rating": 5,
-        "date": "10 May 2026",
+        "date": "14 May 2026",
         "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
       },
       {
-        "user": "Sofía T.",
-        "rating": 4,
-        "date": "29 May 2026",
-        "text": "Cumple su función perfectamente, el material se nota duradero y robusto."
+        "user": "María L.",
+        "rating": 5,
+        "date": "10 May 2026",
+        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
       }
     ]
   },
   {
     "id": "ts-cat-158",
-    "title": "Cable D09 Tipo C a Lightning 30W (Blanco Puro)",
+    "title": "Ficha Técnica: Cable Ultra Resistente Flex-Test 30k",
     "category": "tech",
     "price": 450,
-    "icon": "<img src=\"TeloCorp/images/image59.png\" alt=\"Cable D09 Tipo C a Lightning 30W (Blanco Puro)\">",
+    "icon": "<img src=\"TeloCorp/images/image59.png\" alt=\"Ficha Técnica: Cable Ultra Resistente Flex-Test 30k\">",
     "images": [
       "TeloCorp/images/image59.png"
     ],
-    "description": "Cable premium ultra resistente de alta conductividad en color blanco puro. Ideal para carga ultra rápida y transferencia de datos de alta velocidad sin pérdida de señal.",
+    "description": "Infografía explicativa del test de resistencia del cable Miccell. Demuestra la capacidad del conector de soportar más de 30,000 flexiones de 90 grados sin sufrir daños en la transmisión.",
     "specs": {
-      "Conectores": "USB-C a Lightning (iPhone)",
-      "Longitud": "1.2 Metros",
-      "Potencia": "30W Power Delivery",
-      "Material": "TPE reforzado de alta resistencia"
+      "Test": "Prueba de flexión y torsión mecánica",
+      "Resistencia": "30,000 ciclos de flexión",
+      "Estructura": "Junta de silicona reforzada"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Elena F.",
         "rating": 5,
-        "date": "10 May 2026",
-        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
+        "date": "14 May 2026",
+        "text": "Me encantó el diseño y la resistencia. Ajusta perfecto y se ve muy estético."
       },
       {
-        "user": "Pedro S.",
-        "rating": 5,
-        "date": "02 Jun 2026",
-        "text": "Buen empaque y presentación. Se adapta perfectamente a lo descrito."
+        "user": "Laura R.",
+        "rating": 4,
+        "date": "18 May 2026",
+        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
       }
     ]
   },
   {
     "id": "ts-cat-159",
-    "title": "Cable D09 Tipo C a Tipo C 100W (Negro)",
-    "category": "tech",
-    "price": 450,
-    "icon": "<img src=\"TeloCorp/images/image60.png\" alt=\"Cable D09 Tipo C a Tipo C 100W (Negro)\">",
+    "title": "Ficha Técnica: Estuche Carga 5 Maratones - Miccell",
+    "category": "audio",
+    "price": 1450,
+    "icon": "<img src=\"TeloCorp/images/image60.png\" alt=\"Ficha Técnica: Estuche Carga 5 Maratones - Miccell\">",
     "images": [
       "TeloCorp/images/image60.png"
     ],
-    "description": "Cable premium ultra resistente de alta conductividad en color negro. Ideal para carga ultra rápida y transferencia de datos de alta velocidad sin pérdida de señal.",
+    "description": "Ficha descriptiva de la batería de alto rendimiento de los audífonos Miccell. Destaca la capacidad de cargar los audífonos hasta 4 veces completas, brindando una duración equivalente a correr 5 maratones.",
     "specs": {
-      "Conectores": "USB-C a USB-C",
-      "Longitud": "1.2 Metros",
-      "Potencia": "100W (Carga laptops, tablets y móviles)",
-      "Material": "TPE reforzado de alta resistencia"
+      "Duración por Carga": "8 horas por auricular individual",
+      "Duración con Estuche": "Hasta 30 horas de reproducción total",
+      "Tecnología": "Administración de energía inteligente de litio",
+      "Material": "Carcasa ABS ecológica de tacto suave (soft-touch)"
     },
     "reviews": [
       {
-        "user": "Miguel B.",
+        "user": "Daniel A.",
         "rating": 5,
-        "date": "29 May 2026",
-        "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "18 May 2026",
+        "text": "Me encantó el diseño y la resistencia. Ajusta perfecto y se ve muy estético."
       },
       {
         "user": "Ana G.",
         "rating": 4,
-        "date": "18 May 2026",
-        "text": "Me encantó el diseño y la resistencia. Ajusta perfecto y se ve muy estético."
-      }
-    ]
-  },
-  {
-    "id": "ts-cat-160",
-    "title": "Cable D09 Tipo C a Lightning 30W (Rojo)",
-    "category": "tech",
-    "price": 450,
-    "icon": "<img src=\"TeloCorp/images/image61.png\" alt=\"Cable D09 Tipo C a Lightning 30W (Rojo)\">",
-    "images": [
-      "TeloCorp/images/image61.png"
-    ],
-    "description": "Cable premium ultra resistente de alta conductividad en color rojo. Ideal para carga ultra rápida y transferencia de datos de alta velocidad sin pérdida de señal.",
-    "specs": {
-      "Conectores": "USB-C a Lightning (iPhone)",
-      "Longitud": "1.2 Metros",
-      "Potencia": "30W Power Delivery",
-      "Material": "TPE reforzado de alta resistencia"
-    },
-    "reviews": [
-      {
-        "user": "María L.",
-        "rating": 5,
         "date": "29 May 2026",
-        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
-      },
-      {
-        "user": "David P.",
-        "rating": 4,
-        "date": "18 May 2026",
         "text": "Cumple su función perfectamente, el material se nota duradero y robusto."
       }
     ]
   },
   {
-    "id": "ts-cat-161",
-    "title": "Cover Silicona Diseño Stitch Rosa (Angel)",
-    "category": "cases",
-    "price": 550,
-    "icon": "<img src=\"TeloCorp/images/image62.png\" alt=\"Cover Silicona Diseño Stitch Rosa (Angel)\">",
+    "id": "ts-cat-160",
+    "title": "Auriculares Inalámbricos Miccell 320mAh TWS",
+    "category": "audio",
+    "price": 1350,
+    "icon": "<img src=\"TeloCorp/images/image61.png\" alt=\"Auriculares Inalámbricos Miccell 320mAh TWS\">",
     "images": [
-      "TeloCorp/images/image62.png"
+      "TeloCorp/images/image61.png"
     ],
-    "description": "Funda protectora de silicona líquida flexible con un encantador y divertido diseño de stitch rosa (angel) en relieve 3D. Aporta un toque alegre y único a tu móvil, con una gran protección anticaídas.",
+    "description": "Auriculares inalámbricos TWS de Miccell con estuche de carga de 320mAh y pantalla LED. Proporcionan hasta 20 horas de reproducción total de música, ideales para el día a día y viajes al trabajo.",
     "specs": {
-      "Material": "Silicona líquida blanda ultra suave",
-      "Diseño": "Personaje de Stitch Rosa (Angel) en relieve 3D",
-      "Protección": "Antigolpes certificado con tacto agradable",
-      "Bordes": "Cámara y pantalla sobreelevados para evitar rayones"
+      "Batería Auriculares": "35 mAh * 2 (hasta 5 horas por carga única)",
+      "Batería Estuche": "320 mAh (recarga los auriculares hasta 4 veces)",
+      "Tiempo de Recarga": "2 Horas para carga completa del estuche",
+      "Autonomía Total": "Hasta 20 horas de reproducción continua"
     },
     "reviews": [
       {
-        "user": "Miguel B.",
+        "user": "Lucía H.",
         "rating": 5,
-        "date": "18 May 2026",
-        "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "24 May 2026",
+        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
       },
       {
-        "user": "Sofía T.",
-        "rating": 5,
+        "user": "David P.",
+        "rating": 4,
         "date": "02 Jun 2026",
         "text": "Buen empaque y presentación. Se adapta perfectamente a lo descrito."
       }
     ]
   },
   {
-    "id": "ts-cat-162",
-    "title": "Cover Silicona Diseño Panda Dormilón",
-    "category": "cases",
-    "price": 550,
-    "icon": "<img src=\"TeloCorp/images/image63.png\" alt=\"Cover Silicona Diseño Panda Dormilón\">",
+    "id": "ts-cat-161",
+    "title": "Planta Eléctrica DuroMax XP12000HX Dual Fuel",
+    "category": "equipos",
+    "price": 65000,
+    "icon": "<img src=\"TeloCorp/images/image62.png\" alt=\"Planta Eléctrica DuroMax XP12000HX Dual Fuel\">",
     "images": [
-      "TeloCorp/images/image63.png"
+      "TeloCorp/images/image62.png"
     ],
-    "description": "Funda protectora de silicona líquida flexible con un encantador y divertido diseño de panda dormilón en relieve 3D. Aporta un toque alegre y único a tu móvil, con una gran protección anticaídas.",
+    "description": "Generador eléctrico de alta potencia DuroMax XP12000HX Dual Fuel (Gasolina o Propano). Ofrece hasta 12,000 vatios de potencia de arranque, ideal para respaldo total del hogar, fincas, talleres o construcción.",
     "specs": {
-      "Material": "Silicona líquida blanda ultra suave",
-      "Diseño": "Personaje de Panda Dormilón en relieve 3D",
-      "Protección": "Antigolpes certificado con tacto agradable",
-      "Bordes": "Cámara y pantalla sobreelevados para evitar rayones"
+      "Marca/Modelo": "DuroMax XP12000HX Dual Fuel Generator",
+      "Potencia de Arranque": "12,000 Vatios (12 kW)",
+      "Combustible": "Dual Fuel (Gasolina / Gas Propano GLP)",
+      "Características": "Arranque eléctrico y panel de control digital inteligente"
     },
     "reviews": [
       {
-        "user": "David P.",
+        "user": "Jorge V.",
         "rating": 5,
-        "date": "18 May 2026",
-        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
+        "date": "29 May 2026",
+        "text": "Me encantó el diseño y la resistencia. Ajusta perfecto y se ve muy estético."
       },
       {
-        "user": "Carlos M.",
-        "rating": 4,
-        "date": "24 May 2026",
+        "user": "Laura R.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Muy práctico y útil. La calidad es buena por el precio."
+      }
+    ]
+  },
+  {
+    "id": "ts-cat-162",
+    "title": "Caminadora Eléctrica Plegable Pro-Form CC300",
+    "category": "equipos",
+    "price": 18000,
+    "icon": "<img src=\"TeloCorp/images/image63.png\" alt=\"Caminadora Eléctrica Plegable Pro-Form CC300\">",
+    "images": [
+      "TeloCorp/images/image63.png"
+    ],
+    "description": "Caminadora y caminadora de correr eléctrica plegable Pro-Form CC300. Cuenta con motor silencioso, amortiguación ProShox para protección de articulaciones, inclinación ajustable y plegado vertical ahorrador de espacio.",
+    "specs": {
+      "Marca/Modelo": "Pro-Form CC300 Folding Treadmill",
+      "Velocidad": "0 a 10 mph ajustable digitalmente",
+      "Inclinación": "Ajuste manual de inclinación en 3 posiciones",
+      "Seguridad": "Llave de parada de emergencia magnética"
+    },
+    "reviews": [
+      {
+        "user": "Laura R.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
+      },
+      {
+        "user": "Jorge V.",
+        "rating": 5,
+        "date": "02 Jun 2026",
         "text": "Buen empaque y presentación. Se adapta perfectamente a lo descrito."
       }
     ]
@@ -2039,16 +2023,16 @@ const productsDatabase = [
     },
     "reviews": [
       {
-        "user": "Elena F.",
+        "user": "María L.",
         "rating": 5,
-        "date": "02 Jun 2026",
+        "date": "18 May 2026",
         "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
       },
       {
-        "user": "Miguel B.",
-        "rating": 5,
-        "date": "24 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "user": "Elena F.",
+        "rating": 4,
+        "date": "29 May 2026",
+        "text": "Buen empaque y presentación. Se adapta perfectamente a lo descrito."
       }
     ]
   },
@@ -2063,83 +2047,83 @@ const productsDatabase = [
     ],
     "description": "Cargador de pared completo T13 de 20W con cable incluido. Conector Tipo C Multi-puertos 20W. Cabezal con chip inteligente para proteger el móvil contra sobrecalentamiento.",
     "specs": {
-      "Potencia de Salida": "20W Máximo",
-      "Voltaje de Entrada": "100-240V 50/60Hz (Universal)",
-      "Cable Incluido": "1.0 Metro de alta velocidad",
-      "Protección": "Chip inteligente contra cortocircuito y sobrevoltaje"
+      "Potencia": "20W",
+      "Cable": "1.0m USB-C a Lightning",
+      "Puertos": "1x USB-C y 2x USB-A"
     },
     "reviews": [
       {
-        "user": "Sofía T.",
+        "user": "María L.",
         "rating": 5,
-        "date": "18 May 2026",
-        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
+        "date": "02 Jun 2026",
+        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
       },
       {
-        "user": "Pedro S.",
-        "rating": 5,
-        "date": "24 May 2026",
-        "text": "Muy buen producto, se siente resistente aunque demoró un día más en llegar."
+        "user": "Ana G.",
+        "rating": 4,
+        "date": "02 Jun 2026",
+        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
       }
     ]
   },
   {
     "id": "ts-cat-165",
-    "title": "Cable D09 Tipo C a Tipo C 100W (Rojo)",
-    "category": "tech",
-    "price": 450,
-    "icon": "<img src=\"TeloCorp/images/image66.png\" alt=\"Cable D09 Tipo C a Tipo C 100W (Rojo)\">",
+    "title": "Ficha Técnica: Auriculares de Clip Autónomos 40h",
+    "category": "audio",
+    "price": 1550,
+    "icon": "<img src=\"TeloCorp/images/image66.png\" alt=\"Ficha Técnica: Auriculares de Clip Autónomos 40h\">",
     "images": [
       "TeloCorp/images/image66.png"
     ],
-    "description": "Cable premium ultra resistente de alta conductividad en color rojo. Ideal para carga ultra rápida y transferencia de datos de alta velocidad sin pérdida de señal.",
+    "description": "Ficha informativa de los auriculares de clip Miccell. Detalla la tecnología de batería de larga duración con hasta 40 horas de reproducción continua bajo una sola carga del estuche de gran capacidad.",
     "specs": {
-      "Conectores": "USB-C a USB-C",
-      "Longitud": "1.2 Metros",
-      "Potencia": "100W (Carga laptops, tablets y móviles)",
-      "Material": "TPE reforzado de alta resistencia"
+      "Autonomía Total": "Hasta 40 horas de música ininterrumpida",
+      "Tipo de Ajuste": "Clip de oreja (Ear-clip) ergonómico y cómodo",
+      "Diseño": "Ajuste seguro e indoloro para uso prolongado",
+      "Conexión": "Bluetooth 5.3 con chip Miccell de bajo consumo"
     },
     "reviews": [
       {
-        "user": "Lucía H.",
+        "user": "Elena F.",
         "rating": 5,
-        "date": "24 May 2026",
-        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
+        "date": "05 Jun 2026",
+        "text": "Muy satisfecho con la compra, el material es excelente y llegó a tiempo."
       },
       {
-        "user": "David P.",
+        "user": "María L.",
         "rating": 4,
-        "date": "18 May 2026",
+        "date": "10 May 2026",
         "text": "Muy práctico y útil. La calidad es buena por el precio."
       }
     ]
   },
   {
     "id": "ts-cat-166",
-    "title": "Cable D09 Tipo C a Lightning 30W (Amarillo)",
-    "category": "tech",
-    "price": 450,
-    "icon": "<img src=\"TeloCorp/images/image67.png\" alt=\"Cable D09 Tipo C a Lightning 30W (Amarillo)\">",
+    "title": "Altavoz Boombox Potencia Digital Miccell SP56 300W",
+    "category": "audio",
+    "price": 4500,
+    "icon": "<img src=\"TeloCorp/images/image67.png\" alt=\"Altavoz Boombox Potencia Digital Miccell SP56 300W\">",
     "images": [
       "TeloCorp/images/image67.png"
     ],
-    "description": "Cable premium ultra resistente de alta conductividad en color amarillo. Ideal para carga ultra rápida y transferencia de datos de alta velocidad sin pérdida de señal.",
+    "description": "Altavoz tipo maletín boombox Miccell SP56 con amplificador digital TI de 300W. Equipado con un potente subwoofer de 2x119mm (100W), altavoces tenor de 2x78mm (30W) y tweeters de 2x66mm.",
     "specs": {
-      "Conectores": "USB-C a Lightning (iPhone)",
-      "Longitud": "1.2 Metros",
-      "Potencia": "30W Power Delivery",
-      "Material": "TPE reforzado de alta resistencia"
+      "Modelo": "SP56 Digital Boombox",
+      "Amplificador": "Chip amplificador digital TI de alta potencia",
+      "Configuración Altavoces": "Subwoofer dual + Tenor dual + Tweeter dual",
+      "Potencia Máxima": "300W de sonido de alta fidelidad para fiestas",
+      "Características": "Efectos de iluminación LED rítmicos en los conos"
     },
     "reviews": [
       {
-        "user": "Daniel A.",
+        "user": "Laura R.",
         "rating": 5,
-        "date": "10 May 2026",
-        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
+        "date": "05 Jun 2026",
+        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
       },
       {
-        "user": "David P.",
-        "rating": 5,
+        "user": "Lucía H.",
+        "rating": 4,
         "date": "14 May 2026",
         "text": "Muy buen producto, se siente resistente aunque demoró un día más en llegar."
       }
@@ -2156,54 +2140,53 @@ const productsDatabase = [
     ],
     "description": "Cargador de pared completo T13 de 20W con cable incluido. Conector Carga Ultra Rápida 20W. Cabezal con chip inteligente para proteger el móvil contra sobrecalentamiento.",
     "specs": {
-      "Potencia de Salida": "20W Máximo",
-      "Voltaje de Entrada": "100-240V 50/60Hz (Universal)",
-      "Cable Incluido": "1.0 Metro de alta velocidad",
-      "Protección": "Chip inteligente contra cortocircuito y sobrevoltaje"
+      "Potencia": "20W",
+      "Cable": "1.0m USB-C a Lightning",
+      "Protección": "Chip inteligente contra cortocircuito"
     },
     "reviews": [
       {
         "user": "María L.",
         "rating": 5,
-        "date": "10 May 2026",
-        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
+        "date": "24 May 2026",
+        "text": "Me encantó el diseño y la resistencia. Ajusta perfecto y se ve muy estético."
       },
       {
-        "user": "Lucía H.",
+        "user": "David P.",
         "rating": 4,
-        "date": "24 May 2026",
-        "text": "Muy práctico y útil. La calidad es buena por el precio."
+        "date": "18 May 2026",
+        "text": "Cumple su función perfectamente, el material se nota duradero y robusto."
       }
     ]
   },
   {
     "id": "ts-cat-168",
-    "title": "Cover Silicona Diseño Patito Kawaii",
-    "category": "cases",
-    "price": 550,
-    "icon": "<img src=\"TeloCorp/images/image69.png\" alt=\"Cover Silicona Diseño Patito Kawaii\">",
+    "title": "Kit Calentador de Inducción Flameless Solary Hot Rod",
+    "category": "equipos",
+    "price": 12500,
+    "icon": "<img src=\"TeloCorp/images/image69.png\" alt=\"Kit Calentador de Inducción Flameless Solary Hot Rod\">",
     "images": [
       "TeloCorp/images/image69.png"
     ],
-    "description": "Funda protectora de silicona líquida flexible con un encantador y divertido diseño de patito kawaii en relieve 3D. Aporta un toque alegre y único a tu móvil, con una gran protección anticaídas.",
+    "description": "Calentador de inducción magnética portátil sin llama (Solary Hot Rod Flameless Induction Heater Kit). Ideal para mecánicos y talleres, permite calentar tuercas, pernos y piezas de metal trabadas u oxidadas en segundos.",
     "specs": {
-      "Material": "Silicona líquida blanda ultra suave",
-      "Diseño": "Personaje de Patito Kawaii en relieve 3D",
-      "Protección": "Antigolpes certificado con tacto agradable",
-      "Bordes": "Cámara y pantalla sobreelevados para evitar rayones"
+      "Marca": "Solary Professional Tools",
+      "Tecnología": "Calentamiento electromagnético por inducción sin llama",
+      "Incluye": "Bobinas de inducción flexibles de varios diámetros y maletín",
+      "Uso": "Desmontaje de pernos, tuercas oxidadas y rodamientos trabados"
     },
     "reviews": [
       {
-        "user": "Laura R.",
+        "user": "Jorge V.",
         "rating": 5,
-        "date": "02 Jun 2026",
+        "date": "24 May 2026",
         "text": "Me encantó el diseño y la resistencia. Ajusta perfecto y se ve muy estético."
       },
       {
-        "user": "Lucía H.",
-        "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
+        "user": "Ana G.",
+        "rating": 4,
+        "date": "02 Jun 2026",
+        "text": "Buen empaque y presentación. Se adapta perfectamente a lo descrito."
       }
     ]
   },
@@ -2216,7 +2199,7 @@ const productsDatabase = [
     "images": [
       "TeloCorp/images/image70.png"
     ],
-    "description": "Funda transparente con tecnología magnética integrada (MagSafe). Material de policarbonato ópticamente transparente que evita el amarilleo y ofrece protección premium contra caídas.",
+    "description": "Funda transparente premium con tecnología magnética integrada (MagSafe). Material de policarbonato ópticamente transparente que evita el amarilleo y ofrece protección premium contra caídas.",
     "specs": {
       "Material": "Poliuretano termoplástico (TPU) y Policarbonato rígido",
       "Compatibilidad": "iPhone 7 Plus hasta 17 Pro Max",
@@ -2225,47 +2208,48 @@ const productsDatabase = [
     },
     "reviews": [
       {
-        "user": "Jorge V.",
+        "user": "María L.",
         "rating": 5,
         "date": "05 Jun 2026",
-        "text": "Me encantó el diseño y la resistencia. Ajusta perfecto y se ve muy estético."
+        "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
       },
       {
-        "user": "Sofía T.",
-        "rating": 4,
-        "date": "05 Jun 2026",
-        "text": "Muy práctico y útil. La calidad es buena por el precio."
+        "user": "Ana G.",
+        "rating": 5,
+        "date": "29 May 2026",
+        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
       }
     ]
   },
   {
     "id": "ts-cat-170",
-    "title": "Cable D09 Tipo C a Lightning 30W (Rojo)",
-    "category": "tech",
-    "price": 450,
-    "icon": "<img src=\"TeloCorp/images/image71.png\" alt=\"Cable D09 Tipo C a Lightning 30W (Rojo)\">",
+    "title": "Audífonos de Clip Inalámbricos Miccell BH106",
+    "category": "audio",
+    "price": 1600,
+    "icon": "<img src=\"TeloCorp/images/image71.png\" alt=\"Audífonos de Clip Inalámbricos Miccell BH106\">",
     "images": [
       "TeloCorp/images/image71.png"
     ],
-    "description": "Cable premium ultra resistente de alta conductividad en color rojo. Ideal para carga ultra rápida y transferencia de datos de alta velocidad sin pérdida de señal.",
+    "description": "Auriculares inalámbricos de clip Miccell BH106. Innovador diseño ergonómico de clip que no se inserta en el canal auditivo, ofreciendo comodidad absoluta sin dolor y permitiendo escuchar el entorno.",
     "specs": {
-      "Conectores": "USB-C a Lightning (iPhone)",
-      "Longitud": "1.2 Metros",
-      "Potencia": "30W Power Delivery",
-      "Material": "TPE reforzado de alta resistencia"
+      "Modelo": "VQ-BH106 (Ear Clip Wireless Earbuds)",
+      "Versión BT": "BT V5.3 con emparejamiento automático instantáneo",
+      "Batería Auricular": "40 mAh (hasta 5.5 horas de música continua)",
+      "Batería Estuche": "400 mAh (hasta 24 horas de uso total)",
+      "Diseño": "Gancho de silicona flexible y ganchos deportivos seguros"
     },
     "reviews": [
       {
-        "user": "Pedro S.",
+        "user": "María L.",
         "rating": 5,
         "date": "10 May 2026",
-        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
+        "text": "Me encantó el diseño y la resistencia. Ajusta perfecto y se ve muy estético."
       },
       {
-        "user": "Laura R.",
-        "rating": 4,
-        "date": "24 May 2026",
-        "text": "Me encantó el diseño y la resistencia. Ajusta perfecto y se ve muy estético."
+        "user": "Pedro S.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
       }
     ]
   }
