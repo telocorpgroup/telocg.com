@@ -70,2202 +70,2202 @@ const AppState = {
 const productsDatabase = [
   {
     "id": "ts-cat-100",
-    "title": "Cover Silicona Diseño Exclusivo N°1",
-    "category": "cases",
-    "price": 500,
-    "icon": "<img src=\"TeloCorp/images/image1.png\" alt=\"Cover Silicona Diseño Exclusivo N°1\">",
+    "title": "Cable D09 Tipo C a Lightning 30W (Rojo)",
+    "category": "tech",
+    "price": 450,
+    "icon": "<img src=\"TeloCorp/images/image1.png\" alt=\"Cable D09 Tipo C a Lightning 30W (Rojo)\">",
     "images": [
       "TeloCorp/images/image1.png"
     ],
-    "description": "Funda de silicona soft-touch con interior de microfibra para evitar rayones. Disponible en varios colores pastel.",
+    "description": "Cable premium ultra resistente de alta conductividad en color rojo. Ideal para carga ultra rápida y transferencia de datos de alta velocidad sin pérdida de señal.",
     "specs": {
-      "Material": "Silicona líquida flexible",
-      "Compatibilidad": "Modelos iPhone y Samsung",
-      "Interior": "Forro de microfibra suave",
-      "Diseño": "Ultra delgado"
+      "Conectores": "USB-C a Lightning (iPhone)",
+      "Longitud": "1.2 Metros",
+      "Potencia": "30W Power Delivery",
+      "Material": "TPE reforzado de alta resistencia"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Elena F.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "10 May 2026",
+        "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
       },
       {
-        "user": "Jorge V.",
+        "user": "Sofía T.",
         "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "date": "14 May 2026",
+        "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
       }
     ]
   },
   {
     "id": "ts-cat-101",
-    "title": "Cover Protector De Diseño Especial",
+    "title": "Cover Magnético Original Transparente MagSafe",
     "category": "cases",
     "price": 600,
-    "icon": "<img src=\"TeloCorp/images/image2.png\" alt=\"Cover Protector De Diseño Especial\">",
+    "icon": "<img src=\"TeloCorp/images/image2.png\" alt=\"Cover Magnético Original Transparente MagSafe\">",
     "images": [
       "TeloCorp/images/image2.png"
     ],
-    "description": "Forro protector de alta resistencia contra caídas y arañazos. Diseño ergonómico adaptado para un agarre cómodo y firme.",
+    "description": "Funda transparente con tecnología magnética integrada (MagSafe). Material de policarbonato ópticamente transparente que evita el amarilleo y ofrece protección premium contra caídas.",
     "specs": {
-      "Material": "Silicona / TPU de alta densidad",
-      "Protección": "Antigolpes certificado",
-      "Bordes": "Cámara y pantalla sobreelevados",
-      "Estilo": "Diseño exclusivo TeloSales"
+      "Material": "Poliuretano termoplástico (TPU) y Policarbonato rígido",
+      "Compatibilidad": "iPhone 7 Plus hasta 17 Pro Max",
+      "Características": "Magnetismo fuerte MagSafe, tecnología anti-amarilleo",
+      "Protección": "Certificación anticaídas de grado militar"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Elena F.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "02 Jun 2026",
+        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
       },
       {
         "user": "Jorge V.",
-        "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "rating": 5,
+        "date": "10 May 2026",
+        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
       }
     ]
   },
   {
     "id": "ts-cat-102",
-    "title": "Cover Silicona Diseño Stitch",
+    "title": "Cover Silicona Stitch Azul Premium",
     "category": "cases",
     "price": 550,
-    "icon": "<img src=\"TeloCorp/images/image3.png\" alt=\"Cover Silicona Diseño Stitch\">",
+    "icon": "<img src=\"TeloCorp/images/image3.png\" alt=\"Cover Silicona Stitch Azul Premium\">",
     "images": [
       "TeloCorp/images/image3.png"
     ],
-    "description": "Forro protector de alta resistencia contra caídas y arañazos. Diseño ergonómico adaptado para un agarre cómodo y firme.",
+    "description": "Funda de silicona líquida flexible con el simpático diseño en relieve 3D de Stitch. Tacto extra suave (soft-touch) y excelente agarre que evita caídas accidentales.",
     "specs": {
-      "Material": "Silicona / TPU de alta densidad",
-      "Protección": "Antigolpes certificado",
-      "Bordes": "Cámara y pantalla sobreelevados",
-      "Estilo": "Diseño exclusivo TeloSales"
+      "Material": "Silicona líquida blanda soft-touch",
+      "Diseño": "Relieve 3D Stitch coleccionable",
+      "Compatibilidad": "iPhone, Samsung y Tecno",
+      "Interior": "Forro de microfibra suave protector"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Laura R.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "29 May 2026",
+        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
       },
       {
-        "user": "Jorge V.",
+        "user": "María L.",
         "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "date": "02 Jun 2026",
+        "text": "Muy práctico y útil. La calidad es buena por el precio."
       }
     ]
   },
   {
     "id": "ts-cat-103",
-    "title": "Cover Silicona Diseño Exclusivo N°4",
+    "title": "Cover Silicona Diseño Astronauta 3D",
     "category": "cases",
-    "price": 500,
-    "icon": "<img src=\"TeloCorp/images/image4.png\" alt=\"Cover Silicona Diseño Exclusivo N°4\">",
+    "price": 550,
+    "icon": "<img src=\"TeloCorp/images/image4.png\" alt=\"Cover Silicona Diseño Astronauta 3D\">",
     "images": [
       "TeloCorp/images/image4.png"
     ],
-    "description": "Funda de silicona soft-touch con interior de microfibra para evitar rayones. Disponible en varios colores pastel.",
+    "description": "Funda protectora de silicona líquida flexible con un encantador y divertido diseño de astronauta 3d en relieve 3D. Aporta un toque alegre y único a tu móvil, con una gran protección anticaídas.",
     "specs": {
-      "Material": "Silicona líquida flexible",
-      "Compatibilidad": "Modelos iPhone y Samsung",
-      "Interior": "Forro de microfibra suave",
-      "Diseño": "Ultra delgado"
+      "Material": "Silicona líquida blanda ultra suave",
+      "Diseño": "Personaje de Astronauta 3D en relieve 3D",
+      "Protección": "Antigolpes certificado con tacto agradable",
+      "Bordes": "Cámara y pantalla sobreelevados para evitar rayones"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Ana G.",
         "rating": 5,
         "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "text": "Me encantó el diseño y la resistencia. Ajusta perfecto y se ve muy estético."
       },
       {
-        "user": "Jorge V.",
-        "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "user": "Elena F.",
+        "rating": 5,
+        "date": "05 Jun 2026",
+        "text": "Muy buen producto, se siente resistente aunque demoró un día más en llegar."
       }
     ]
   },
   {
     "id": "ts-cat-104",
-    "title": "Cover Silicona Diseño Exclusivo N°5",
-    "category": "cases",
-    "price": 500,
-    "icon": "<img src=\"TeloCorp/images/image5.png\" alt=\"Cover Silicona Diseño Exclusivo N°5\">",
+    "title": "Cable D09 Tipo C a Lightning 30W (Negro)",
+    "category": "tech",
+    "price": 450,
+    "icon": "<img src=\"TeloCorp/images/image5.png\" alt=\"Cable D09 Tipo C a Lightning 30W (Negro)\">",
     "images": [
       "TeloCorp/images/image5.png"
     ],
-    "description": "Funda de silicona soft-touch con interior de microfibra para evitar rayones. Disponible en varios colores pastel.",
+    "description": "Cable premium ultra resistente de alta conductividad en color negro. Ideal para carga ultra rápida y transferencia de datos de alta velocidad sin pérdida de señal.",
     "specs": {
-      "Material": "Silicona líquida flexible",
-      "Compatibilidad": "Modelos iPhone y Samsung",
-      "Interior": "Forro de microfibra suave",
-      "Diseño": "Ultra delgado"
+      "Conectores": "USB-C a Lightning (iPhone)",
+      "Longitud": "1.2 Metros",
+      "Potencia": "30W Power Delivery",
+      "Material": "TPE reforzado de alta resistencia"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "David P.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "24 May 2026",
+        "text": "Muy satisfecho con la compra, el material es excelente y llegó a tiempo."
       },
       {
-        "user": "Jorge V.",
+        "user": "Sofía T.",
         "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "date": "14 May 2026",
+        "text": "Cumple su función perfectamente, el material se nota duradero y robusto."
       }
     ]
   },
   {
     "id": "ts-cat-105",
-    "title": "Cover Silicona Diseño Exclusivo N°6",
-    "category": "cases",
-    "price": 500,
-    "icon": "<img src=\"TeloCorp/images/image6.png\" alt=\"Cover Silicona Diseño Exclusivo N°6\">",
+    "title": "Cable D09 Tipo C a Tipo C 100W (Rojo)",
+    "category": "tech",
+    "price": 450,
+    "icon": "<img src=\"TeloCorp/images/image6.png\" alt=\"Cable D09 Tipo C a Tipo C 100W (Rojo)\">",
     "images": [
       "TeloCorp/images/image6.png"
     ],
-    "description": "Funda de silicona soft-touch con interior de microfibra para evitar rayones. Disponible en varios colores pastel.",
+    "description": "Cable premium ultra resistente de alta conductividad en color rojo. Ideal para carga ultra rápida y transferencia de datos de alta velocidad sin pérdida de señal.",
     "specs": {
-      "Material": "Silicona líquida flexible",
-      "Compatibilidad": "Modelos iPhone y Samsung",
-      "Interior": "Forro de microfibra suave",
-      "Diseño": "Ultra delgado"
+      "Conectores": "USB-C a USB-C",
+      "Longitud": "1.2 Metros",
+      "Potencia": "100W (Carga laptops, tablets y móviles)",
+      "Material": "TPE reforzado de alta resistencia"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Jorge V.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "10 May 2026",
+        "text": "Me encantó el diseño y la resistencia. Ajusta perfecto y se ve muy estético."
       },
       {
-        "user": "Jorge V.",
-        "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "user": "Carlos M.",
+        "rating": 5,
+        "date": "05 Jun 2026",
+        "text": "Cumple su función perfectamente, el material se nota duradero y robusto."
       }
     ]
   },
   {
     "id": "ts-cat-106",
-    "title": "Cover Silicona Diseño Exclusivo N°7",
-    "category": "cases",
-    "price": 500,
-    "icon": "<img src=\"TeloCorp/images/image7.png\" alt=\"Cover Silicona Diseño Exclusivo N°7\">",
+    "title": "Cargador Rápido T13 Completo (Tipo C a Lightning 20W)",
+    "category": "tech",
+    "price": 850,
+    "icon": "<img src=\"TeloCorp/images/image7.png\" alt=\"Cargador Rápido T13 Completo (Tipo C a Lightning 20W)\">",
     "images": [
       "TeloCorp/images/image7.png"
     ],
-    "description": "Funda de silicona soft-touch con interior de microfibra para evitar rayones. Disponible en varios colores pastel.",
+    "description": "Cargador de pared completo T13 de 20W con cable incluido. Conector Tipo C a Lightning 20W. Cabezal con chip inteligente para proteger el móvil contra sobrecalentamiento.",
     "specs": {
-      "Material": "Silicona líquida flexible",
-      "Compatibilidad": "Modelos iPhone y Samsung",
-      "Interior": "Forro de microfibra suave",
-      "Diseño": "Ultra delgado"
+      "Potencia de Salida": "20W Máximo",
+      "Voltaje de Entrada": "100-240V 50/60Hz (Universal)",
+      "Cable Incluido": "1.0 Metro de alta velocidad",
+      "Protección": "Chip inteligente contra cortocircuito y sobrevoltaje"
     },
     "reviews": [
       {
         "user": "María L.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "02 Jun 2026",
+        "text": "Me encantó el diseño y la resistencia. Ajusta perfecto y se ve muy estético."
       },
       {
-        "user": "Jorge V.",
+        "user": "Miguel B.",
         "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "date": "24 May 2026",
+        "text": "Muy satisfecho con la compra, el material es excelente y llegó a tiempo."
       }
     ]
   },
   {
     "id": "ts-cat-107",
-    "title": "Cover Silicona Diseño Exclusivo N°8",
+    "title": "Cover Silicona Diseño Oso Teddy Soft",
     "category": "cases",
-    "price": 500,
-    "icon": "<img src=\"TeloCorp/images/image8.png\" alt=\"Cover Silicona Diseño Exclusivo N°8\">",
+    "price": 550,
+    "icon": "<img src=\"TeloCorp/images/image8.png\" alt=\"Cover Silicona Diseño Oso Teddy Soft\">",
     "images": [
       "TeloCorp/images/image8.png"
     ],
-    "description": "Funda de silicona soft-touch con interior de microfibra para evitar rayones. Disponible en varios colores pastel.",
+    "description": "Funda protectora de silicona líquida flexible con un encantador y divertido diseño de oso teddy soft en relieve 3D. Aporta un toque alegre y único a tu móvil, con una gran protección anticaídas.",
     "specs": {
-      "Material": "Silicona líquida flexible",
-      "Compatibilidad": "Modelos iPhone y Samsung",
-      "Interior": "Forro de microfibra suave",
-      "Diseño": "Ultra delgado"
+      "Material": "Silicona líquida blanda ultra suave",
+      "Diseño": "Personaje de Oso Teddy Soft en relieve 3D",
+      "Protección": "Antigolpes certificado con tacto agradable",
+      "Bordes": "Cámara y pantalla sobreelevados para evitar rayones"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Elena F.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "29 May 2026",
+        "text": "Muy satisfecho con la compra, el material es excelente y llegó a tiempo."
       },
       {
-        "user": "Jorge V.",
+        "user": "Miguel B.",
         "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "date": "02 Jun 2026",
+        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
       }
     ]
   },
   {
     "id": "ts-cat-108",
-    "title": "Cover Silicona Diseño Exclusivo N°9",
-    "category": "cases",
-    "price": 500,
-    "icon": "<img src=\"TeloCorp/images/image9.png\" alt=\"Cover Silicona Diseño Exclusivo N°9\">",
+    "title": "Batería Portátil TeloCorp Slim 10,000 mAh",
+    "category": "tech",
+    "price": 1450,
+    "icon": "<img src=\"TeloCorp/images/image9.png\" alt=\"Batería Portátil TeloCorp Slim 10,000 mAh\">",
     "images": [
       "TeloCorp/images/image9.png"
     ],
-    "description": "Funda de silicona soft-touch con interior de microfibra para evitar rayones. Disponible en varios colores pastel.",
+    "description": "Batería externa ultra delgada premium de 10,000 mAh para recarga rápida. Su tamaño compacto permite llevarla en el bolsillo. Cuenta con display LED de porcentaje.",
     "specs": {
-      "Material": "Silicona líquida flexible",
-      "Compatibilidad": "Modelos iPhone y Samsung",
-      "Interior": "Forro de microfibra suave",
-      "Diseño": "Ultra delgado"
+      "Capacidad": "10,000 mAh",
+      "Puertos de Salida": "2x USB-A (5V/2.4A)",
+      "Puertos de Entrada": "1x USB-C y 1x Micro-USB",
+      "Indicador": "Pantalla digital inteligente LED"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Sofía T.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "10 May 2026",
+        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
       },
       {
         "user": "Jorge V.",
-        "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "rating": 5,
+        "date": "18 May 2026",
+        "text": "Cumple su función perfectamente, el material se nota duradero y robusto."
       }
     ]
   },
   {
     "id": "ts-cat-109",
-    "title": "Cover Silicona Diseño Exclusivo N°10",
-    "category": "cases",
-    "price": 500,
-    "icon": "<img src=\"TeloCorp/images/image10.png\" alt=\"Cover Silicona Diseño Exclusivo N°10\">",
+    "title": "Cable D09 Tipo C a Tipo C 100W (Negro)",
+    "category": "tech",
+    "price": 450,
+    "icon": "<img src=\"TeloCorp/images/image10.png\" alt=\"Cable D09 Tipo C a Tipo C 100W (Negro)\">",
     "images": [
       "TeloCorp/images/image10.png"
     ],
-    "description": "Funda de silicona soft-touch con interior de microfibra para evitar rayones. Disponible en varios colores pastel.",
+    "description": "Cable premium ultra resistente de alta conductividad en color negro. Ideal para carga ultra rápida y transferencia de datos de alta velocidad sin pérdida de señal.",
     "specs": {
-      "Material": "Silicona líquida flexible",
-      "Compatibilidad": "Modelos iPhone y Samsung",
-      "Interior": "Forro de microfibra suave",
-      "Diseño": "Ultra delgado"
+      "Conectores": "USB-C a USB-C",
+      "Longitud": "1.2 Metros",
+      "Potencia": "100W (Carga laptops, tablets y móviles)",
+      "Material": "TPE reforzado de alta resistencia"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Carlos M.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "18 May 2026",
+        "text": "Muy satisfecho con la compra, el material es excelente y llegó a tiempo."
       },
       {
-        "user": "Jorge V.",
-        "rating": 4,
-        "date": "08 May 2026",
+        "user": "Sofía T.",
+        "rating": 5,
+        "date": "02 Jun 2026",
         "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
       }
     ]
   },
   {
     "id": "ts-cat-110",
-    "title": "Cover Silicona Diseño Exclusivo N°11",
+    "title": "Cover Magnético en Cristal MagSafe (Transparente)",
     "category": "cases",
-    "price": 500,
-    "icon": "<img src=\"TeloCorp/images/image11.png\" alt=\"Cover Silicona Diseño Exclusivo N°11\">",
+    "price": 800,
+    "icon": "<img src=\"TeloCorp/images/image11.png\" alt=\"Cover Magnético en Cristal MagSafe (Transparente)\">",
     "images": [
       "TeloCorp/images/image11.png"
     ],
-    "description": "Funda de silicona soft-touch con interior de microfibra para evitar rayones. Disponible en varios colores pastel.",
+    "description": "Funda de cristal templado trasero de alta transparencia combinada con bordes de metal en color transparente y soporte magnético MagSafe. Ofrece una estética limpia e idéntica a tu teléfono desnudo.",
     "specs": {
-      "Material": "Silicona líquida flexible",
-      "Compatibilidad": "Modelos iPhone y Samsung",
-      "Interior": "Forro de microfibra suave",
-      "Diseño": "Ultra delgado"
+      "Material": "Vidrio templado 9H trasero y marco de TPU/Aluminio",
+      "Compatibilidad": "iPhone 11 hasta 17 Pro Max",
+      "MagSafe": "Imanes N52 de alta potencia incorporados",
+      "Resistencia": "Antirayaduras y absorción de impactos en esquinas"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Miguel B.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "02 Jun 2026",
+        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
       },
       {
-        "user": "Jorge V.",
+        "user": "Lucía H.",
         "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "date": "14 May 2026",
+        "text": "Cumple su función perfectamente, el material se nota duradero y robusto."
       }
     ]
   },
   {
     "id": "ts-cat-111",
-    "title": "Cover Silicona Diseño Exclusivo N°12",
+    "title": "Cover Magnético en Cristal MagSafe (Borde Grafito)",
     "category": "cases",
-    "price": 500,
-    "icon": "<img src=\"TeloCorp/images/image12.png\" alt=\"Cover Silicona Diseño Exclusivo N°12\">",
+    "price": 800,
+    "icon": "<img src=\"TeloCorp/images/image12.png\" alt=\"Cover Magnético en Cristal MagSafe (Borde Grafito)\">",
     "images": [
       "TeloCorp/images/image12.png"
     ],
-    "description": "Funda de silicona soft-touch con interior de microfibra para evitar rayones. Disponible en varios colores pastel.",
+    "description": "Funda de cristal templado trasero de alta transparencia combinada con bordes de metal en color borde grafito y soporte magnético MagSafe. Ofrece una estética limpia e idéntica a tu teléfono desnudo.",
     "specs": {
-      "Material": "Silicona líquida flexible",
-      "Compatibilidad": "Modelos iPhone y Samsung",
-      "Interior": "Forro de microfibra suave",
-      "Diseño": "Ultra delgado"
+      "Material": "Vidrio templado 9H trasero y marco de TPU/Aluminio",
+      "Compatibilidad": "iPhone 11 hasta 17 Pro Max",
+      "MagSafe": "Imanes N52 de alta potencia incorporados",
+      "Resistencia": "Antirayaduras y absorción de impactos en esquinas"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Elena F.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "02 Jun 2026",
+        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
       },
       {
-        "user": "Jorge V.",
-        "rating": 4,
-        "date": "08 May 2026",
+        "user": "Laura R.",
+        "rating": 5,
+        "date": "05 Jun 2026",
         "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
       }
     ]
   },
   {
     "id": "ts-cat-112",
-    "title": "Cover Silicona Diseño Exclusivo N°13",
-    "category": "cases",
-    "price": 500,
-    "icon": "<img src=\"TeloCorp/images/image13.png\" alt=\"Cover Silicona Diseño Exclusivo N°13\">",
+    "title": "Cable D09 Tipo C a Lightning 30W (Naranja)",
+    "category": "tech",
+    "price": 450,
+    "icon": "<img src=\"TeloCorp/images/image13.png\" alt=\"Cable D09 Tipo C a Lightning 30W (Naranja)\">",
     "images": [
       "TeloCorp/images/image13.png"
     ],
-    "description": "Funda de silicona soft-touch con interior de microfibra para evitar rayones. Disponible en varios colores pastel.",
+    "description": "Cable premium ultra resistente de alta conductividad en color naranja. Ideal para carga ultra rápida y transferencia de datos de alta velocidad sin pérdida de señal.",
     "specs": {
-      "Material": "Silicona líquida flexible",
-      "Compatibilidad": "Modelos iPhone y Samsung",
-      "Interior": "Forro de microfibra suave",
-      "Diseño": "Ultra delgado"
+      "Conectores": "USB-C a Lightning (iPhone)",
+      "Longitud": "1.2 Metros",
+      "Potencia": "30W Power Delivery",
+      "Material": "TPE reforzado de alta resistencia"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Laura R.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "05 Jun 2026",
+        "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
       },
       {
-        "user": "Jorge V.",
-        "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "user": "Ana G.",
+        "rating": 5,
+        "date": "18 May 2026",
+        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
       }
     ]
   },
   {
     "id": "ts-cat-113",
-    "title": "Cable D06 Ip Tipo C V8 Tipo C A Tipo C 60W Tipo C A iPhone 30W",
+    "title": "Cable D06 de Carga Rápida (Lightning (iPhone) Blanco)",
     "category": "tech",
-    "price": 450,
-    "icon": "<img src=\"TeloCorp/images/image14.png\" alt=\"Cable D06 Ip Tipo C V8 Tipo C A Tipo C 60W Tipo C A iPhone 30W\">",
+    "price": 350,
+    "icon": "<img src=\"TeloCorp/images/image14.png\" alt=\"Cable D06 de Carga Rápida (Lightning (iPhone) Blanco)\">",
     "images": [
       "TeloCorp/images/image14.png"
     ],
-    "description": "Cable premium ultra resistente de alta conductividad. Ideal para carga rápida y transferencia de datos sin pérdida de señal.",
+    "description": "Cable económico y duradero modelo D06. Variante Lightning (iPhone) Blanco. Excelente relación calidad-precio, ideal para llevar en la mochila o tener de repuesto.",
     "specs": {
-      "Conexión": "USB o USB-C según modelo",
-      "Longitud": "1 Metro o 2 Metros",
-      "Corriente": "3A / 60W / 100W",
-      "Material": "Nylon trenzado reforzado"
+      "Conectores": "Modelos Lightning / Tipo C / V8",
+      "Longitud": "1.0 Metro",
+      "Material": "PVC reforzado ultra flexible",
+      "Garantía": "Durabilidad probada contra flexión"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "David P.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "18 May 2026",
+        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
       },
       {
-        "user": "Jorge V.",
-        "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "user": "Elena F.",
+        "rating": 5,
+        "date": "24 May 2026",
+        "text": "Buen empaque y presentación. Se adapta perfectamente a lo descrito."
       }
     ]
   },
   {
     "id": "ts-cat-114",
-    "title": "Cover 360 Colorido Blindado",
+    "title": "Cover 360 Colorido SHS Blindado (Rojo Fuego)",
     "category": "cases",
     "price": 700,
-    "icon": "<img src=\"TeloCorp/images/image15.png\" alt=\"Cover 360 Colorido Blindado\">",
+    "icon": "<img src=\"TeloCorp/images/image15.png\" alt=\"Cover 360 Colorido SHS Blindado (Rojo Fuego)\">",
     "images": [
       "TeloCorp/images/image15.png"
     ],
-    "description": "Forro protector de alta resistencia contra caídas y arañazos. Diseño ergonómico adaptado para un agarre cómodo y firme.",
+    "description": "Forro de protección total de 360 grados con colores vibrantes y diseño blindado. Ofrece la máxima protección anticaídas para la parte trasera y los laterales del dispositivo.",
     "specs": {
-      "Material": "Silicona / TPU de alta densidad",
-      "Protección": "Antigolpes certificado",
-      "Bordes": "Cámara y pantalla sobreelevados",
-      "Estilo": "Diseño exclusivo TeloSales"
+      "Material": "TPU flexible y policarbonato híbrido",
+      "Protección": "Doble capa anticaídas 360° blindada",
+      "Compatibilidad": "iPhone, Samsung, Tecno, Redmi, Honor, ZTE, Motorola",
+      "Diseño": "Acabado mate texturizado antideslizante"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Carlos M.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "18 May 2026",
+        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
       },
       {
-        "user": "Jorge V.",
-        "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "user": "Sofía T.",
+        "rating": 5,
+        "date": "02 Jun 2026",
+        "text": "Muy práctico y útil. La calidad es buena por el precio."
       }
     ]
   },
   {
     "id": "ts-cat-115",
-    "title": "Cover Silicona Diseño Exclusivo N°16",
-    "category": "cases",
-    "price": 500,
-    "icon": "<img src=\"TeloCorp/images/image16.png\" alt=\"Cover Silicona Diseño Exclusivo N°16\">",
+    "title": "Cable D09 Tipo C a Tipo C 100W (Rojo)",
+    "category": "tech",
+    "price": 450,
+    "icon": "<img src=\"TeloCorp/images/image16.png\" alt=\"Cable D09 Tipo C a Tipo C 100W (Rojo)\">",
     "images": [
       "TeloCorp/images/image16.png"
     ],
-    "description": "Funda de silicona soft-touch con interior de microfibra para evitar rayones. Disponible en varios colores pastel.",
+    "description": "Cable premium ultra resistente de alta conductividad en color rojo. Ideal para carga ultra rápida y transferencia de datos de alta velocidad sin pérdida de señal.",
     "specs": {
-      "Material": "Silicona líquida flexible",
-      "Compatibilidad": "Modelos iPhone y Samsung",
-      "Interior": "Forro de microfibra suave",
-      "Diseño": "Ultra delgado"
+      "Conectores": "USB-C a USB-C",
+      "Longitud": "1.2 Metros",
+      "Potencia": "100W (Carga laptops, tablets y móviles)",
+      "Material": "TPE reforzado de alta resistencia"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Ana G.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "18 May 2026",
+        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
       },
       {
-        "user": "Jorge V.",
-        "rating": 4,
-        "date": "08 May 2026",
+        "user": "Carlos M.",
+        "rating": 5,
+        "date": "10 May 2026",
         "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
       }
     ]
   },
   {
     "id": "ts-cat-116",
-    "title": "Cover De Chupón Succión Especial",
+    "title": "Cover de Chupón Succión Especial",
     "category": "cases",
     "price": 450,
-    "icon": "<img src=\"TeloCorp/images/image17.png\" alt=\"Cover De Chupón Succión Especial\">",
+    "icon": "<img src=\"TeloCorp/images/image17.png\" alt=\"Cover de Chupón Succión Especial\">",
     "images": [
       "TeloCorp/images/image17.png"
     ],
-    "description": "Forro protector de alta resistencia contra caídas y arañazos. Diseño ergonómico adaptado para un agarre cómodo y firme.",
+    "description": "Funda protectora con ventosas (chupón) de succión especial para adherir tu teléfono a superficies planas como espejos, azulejos o vidrios. Ideal para creadores de contenido y videollamadas.",
     "specs": {
-      "Material": "Silicona / TPU de alta densidad",
-      "Protección": "Antigolpes certificado",
-      "Bordes": "Cámara y pantalla sobreelevados",
-      "Estilo": "Diseño exclusivo TeloSales"
+      "Material": "Silicona flexible y ventosas de alta succión",
+      "Compatibilidad": "iPhone 7 Plus hasta 17 Pro Max",
+      "Color": "Negro mate anti-adherente de polvo",
+      "Protección": "Bordes reforzados para cámara y pantalla"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Carlos M.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "02 Jun 2026",
+        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
       },
       {
-        "user": "Jorge V.",
-        "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "user": "David P.",
+        "rating": 5,
+        "date": "29 May 2026",
+        "text": "Me encantó el diseño y la resistencia. Ajusta perfecto y se ve muy estético."
       }
     ]
   },
   {
     "id": "ts-cat-117",
-    "title": "Cover Silicona Diseño Exclusivo N°18",
-    "category": "cases",
-    "price": 500,
-    "icon": "<img src=\"TeloCorp/images/image18.png\" alt=\"Cover Silicona Diseño Exclusivo N°18\">",
+    "title": "Cargador Rápido T13 Completo (Tipo C a Lightning 20W)",
+    "category": "tech",
+    "price": 850,
+    "icon": "<img src=\"TeloCorp/images/image18.png\" alt=\"Cargador Rápido T13 Completo (Tipo C a Lightning 20W)\">",
     "images": [
       "TeloCorp/images/image18.png"
     ],
-    "description": "Funda de silicona soft-touch con interior de microfibra para evitar rayones. Disponible en varios colores pastel.",
+    "description": "Cargador de pared completo T13 de 20W con cable incluido. Conector Tipo C a Lightning 20W. Cabezal con chip inteligente para proteger el móvil contra sobrecalentamiento.",
     "specs": {
-      "Material": "Silicona líquida flexible",
-      "Compatibilidad": "Modelos iPhone y Samsung",
-      "Interior": "Forro de microfibra suave",
-      "Diseño": "Ultra delgado"
+      "Potencia de Salida": "20W Máximo",
+      "Voltaje de Entrada": "100-240V 50/60Hz (Universal)",
+      "Cable Incluido": "1.0 Metro de alta velocidad",
+      "Protección": "Chip inteligente contra cortocircuito y sobrevoltaje"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Miguel B.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "24 May 2026",
+        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
       },
       {
-        "user": "Jorge V.",
+        "user": "Sofía T.",
         "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "date": "02 Jun 2026",
+        "text": "Muy práctico y útil. La calidad es buena por el precio."
       }
     ]
   },
   {
     "id": "ts-cat-118",
-    "title": "Cover Silicona Diseño Exclusivo N°19",
-    "category": "cases",
-    "price": 500,
-    "icon": "<img src=\"TeloCorp/images/image19.png\" alt=\"Cover Silicona Diseño Exclusivo N°19\">",
+    "title": "Cable D09 Tipo C a Lightning 30W (Blanco Puro)",
+    "category": "tech",
+    "price": 450,
+    "icon": "<img src=\"TeloCorp/images/image19.png\" alt=\"Cable D09 Tipo C a Lightning 30W (Blanco Puro)\">",
     "images": [
       "TeloCorp/images/image19.png"
     ],
-    "description": "Funda de silicona soft-touch con interior de microfibra para evitar rayones. Disponible en varios colores pastel.",
+    "description": "Cable premium ultra resistente de alta conductividad en color blanco puro. Ideal para carga ultra rápida y transferencia de datos de alta velocidad sin pérdida de señal.",
     "specs": {
-      "Material": "Silicona líquida flexible",
-      "Compatibilidad": "Modelos iPhone y Samsung",
-      "Interior": "Forro de microfibra suave",
-      "Diseño": "Ultra delgado"
+      "Conectores": "USB-C a Lightning (iPhone)",
+      "Longitud": "1.2 Metros",
+      "Potencia": "30W Power Delivery",
+      "Material": "TPE reforzado de alta resistencia"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Sofía T.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "05 Jun 2026",
+        "text": "Muy satisfecho con la compra, el material es excelente y llegó a tiempo."
       },
       {
         "user": "Jorge V.",
-        "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "rating": 5,
+        "date": "24 May 2026",
+        "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
       }
     ]
   },
   {
     "id": "ts-cat-119",
-    "title": "Cover Premium Edición Limitada N°20",
-    "category": "cases",
-    "price": 650,
-    "icon": "<img src=\"TeloCorp/images/image20.png\" alt=\"Cover Premium Edición Limitada N°20\">",
+    "title": "Cable D09 Tipo C a Tipo C 100W (Negro)",
+    "category": "tech",
+    "price": 450,
+    "icon": "<img src=\"TeloCorp/images/image20.png\" alt=\"Cable D09 Tipo C a Tipo C 100W (Negro)\">",
     "images": [
       "TeloCorp/images/image20.png"
     ],
-    "description": "Estuche de alto rendimiento con esquinas reforzadas para absorción de impactos. Estilo moderno translúcido.",
+    "description": "Cable premium ultra resistente de alta conductividad en color negro. Ideal para carga ultra rápida y transferencia de datos de alta velocidad sin pérdida de señal.",
     "specs": {
-      "Material": "TPU flexible y acrílico rígido",
-      "Esquinas": "Air-bag integrados contra caídas",
-      "Botones": "Sensación táctil clicky",
-      "Perfil": "Slim protector"
+      "Conectores": "USB-C a USB-C",
+      "Longitud": "1.2 Metros",
+      "Potencia": "100W (Carga laptops, tablets y móviles)",
+      "Material": "TPE reforzado de alta resistencia"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "David P.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "02 Jun 2026",
+        "text": "Muy satisfecho con la compra, el material es excelente y llegó a tiempo."
       },
       {
-        "user": "Jorge V.",
+        "user": "Lucía H.",
         "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "date": "29 May 2026",
+        "text": "Cumple su función perfectamente, el material se nota duradero y robusto."
       }
     ]
   },
   {
     "id": "ts-cat-120",
-    "title": "Cable D02 Tipo C A Tipo C 2M Cable D02 Tipo C A Ip &Nbsp;30W 2M",
+    "title": "Cable D02 Tipo C a Tipo C / Lightning 2M Extra Largo",
     "category": "tech",
-    "price": 450,
-    "icon": "<img src=\"TeloCorp/images/image21.png\" alt=\"Cable D02 Tipo C A Tipo C 2M Cable D02 Tipo C A Ip &Nbsp;30W 2M\">",
+    "price": 500,
+    "icon": "<img src=\"TeloCorp/images/image21.png\" alt=\"Cable D02 Tipo C a Tipo C / Lightning 2M Extra Largo\">",
     "images": [
       "TeloCorp/images/image21.png"
     ],
-    "description": "Cable premium ultra resistente de alta conductividad. Ideal para carga rápida y transferencia de datos sin pérdida de señal.",
+    "description": "Cable de carga extra largo de 2 metros modelo D02. Ideal para carga de laptops, iPads y móviles a distancia sin comprometer la velocidad.",
     "specs": {
-      "Conexión": "USB o USB-C según modelo",
-      "Longitud": "1 Metro o 2 Metros",
-      "Corriente": "3A / 60W / 100W",
-      "Material": "Nylon trenzado reforzado"
+      "Conectores": "USB-C a USB-C / Lightning (30W)",
+      "Longitud": "2.0 Metros (Largo especial)",
+      "Carga Rápida": "Power Delivery (PD)",
+      "Material": "TPE flexible de alta durabilidad"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Elena F.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "29 May 2026",
+        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
       },
       {
-        "user": "Jorge V.",
+        "user": "Laura R.",
         "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "date": "18 May 2026",
+        "text": "Muy práctico y útil. La calidad es buena por el precio."
       }
     ]
   },
   {
     "id": "ts-cat-121",
-    "title": "Cover Premium Edición Limitada N°22",
-    "category": "cases",
-    "price": 650,
-    "icon": "<img src=\"TeloCorp/images/image22.png\" alt=\"Cover Premium Edición Limitada N°22\">",
+    "title": "Cable D09 Tipo C a Tipo C 100W (Amarillo)",
+    "category": "tech",
+    "price": 450,
+    "icon": "<img src=\"TeloCorp/images/image22.png\" alt=\"Cable D09 Tipo C a Tipo C 100W (Amarillo)\">",
     "images": [
       "TeloCorp/images/image22.png"
     ],
-    "description": "Estuche de alto rendimiento con esquinas reforzadas para absorción de impactos. Estilo moderno translúcido.",
+    "description": "Cable premium ultra resistente de alta conductividad en color amarillo. Ideal para carga ultra rápida y transferencia de datos de alta velocidad sin pérdida de señal.",
     "specs": {
-      "Material": "TPU flexible y acrílico rígido",
-      "Esquinas": "Air-bag integrados contra caídas",
-      "Botones": "Sensación táctil clicky",
-      "Perfil": "Slim protector"
+      "Conectores": "USB-C a USB-C",
+      "Longitud": "1.2 Metros",
+      "Potencia": "100W (Carga laptops, tablets y móviles)",
+      "Material": "TPE reforzado de alta resistencia"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Lucía H.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "10 May 2026",
+        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
       },
       {
-        "user": "Jorge V.",
-        "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "user": "Daniel A.",
+        "rating": 5,
+        "date": "10 May 2026",
+        "text": "Muy satisfecho con la compra, el material es excelente y llegó a tiempo."
       }
     ]
   },
   {
     "id": "ts-cat-122",
-    "title": "Cover Premium Edición Limitada N°23",
+    "title": "Cover Magnético en Cristal MagSafe (Borde Negro)",
     "category": "cases",
-    "price": 650,
-    "icon": "<img src=\"TeloCorp/images/image23.png\" alt=\"Cover Premium Edición Limitada N°23\">",
+    "price": 800,
+    "icon": "<img src=\"TeloCorp/images/image23.png\" alt=\"Cover Magnético en Cristal MagSafe (Borde Negro)\">",
     "images": [
       "TeloCorp/images/image23.png"
     ],
-    "description": "Estuche de alto rendimiento con esquinas reforzadas para absorción de impactos. Estilo moderno translúcido.",
+    "description": "Funda de cristal templado trasero de alta transparencia combinada con bordes de metal en color borde negro y soporte magnético MagSafe. Ofrece una estética limpia e idéntica a tu teléfono desnudo.",
     "specs": {
-      "Material": "TPU flexible y acrílico rígido",
-      "Esquinas": "Air-bag integrados contra caídas",
-      "Botones": "Sensación táctil clicky",
-      "Perfil": "Slim protector"
+      "Material": "Vidrio templado 9H trasero y marco de TPU/Aluminio",
+      "Compatibilidad": "iPhone 11 hasta 17 Pro Max",
+      "MagSafe": "Imanes N52 de alta potencia incorporados",
+      "Resistencia": "Antirayaduras y absorción de impactos en esquinas"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Sofía T.",
         "rating": 5,
         "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
       },
       {
-        "user": "Jorge V.",
+        "user": "Laura R.",
         "rating": 4,
-        "date": "08 May 2026",
+        "date": "10 May 2026",
         "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
       }
     ]
   },
   {
     "id": "ts-cat-123",
-    "title": "Cover Premium Edición Limitada N°24",
-    "category": "cases",
-    "price": 650,
-    "icon": "<img src=\"TeloCorp/images/image24.png\" alt=\"Cover Premium Edición Limitada N°24\">",
+    "title": "Cable D06 de Carga Rápida (Tipo C Blanco)",
+    "category": "tech",
+    "price": 350,
+    "icon": "<img src=\"TeloCorp/images/image24.png\" alt=\"Cable D06 de Carga Rápida (Tipo C Blanco)\">",
     "images": [
       "TeloCorp/images/image24.png"
     ],
-    "description": "Estuche de alto rendimiento con esquinas reforzadas para absorción de impactos. Estilo moderno translúcido.",
+    "description": "Cable económico y duradero modelo D06. Variante Tipo C Blanco. Excelente relación calidad-precio, ideal para llevar en la mochila o tener de repuesto.",
     "specs": {
-      "Material": "TPU flexible y acrílico rígido",
-      "Esquinas": "Air-bag integrados contra caídas",
-      "Botones": "Sensación táctil clicky",
-      "Perfil": "Slim protector"
+      "Conectores": "Modelos Lightning / Tipo C / V8",
+      "Longitud": "1.0 Metro",
+      "Material": "PVC reforzado ultra flexible",
+      "Garantía": "Durabilidad probada contra flexión"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Lucía H.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "05 Jun 2026",
+        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
       },
       {
-        "user": "Jorge V.",
-        "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "user": "Carlos M.",
+        "rating": 5,
+        "date": "29 May 2026",
+        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
       }
     ]
   },
   {
     "id": "ts-cat-124",
-    "title": "Cover Premium Edición Limitada N°25",
-    "category": "cases",
-    "price": 650,
-    "icon": "<img src=\"TeloCorp/images/image25.png\" alt=\"Cover Premium Edición Limitada N°25\">",
+    "title": "Cable D09 Tipo C a Lightning 30W (Negro)",
+    "category": "tech",
+    "price": 450,
+    "icon": "<img src=\"TeloCorp/images/image25.png\" alt=\"Cable D09 Tipo C a Lightning 30W (Negro)\">",
     "images": [
       "TeloCorp/images/image25.png"
     ],
-    "description": "Estuche de alto rendimiento con esquinas reforzadas para absorción de impactos. Estilo moderno translúcido.",
+    "description": "Cable premium ultra resistente de alta conductividad en color negro. Ideal para carga ultra rápida y transferencia de datos de alta velocidad sin pérdida de señal.",
     "specs": {
-      "Material": "TPU flexible y acrílico rígido",
-      "Esquinas": "Air-bag integrados contra caídas",
-      "Botones": "Sensación táctil clicky",
-      "Perfil": "Slim protector"
+      "Conectores": "USB-C a Lightning (iPhone)",
+      "Longitud": "1.2 Metros",
+      "Potencia": "30W Power Delivery",
+      "Material": "TPE reforzado de alta resistencia"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Miguel B.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "24 May 2026",
+        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
       },
       {
-        "user": "Jorge V.",
+        "user": "Lucía H.",
         "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "date": "02 Jun 2026",
+        "text": "Cumple su función perfectamente, el material se nota duradero y robusto."
       }
     ]
   },
   {
     "id": "ts-cat-125",
-    "title": "Cargador Rápido T16 Inteligente",
+    "title": "Cargador Completo T16 Inteligente Dual 30W",
     "category": "tech",
     "price": 850,
-    "icon": "<img src=\"TeloCorp/images/image26.png\" alt=\"Cargador Rápido T16 Inteligente\">",
+    "icon": "<img src=\"TeloCorp/images/image26.png\" alt=\"Cargador Completo T16 Inteligente Dual 30W\">",
     "images": [
       "TeloCorp/images/image26.png"
     ],
-    "description": "Cargador de pared con protección térmica inteligente contra cortocircuitos y sobrecargas. Compatible con carga rápida para dispositivos móviles.",
+    "description": "Cargador de pared inteligente modelo T16 de 30W con regulación de corriente automática para proteger la vida útil de la batería. Incluye puertos duales para cargar dos dispositivos.",
     "specs": {
-      "Potencia": "20W / 45W / 100W",
-      "Puertos": "USB-C y USB-A duales",
-      "Eficiencia": "Carga rápida Power Delivery 3.0",
-      "Protección": "Chip inteligente anticaídas de voltaje"
+      "Potencia": "30W Max de salida",
+      "Puertos": "1x USB-C (PD) y 1x USB-A (QC 3.0)",
+      "Protección": "Smart Control de temperatura constante",
+      "Certificación": "Seguridad eléctrica CE/FCC"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Pedro S.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "29 May 2026",
+        "text": "Me encantó el diseño y la resistencia. Ajusta perfecto y se ve muy estético."
       },
       {
         "user": "Jorge V.",
         "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "date": "14 May 2026",
+        "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
       }
     ]
   },
   {
     "id": "ts-cat-126",
-    "title": "Cover Premium Edición Limitada N°27",
-    "category": "cases",
-    "price": 650,
-    "icon": "<img src=\"TeloCorp/images/image27.png\" alt=\"Cover Premium Edición Limitada N°27\">",
+    "title": "Cable D09 Tipo C a Lightning 30W (Amarillo)",
+    "category": "tech",
+    "price": 450,
+    "icon": "<img src=\"TeloCorp/images/image27.png\" alt=\"Cable D09 Tipo C a Lightning 30W (Amarillo)\">",
     "images": [
       "TeloCorp/images/image27.png"
     ],
-    "description": "Estuche de alto rendimiento con esquinas reforzadas para absorción de impactos. Estilo moderno translúcido.",
+    "description": "Cable premium ultra resistente de alta conductividad en color amarillo. Ideal para carga ultra rápida y transferencia de datos de alta velocidad sin pérdida de señal.",
     "specs": {
-      "Material": "TPU flexible y acrílico rígido",
-      "Esquinas": "Air-bag integrados contra caídas",
-      "Botones": "Sensación táctil clicky",
-      "Perfil": "Slim protector"
+      "Conectores": "USB-C a Lightning (iPhone)",
+      "Longitud": "1.2 Metros",
+      "Potencia": "30W Power Delivery",
+      "Material": "TPE reforzado de alta resistencia"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Miguel B.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "29 May 2026",
+        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
       },
       {
-        "user": "Jorge V.",
+        "user": "Elena F.",
         "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "date": "10 May 2026",
+        "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
       }
     ]
   },
   {
     "id": "ts-cat-127",
-    "title": "Cargador Rápido T13 Completo 20W",
+    "title": "Cargador Rápido T13 Completo (Tipo C a Tipo C 20W)",
     "category": "tech",
     "price": 850,
-    "icon": "<img src=\"TeloCorp/images/image28.png\" alt=\"Cargador Rápido T13 Completo 20W\">",
+    "icon": "<img src=\"TeloCorp/images/image28.png\" alt=\"Cargador Rápido T13 Completo (Tipo C a Tipo C 20W)\">",
     "images": [
       "TeloCorp/images/image28.png"
     ],
-    "description": "Cargador de pared con protección térmica inteligente contra cortocircuitos y sobrecargas. Compatible con carga rápida para dispositivos móviles.",
+    "description": "Cargador de pared completo T13 de 20W con cable incluido. Conector Tipo C a Tipo C 20W. Cabezal con chip inteligente para proteger el móvil contra sobrecalentamiento.",
     "specs": {
-      "Potencia": "20W / 45W / 100W",
-      "Puertos": "USB-C y USB-A duales",
-      "Eficiencia": "Carga rápida Power Delivery 3.0",
-      "Protección": "Chip inteligente anticaídas de voltaje"
+      "Potencia de Salida": "20W Máximo",
+      "Voltaje de Entrada": "100-240V 50/60Hz (Universal)",
+      "Cable Incluido": "1.0 Metro de alta velocidad",
+      "Protección": "Chip inteligente contra cortocircuito y sobrevoltaje"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Laura R.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "10 May 2026",
+        "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
       },
       {
-        "user": "Jorge V.",
+        "user": "Ana G.",
         "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "date": "29 May 2026",
+        "text": "Me encantó el diseño y la resistencia. Ajusta perfecto y se ve muy estético."
       }
     ]
   },
   {
     "id": "ts-cat-128",
-    "title": "Cover Premium Edición Limitada N°29",
+    "title": "Cover Silicona Diseño Dinosaurio Baby",
     "category": "cases",
-    "price": 650,
-    "icon": "<img src=\"TeloCorp/images/image29.png\" alt=\"Cover Premium Edición Limitada N°29\">",
+    "price": 550,
+    "icon": "<img src=\"TeloCorp/images/image29.png\" alt=\"Cover Silicona Diseño Dinosaurio Baby\">",
     "images": [
       "TeloCorp/images/image29.png"
     ],
-    "description": "Estuche de alto rendimiento con esquinas reforzadas para absorción de impactos. Estilo moderno translúcido.",
+    "description": "Funda protectora de silicona líquida flexible con un encantador y divertido diseño de dinosaurio baby en relieve 3D. Aporta un toque alegre y único a tu móvil, con una gran protección anticaídas.",
     "specs": {
-      "Material": "TPU flexible y acrílico rígido",
-      "Esquinas": "Air-bag integrados contra caídas",
-      "Botones": "Sensación táctil clicky",
-      "Perfil": "Slim protector"
+      "Material": "Silicona líquida blanda ultra suave",
+      "Diseño": "Personaje de Dinosaurio Baby en relieve 3D",
+      "Protección": "Antigolpes certificado con tacto agradable",
+      "Bordes": "Cámara y pantalla sobreelevados para evitar rayones"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Laura R.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "29 May 2026",
+        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
       },
       {
-        "user": "Jorge V.",
-        "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "user": "Elena F.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Buen empaque y presentación. Se adapta perfectamente a lo descrito."
       }
     ]
   },
   {
     "id": "ts-cat-129",
-    "title": "Cover Premium Edición Limitada N°30",
-    "category": "cases",
-    "price": 650,
-    "icon": "<img src=\"TeloCorp/images/image30.png\" alt=\"Cover Premium Edición Limitada N°30\">",
+    "title": "Cable D09 Tipo C a Tipo C 100W (Negro)",
+    "category": "tech",
+    "price": 450,
+    "icon": "<img src=\"TeloCorp/images/image30.png\" alt=\"Cable D09 Tipo C a Tipo C 100W (Negro)\">",
     "images": [
       "TeloCorp/images/image30.png"
     ],
-    "description": "Estuche de alto rendimiento con esquinas reforzadas para absorción de impactos. Estilo moderno translúcido.",
+    "description": "Cable premium ultra resistente de alta conductividad en color negro. Ideal para carga ultra rápida y transferencia de datos de alta velocidad sin pérdida de señal.",
     "specs": {
-      "Material": "TPU flexible y acrílico rígido",
-      "Esquinas": "Air-bag integrados contra caídas",
-      "Botones": "Sensación táctil clicky",
-      "Perfil": "Slim protector"
+      "Conectores": "USB-C a USB-C",
+      "Longitud": "1.2 Metros",
+      "Potencia": "100W (Carga laptops, tablets y móviles)",
+      "Material": "TPE reforzado de alta resistencia"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Laura R.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "10 May 2026",
+        "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
       },
       {
-        "user": "Jorge V.",
-        "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "user": "David P.",
+        "rating": 5,
+        "date": "18 May 2026",
+        "text": "Buen empaque y presentación. Se adapta perfectamente a lo descrito."
       }
     ]
   },
   {
     "id": "ts-cat-130",
-    "title": "Cover Premium Edición Limitada N°31",
-    "category": "cases",
-    "price": 650,
-    "icon": "<img src=\"TeloCorp/images/image31.png\" alt=\"Cover Premium Edición Limitada N°31\">",
+    "title": "Cable D09 Tipo C a Lightning 30W (Rojo)",
+    "category": "tech",
+    "price": 450,
+    "icon": "<img src=\"TeloCorp/images/image31.png\" alt=\"Cable D09 Tipo C a Lightning 30W (Rojo)\">",
     "images": [
       "TeloCorp/images/image31.png"
     ],
-    "description": "Estuche de alto rendimiento con esquinas reforzadas para absorción de impactos. Estilo moderno translúcido.",
+    "description": "Cable premium ultra resistente de alta conductividad en color rojo. Ideal para carga ultra rápida y transferencia de datos de alta velocidad sin pérdida de señal.",
     "specs": {
-      "Material": "TPU flexible y acrílico rígido",
-      "Esquinas": "Air-bag integrados contra caídas",
-      "Botones": "Sensación táctil clicky",
-      "Perfil": "Slim protector"
+      "Conectores": "USB-C a Lightning (iPhone)",
+      "Longitud": "1.2 Metros",
+      "Potencia": "30W Power Delivery",
+      "Material": "TPE reforzado de alta resistencia"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "David P.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "10 May 2026",
+        "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
       },
       {
-        "user": "Jorge V.",
-        "rating": 4,
-        "date": "08 May 2026",
+        "user": "María L.",
+        "rating": 5,
+        "date": "02 Jun 2026",
         "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
       }
     ]
   },
   {
     "id": "ts-cat-131",
-    "title": "Cover Premium Edición Limitada N°32",
-    "category": "cases",
-    "price": 650,
-    "icon": "<img src=\"TeloCorp/images/image32.png\" alt=\"Cover Premium Edición Limitada N°32\">",
+    "title": "Cable D06 de Carga Rápida (Micro USB V8 Blanco)",
+    "category": "tech",
+    "price": 350,
+    "icon": "<img src=\"TeloCorp/images/image32.png\" alt=\"Cable D06 de Carga Rápida (Micro USB V8 Blanco)\">",
     "images": [
       "TeloCorp/images/image32.png"
     ],
-    "description": "Estuche de alto rendimiento con esquinas reforzadas para absorción de impactos. Estilo moderno translúcido.",
+    "description": "Cable económico y duradero modelo D06. Variante Micro USB V8 Blanco. Excelente relación calidad-precio, ideal para llevar en la mochila o tener de repuesto.",
     "specs": {
-      "Material": "TPU flexible y acrílico rígido",
-      "Esquinas": "Air-bag integrados contra caídas",
-      "Botones": "Sensación táctil clicky",
-      "Perfil": "Slim protector"
+      "Conectores": "Modelos Lightning / Tipo C / V8",
+      "Longitud": "1.0 Metro",
+      "Material": "PVC reforzado ultra flexible",
+      "Garantía": "Durabilidad probada contra flexión"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Laura R.",
         "rating": 5,
         "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
       },
       {
-        "user": "Jorge V.",
-        "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "user": "Miguel B.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Cumple su función perfectamente, el material se nota duradero y robusto."
       }
     ]
   },
   {
     "id": "ts-cat-132",
-    "title": "Cover Premium Edición Limitada N°33",
-    "category": "cases",
-    "price": 650,
-    "icon": "<img src=\"TeloCorp/images/image33.png\" alt=\"Cover Premium Edición Limitada N°33\">",
+    "title": "Cable D09 Tipo C a Lightning 30W (Naranja)",
+    "category": "tech",
+    "price": 450,
+    "icon": "<img src=\"TeloCorp/images/image33.png\" alt=\"Cable D09 Tipo C a Lightning 30W (Naranja)\">",
     "images": [
       "TeloCorp/images/image33.png"
     ],
-    "description": "Estuche de alto rendimiento con esquinas reforzadas para absorción de impactos. Estilo moderno translúcido.",
+    "description": "Cable premium ultra resistente de alta conductividad en color naranja. Ideal para carga ultra rápida y transferencia de datos de alta velocidad sin pérdida de señal.",
     "specs": {
-      "Material": "TPU flexible y acrílico rígido",
-      "Esquinas": "Air-bag integrados contra caídas",
-      "Botones": "Sensación táctil clicky",
-      "Perfil": "Slim protector"
+      "Conectores": "USB-C a Lightning (iPhone)",
+      "Longitud": "1.2 Metros",
+      "Potencia": "30W Power Delivery",
+      "Material": "TPE reforzado de alta resistencia"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Pedro S.",
         "rating": 5,
         "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
       },
       {
-        "user": "Jorge V.",
+        "user": "Lucía H.",
         "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "date": "10 May 2026",
+        "text": "Muy práctico y útil. La calidad es buena por el precio."
       }
     ]
   },
   {
     "id": "ts-cat-133",
-    "title": "Cargador Rápido T13 Completo 20W",
+    "title": "Cargador Rápido T13 Completo (Tipo C USB 20W Dual)",
     "category": "tech",
     "price": 850,
-    "icon": "<img src=\"TeloCorp/images/image34.png\" alt=\"Cargador Rápido T13 Completo 20W\">",
+    "icon": "<img src=\"TeloCorp/images/image34.png\" alt=\"Cargador Rápido T13 Completo (Tipo C USB 20W Dual)\">",
     "images": [
       "TeloCorp/images/image34.png"
     ],
-    "description": "Cargador de pared con protección térmica inteligente contra cortocircuitos y sobrecargas. Compatible con carga rápida para dispositivos móviles.",
+    "description": "Cargador de pared completo T13 de 20W con cable incluido. Conector Tipo C USB 20W Dual. Cabezal con chip inteligente para proteger el móvil contra sobrecalentamiento.",
     "specs": {
-      "Potencia": "20W / 45W / 100W",
-      "Puertos": "USB-C y USB-A duales",
-      "Eficiencia": "Carga rápida Power Delivery 3.0",
-      "Protección": "Chip inteligente anticaídas de voltaje"
+      "Potencia de Salida": "20W Máximo",
+      "Voltaje de Entrada": "100-240V 50/60Hz (Universal)",
+      "Cable Incluido": "1.0 Metro de alta velocidad",
+      "Protección": "Chip inteligente contra cortocircuito y sobrevoltaje"
     },
     "reviews": [
       {
         "user": "María L.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "10 May 2026",
+        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
       },
       {
-        "user": "Jorge V.",
-        "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "user": "Laura R.",
+        "rating": 5,
+        "date": "24 May 2026",
+        "text": "Buen empaque y presentación. Se adapta perfectamente a lo descrito."
       }
     ]
   },
   {
     "id": "ts-cat-134",
-    "title": "Cable D16",
+    "title": "Cable D16 USB a Lightning & Tipo-C 3A (Negro Clásico)",
     "category": "tech",
-    "price": 450,
-    "icon": "<img src=\"TeloCorp/images/image35.png\" alt=\"Cable D16\">",
+    "price": 400,
+    "icon": "<img src=\"TeloCorp/images/image35.png\" alt=\"Cable D16 USB a Lightning & Tipo-C 3A (Negro Clásico)\">",
     "images": [
       "TeloCorp/images/image35.png"
     ],
-    "description": "Cable premium ultra resistente de alta conductividad. Ideal para carga rápida y transferencia de datos sin pérdida de señal.",
+    "description": "Cable reforzado D16 de alta velocidad en acabado negro clásico. Compatible con entradas USB y Tipo C, con salidas de Lightning de 30W y Tipo C de 60W.",
     "specs": {
-      "Conexión": "USB o USB-C según modelo",
-      "Longitud": "1 Metro o 2 Metros",
-      "Corriente": "3A / 60W / 100W",
-      "Material": "Nylon trenzado reforzado"
+      "Conectores": "USB-A a USB-C y Lightning",
+      "Corriente": "3A de carga rápida segura",
+      "Longitud": "1.2 Metros",
+      "Material": "Nylon trenzado reforzado ultra resistente"
     },
     "reviews": [
       {
         "user": "María L.",
         "rating": 5,
         "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "text": "Me encantó el diseño y la resistencia. Ajusta perfecto y se ve muy estético."
       },
       {
         "user": "Jorge V.",
-        "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "rating": 5,
+        "date": "18 May 2026",
+        "text": "Buen empaque y presentación. Se adapta perfectamente a lo descrito."
       }
     ]
   },
   {
     "id": "ts-cat-135",
-    "title": "Cable D16",
+    "title": "Cable D16 USB a Lightning & Tipo-C 3A (Rojo Deportivo)",
     "category": "tech",
-    "price": 450,
-    "icon": "<img src=\"TeloCorp/images/image36.png\" alt=\"Cable D16\">",
+    "price": 400,
+    "icon": "<img src=\"TeloCorp/images/image36.png\" alt=\"Cable D16 USB a Lightning & Tipo-C 3A (Rojo Deportivo)\">",
     "images": [
       "TeloCorp/images/image36.png"
     ],
-    "description": "Cable premium ultra resistente de alta conductividad. Ideal para carga rápida y transferencia de datos sin pérdida de señal.",
+    "description": "Cable reforzado D16 de alta velocidad en acabado rojo deportivo. Compatible con entradas USB y Tipo C, con salidas de Lightning de 30W y Tipo C de 60W.",
     "specs": {
-      "Conexión": "USB o USB-C según modelo",
-      "Longitud": "1 Metro o 2 Metros",
-      "Corriente": "3A / 60W / 100W",
-      "Material": "Nylon trenzado reforzado"
+      "Conectores": "USB-A a USB-C y Lightning",
+      "Corriente": "3A de carga rápida segura",
+      "Longitud": "1.2 Metros",
+      "Material": "Nylon trenzado reforzado ultra resistente"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Sofía T.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "24 May 2026",
+        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
       },
       {
-        "user": "Jorge V.",
-        "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "user": "David P.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
       }
     ]
   },
   {
     "id": "ts-cat-136",
-    "title": "Cover Premium Edición Limitada N°37",
-    "category": "cases",
-    "price": 650,
-    "icon": "<img src=\"TeloCorp/images/image37.png\" alt=\"Cover Premium Edición Limitada N°37\">",
+    "title": "Cable D09 Tipo C a Lightning 30W (Amarillo)",
+    "category": "tech",
+    "price": 450,
+    "icon": "<img src=\"TeloCorp/images/image37.png\" alt=\"Cable D09 Tipo C a Lightning 30W (Amarillo)\">",
     "images": [
       "TeloCorp/images/image37.png"
     ],
-    "description": "Estuche de alto rendimiento con esquinas reforzadas para absorción de impactos. Estilo moderno translúcido.",
+    "description": "Cable premium ultra resistente de alta conductividad en color amarillo. Ideal para carga ultra rápida y transferencia de datos de alta velocidad sin pérdida de señal.",
     "specs": {
-      "Material": "TPU flexible y acrílico rígido",
-      "Esquinas": "Air-bag integrados contra caídas",
-      "Botones": "Sensación táctil clicky",
-      "Perfil": "Slim protector"
+      "Conectores": "USB-C a Lightning (iPhone)",
+      "Longitud": "1.2 Metros",
+      "Potencia": "30W Power Delivery",
+      "Material": "TPE reforzado de alta resistencia"
     },
     "reviews": [
       {
         "user": "María L.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "29 May 2026",
+        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
       },
       {
         "user": "Jorge V.",
-        "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "rating": 5,
+        "date": "10 May 2026",
+        "text": "Me encantó el diseño y la resistencia. Ajusta perfecto y se ve muy estético."
       }
     ]
   },
   {
     "id": "ts-cat-137",
-    "title": "Cover Premium Edición Limitada N°38",
+    "title": "Cover Silicona Diseño Gatito de la Suerte",
     "category": "cases",
-    "price": 650,
-    "icon": "<img src=\"TeloCorp/images/image38.png\" alt=\"Cover Premium Edición Limitada N°38\">",
+    "price": 550,
+    "icon": "<img src=\"TeloCorp/images/image38.png\" alt=\"Cover Silicona Diseño Gatito de la Suerte\">",
     "images": [
       "TeloCorp/images/image38.png"
     ],
-    "description": "Estuche de alto rendimiento con esquinas reforzadas para absorción de impactos. Estilo moderno translúcido.",
+    "description": "Funda protectora de silicona líquida flexible con un encantador y divertido diseño de gatito de la suerte en relieve 3D. Aporta un toque alegre y único a tu móvil, con una gran protección anticaídas.",
     "specs": {
-      "Material": "TPU flexible y acrílico rígido",
-      "Esquinas": "Air-bag integrados contra caídas",
-      "Botones": "Sensación táctil clicky",
-      "Perfil": "Slim protector"
+      "Material": "Silicona líquida blanda ultra suave",
+      "Diseño": "Personaje de Gatito de la Suerte en relieve 3D",
+      "Protección": "Antigolpes certificado con tacto agradable",
+      "Bordes": "Cámara y pantalla sobreelevados para evitar rayones"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Lucía H.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "05 Jun 2026",
+        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
       },
       {
-        "user": "Jorge V.",
+        "user": "Carlos M.",
         "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "date": "29 May 2026",
+        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
       }
     ]
   },
   {
     "id": "ts-cat-138",
-    "title": "Cover Premium Edición Limitada N°39",
-    "category": "cases",
-    "price": 650,
-    "icon": "<img src=\"TeloCorp/images/image39.png\" alt=\"Cover Premium Edición Limitada N°39\">",
+    "title": "Cable D09 Tipo C a Lightning 30W (Blanco Puro)",
+    "category": "tech",
+    "price": 450,
+    "icon": "<img src=\"TeloCorp/images/image39.png\" alt=\"Cable D09 Tipo C a Lightning 30W (Blanco Puro)\">",
     "images": [
       "TeloCorp/images/image39.png"
     ],
-    "description": "Estuche de alto rendimiento con esquinas reforzadas para absorción de impactos. Estilo moderno translúcido.",
+    "description": "Cable premium ultra resistente de alta conductividad en color blanco puro. Ideal para carga ultra rápida y transferencia de datos de alta velocidad sin pérdida de señal.",
     "specs": {
-      "Material": "TPU flexible y acrílico rígido",
-      "Esquinas": "Air-bag integrados contra caídas",
-      "Botones": "Sensación táctil clicky",
-      "Perfil": "Slim protector"
+      "Conectores": "USB-C a Lightning (iPhone)",
+      "Longitud": "1.2 Metros",
+      "Potencia": "30W Power Delivery",
+      "Material": "TPE reforzado de alta resistencia"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Jorge V.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "29 May 2026",
+        "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
       },
       {
-        "user": "Jorge V.",
+        "user": "David P.",
         "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "date": "24 May 2026",
+        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
       }
     ]
   },
   {
     "id": "ts-cat-139",
-    "title": "Cable Técnico Reforzado N°40",
-    "category": "tech",
-    "price": 350,
-    "icon": "<img src=\"TeloCorp/images/image40.png\" alt=\"Cable Técnico Reforzado N°40\">",
+    "title": "Cover Silicona Diseño Minnie Mouse 3D",
+    "category": "cases",
+    "price": 550,
+    "icon": "<img src=\"TeloCorp/images/image40.png\" alt=\"Cover Silicona Diseño Minnie Mouse 3D\">",
     "images": [
       "TeloCorp/images/image40.png"
     ],
-    "description": "Cable trenzado de alto rendimiento para carga y transferencia de datos a alta velocidad. Soporta carga súper rápida.",
+    "description": "Funda protectora de silicona líquida flexible con un encantador y divertido diseño de minnie mouse 3d en relieve 3D. Aporta un toque alegre y único a tu móvil, con una gran protección anticaídas.",
     "specs": {
-      "Conector": "Tipo-C a USB-A o Tipo-C a Lightning",
-      "Material": "Aluminio anodizado y trenzado de nylon",
-      "Velocidad": "480 Mbps transferencia",
-      "Garantía": "Durabilidad probada de 10,000 dobleces"
+      "Material": "Silicona líquida blanda ultra suave",
+      "Diseño": "Personaje de Minnie Mouse 3D en relieve 3D",
+      "Protección": "Antigolpes certificado con tacto agradable",
+      "Bordes": "Cámara y pantalla sobreelevados para evitar rayones"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Laura R.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "29 May 2026",
+        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
       },
       {
-        "user": "Jorge V.",
+        "user": "María L.",
         "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "date": "24 May 2026",
+        "text": "Muy práctico y útil. La calidad es buena por el precio."
       }
     ]
   },
   {
     "id": "ts-cat-140",
-    "title": "Cable Técnico Reforzado N°41",
+    "title": "Cable D09 Tipo C a Lightning 30W (Rojo)",
     "category": "tech",
-    "price": 350,
-    "icon": "<img src=\"TeloCorp/images/image41.png\" alt=\"Cable Técnico Reforzado N°41\">",
+    "price": 450,
+    "icon": "<img src=\"TeloCorp/images/image41.png\" alt=\"Cable D09 Tipo C a Lightning 30W (Rojo)\">",
     "images": [
       "TeloCorp/images/image41.png"
     ],
-    "description": "Cable trenzado de alto rendimiento para carga y transferencia de datos a alta velocidad. Soporta carga súper rápida.",
+    "description": "Cable premium ultra resistente de alta conductividad en color rojo. Ideal para carga ultra rápida y transferencia de datos de alta velocidad sin pérdida de señal.",
     "specs": {
-      "Conector": "Tipo-C a USB-A o Tipo-C a Lightning",
-      "Material": "Aluminio anodizado y trenzado de nylon",
-      "Velocidad": "480 Mbps transferencia",
-      "Garantía": "Durabilidad probada de 10,000 dobleces"
+      "Conectores": "USB-C a Lightning (iPhone)",
+      "Longitud": "1.2 Metros",
+      "Potencia": "30W Power Delivery",
+      "Material": "TPE reforzado de alta resistencia"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Lucía H.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "18 May 2026",
+        "text": "Muy satisfecho con la compra, el material es excelente y llegó a tiempo."
       },
       {
-        "user": "Jorge V.",
-        "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "user": "Laura R.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
       }
     ]
   },
   {
     "id": "ts-cat-141",
-    "title": "Cable Técnico Reforzado N°42",
-    "category": "tech",
-    "price": 350,
-    "icon": "<img src=\"TeloCorp/images/image42.png\" alt=\"Cable Técnico Reforzado N°42\">",
+    "title": "Cover Silicona Diseño Mickey Mouse Clásico",
+    "category": "cases",
+    "price": 550,
+    "icon": "<img src=\"TeloCorp/images/image42.png\" alt=\"Cover Silicona Diseño Mickey Mouse Clásico\">",
     "images": [
       "TeloCorp/images/image42.png"
     ],
-    "description": "Cable trenzado de alto rendimiento para carga y transferencia de datos a alta velocidad. Soporta carga súper rápida.",
+    "description": "Funda protectora de silicona líquida flexible con un encantador y divertido diseño de mickey mouse clásico en relieve 3D. Aporta un toque alegre y único a tu móvil, con una gran protección anticaídas.",
     "specs": {
-      "Conector": "Tipo-C a USB-A o Tipo-C a Lightning",
-      "Material": "Aluminio anodizado y trenzado de nylon",
-      "Velocidad": "480 Mbps transferencia",
-      "Garantía": "Durabilidad probada de 10,000 dobleces"
+      "Material": "Silicona líquida blanda ultra suave",
+      "Diseño": "Personaje de Mickey Mouse Clásico en relieve 3D",
+      "Protección": "Antigolpes certificado con tacto agradable",
+      "Bordes": "Cámara y pantalla sobreelevados para evitar rayones"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Elena F.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "02 Jun 2026",
+        "text": "Muy satisfecho con la compra, el material es excelente y llegó a tiempo."
       },
       {
-        "user": "Jorge V.",
-        "rating": 4,
-        "date": "08 May 2026",
+        "user": "Pedro S.",
+        "rating": 5,
+        "date": "05 Jun 2026",
         "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
       }
     ]
   },
   {
     "id": "ts-cat-142",
-    "title": "Cable Técnico Reforzado N°43",
-    "category": "tech",
-    "price": 350,
-    "icon": "<img src=\"TeloCorp/images/image43.png\" alt=\"Cable Técnico Reforzado N°43\">",
+    "title": "Cover Magnético en Cristal MagSafe (Borde Plata)",
+    "category": "cases",
+    "price": 800,
+    "icon": "<img src=\"TeloCorp/images/image43.png\" alt=\"Cover Magnético en Cristal MagSafe (Borde Plata)\">",
     "images": [
       "TeloCorp/images/image43.png"
     ],
-    "description": "Cable trenzado de alto rendimiento para carga y transferencia de datos a alta velocidad. Soporta carga súper rápida.",
+    "description": "Funda de cristal templado trasero de alta transparencia combinada con bordes de metal en color borde plata y soporte magnético MagSafe. Ofrece una estética limpia e idéntica a tu teléfono desnudo.",
     "specs": {
-      "Conector": "Tipo-C a USB-A o Tipo-C a Lightning",
-      "Material": "Aluminio anodizado y trenzado de nylon",
-      "Velocidad": "480 Mbps transferencia",
-      "Garantía": "Durabilidad probada de 10,000 dobleces"
+      "Material": "Vidrio templado 9H trasero y marco de TPU/Aluminio",
+      "Compatibilidad": "iPhone 11 hasta 17 Pro Max",
+      "MagSafe": "Imanes N52 de alta potencia incorporados",
+      "Resistencia": "Antirayaduras y absorción de impactos en esquinas"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Pedro S.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "29 May 2026",
+        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
       },
       {
         "user": "Jorge V.",
         "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "date": "29 May 2026",
+        "text": "Muy satisfecho con la compra, el material es excelente y llegó a tiempo."
       }
     ]
   },
   {
     "id": "ts-cat-143",
-    "title": "Cable Técnico Reforzado N°44",
+    "title": "Cable D06 de Carga Rápida (Tipo C a Tipo C 60W)",
     "category": "tech",
     "price": 350,
-    "icon": "<img src=\"TeloCorp/images/image44.png\" alt=\"Cable Técnico Reforzado N°44\">",
+    "icon": "<img src=\"TeloCorp/images/image44.png\" alt=\"Cable D06 de Carga Rápida (Tipo C a Tipo C 60W)\">",
     "images": [
       "TeloCorp/images/image44.png"
     ],
-    "description": "Cable trenzado de alto rendimiento para carga y transferencia de datos a alta velocidad. Soporta carga súper rápida.",
+    "description": "Cable económico y duradero modelo D06. Variante Tipo C a Tipo C 60W. Excelente relación calidad-precio, ideal para llevar en la mochila o tener de repuesto.",
     "specs": {
-      "Conector": "Tipo-C a USB-A o Tipo-C a Lightning",
-      "Material": "Aluminio anodizado y trenzado de nylon",
-      "Velocidad": "480 Mbps transferencia",
-      "Garantía": "Durabilidad probada de 10,000 dobleces"
+      "Conectores": "Modelos Lightning / Tipo C / V8",
+      "Longitud": "1.0 Metro",
+      "Material": "PVC reforzado ultra flexible",
+      "Garantía": "Durabilidad probada contra flexión"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Carlos M.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "18 May 2026",
+        "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
       },
       {
-        "user": "Jorge V.",
-        "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "user": "Sofía T.",
+        "rating": 5,
+        "date": "18 May 2026",
+        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
       }
     ]
   },
   {
     "id": "ts-cat-144",
-    "title": "Cable Técnico Reforzado N°45",
+    "title": "Cable D16 USB a Lightning & Tipo-C 3A (Gris Metálico)",
     "category": "tech",
-    "price": 350,
-    "icon": "<img src=\"TeloCorp/images/image45.png\" alt=\"Cable Técnico Reforzado N°45\">",
+    "price": 400,
+    "icon": "<img src=\"TeloCorp/images/image45.png\" alt=\"Cable D16 USB a Lightning & Tipo-C 3A (Gris Metálico)\">",
     "images": [
       "TeloCorp/images/image45.png"
     ],
-    "description": "Cable trenzado de alto rendimiento para carga y transferencia de datos a alta velocidad. Soporta carga súper rápida.",
+    "description": "Cable reforzado D16 de alta velocidad en acabado gris metálico. Compatible con entradas USB y Tipo C, con salidas de Lightning de 30W y Tipo C de 60W.",
     "specs": {
-      "Conector": "Tipo-C a USB-A o Tipo-C a Lightning",
-      "Material": "Aluminio anodizado y trenzado de nylon",
-      "Velocidad": "480 Mbps transferencia",
-      "Garantía": "Durabilidad probada de 10,000 dobleces"
+      "Conectores": "USB-A a USB-C y Lightning",
+      "Corriente": "3A de carga rápida segura",
+      "Longitud": "1.2 Metros",
+      "Material": "Nylon trenzado reforzado ultra resistente"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "David P.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "18 May 2026",
+        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
       },
       {
-        "user": "Jorge V.",
+        "user": "Elena F.",
         "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "date": "02 Jun 2026",
+        "text": "Cumple su función perfectamente, el material se nota duradero y robusto."
       }
     ]
   },
   {
     "id": "ts-cat-145",
-    "title": "Cable Técnico Reforzado N°46",
-    "category": "tech",
-    "price": 350,
-    "icon": "<img src=\"TeloCorp/images/image46.png\" alt=\"Cable Técnico Reforzado N°46\">",
+    "title": "Cover Silicona Diseño Cactus Alegre 3D",
+    "category": "cases",
+    "price": 550,
+    "icon": "<img src=\"TeloCorp/images/image46.png\" alt=\"Cover Silicona Diseño Cactus Alegre 3D\">",
     "images": [
       "TeloCorp/images/image46.png"
     ],
-    "description": "Cable trenzado de alto rendimiento para carga y transferencia de datos a alta velocidad. Soporta carga súper rápida.",
+    "description": "Funda protectora de silicona líquida flexible con un encantador y divertido diseño de cactus alegre 3d en relieve 3D. Aporta un toque alegre y único a tu móvil, con una gran protección anticaídas.",
     "specs": {
-      "Conector": "Tipo-C a USB-A o Tipo-C a Lightning",
-      "Material": "Aluminio anodizado y trenzado de nylon",
-      "Velocidad": "480 Mbps transferencia",
-      "Garantía": "Durabilidad probada de 10,000 dobleces"
+      "Material": "Silicona líquida blanda ultra suave",
+      "Diseño": "Personaje de Cactus Alegre 3D en relieve 3D",
+      "Protección": "Antigolpes certificado con tacto agradable",
+      "Bordes": "Cámara y pantalla sobreelevados para evitar rayones"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Elena F.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "10 May 2026",
+        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
       },
       {
-        "user": "Jorge V.",
+        "user": "Sofía T.",
         "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "date": "10 May 2026",
+        "text": "Muy buen producto, se siente resistente aunque demoró un día más en llegar."
       }
     ]
   },
   {
     "id": "ts-cat-146",
-    "title": "Cable Técnico Reforzado N°47",
+    "title": "Cable D09 Tipo C a Lightning 30W (Amarillo)",
     "category": "tech",
-    "price": 350,
-    "icon": "<img src=\"TeloCorp/images/image47.png\" alt=\"Cable Técnico Reforzado N°47\">",
+    "price": 450,
+    "icon": "<img src=\"TeloCorp/images/image47.png\" alt=\"Cable D09 Tipo C a Lightning 30W (Amarillo)\">",
     "images": [
       "TeloCorp/images/image47.png"
     ],
-    "description": "Cable trenzado de alto rendimiento para carga y transferencia de datos a alta velocidad. Soporta carga súper rápida.",
+    "description": "Cable premium ultra resistente de alta conductividad en color amarillo. Ideal para carga ultra rápida y transferencia de datos de alta velocidad sin pérdida de señal.",
     "specs": {
-      "Conector": "Tipo-C a USB-A o Tipo-C a Lightning",
-      "Material": "Aluminio anodizado y trenzado de nylon",
-      "Velocidad": "480 Mbps transferencia",
-      "Garantía": "Durabilidad probada de 10,000 dobleces"
+      "Conectores": "USB-C a Lightning (iPhone)",
+      "Longitud": "1.2 Metros",
+      "Potencia": "30W Power Delivery",
+      "Material": "TPE reforzado de alta resistencia"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Sofía T.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "18 May 2026",
+        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
       },
       {
-        "user": "Jorge V.",
-        "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "user": "Laura R.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Cumple su función perfectamente, el material se nota duradero y robusto."
       }
     ]
   },
   {
     "id": "ts-cat-147",
-    "title": "Cable Técnico Reforzado N°48",
+    "title": "Cargador Rápido T13 Completo (Tipo C a iPhone 20W con USB)",
     "category": "tech",
-    "price": 350,
-    "icon": "<img src=\"TeloCorp/images/image48.png\" alt=\"Cable Técnico Reforzado N°48\">",
+    "price": 850,
+    "icon": "<img src=\"TeloCorp/images/image48.png\" alt=\"Cargador Rápido T13 Completo (Tipo C a iPhone 20W con USB)\">",
     "images": [
       "TeloCorp/images/image48.png"
     ],
-    "description": "Cable trenzado de alto rendimiento para carga y transferencia de datos a alta velocidad. Soporta carga súper rápida.",
+    "description": "Cargador de pared completo T13 de 20W con cable incluido. Conector Tipo C a iPhone 20W con USB. Cabezal con chip inteligente para proteger el móvil contra sobrecalentamiento.",
     "specs": {
-      "Conector": "Tipo-C a USB-A o Tipo-C a Lightning",
-      "Material": "Aluminio anodizado y trenzado de nylon",
-      "Velocidad": "480 Mbps transferencia",
-      "Garantía": "Durabilidad probada de 10,000 dobleces"
+      "Potencia de Salida": "20W Máximo",
+      "Voltaje de Entrada": "100-240V 50/60Hz (Universal)",
+      "Cable Incluido": "1.0 Metro de alta velocidad",
+      "Protección": "Chip inteligente contra cortocircuito y sobrevoltaje"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Lucía H.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "24 May 2026",
+        "text": "Muy satisfecho con la compra, el material es excelente y llegó a tiempo."
       },
       {
-        "user": "Jorge V.",
+        "user": "María L.",
         "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "date": "02 Jun 2026",
+        "text": "Cumple su función perfectamente, el material se nota duradero y robusto."
       }
     ]
   },
   {
     "id": "ts-cat-148",
-    "title": "Cover Magnético En Cristal MagSafe",
+    "title": "Cover Magnético en Cristal MagSafe (Borde Oro)",
     "category": "cases",
     "price": 800,
-    "icon": "<img src=\"TeloCorp/images/image49.png\" alt=\"Cover Magnético En Cristal MagSafe\">",
+    "icon": "<img src=\"TeloCorp/images/image49.png\" alt=\"Cover Magnético en Cristal MagSafe (Borde Oro)\">",
     "images": [
       "TeloCorp/images/image49.png"
     ],
-    "description": "Forro protector de alta resistencia contra caídas y arañazos. Diseño ergonómico adaptado para un agarre cómodo y firme.",
+    "description": "Funda de cristal templado trasero de alta transparencia combinada con bordes de metal en color borde oro y soporte magnético MagSafe. Ofrece una estética limpia e idéntica a tu teléfono desnudo.",
     "specs": {
-      "Material": "Silicona / TPU de alta densidad",
-      "Protección": "Antigolpes certificado",
-      "Bordes": "Cámara y pantalla sobreelevados",
-      "Estilo": "Diseño exclusivo TeloSales"
+      "Material": "Vidrio templado 9H trasero y marco de TPU/Aluminio",
+      "Compatibilidad": "iPhone 11 hasta 17 Pro Max",
+      "MagSafe": "Imanes N52 de alta potencia incorporados",
+      "Resistencia": "Antirayaduras y absorción de impactos en esquinas"
     },
     "reviews": [
       {
         "user": "María L.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "10 May 2026",
+        "text": "Muy satisfecho con la compra, el material es excelente y llegó a tiempo."
       },
       {
-        "user": "Jorge V.",
-        "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "user": "Laura R.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Muy práctico y útil. La calidad es buena por el precio."
       }
     ]
   },
   {
     "id": "ts-cat-149",
-    "title": "Cable Técnico Reforzado N°50",
+    "title": "Cable D06 de Carga Rápida (Tipo C a Lightning 30W)",
     "category": "tech",
     "price": 350,
-    "icon": "<img src=\"TeloCorp/images/image50.png\" alt=\"Cable Técnico Reforzado N°50\">",
+    "icon": "<img src=\"TeloCorp/images/image50.png\" alt=\"Cable D06 de Carga Rápida (Tipo C a Lightning 30W)\">",
     "images": [
       "TeloCorp/images/image50.png"
     ],
-    "description": "Cable trenzado de alto rendimiento para carga y transferencia de datos a alta velocidad. Soporta carga súper rápida.",
+    "description": "Cable económico y duradero modelo D06. Variante Tipo C a Lightning 30W. Excelente relación calidad-precio, ideal para llevar en la mochila o tener de repuesto.",
     "specs": {
-      "Conector": "Tipo-C a USB-A o Tipo-C a Lightning",
-      "Material": "Aluminio anodizado y trenzado de nylon",
-      "Velocidad": "480 Mbps transferencia",
-      "Garantía": "Durabilidad probada de 10,000 dobleces"
+      "Conectores": "Modelos Lightning / Tipo C / V8",
+      "Longitud": "1.0 Metro",
+      "Material": "PVC reforzado ultra flexible",
+      "Garantía": "Durabilidad probada contra flexión"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "David P.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "24 May 2026",
+        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
       },
       {
-        "user": "Jorge V.",
+        "user": "María L.",
         "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "date": "10 May 2026",
+        "text": "Muy buen producto, se siente resistente aunque demoró un día más en llegar."
       }
     ]
   },
   {
     "id": "ts-cat-150",
-    "title": "Cable Técnico Reforzado N°51",
+    "title": "Cargador Rápido T13 Individual GaN (20W-100W)",
     "category": "tech",
-    "price": 350,
-    "icon": "<img src=\"TeloCorp/images/image51.png\" alt=\"Cable Técnico Reforzado N°51\">",
+    "price": 950,
+    "icon": "<img src=\"TeloCorp/images/image51.png\" alt=\"Cargador Rápido T13 Individual GaN (20W-100W)\">",
     "images": [
       "TeloCorp/images/image51.png"
     ],
-    "description": "Cable trenzado de alto rendimiento para carga y transferencia de datos a alta velocidad. Soporta carga súper rápida.",
+    "description": "Cabezales individuales de cargador de pared T13. Disponibles en potencias desde 20W hasta 100W para satisfacer la carga súper rápida de laptops y móviles de gama alta. Utiliza tecnología GaN avanzada.",
     "specs": {
-      "Conector": "Tipo-C a USB-A o Tipo-C a Lightning",
-      "Material": "Aluminio anodizado y trenzado de nylon",
-      "Velocidad": "480 Mbps transferencia",
-      "Garantía": "Durabilidad probada de 10,000 dobleces"
+      "Tecnología": "GaN (Nitruro de Galio) de última generación",
+      "Potencias Disponibles": "20W, 45W, 65W, 100W",
+      "Puertos": "USB-C (Power Delivery 3.0)",
+      "Tamaño": "Ultra compacto y ligero"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Lucía H.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "10 May 2026",
+        "text": "Muy satisfecho con la compra, el material es excelente y llegó a tiempo."
       },
       {
-        "user": "Jorge V.",
+        "user": "Elena F.",
         "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "date": "24 May 2026",
+        "text": "Muy satisfecho con la compra, el material es excelente y llegó a tiempo."
       }
     ]
   },
   {
     "id": "ts-cat-151",
-    "title": "Cable Técnico Reforzado N°52",
-    "category": "tech",
-    "price": 350,
-    "icon": "<img src=\"TeloCorp/images/image52.png\" alt=\"Cable Técnico Reforzado N°52\">",
+    "title": "Cover Silicona Diseño Aguacate Tierno",
+    "category": "cases",
+    "price": 550,
+    "icon": "<img src=\"TeloCorp/images/image52.png\" alt=\"Cover Silicona Diseño Aguacate Tierno\">",
     "images": [
       "TeloCorp/images/image52.png"
     ],
-    "description": "Cable trenzado de alto rendimiento para carga y transferencia de datos a alta velocidad. Soporta carga súper rápida.",
+    "description": "Funda protectora de silicona líquida flexible con un encantador y divertido diseño de aguacate tierno en relieve 3D. Aporta un toque alegre y único a tu móvil, con una gran protección anticaídas.",
     "specs": {
-      "Conector": "Tipo-C a USB-A o Tipo-C a Lightning",
-      "Material": "Aluminio anodizado y trenzado de nylon",
-      "Velocidad": "480 Mbps transferencia",
-      "Garantía": "Durabilidad probada de 10,000 dobleces"
+      "Material": "Silicona líquida blanda ultra suave",
+      "Diseño": "Personaje de Aguacate Tierno en relieve 3D",
+      "Protección": "Antigolpes certificado con tacto agradable",
+      "Bordes": "Cámara y pantalla sobreelevados para evitar rayones"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Daniel A.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "05 Jun 2026",
+        "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
       },
       {
-        "user": "Jorge V.",
+        "user": "Ana G.",
         "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "date": "02 Jun 2026",
+        "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
       }
     ]
   },
   {
     "id": "ts-cat-152",
-    "title": "Cable D16",
+    "title": "Cable D16 USB a Lightning & Tipo-C 3A (Azul Marino)",
     "category": "tech",
-    "price": 450,
-    "icon": "<img src=\"TeloCorp/images/image53.png\" alt=\"Cable D16\">",
+    "price": 400,
+    "icon": "<img src=\"TeloCorp/images/image53.png\" alt=\"Cable D16 USB a Lightning & Tipo-C 3A (Azul Marino)\">",
     "images": [
       "TeloCorp/images/image53.png"
     ],
-    "description": "Cable premium ultra resistente de alta conductividad. Ideal para carga rápida y transferencia de datos sin pérdida de señal.",
+    "description": "Cable reforzado D16 de alta velocidad en acabado azul marino. Compatible con entradas USB y Tipo C, con salidas de Lightning de 30W y Tipo C de 60W.",
     "specs": {
-      "Conexión": "USB o USB-C según modelo",
-      "Longitud": "1 Metro o 2 Metros",
-      "Corriente": "3A / 60W / 100W",
-      "Material": "Nylon trenzado reforzado"
+      "Conectores": "USB-A a USB-C y Lightning",
+      "Corriente": "3A de carga rápida segura",
+      "Longitud": "1.2 Metros",
+      "Material": "Nylon trenzado reforzado ultra resistente"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Daniel A.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "05 Jun 2026",
+        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
       },
       {
-        "user": "Jorge V.",
+        "user": "Pedro S.",
         "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "date": "14 May 2026",
+        "text": "Muy buen producto, se siente resistente aunque demoró un día más en llegar."
       }
     ]
   },
   {
     "id": "ts-cat-153",
-    "title": "Cable Técnico Reforzado N°54",
+    "title": "Cable D06 de Carga Rápida (Lightning (iPhone) Negro)",
     "category": "tech",
     "price": 350,
-    "icon": "<img src=\"TeloCorp/images/image54.png\" alt=\"Cable Técnico Reforzado N°54\">",
+    "icon": "<img src=\"TeloCorp/images/image54.png\" alt=\"Cable D06 de Carga Rápida (Lightning (iPhone) Negro)\">",
     "images": [
       "TeloCorp/images/image54.png"
     ],
-    "description": "Cable trenzado de alto rendimiento para carga y transferencia de datos a alta velocidad. Soporta carga súper rápida.",
+    "description": "Cable económico y duradero modelo D06. Variante Lightning (iPhone) Negro. Excelente relación calidad-precio, ideal para llevar en la mochila o tener de repuesto.",
     "specs": {
-      "Conector": "Tipo-C a USB-A o Tipo-C a Lightning",
-      "Material": "Aluminio anodizado y trenzado de nylon",
-      "Velocidad": "480 Mbps transferencia",
-      "Garantía": "Durabilidad probada de 10,000 dobleces"
+      "Conectores": "Modelos Lightning / Tipo C / V8",
+      "Longitud": "1.0 Metro",
+      "Material": "PVC reforzado ultra flexible",
+      "Garantía": "Durabilidad probada contra flexión"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Ana G.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "10 May 2026",
+        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
       },
       {
-        "user": "Jorge V.",
-        "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "user": "Daniel A.",
+        "rating": 5,
+        "date": "05 Jun 2026",
+        "text": "Muy buen producto, se siente resistente aunque demoró un día más en llegar."
       }
     ]
   },
   {
     "id": "ts-cat-154",
-    "title": "Batería Portátil Telocorp 20,000 Mah",
+    "title": "Batería Portátil TeloCorp Power 20,000 mAh",
     "category": "tech",
     "price": 1950,
-    "icon": "<img src=\"TeloCorp/images/image55.png\" alt=\"Batería Portátil Telocorp 20,000 Mah\">",
+    "icon": "<img src=\"TeloCorp/images/image55.png\" alt=\"Batería Portátil TeloCorp Power 20,000 mAh\">",
     "images": [
       "TeloCorp/images/image55.png"
     ],
-    "description": "Batería portátil de alta capacidad para recargar tus dispositivos en cualquier lugar. Incluye display indicador de porcentaje de carga.",
+    "description": "Batería externa premium de 20,000 mAh de súper alta capacidad, ideal para viajes largos, camping o carga de múltiples dispositivos. Soporta carga rápida bidireccional.",
     "specs": {
-      "Capacidad": "10,000 mAh / 20,000 mAh",
-      "Salidas": "2 puertos USB 5V/2.4A",
-      "Entradas": "Micro-USB y Tipo-C",
-      "Indicador": "Pantalla digital LED"
+      "Capacidad": "20,000 mAh",
+      "Puertos de Salida": "2x USB-A (QC 3.0) y 1x USB-C (PD 22.5W)",
+      "Puertos de Entrada": "1x USB-C (PD rápido)",
+      "Protección": "Chip Multi-Protección contra sobrecargas"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Sofía T.",
         "rating": 5,
         "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
       },
       {
-        "user": "Jorge V.",
+        "user": "Pedro S.",
         "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "date": "05 Jun 2026",
+        "text": "Muy buen producto, se siente resistente aunque demoró un día más en llegar."
       }
     ]
   },
   {
     "id": "ts-cat-155",
-    "title": "Cover 360 Colorido Blindado",
+    "title": "Cover 360 Colorido SHS Blindado (Azul Cobalto)",
     "category": "cases",
     "price": 700,
-    "icon": "<img src=\"TeloCorp/images/image56.png\" alt=\"Cover 360 Colorido Blindado\">",
+    "icon": "<img src=\"TeloCorp/images/image56.png\" alt=\"Cover 360 Colorido SHS Blindado (Azul Cobalto)\">",
     "images": [
       "TeloCorp/images/image56.png"
     ],
-    "description": "Forro protector de alta resistencia contra caídas y arañazos. Diseño ergonómico adaptado para un agarre cómodo y firme.",
+    "description": "Forro de protección total de 360 grados con colores vibrantes y diseño blindado. Ofrece la máxima protección anticaídas para la parte trasera y los laterales del dispositivo.",
     "specs": {
-      "Material": "Silicona / TPU de alta densidad",
-      "Protección": "Antigolpes certificado",
-      "Bordes": "Cámara y pantalla sobreelevados",
-      "Estilo": "Diseño exclusivo TeloSales"
+      "Material": "TPU flexible y policarbonato híbrido",
+      "Protección": "Doble capa anticaídas 360° blindada",
+      "Compatibilidad": "iPhone, Samsung, Tecno, Redmi, Honor, ZTE, Motorola",
+      "Diseño": "Acabado mate texturizado antideslizante"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Pedro S.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "18 May 2026",
+        "text": "Muy satisfecho con la compra, el material es excelente y llegó a tiempo."
       },
       {
-        "user": "Jorge V.",
+        "user": "Laura R.",
         "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "date": "10 May 2026",
+        "text": "Buen empaque y presentación. Se adapta perfectamente a lo descrito."
       }
     ]
   },
   {
     "id": "ts-cat-156",
-    "title": "Cable Técnico Reforzado N°57",
+    "title": "Cargador Rápido T13 Completo (Tipo C Doble Salida 20W)",
     "category": "tech",
-    "price": 350,
-    "icon": "<img src=\"TeloCorp/images/image57.png\" alt=\"Cable Técnico Reforzado N°57\">",
+    "price": 850,
+    "icon": "<img src=\"TeloCorp/images/image57.png\" alt=\"Cargador Rápido T13 Completo (Tipo C Doble Salida 20W)\">",
     "images": [
       "TeloCorp/images/image57.png"
     ],
-    "description": "Cable trenzado de alto rendimiento para carga y transferencia de datos a alta velocidad. Soporta carga súper rápida.",
+    "description": "Cargador de pared completo T13 de 20W con cable incluido. Conector Tipo C Doble Salida 20W. Cabezal con chip inteligente para proteger el móvil contra sobrecalentamiento.",
     "specs": {
-      "Conector": "Tipo-C a USB-A o Tipo-C a Lightning",
-      "Material": "Aluminio anodizado y trenzado de nylon",
-      "Velocidad": "480 Mbps transferencia",
-      "Garantía": "Durabilidad probada de 10,000 dobleces"
+      "Potencia de Salida": "20W Máximo",
+      "Voltaje de Entrada": "100-240V 50/60Hz (Universal)",
+      "Cable Incluido": "1.0 Metro de alta velocidad",
+      "Protección": "Chip inteligente contra cortocircuito y sobrevoltaje"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Daniel A.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "18 May 2026",
+        "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
       },
       {
-        "user": "Jorge V.",
-        "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "user": "Sofía T.",
+        "rating": 5,
+        "date": "02 Jun 2026",
+        "text": "Muy práctico y útil. La calidad es buena por el precio."
       }
     ]
   },
   {
     "id": "ts-cat-157",
-    "title": "Cable D34",
+    "title": "Cable D34 Multiconector USB/Tipo-C a Lightning & Tipo-C 3A",
     "category": "tech",
     "price": 450,
-    "icon": "<img src=\"TeloCorp/images/image58.png\" alt=\"Cable D34\">",
+    "icon": "<img src=\"TeloCorp/images/image58.png\" alt=\"Cable D34 Multiconector USB/Tipo-C a Lightning & Tipo-C 3A\">",
     "images": [
       "TeloCorp/images/image58.png"
     ],
-    "description": "Cable premium ultra resistente de alta conductividad. Ideal para carga rápida y transferencia de datos sin pérdida de señal.",
+    "description": "Cable multifuncional D34 de carga rápida con conectores intercambiables. Soporta hasta 3A para USB normal y hasta 100W para Tipo C a Tipo C. El único cable que necesitas.",
     "specs": {
-      "Conexión": "USB o USB-C según modelo",
-      "Longitud": "1 Metro o 2 Metros",
-      "Corriente": "3A / 60W / 100W",
-      "Material": "Nylon trenzado reforzado"
+      "Conectores Entrada": "USB-A y USB-C intercambiables",
+      "Conectores Salida": "Lightning (iPhone) y USB-C",
+      "Corriente Máxima": "3A / 100W Carga Inteligente",
+      "Material": "TPE reforzado de alta durabilidad y protección contra dobleces"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Daniel A.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "10 May 2026",
+        "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
       },
       {
-        "user": "Jorge V.",
+        "user": "Sofía T.",
         "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "date": "29 May 2026",
+        "text": "Cumple su función perfectamente, el material se nota duradero y robusto."
       }
     ]
   },
   {
     "id": "ts-cat-158",
-    "title": "Cable D09 Tipo C A Ip 30W Cable D09 Tipo C A Tipo C 100W",
+    "title": "Cable D09 Tipo C a Lightning 30W (Blanco Puro)",
     "category": "tech",
     "price": 450,
-    "icon": "<img src=\"TeloCorp/images/image59.png\" alt=\"Cable D09 Tipo C A Ip 30W Cable D09 Tipo C A Tipo C 100W\">",
+    "icon": "<img src=\"TeloCorp/images/image59.png\" alt=\"Cable D09 Tipo C a Lightning 30W (Blanco Puro)\">",
     "images": [
       "TeloCorp/images/image59.png"
     ],
-    "description": "Cable premium ultra resistente de alta conductividad. Ideal para carga rápida y transferencia de datos sin pérdida de señal.",
+    "description": "Cable premium ultra resistente de alta conductividad en color blanco puro. Ideal para carga ultra rápida y transferencia de datos de alta velocidad sin pérdida de señal.",
     "specs": {
-      "Conexión": "USB o USB-C según modelo",
-      "Longitud": "1 Metro o 2 Metros",
-      "Corriente": "3A / 60W / 100W",
-      "Material": "Nylon trenzado reforzado"
+      "Conectores": "USB-C a Lightning (iPhone)",
+      "Longitud": "1.2 Metros",
+      "Potencia": "30W Power Delivery",
+      "Material": "TPE reforzado de alta resistencia"
     },
     "reviews": [
       {
         "user": "María L.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "10 May 2026",
+        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
       },
       {
-        "user": "Jorge V.",
-        "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "user": "Pedro S.",
+        "rating": 5,
+        "date": "02 Jun 2026",
+        "text": "Buen empaque y presentación. Se adapta perfectamente a lo descrito."
       }
     ]
   },
   {
     "id": "ts-cat-159",
-    "title": "Cargador Compacto De Viaje N°60",
+    "title": "Cable D09 Tipo C a Tipo C 100W (Negro)",
     "category": "tech",
-    "price": 900,
-    "icon": "<img src=\"TeloCorp/images/image60.png\" alt=\"Cargador Compacto De Viaje N°60\">",
+    "price": 450,
+    "icon": "<img src=\"TeloCorp/images/image60.png\" alt=\"Cable D09 Tipo C a Tipo C 100W (Negro)\">",
     "images": [
       "TeloCorp/images/image60.png"
     ],
-    "description": "Cargador de pared compacto ideal para viajes. Carga inteligente de alta velocidad para dispositivos Android y Apple.",
+    "description": "Cable premium ultra resistente de alta conductividad en color negro. Ideal para carga ultra rápida y transferencia de datos de alta velocidad sin pérdida de señal.",
     "specs": {
-      "Potencia": "20W carga eficiente",
-      "Dimensiones": "Diseño compacto mini",
-      "Enchufe": "Pines planos estándar",
-      "Tecnología": "Smart IQ reconocimiento automático"
+      "Conectores": "USB-C a USB-C",
+      "Longitud": "1.2 Metros",
+      "Potencia": "100W (Carga laptops, tablets y móviles)",
+      "Material": "TPE reforzado de alta resistencia"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Miguel B.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "29 May 2026",
+        "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
       },
       {
-        "user": "Jorge V.",
+        "user": "Ana G.",
         "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "date": "18 May 2026",
+        "text": "Me encantó el diseño y la resistencia. Ajusta perfecto y se ve muy estético."
       }
     ]
   },
   {
     "id": "ts-cat-160",
-    "title": "Cargador Compacto De Viaje N°61",
+    "title": "Cable D09 Tipo C a Lightning 30W (Rojo)",
     "category": "tech",
-    "price": 900,
-    "icon": "<img src=\"TeloCorp/images/image61.png\" alt=\"Cargador Compacto De Viaje N°61\">",
+    "price": 450,
+    "icon": "<img src=\"TeloCorp/images/image61.png\" alt=\"Cable D09 Tipo C a Lightning 30W (Rojo)\">",
     "images": [
       "TeloCorp/images/image61.png"
     ],
-    "description": "Cargador de pared compacto ideal para viajes. Carga inteligente de alta velocidad para dispositivos Android y Apple.",
+    "description": "Cable premium ultra resistente de alta conductividad en color rojo. Ideal para carga ultra rápida y transferencia de datos de alta velocidad sin pérdida de señal.",
     "specs": {
-      "Potencia": "20W carga eficiente",
-      "Dimensiones": "Diseño compacto mini",
-      "Enchufe": "Pines planos estándar",
-      "Tecnología": "Smart IQ reconocimiento automático"
+      "Conectores": "USB-C a Lightning (iPhone)",
+      "Longitud": "1.2 Metros",
+      "Potencia": "30W Power Delivery",
+      "Material": "TPE reforzado de alta resistencia"
     },
     "reviews": [
       {
         "user": "María L.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "29 May 2026",
+        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
       },
       {
-        "user": "Jorge V.",
+        "user": "David P.",
         "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "date": "18 May 2026",
+        "text": "Cumple su función perfectamente, el material se nota duradero y robusto."
       }
     ]
   },
   {
     "id": "ts-cat-161",
-    "title": "Cargador Compacto De Viaje N°62",
-    "category": "tech",
-    "price": 900,
-    "icon": "<img src=\"TeloCorp/images/image62.png\" alt=\"Cargador Compacto De Viaje N°62\">",
+    "title": "Cover Silicona Diseño Stitch Rosa (Angel)",
+    "category": "cases",
+    "price": 550,
+    "icon": "<img src=\"TeloCorp/images/image62.png\" alt=\"Cover Silicona Diseño Stitch Rosa (Angel)\">",
     "images": [
       "TeloCorp/images/image62.png"
     ],
-    "description": "Cargador de pared compacto ideal para viajes. Carga inteligente de alta velocidad para dispositivos Android y Apple.",
+    "description": "Funda protectora de silicona líquida flexible con un encantador y divertido diseño de stitch rosa (angel) en relieve 3D. Aporta un toque alegre y único a tu móvil, con una gran protección anticaídas.",
     "specs": {
-      "Potencia": "20W carga eficiente",
-      "Dimensiones": "Diseño compacto mini",
-      "Enchufe": "Pines planos estándar",
-      "Tecnología": "Smart IQ reconocimiento automático"
+      "Material": "Silicona líquida blanda ultra suave",
+      "Diseño": "Personaje de Stitch Rosa (Angel) en relieve 3D",
+      "Protección": "Antigolpes certificado con tacto agradable",
+      "Bordes": "Cámara y pantalla sobreelevados para evitar rayones"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Miguel B.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "18 May 2026",
+        "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
       },
       {
-        "user": "Jorge V.",
-        "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "user": "Sofía T.",
+        "rating": 5,
+        "date": "02 Jun 2026",
+        "text": "Buen empaque y presentación. Se adapta perfectamente a lo descrito."
       }
     ]
   },
   {
     "id": "ts-cat-162",
-    "title": "Cargador Compacto De Viaje N°63",
-    "category": "tech",
-    "price": 900,
-    "icon": "<img src=\"TeloCorp/images/image63.png\" alt=\"Cargador Compacto De Viaje N°63\">",
+    "title": "Cover Silicona Diseño Panda Dormilón",
+    "category": "cases",
+    "price": 550,
+    "icon": "<img src=\"TeloCorp/images/image63.png\" alt=\"Cover Silicona Diseño Panda Dormilón\">",
     "images": [
       "TeloCorp/images/image63.png"
     ],
-    "description": "Cargador de pared compacto ideal para viajes. Carga inteligente de alta velocidad para dispositivos Android y Apple.",
+    "description": "Funda protectora de silicona líquida flexible con un encantador y divertido diseño de panda dormilón en relieve 3D. Aporta un toque alegre y único a tu móvil, con una gran protección anticaídas.",
     "specs": {
-      "Potencia": "20W carga eficiente",
-      "Dimensiones": "Diseño compacto mini",
-      "Enchufe": "Pines planos estándar",
-      "Tecnología": "Smart IQ reconocimiento automático"
+      "Material": "Silicona líquida blanda ultra suave",
+      "Diseño": "Personaje de Panda Dormilón en relieve 3D",
+      "Protección": "Antigolpes certificado con tacto agradable",
+      "Bordes": "Cámara y pantalla sobreelevados para evitar rayones"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "David P.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "18 May 2026",
+        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
       },
       {
-        "user": "Jorge V.",
+        "user": "Carlos M.",
         "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "date": "24 May 2026",
+        "text": "Buen empaque y presentación. Se adapta perfectamente a lo descrito."
       }
     ]
   },
   {
     "id": "ts-cat-163",
-    "title": "Cargador Compacto De Viaje N°64",
-    "category": "tech",
-    "price": 900,
-    "icon": "<img src=\"TeloCorp/images/image64.png\" alt=\"Cargador Compacto De Viaje N°64\">",
+    "title": "Cover Magnético en Cristal MagSafe (Borde Azul Sierra)",
+    "category": "cases",
+    "price": 800,
+    "icon": "<img src=\"TeloCorp/images/image64.png\" alt=\"Cover Magnético en Cristal MagSafe (Borde Azul Sierra)\">",
     "images": [
       "TeloCorp/images/image64.png"
     ],
-    "description": "Cargador de pared compacto ideal para viajes. Carga inteligente de alta velocidad para dispositivos Android y Apple.",
+    "description": "Funda de cristal templado trasero de alta transparencia combinada con bordes de metal en color borde azul sierra y soporte magnético MagSafe. Ofrece una estética limpia e idéntica a tu teléfono desnudo.",
     "specs": {
-      "Potencia": "20W carga eficiente",
-      "Dimensiones": "Diseño compacto mini",
-      "Enchufe": "Pines planos estándar",
-      "Tecnología": "Smart IQ reconocimiento automático"
+      "Material": "Vidrio templado 9H trasero y marco de TPU/Aluminio",
+      "Compatibilidad": "iPhone 11 hasta 17 Pro Max",
+      "MagSafe": "Imanes N52 de alta potencia incorporados",
+      "Resistencia": "Antirayaduras y absorción de impactos en esquinas"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Elena F.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "02 Jun 2026",
+        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
       },
       {
-        "user": "Jorge V.",
-        "rating": 4,
-        "date": "08 May 2026",
+        "user": "Miguel B.",
+        "rating": 5,
+        "date": "24 May 2026",
         "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
       }
     ]
   },
   {
     "id": "ts-cat-164",
-    "title": "Cargador Compacto De Viaje N°65",
+    "title": "Cargador Rápido T13 Completo (Tipo C Multi-puertos 20W)",
     "category": "tech",
-    "price": 900,
-    "icon": "<img src=\"TeloCorp/images/image65.png\" alt=\"Cargador Compacto De Viaje N°65\">",
+    "price": 850,
+    "icon": "<img src=\"TeloCorp/images/image65.png\" alt=\"Cargador Rápido T13 Completo (Tipo C Multi-puertos 20W)\">",
     "images": [
       "TeloCorp/images/image65.png"
     ],
-    "description": "Cargador de pared compacto ideal para viajes. Carga inteligente de alta velocidad para dispositivos Android y Apple.",
+    "description": "Cargador de pared completo T13 de 20W con cable incluido. Conector Tipo C Multi-puertos 20W. Cabezal con chip inteligente para proteger el móvil contra sobrecalentamiento.",
     "specs": {
-      "Potencia": "20W carga eficiente",
-      "Dimensiones": "Diseño compacto mini",
-      "Enchufe": "Pines planos estándar",
-      "Tecnología": "Smart IQ reconocimiento automático"
+      "Potencia de Salida": "20W Máximo",
+      "Voltaje de Entrada": "100-240V 50/60Hz (Universal)",
+      "Cable Incluido": "1.0 Metro de alta velocidad",
+      "Protección": "Chip inteligente contra cortocircuito y sobrevoltaje"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Sofía T.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "18 May 2026",
+        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
       },
       {
-        "user": "Jorge V.",
-        "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "user": "Pedro S.",
+        "rating": 5,
+        "date": "24 May 2026",
+        "text": "Muy buen producto, se siente resistente aunque demoró un día más en llegar."
       }
     ]
   },
   {
     "id": "ts-cat-165",
-    "title": "Cargador Compacto De Viaje N°66",
+    "title": "Cable D09 Tipo C a Tipo C 100W (Rojo)",
     "category": "tech",
-    "price": 900,
-    "icon": "<img src=\"TeloCorp/images/image66.png\" alt=\"Cargador Compacto De Viaje N°66\">",
+    "price": 450,
+    "icon": "<img src=\"TeloCorp/images/image66.png\" alt=\"Cable D09 Tipo C a Tipo C 100W (Rojo)\">",
     "images": [
       "TeloCorp/images/image66.png"
     ],
-    "description": "Cargador de pared compacto ideal para viajes. Carga inteligente de alta velocidad para dispositivos Android y Apple.",
+    "description": "Cable premium ultra resistente de alta conductividad en color rojo. Ideal para carga ultra rápida y transferencia de datos de alta velocidad sin pérdida de señal.",
     "specs": {
-      "Potencia": "20W carga eficiente",
-      "Dimensiones": "Diseño compacto mini",
-      "Enchufe": "Pines planos estándar",
-      "Tecnología": "Smart IQ reconocimiento automático"
+      "Conectores": "USB-C a USB-C",
+      "Longitud": "1.2 Metros",
+      "Potencia": "100W (Carga laptops, tablets y móviles)",
+      "Material": "TPE reforzado de alta resistencia"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Lucía H.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "24 May 2026",
+        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
       },
       {
-        "user": "Jorge V.",
+        "user": "David P.",
         "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "date": "18 May 2026",
+        "text": "Muy práctico y útil. La calidad es buena por el precio."
       }
     ]
   },
   {
     "id": "ts-cat-166",
-    "title": "Cargador Compacto De Viaje N°67",
+    "title": "Cable D09 Tipo C a Lightning 30W (Amarillo)",
     "category": "tech",
-    "price": 900,
-    "icon": "<img src=\"TeloCorp/images/image67.png\" alt=\"Cargador Compacto De Viaje N°67\">",
+    "price": 450,
+    "icon": "<img src=\"TeloCorp/images/image67.png\" alt=\"Cable D09 Tipo C a Lightning 30W (Amarillo)\">",
     "images": [
       "TeloCorp/images/image67.png"
     ],
-    "description": "Cargador de pared compacto ideal para viajes. Carga inteligente de alta velocidad para dispositivos Android y Apple.",
+    "description": "Cable premium ultra resistente de alta conductividad en color amarillo. Ideal para carga ultra rápida y transferencia de datos de alta velocidad sin pérdida de señal.",
     "specs": {
-      "Potencia": "20W carga eficiente",
-      "Dimensiones": "Diseño compacto mini",
-      "Enchufe": "Pines planos estándar",
-      "Tecnología": "Smart IQ reconocimiento automático"
+      "Conectores": "USB-C a Lightning (iPhone)",
+      "Longitud": "1.2 Metros",
+      "Potencia": "30W Power Delivery",
+      "Material": "TPE reforzado de alta resistencia"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Daniel A.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "10 May 2026",
+        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
       },
       {
-        "user": "Jorge V.",
-        "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "user": "David P.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Muy buen producto, se siente resistente aunque demoró un día más en llegar."
       }
     ]
   },
   {
     "id": "ts-cat-167",
-    "title": "Cargador Compacto De Viaje N°68",
+    "title": "Cargador Rápido T13 Completo (Carga Ultra Rápida 20W)",
     "category": "tech",
-    "price": 900,
-    "icon": "<img src=\"TeloCorp/images/image68.png\" alt=\"Cargador Compacto De Viaje N°68\">",
+    "price": 850,
+    "icon": "<img src=\"TeloCorp/images/image68.png\" alt=\"Cargador Rápido T13 Completo (Carga Ultra Rápida 20W)\">",
     "images": [
       "TeloCorp/images/image68.png"
     ],
-    "description": "Cargador de pared compacto ideal para viajes. Carga inteligente de alta velocidad para dispositivos Android y Apple.",
+    "description": "Cargador de pared completo T13 de 20W con cable incluido. Conector Carga Ultra Rápida 20W. Cabezal con chip inteligente para proteger el móvil contra sobrecalentamiento.",
     "specs": {
-      "Potencia": "20W carga eficiente",
-      "Dimensiones": "Diseño compacto mini",
-      "Enchufe": "Pines planos estándar",
-      "Tecnología": "Smart IQ reconocimiento automático"
+      "Potencia de Salida": "20W Máximo",
+      "Voltaje de Entrada": "100-240V 50/60Hz (Universal)",
+      "Cable Incluido": "1.0 Metro de alta velocidad",
+      "Protección": "Chip inteligente contra cortocircuito y sobrevoltaje"
     },
     "reviews": [
       {
         "user": "María L.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "10 May 2026",
+        "text": "Excelente producto, se siente muy premium al tacto. Recomendado 100%."
       },
       {
-        "user": "Jorge V.",
+        "user": "Lucía H.",
         "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "date": "24 May 2026",
+        "text": "Muy práctico y útil. La calidad es buena por el precio."
       }
     ]
   },
   {
     "id": "ts-cat-168",
-    "title": "Cargador Compacto De Viaje N°69",
-    "category": "tech",
-    "price": 900,
-    "icon": "<img src=\"TeloCorp/images/image69.png\" alt=\"Cargador Compacto De Viaje N°69\">",
+    "title": "Cover Silicona Diseño Patito Kawaii",
+    "category": "cases",
+    "price": 550,
+    "icon": "<img src=\"TeloCorp/images/image69.png\" alt=\"Cover Silicona Diseño Patito Kawaii\">",
     "images": [
       "TeloCorp/images/image69.png"
     ],
-    "description": "Cargador de pared compacto ideal para viajes. Carga inteligente de alta velocidad para dispositivos Android y Apple.",
+    "description": "Funda protectora de silicona líquida flexible con un encantador y divertido diseño de patito kawaii en relieve 3D. Aporta un toque alegre y único a tu móvil, con una gran protección anticaídas.",
     "specs": {
-      "Potencia": "20W carga eficiente",
-      "Dimensiones": "Diseño compacto mini",
-      "Enchufe": "Pines planos estándar",
-      "Tecnología": "Smart IQ reconocimiento automático"
+      "Material": "Silicona líquida blanda ultra suave",
+      "Diseño": "Personaje de Patito Kawaii en relieve 3D",
+      "Protección": "Antigolpes certificado con tacto agradable",
+      "Bordes": "Cámara y pantalla sobreelevados para evitar rayones"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Laura R.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "02 Jun 2026",
+        "text": "Me encantó el diseño y la resistencia. Ajusta perfecto y se ve muy estético."
       },
       {
-        "user": "Jorge V.",
-        "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "user": "Lucía H.",
+        "rating": 5,
+        "date": "14 May 2026",
+        "text": "Excelente calidad, superó mis expectativas de calidad y el envío fue rápido."
       }
     ]
   },
   {
     "id": "ts-cat-169",
-    "title": "Cargador Compacto De Viaje N°70",
-    "category": "tech",
-    "price": 900,
-    "icon": "<img src=\"TeloCorp/images/image70.png\" alt=\"Cargador Compacto De Viaje N°70\">",
+    "title": "Cover Magnético Original Transparente MagSafe Premium",
+    "category": "cases",
+    "price": 600,
+    "icon": "<img src=\"TeloCorp/images/image70.png\" alt=\"Cover Magnético Original Transparente MagSafe Premium\">",
     "images": [
       "TeloCorp/images/image70.png"
     ],
-    "description": "Cargador de pared compacto ideal para viajes. Carga inteligente de alta velocidad para dispositivos Android y Apple.",
+    "description": "Funda transparente con tecnología magnética integrada (MagSafe). Material de policarbonato ópticamente transparente que evita el amarilleo y ofrece protección premium contra caídas.",
     "specs": {
-      "Potencia": "20W carga eficiente",
-      "Dimensiones": "Diseño compacto mini",
-      "Enchufe": "Pines planos estándar",
-      "Tecnología": "Smart IQ reconocimiento automático"
+      "Material": "Poliuretano termoplástico (TPU) y Policarbonato rígido",
+      "Compatibilidad": "iPhone 7 Plus hasta 17 Pro Max",
+      "Características": "Magnetismo fuerte MagSafe, tecnología anti-amarilleo",
+      "Protección": "Certificación anticaídas de grado militar"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Jorge V.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "05 Jun 2026",
+        "text": "Me encantó el diseño y la resistencia. Ajusta perfecto y se ve muy estético."
       },
       {
-        "user": "Jorge V.",
+        "user": "Sofía T.",
         "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "date": "05 Jun 2026",
+        "text": "Muy práctico y útil. La calidad es buena por el precio."
       }
     ]
   },
   {
     "id": "ts-cat-170",
-    "title": "Cargador Compacto De Viaje N°71",
+    "title": "Cable D09 Tipo C a Lightning 30W (Rojo)",
     "category": "tech",
-    "price": 900,
-    "icon": "<img src=\"TeloCorp/images/image71.png\" alt=\"Cargador Compacto De Viaje N°71\">",
+    "price": 450,
+    "icon": "<img src=\"TeloCorp/images/image71.png\" alt=\"Cable D09 Tipo C a Lightning 30W (Rojo)\">",
     "images": [
       "TeloCorp/images/image71.png"
     ],
-    "description": "Cargador de pared compacto ideal para viajes. Carga inteligente de alta velocidad para dispositivos Android y Apple.",
+    "description": "Cable premium ultra resistente de alta conductividad en color rojo. Ideal para carga ultra rápida y transferencia de datos de alta velocidad sin pérdida de señal.",
     "specs": {
-      "Potencia": "20W carga eficiente",
-      "Dimensiones": "Diseño compacto mini",
-      "Enchufe": "Pines planos estándar",
-      "Tecnología": "Smart IQ reconocimiento automático"
+      "Conectores": "USB-C a Lightning (iPhone)",
+      "Longitud": "1.2 Metros",
+      "Potencia": "30W Power Delivery",
+      "Material": "TPE reforzado de alta resistencia"
     },
     "reviews": [
       {
-        "user": "María L.",
+        "user": "Pedro S.",
         "rating": 5,
-        "date": "14 May 2026",
-        "text": "Excelente producto, superó mis expectativas de calidad y el envío fue rápido."
+        "date": "10 May 2026",
+        "text": "Excelente relación calidad-precio. Volveré a comprar sin duda."
       },
       {
-        "user": "Jorge V.",
+        "user": "Laura R.",
         "rating": 4,
-        "date": "08 May 2026",
-        "text": "Buena calidad en los acabados. Muy recomendado para uso diario."
+        "date": "24 May 2026",
+        "text": "Me encantó el diseño y la resistencia. Ajusta perfecto y se ve muy estético."
       }
     ]
   }
