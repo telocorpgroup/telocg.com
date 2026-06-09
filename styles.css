@@ -3620,3 +3620,381 @@ input:checked + .slider:before {
   50% { opacity: 0.4; }
 }
 
+/* --------------------------------------------------------------------------
+   TELOASISTENTE IA - WIDGET FLOTANTE GLOBAL
+   -------------------------------------------------------------------------- */
+
+/* Botón chat en el topbar */
+.action-btn.chat-toggle-btn {
+  position: relative;
+}
+
+.action-btn.chat-toggle-btn.chat-active {
+  background: rgba(221, 34, 0, 0.2);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.action-btn.chat-toggle-btn.chat-active svg {
+  stroke: var(--color-primary);
+}
+
+/* Badge del chat */
+.action-badge.chat-badge {
+  background: var(--color-primary);
+  animation: pulseFade 1.5s ease-in-out infinite;
+}
+
+/* Widget flotante */
+.telo-chat-widget {
+  position: fixed;
+  bottom: 90px;
+  right: 24px;
+  width: 380px;
+  max-height: 580px;
+  background: rgba(10, 14, 23, 0.97);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(221, 34, 0, 0.25);
+  border-radius: 20px;
+  box-shadow:
+    0 25px 60px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(255, 255, 255, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 1100;
+  /* HIDDEN state */
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(20px) scale(0.96);
+  transform-origin: bottom right;
+  transition:
+    opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.telo-chat-widget.open {
+  opacity: 1;
+  pointer-events: all;
+  transform: translateY(0) scale(1);
+}
+
+/* Header del widget */
+.telo-chat-widget-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px;
+  background: linear-gradient(135deg, rgba(221, 34, 0, 0.18) 0%, rgba(10, 14, 23, 0.5) 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  flex-shrink: 0;
+}
+
+.telo-chat-widget-identity {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.telo-chat-widget-avatar {
+  position: relative;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(221, 34, 0, 0.12);
+  border: 2px solid rgba(221, 34, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  overflow: visible;
+  flex-shrink: 0;
+}
+
+.telo-chat-widget-avatar img {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  object-fit: contain;
+}
+
+.telo-chat-online-dot {
+  position: absolute;
+  bottom: 1px;
+  right: 1px;
+  width: 10px;
+  height: 10px;
+  background: #10b981;
+  border-radius: 50%;
+  border: 2px solid rgba(10, 14, 23, 0.97);
+  animation: pulse-online 2s ease-in-out infinite;
+}
+
+@keyframes pulse-online {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
+  50% { box-shadow: 0 0 0 5px rgba(16, 185, 129, 0); }
+}
+
+.telo-chat-widget-info h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #f1f5f9;
+  margin: 0 0 2px;
+  letter-spacing: 0.02em;
+}
+
+.telo-chat-widget-info small {
+  font-size: 0.73rem;
+  color: #10b981;
+  font-weight: 500;
+}
+
+.telo-chat-widget-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.telo-chat-ctrl-btn {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: var(--transition);
+}
+
+.telo-chat-ctrl-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+}
+
+.telo-chat-close-btn:hover {
+  background: rgba(221, 34, 0, 0.2);
+  border-color: rgba(221, 34, 0, 0.4);
+  color: var(--color-primary);
+}
+
+/* Área de mensajes */
+.telo-chat-widget-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 18px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  scroll-behavior: smooth;
+  min-height: 220px;
+  max-height: 340px;
+}
+
+.telo-chat-widget-messages::-webkit-scrollbar {
+  width: 4px;
+}
+
+.telo-chat-widget-messages::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.telo-chat-widget-messages::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+}
+
+/* Mensajes del chat (reutilizando .chat-msg) */
+.telo-chat-widget .chat-msg {
+  max-width: 88%;
+  animation: msgSlideIn 0.25s ease-out;
+}
+
+@keyframes msgSlideIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.telo-chat-widget .bot-msg {
+  align-self: flex-start;
+}
+
+.telo-chat-widget .user-msg {
+  align-self: flex-end;
+}
+
+.telo-chat-widget .msg-bubble {
+  padding: 10px 14px;
+  border-radius: 14px;
+  font-size: 0.875rem;
+  line-height: 1.55;
+}
+
+.telo-chat-widget .bot-msg .msg-bubble {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #e2e8f0;
+  border-bottom-left-radius: 4px;
+}
+
+.telo-chat-widget .user-msg .msg-bubble {
+  background: linear-gradient(135deg, var(--color-primary) 0%, #b91c1c 100%);
+  color: white;
+  border-bottom-right-radius: 4px;
+  font-weight: 500;
+}
+
+.telo-chat-widget .typing-msg .msg-bubble {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: var(--text-muted);
+  animation: pulseFade 1.2s ease-in-out infinite;
+  font-style: italic;
+  font-size: 0.82rem;
+}
+
+/* Quick replies */
+.telo-chat-quick-replies {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 0 16px 12px;
+  flex-shrink: 0;
+}
+
+.quick-reply-btn {
+  background: rgba(221, 34, 0, 0.08);
+  border: 1px solid rgba(221, 34, 0, 0.25);
+  color: #f87171;
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  white-space: nowrap;
+  font-family: var(--font-main);
+}
+
+.quick-reply-btn:hover {
+  background: rgba(221, 34, 0, 0.2);
+  border-color: var(--color-primary);
+  color: white;
+  transform: translateY(-1px);
+}
+
+/* Input del widget */
+.telo-chat-widget-input {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.2);
+  flex-shrink: 0;
+}
+
+.telo-chat-widget-input input {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 24px !important;
+  padding: 10px 16px !important;
+  font-size: 0.88rem !important;
+  color: white !important;
+  outline: none;
+  transition: border-color 0.2s;
+  margin: 0 !important;
+}
+
+.telo-chat-widget-input input:focus {
+  border-color: rgba(221, 34, 0, 0.5) !important;
+  box-shadow: 0 0 0 3px rgba(221, 34, 0, 0.08);
+}
+
+.telo-chat-widget-input input::placeholder {
+  color: rgba(148, 163, 184, 0.6);
+}
+
+.telo-chat-send-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-primary) 0%, #b91c1c 100%);
+  border: none;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(221, 34, 0, 0.3);
+}
+
+.telo-chat-send-btn:hover {
+  transform: scale(1.08);
+  box-shadow: 0 6px 18px rgba(221, 34, 0, 0.5);
+}
+
+.telo-chat-send-btn:active {
+  transform: scale(0.95);
+}
+
+/* Backdrop móvil */
+.telo-chat-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1099;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.telo-chat-backdrop.active {
+  opacity: 1;
+}
+
+/* Tarjeta promo de chat en TeloConnect */
+.telo-connect-chat-promo {
+  transition: all 0.3s ease;
+  border: 1px solid var(--border-color);
+}
+
+.telo-connect-chat-promo:hover {
+  border-color: rgba(221, 34, 0, 0.4);
+  box-shadow: 0 0 30px rgba(221, 34, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+/* Mobile adaptations */
+@media (max-width: 640px) {
+  .telo-chat-widget {
+    bottom: 0;
+    right: 0;
+    left: 0;
+    width: 100%;
+    max-height: 80vh;
+    border-radius: 20px 20px 0 0;
+    transform: translateY(100%);
+    transform-origin: bottom center;
+  }
+
+  .telo-chat-widget.open {
+    transform: translateY(0);
+  }
+
+  .telo-chat-backdrop {
+    display: block;
+  }
+
+  .telo-chat-widget-messages {
+    max-height: calc(80vh - 200px);
+  }
+}
+

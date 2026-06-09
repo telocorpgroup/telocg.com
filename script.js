@@ -2516,7 +2516,7 @@ window.switchAppView = function(viewId) {
     'instala-view': 'Instalaciones TeloInstala',
     'about-view': 'Quiénes Somos',
     'profile-view': 'Mi Perfil',
-    'support-view': 'Hub Administrativo Central',
+    'support-view': 'TeloConnect — Centro de Comunicaciones',
     'integrations-view': 'Conectores e Integraciones de Servicios'
   };
   const titleEl = document.getElementById('current-view-title');
@@ -5607,7 +5607,31 @@ function formatChatText(text) {
 
 async function callGeminiAPI(apiKey, promptText) {
   const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
-  const systemInstruction = `Eres TeloAsistente, el agente de soporte inteligente de TeloCorpGroup (TELOCG), un clúster digital dominicano. Tus servicios son: TeloSales (marketplace de covers y tecnología), TeloLleva (logística rápida y segura de delivery e igualas de mensajería), TeloEduca (academia online de marketing digital, tecnología, etc.), TeloRepara (reparación técnica de hardware) y TeloInstala (servicios de instalación por técnicos calificados). Responde de manera profesional, amigable y corporativa, siempre en español. No menciones a Pulso ni RCP. Sé conciso y asertivo.`;
+  
+  // Construir contexto del catálogo
+  const catalogContext = buildCatalogContext();
+  
+  const systemInstruction = `Eres TeloAsistente, el agente de soporte inteligente de TeloCorpGroup (TELOCG), un clúster digital dominicano con sede en Santo Domingo, R.D. Teléfono: +1 (809) 903-8707. Email: soporte@telocg.com.
+
+Nuestros servicios:
+- TeloSales: marketplace de productos tecnológicos, covers personalizados y accesorios. Email: telosales@telocg.com
+- TeloLleva: logística inteligente y mensajería express con cotización de tarifas en tiempo real. Email: telolleva@telocg.com
+- TeloEduca: academia online de tecnología, marketing digital y desarrollo profesional con certificaciones. Email: teloeduca@telocg.com
+- TeloRepara: soporte técnico express para celulares, laptops y dispositivos electrónicos. Email: telorepara@telocg.com
+- TeloInstala: instalaciones técnicas (cámaras CCTV, redes estructuradas, paneles solares, electricidad). Email: teloinstala@telocg.com
+
+Equipo directivo:
+- Director General: Ing. Luis Miguel Herrera
+- Coordinador Logística: Julio Miguel Herrera
+- Arquitecto de Integración: Ing. Balmis Reynoso
+
+${catalogContext}
+
+Directrices:
+- Responde SIEMPRE en español, de forma profesional, cálida y concisa.
+- Si preguntan por productos específicos, usa el catálogo proporcionado para dar información real.
+- No menciones marcas competidoras.
+- Si no tienes información suficiente, invita al usuario a contactar por WhatsApp: +1 (809) 903-8707.`;
   
   const payload = {
     contents: [{
@@ -5642,26 +5666,56 @@ async function callGeminiAPI(apiKey, promptText) {
 function getLocalChatbotResponse(userText) {
   const txt = userText.toLowerCase();
   
+  // Buscar en el catálogo de productos
+  const catalog = AppState.products || [];
+  const words = txt.replace(/[?!.,¿¡]/g, '').trim().split(' ').filter(w => w.length > 3);
+  const matchedProducts = catalog.filter(p => {
+    return words.some(word =>
+      p.name.toLowerCase().includes(word) ||
+      (p.description && p.description.toLowerCase().includes(word)) ||
+      (p.category && p.category.toLowerCase().includes(word))
+    );
+  }).slice(0, 3);
+
   return new Promise((resolve) => {
     setTimeout(() => {
-      if (txt.includes('hola') || txt.includes('buenos dias') || txt.includes('buenas tardes')) {
-        resolve("¡Hola! 👋 Soy **TeloAsistente**, tu asesor de TeloCorpGroup. ¿Sobre cuál de nuestras divisiones (TeloSales, TeloLleva, TeloEduca, TeloRepara o TeloInstala) deseas información hoy?");
-      } else if (txt.includes('sales') || txt.includes('tienda') || txt.includes('comprar') || txt.includes('cover') || txt.includes('precio') || txt.includes('producto')) {
-        resolve("🛒 **TeloSales** es nuestra tienda de comercio electrónico y covers personalizados de alta calidad. Puedes navegar por la pestaña 'TeloSales' para ver nuestro catálogo, agregar productos a tu carrito y realizar la compra de manera rápida y segura.");
-      } else if (txt.includes('lleva') || txt.includes('envio') || txt.includes('delivery') || txt.includes('mensajeria') || txt.includes('transporte') || txt.includes('uber') || txt.includes('indrive')) {
-        resolve("📦 **TeloLleva** es nuestra plataforma de logística inteligente. Ofrecemos envíos express para tus compras y un cotizador de tarifas de mensajería interactivo en la pestaña 'TeloLleva'. ¡Ingresa tu punto de origen y destino para cotizar y solicitar un mensajero!");
-      } else if (txt.includes('educa') || txt.includes('curso') || txt.includes('academia') || txt.includes('aprender') || txt.includes('estudiar') || txt.includes('certificado')) {
-        resolve("🎓 **TeloEduca** es nuestra academia online de desarrollo profesional. Ofrecemos cursos y diplomados prácticos en Tecnología y Marketing Digital con material grabado, foros de consulta y exámenes. Mira la pestaña 'TeloEduca' para inscribirte y estudiar a tu propio ritmo.");
-      } else if (txt.includes('repara') || txt.includes('daño') || txt.includes('pantalla') || txt.includes('celular') || txt.includes('laptop') || txt.includes('computadora')) {
-        resolve("🔧 **TeloRepara** ofrece soporte técnico express. Si tu celular o laptop tiene fallas (pantalla rota, no enciende, etc.), indícalo en la pestaña 'TeloRepara' para obtener una cotización automática. Nuestros mensajeros retiran el equipo a domicilio y lo devuelven reparado.");
-      } else if (txt.includes('instala') || txt.includes('tecnico') || txt.includes('camara') || txt.includes('red') || txt.includes('configurar')) {
-        resolve("🛠️ **TeloInstala** conecta tu hogar u oficina con ingenieros y técnicos calificados para montaje de redes, instalación de cámaras de seguridad, configuración de servidores y cableado estructurado. Puedes agendar y calendarizar tu cita en la pestaña 'TeloInstala'.");
-      } else if (txt.includes('contacto') || txt.includes('whatsapp') || txt.includes('correo') || txt.includes('email') || txt.includes('telefono') || txt.includes('oficina') || txt.includes('ubicacion')) {
-        resolve("Puedes contactar al corporativo central a través de:\n- **WhatsApp:** +1 (809) 903-8707\n- **Correo Central:** soporte@telocg.com\n- **Oficinas:** Santo Domingo, R.D.");
-      } else {
-        resolve("TeloCorpGroup es un clúster digital líder que integra soluciones de e-commerce, logística, educación y soporte técnico. ¿Deseas saber más sobre TeloSales, TeloLleva, TeloEduca, TeloRepara o TeloInstala? También puedes escribirnos a soporte@telocg.com.");
+      // Productos específicos con coincidencia en catálogo
+      if (matchedProducts.length > 0 && (txt.includes('precio') || txt.includes('costo') || txt.includes('cuánto') || txt.includes('cuanto') || txt.includes('stock') || txt.includes('disponible'))) {
+        const list = matchedProducts.map(p => `\n• **${p.name}** — RD$ ${p.price || 'Consultar'}`).join('');
+        resolve(`🛒 Encontré estos productos en **TeloSales**:${list}\n\nNavega a la pestaña **TeloSales** para verlos con imágenes y agregar al carrito. ¿Necesitas más info?`);
+        return;
       }
-    }, 800);
+      // Catálogo general
+      if (txt.includes('catálogo') || txt.includes('catalogo') || txt.includes('que tienen') || txt.includes('qué tienen') || txt.includes('productos')) {
+        const total = catalog.length;
+        const categories = [...new Set(catalog.map(p => p.category).filter(Boolean))];
+        const catList = categories.length > 0 ? categories.slice(0, 5).join(', ') : 'tecnología y accesorios';
+        resolve(`🛒 **TeloSales** tiene **${total} productos** disponibles actualmente: ${catList}.\n\nAbre la pestaña **TeloSales** para explorar el catálogo completo con precios y descripción.`);
+        return;
+      }
+      // Saludo
+      if (txt.includes('hola') || txt.includes('buenos') || txt.includes('buenas') || txt.includes('hey')) {
+        resolve("¡Hola! 👋 Soy **TeloAsistente**, tu asesor de TeloCorpGroup. ¿Sobre cuál de nuestras divisiones deseas información?\n\n🛒 TeloSales · 📦 TeloLleva · 🎓 TeloEduca · 🔧 TeloRepara · 🛠️ TeloInstala");
+      } else if (txt.includes('sales') || txt.includes('tienda') || txt.includes('comprar') || txt.includes('cover') || txt.includes('precio') || txt.includes('producto') || txt.includes('accesorio')) {
+        resolve("🛒 **TeloSales** es nuestro marketplace de productos tecnológicos y covers personalizados de alta calidad. Navega en la pestaña **TeloSales** para ver todo el catálogo, agregar al carrito y realizar tu compra de forma segura.\n\nEmail: telosales@telocg.com");
+      } else if (txt.includes('lleva') || txt.includes('envio') || txt.includes('envío') || txt.includes('delivery') || txt.includes('mensajeria') || txt.includes('transporte') || txt.includes('tarifa') || txt.includes('cuesta') || txt.includes('mensajero')) {
+        resolve("📦 **TeloLleva** es nuestra plataforma de logística inteligente con cotización de tarifas en tiempo real.\n\nCobertura: Santo Domingo, Santiago, La Vega, Puerto Plata, Punta Cana y más. Las tarifas van desde **RD$ 200** (dentro de la ciudad) hasta **RD$ 4,500** (rutas largas).\n\nEmail: telolleva@telocg.com");
+      } else if (txt.includes('educa') || txt.includes('curso') || txt.includes('academia') || txt.includes('aprender') || txt.includes('estudiar') || txt.includes('certificado') || txt.includes('diplomado')) {
+        resolve("🎓 **TeloEduca** es nuestra academia online de desarrollo profesional. Ofrecemos cursos en Tecnología, Marketing Digital y Negocios con certificaciones digitales.\n\nNavega a **TeloEduca** para inscribirte. Los primeros módulos son gratuitos.\n\nEmail: teloeduca@telocg.com");
+      } else if (txt.includes('repara') || txt.includes('daño') || txt.includes('pantalla') || txt.includes('celular') || txt.includes('laptop') || txt.includes('computadora') || txt.includes('roto') || txt.includes('falla')) {
+        resolve("🔧 **TeloRepara** ofrece soporte técnico express para celulares, laptops y dispositivos electrónicos.\n\nNuestros técnicos retiran el equipo a domicilio y lo devuelven reparado. Cotización inmediata en la pestaña **TeloRepara**.\n\nEmail: telorepara@telocg.com");
+      } else if (txt.includes('instala') || txt.includes('tecnico') || txt.includes('técnico') || txt.includes('camara') || txt.includes('cámara') || txt.includes('red') || txt.includes('solar') || txt.includes('cctv') || txt.includes('configurar')) {
+        resolve("🛠️ **TeloInstala** conecta tu hogar u oficina con técnicos calificados para:\n\n• Cámaras CCTV\n• Redes estructuradas\n• Paneles solares\n• Instalaciones eléctricas\n• Configuración de servidores\n\nAgenda tu cita en la pestaña **TeloInstala**. Email: teloinstala@telocg.com");
+      } else if (txt.includes('contacto') || txt.includes('whatsapp') || txt.includes('correo') || txt.includes('email') || txt.includes('telefono') || txt.includes('teléfono') || txt.includes('oficina') || txt.includes('ubicacion') || txt.includes('ubicación') || txt.includes('soporte')) {
+        resolve("📞 **Canales oficiales de TeloCorpGroup:**\n\n- 💬 **WhatsApp:** +1 (809) 903-8707\n- 📧 **Email Central:** soporte@telocg.com\n- 📍 **Oficinas:** Santo Domingo, R.D.\n\nTambién puedes visitar **TeloConnect** desde el menú lateral para enviar un mensaje directo.");
+      } else if (txt.includes('socio') || txt.includes('alianza') || txt.includes('partner') || txt.includes('invertir') || txt.includes('franquicia')) {
+        resolve("🤝 **Programa de Socios TeloCorpGroup:**\n\nPuedes unirte como socio de cualquiera de nuestras empresas, ya sea como **agente independiente**, **empresa de servicios** o **desarrollando un nuevo servicio** bajo la estrategia TeloCorpGroup.\n\nVisita la sección **Conviértete en Socio** en el menú lateral para postularte.");
+      } else if (txt.includes('equipo') || txt.includes('director') || txt.includes('fundador') || txt.includes('quienes') || txt.includes('quiénes')) {
+        resolve("👔 **Equipo directivo de TeloCorpGroup:**\n\n• 🏆 **Director General:** Ing. Luis Miguel Herrera\n• 📋 **Coordinador Logística:** Julio Miguel Herrera\n• ⚙️ **Arquitecto de Integración:** Ing. Balmis Reynoso\n\nConoce más sobre nosotros en la sección **Quiénes Somos**.");
+      } else {
+        resolve("Soy **TeloAsistente**, tu guía en el ecosistema digital de **TeloCorpGroup**. 🌐\n\nPuedo ayudarte con:\n🛒 Productos y precios (TeloSales)\n📦 Envíos y logística (TeloLleva)\n🎓 Cursos y academias (TeloEduca)\n🔧 Reparaciones (TeloRepara)\n🛠️ Instalaciones técnicas (TeloInstala)\n\n¿Sobre qué quieres saber?");
+      }
+    }, 700);
   });
 }
 
@@ -5866,5 +5920,98 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Load user profile into the profile form on page load
   window.loadUserProfile();
+  
+  // Show chat badge after 3 seconds to invite first interaction
+  setTimeout(() => {
+    const badge = document.getElementById('global-chat-badge');
+    const widget = document.getElementById('telo-chat-widget');
+    if (badge && widget && !widget.classList.contains('open')) {
+      badge.style.display = 'flex';
+      badge.textContent = '1';
+    }
+  }, 3000);
 });
+
+// ==========================================
+// TELOASISTENTE IA - WIDGET FLOTANTE GLOBAL
+// ==========================================
+let chatWidgetOpen = false;
+
+window.toggleChatWidget = function() {
+  const widget = document.getElementById('telo-chat-widget');
+  const backdrop = document.getElementById('telo-chat-backdrop');
+  const btn = document.getElementById('global-chat-btn');
+  const badge = document.getElementById('global-chat-badge');
+  
+  if (!widget) return;
+  
+  chatWidgetOpen = !chatWidgetOpen;
+  widget.classList.toggle('open', chatWidgetOpen);
+  widget.setAttribute('aria-hidden', chatWidgetOpen ? 'false' : 'true');
+  
+  if (backdrop) backdrop.classList.toggle('active', chatWidgetOpen);
+  if (btn) btn.classList.toggle('chat-active', chatWidgetOpen);
+  
+  // Hide badge when opened
+  if (chatWidgetOpen && badge) {
+    badge.style.display = 'none';
+  }
+  
+  // Focus input when opened
+  if (chatWidgetOpen) {
+    setTimeout(() => {
+      const input = document.getElementById('telo-chatbot-input');
+      if (input) input.focus();
+    }, 300);
+  }
+};
+
+window.clearChatWidget = function() {
+  const messagesEl = document.getElementById('telo-chatbot-messages');
+  if (!messagesEl) return;
+  
+  messagesEl.innerHTML = `
+    <div class="chat-msg bot-msg">
+      <div class="msg-bubble">
+        Chat reiniciado. 🔄 ¡Hola de nuevo! Soy <strong>TeloAsistente</strong>. ¿En qué puedo ayudarte hoy?
+      </div>
+    </div>
+  `;
+  
+  // Show quick replies again
+  const quickReplies = document.getElementById('telo-chat-quick-replies');
+  if (quickReplies) quickReplies.style.display = 'flex';
+};
+
+window.sendQuickReply = function(text) {
+  // Hide quick replies after first use
+  const quickReplies = document.getElementById('telo-chat-quick-replies');
+  if (quickReplies) quickReplies.style.display = 'none';
+  
+  // Pre-fill input and send
+  const input = document.getElementById('telo-chatbot-input');
+  if (input) {
+    input.value = text;
+    window.sendChatbotMessage();
+  }
+};
+
+/**
+ * Construye un contexto de texto con el catálogo de productos
+ * para inyectarlo al sistema de IA
+ */
+function buildCatalogContext() {
+  const products = AppState.products || [];
+  if (products.length === 0) return '';
+  
+  const lines = products.map(p => {
+    let line = `- ${p.name}`;
+    if (p.price) line += ` | Precio: RD$ ${p.price}`;
+    if (p.category) line += ` | Categoría: ${p.category}`;
+    if (p.description) line += ` | Descripción: ${p.description.substring(0, 80)}`;
+    return line;
+  }).join('\n');
+  
+  return `\nCATÁLOGO ACTUAL DE TELOSALES (${products.length} productos):\n${lines}\n\nUsa este catálogo para responder preguntas sobre precios, disponibilidad y características de productos.`;
+}
 
