@@ -3665,20 +3665,27 @@ input:checked + .slider:before {
   flex-direction: column;
   overflow: hidden;
   z-index: 1100;
-  /* HIDDEN state */
+  /* HIDDEN state - fully isolated from touch events */
   opacity: 0;
+  visibility: hidden;
   pointer-events: none;
   transform: translateY(20px) scale(0.96);
   transform-origin: bottom right;
   transition:
     opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    visibility 0s linear 0.3s;
 }
 
 .telo-chat-widget.open {
   opacity: 1;
+  visibility: visible;
   pointer-events: all;
   transform: translateY(0) scale(1);
+  transition:
+    opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    visibility 0s linear 0s;
 }
 
 /* Header del widget */
@@ -3953,11 +3960,13 @@ input:checked + .slider:before {
   background: rgba(0, 0, 0, 0.5);
   z-index: 1099;
   opacity: 0;
+  pointer-events: none;  /* Never block touches when closed */
   transition: opacity 0.3s;
 }
 
 .telo-chat-backdrop.active {
   opacity: 1;
+  pointer-events: all;   /* Only active when chat is open */
 }
 
 /* Tarjeta promo de chat en TeloConnect */
@@ -3979,14 +3988,29 @@ input:checked + .slider:before {
     right: 0;
     left: 0;
     width: 100%;
-    max-height: 80vh;
+    max-height: 85vh;
     border-radius: 20px 20px 0 0;
-    transform: translateY(100%);
     transform-origin: bottom center;
+    /* Closed on mobile: fully off-screen AND hidden */
+    transform: translateY(100%);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+      transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+      opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+      visibility 0s linear 0.35s;
   }
 
   .telo-chat-widget.open {
     transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+    pointer-events: all;
+    transition:
+      transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+      opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+      visibility 0s linear 0s;
   }
 
   .telo-chat-backdrop {
@@ -3994,7 +4018,12 @@ input:checked + .slider:before {
   }
 
   .telo-chat-widget-messages {
-    max-height: calc(80vh - 200px);
+    max-height: calc(85vh - 200px);
+  }
+
+  /* Prevent body scroll when chat is open on mobile */
+  body.chat-open {
+    overflow: hidden;
   }
 }
 

@@ -5949,7 +5949,14 @@ window.toggleChatWidget = function() {
   widget.classList.toggle('open', chatWidgetOpen);
   widget.setAttribute('aria-hidden', chatWidgetOpen ? 'false' : 'true');
   
-  if (backdrop) backdrop.classList.toggle('active', chatWidgetOpen);
+  // Toggle backdrop
+  if (backdrop) {
+    backdrop.classList.toggle('active', chatWidgetOpen);
+    // On mobile, ensure backdrop blocks ALL touch events when active
+    backdrop.style.pointerEvents = chatWidgetOpen ? 'all' : 'none';
+  }
+  
+  // Toggle button active state
   if (btn) btn.classList.toggle('chat-active', chatWidgetOpen);
   
   // Hide badge when opened
@@ -5957,12 +5964,18 @@ window.toggleChatWidget = function() {
     badge.style.display = 'none';
   }
   
+  // On mobile: lock body scroll when chat is open to prevent scroll-through
+  const isMobile = window.innerWidth <= 640;
+  if (isMobile) {
+    document.body.classList.toggle('chat-open', chatWidgetOpen);
+  }
+  
   // Focus input when opened
   if (chatWidgetOpen) {
     setTimeout(() => {
       const input = document.getElementById('telo-chatbot-input');
       if (input) input.focus();
-    }, 300);
+    }, 350);
   }
 };
 
