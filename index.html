@@ -61,6 +61,10 @@
           <span class="nav-icon">🎧</span>
           <span class="nav-label">Soporte</span>
         </button>
+        <button class="nav-item" data-target="profile-view">
+          <span class="nav-icon">👤</span>
+          <span class="nav-label">Mi Perfil</span>
+        </button>
         <button class="nav-item" id="nav-integrations-item" data-target="integrations-view" style="display: none;">
           <span class="nav-icon">🔌</span>
           <span class="nav-label">Integración</span>
@@ -100,14 +104,10 @@
             
           </div>
           
-          <!-- Perfil de Usuario para Contexto de Super App -->
-          <div class="user-profile-menu">
-            <div class="user-avatar">U</div>
-            <div class="user-info">
-              <span class="user-name">Usuario Premium</span>
-              <span class="user-role">Socio</span>
-            </div>
-          </div>
+          <!-- Botón Mi Perfil -->
+          <button class="action-btn profile-btn" onclick="window.switchAppView('profile-view')" aria-label="Mi Perfil" title="Mi Perfil">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="action-icon"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          </button>
         </div>
       </header>
 
@@ -192,11 +192,11 @@
         <section class="app-view" id="educa-view">
           <div class="view-header">
             <h2>Academia TeloEduca</h2>
-            <p>Talleres interactivos con rutas de aprendizaje reales (Estilo Platzi).</p>
+            <p>Academia digital de alto nivel con rutas de aprendizaje estructuradas, certificaciones y talleres interactivos.</p>
           </div>
 
           <!-- Dashboard de Estudiante -->
-          <div class="platzi-dashboard-banner">
+          <div class="educa-dashboard-banner">
             <div class="student-info-row">
               <span class="student-welcome">👋 ¡Hola, Estudiante!</span>
               <span class="student-active-badge">Matriculado Central</span>
@@ -343,88 +343,129 @@
         <section class="app-view" id="lleva-view">
           <div class="view-header">
             <h2>Logística TeloLleva</h2>
-            <p>Servicio de mensajería Express con negociación de tarifas en tiempo real (Estilo inDrive).</p>
+            <p>Servicio de mensajería express con negociación de tarifas en tiempo real, múltiples puntos de entrega y seguimiento GPS.</p>
           </div>
           
-          <div class="indrive-layout">
+          <div class="lleva-layout">
             <!-- Panel de Pedido / Ofertas -->
-            <div class="indrive-panel">
+            <div class="lleva-panel">
               <!-- Formulario de Oferta -->
-              <div class="card panel-card" id="indrive-request-card">
+              <div class="card panel-card" id="lleva-request-card">
                 <h3>Solicitar Envío</h3>
                 <div class="form-group">
                   <label>Punto de Recogida (Origen)</label>
-                  <select id="indrive-origen" onchange="window.updateIndrivePrice()">
+                  <select id="lleva-origen" onchange="window.updateLlevaPrice()">
                     <option value="SD-Naco">Santo Domingo (Naco)</option>
                     <option value="SD-BellaVista">Santo Domingo (Bella Vista)</option>
+                    <option value="SD-Gazcue">Santo Domingo (Gazcue)</option>
+                    <option value="SD-LosMinas">Santo Domingo Este (Los Minas)</option>
+                    <option value="SD-Herrera">Santo Domingo Oeste (Herrera)</option>
+                    <option value="SD-Norte">Santo Domingo Norte (Villa Mella)</option>
                     <option value="Santiago-Gurabo">Santiago (Gurabo)</option>
+                    <option value="Santiago-Centro">Santiago (Centro)</option>
                     <option value="LaVega-Centro">La Vega (Centro)</option>
+                    <option value="PuntaCana-Bavaro">Punta Cana (Bávaro)</option>
+                    <option value="PuertoPlata-Centro">Puerto Plata (Centro)</option>
+                    <option value="Moca-Centro">Moca (Centro)</option>
                   </select>
                 </div>
                 <div class="form-group">
                   <label>Punto de Entrega (Destino)</label>
-                  <select id="indrive-destino" onchange="window.updateIndrivePrice()">
+                  <select id="lleva-destino" onchange="window.updateLlevaPrice()">
                     <option value="SD-BellaVista">Santo Domingo (Bella Vista)</option>
                     <option value="SD-Naco">Santo Domingo (Naco)</option>
+                    <option value="SD-Gazcue">Santo Domingo (Gazcue)</option>
+                    <option value="SD-LosMinas">Santo Domingo Este (Los Minas)</option>
+                    <option value="SD-Herrera">Santo Domingo Oeste (Herrera)</option>
+                    <option value="SD-Norte">Santo Domingo Norte (Villa Mella)</option>
                     <option value="Santiago-Centro">Santiago (Centro)</option>
+                    <option value="Santiago-Gurabo">Santiago (Gurabo)</option>
                     <option value="LaVega-Centro">La Vega (Centro)</option>
                     <option value="PuntaCana-Bavaro">Punta Cana (Bávaro)</option>
+                    <option value="PuertoPlata-Centro">Puerto Plata (Centro)</option>
+                    <option value="Moca-Centro">Moca (Centro)</option>
                   </select>
                 </div>
                 <div class="form-group">
                   <label>¿Qué envías?</label>
-                  <input type="text" id="indrive-item" placeholder="Ej. Documentos, Ropa, Electrónicos" value="Documentos Importantes">
+                  <input type="text" id="lleva-item" placeholder="Ej. Documentos, Ropa, Electrónicos" value="Documentos Importantes">
+                </div>
+                <div class="form-group">
+                  <label>Tipo de Vehículo</label>
+                <div class="form-group">
+                  <label>Detalles del Paquete (Opcional)</label>
+                  <input type="text" id="lleva-package-details" placeholder="Peso aprox., dimensiones, frágil, etc.">
+                </div>
+                <div class="form-group">
+                  <label>Horario de Recogida</label>
+                  <select id="lleva-schedule">
+                    <option value="now">Ahora mismo (Express)</option>
+                    <option value="30min">En 30 minutos</option>
+                    <option value="1h">En 1 hora</option>
+                    <option value="2h">En 2 horas</option>
+                    <option value="scheduled">Programar fecha y hora</option>
+                  </select>
+                </div>
+                <div class="form-group" id="lleva-datetime-wrapper" style="display:none;">
+                  <label>Fecha y Hora</label>
+                  <input type="datetime-local" id="lleva-datetime">
+                </div>
+                <div class="form-group">
+                  <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                    <input type="checkbox" id="lleva-recurrente" style="width: auto; accent-color: var(--color-lleva);">
+                    <span>Servicio recurrente (iguala mensual)</span>
+                  </label>
                 </div>
                 <div class="form-group">
                   <label>Tipo de Vehículo</label>
                   <div class="vehicle-select-container" style="display: flex; gap: 8px; margin-top: 6px;">
-                    <div class="vehicle-option active" data-type="moto" onclick="window.selectIndriveVehicle('moto')" style="flex: 1; text-align: center; padding: 10px 6px; border: 1px solid var(--color-lleva); background: rgba(245,158,11,0.08); border-radius: 6px; cursor: pointer; transition: all 0.2s;">
-                      <span style="font-size: 1.4rem; display: block; margin-bottom: 2px;">🏍️</span>
-                      <strong style="font-size: 0.8rem; display: block; color: var(--color-lleva);">Moto</strong>
-                      <small style="font-size: 0.65rem; color: var(--text-muted); display: block;">Rápido</small>
+                    <div class="vehicle-option active" data-type="moto" onclick="window.selectLlevaVehicle('moto')" style="flex: 1; text-align: center; padding: 10px 6px; border: 1px solid var(--color-lleva); background: rgba(245,158,11,0.08); border-radius: 6px; cursor: pointer; transition: all 0.2s;">
+                      <div style="font-size: 1.5rem;">🏍️</div>
+                      <strong>Moto</strong>
+                      <div style="font-size: 0.7rem; color: var(--text-muted);">Hasta 5kg</div>
                     </div>
-                    <div class="vehicle-option" data-type="car" onclick="window.selectIndriveVehicle('car')" style="flex: 1; text-align: center; padding: 10px 6px; border: 1px solid var(--border-color); background: var(--bg-card); border-radius: 6px; cursor: pointer; transition: all 0.2s;">
-                      <span style="font-size: 1.4rem; display: block; margin-bottom: 2px;">🚗</span>
-                      <strong style="font-size: 0.8rem; display: block;">Carro</strong>
-                      <small style="font-size: 0.65rem; color: var(--text-muted); display: block;">Protegido</small>
+                    <div class="vehicle-option" data-type="car" onclick="window.selectLlevaVehicle('car')" style="flex: 1; text-align: center; padding: 10px 6px; border: 1px solid var(--border-color); background: var(--bg-card); border-radius: 6px; cursor: pointer; transition: all 0.2s;">
+                      <div style="font-size: 1.5rem;">🚗</div>
+                      <strong>Auto</strong>
+                      <div style="font-size: 0.7rem; color: var(--text-muted);">Hasta 20kg</div>
                     </div>
-                    <div class="vehicle-option" data-type="cargo" onclick="window.selectIndriveVehicle('cargo')" style="flex: 1; text-align: center; padding: 10px 6px; border: 1px solid var(--border-color); background: var(--bg-card); border-radius: 6px; cursor: pointer; transition: all 0.2s;">
-                      <span style="font-size: 1.4rem; display: block; margin-bottom: 2px;">📦</span>
-                      <strong style="font-size: 0.8rem; display: block;">Furgón</strong>
-                      <small style="font-size: 0.65rem; color: var(--text-muted); display: block;">Pesado</small>
-                    </div>
-                  </div>
-                </div>
-                <div class="indrive-fare-box">
-                  <div class="suggested-price">Tarifa Recomendada: <strong id="indrive-suggested-label">RD$ 250</strong></div>
-                  <div class="form-group">
-                    <label>Ofrece tu tarifa (RD$)</label>
-                    <div class="fare-input-wrapper">
-                      <button onclick="window.adjustIndriveOffer(-50)">-</button>
-                      <input type="number" id="indrive-user-fare" value="250" min="100" step="50">
-                      <button onclick="window.adjustIndriveOffer(50)">+</button>
+                    <div class="vehicle-option" data-type="cargo" onclick="window.selectLlevaVehicle('cargo')" style="flex: 1; text-align: center; padding: 10px 6px; border: 1px solid var(--border-color); background: var(--bg-card); border-radius: 6px; cursor: pointer; transition: all 0.2s;">
+                      <div style="font-size: 1.5rem;">🚚</div>
+                      <strong>Furgón</strong>
+                      <div style="font-size: 0.7rem; color: var(--text-muted);">Hasta 500kg</div>
                     </div>
                   </div>
                 </div>
-                <button class="btn btn-primary w-100 mt-2" id="indrive-btn-submit" onclick="window.startIndriveNegotiation()">Solicitar Conductor</button>
+                <div class="lleva-fare-box">
+                  <div class="suggested-price">Tarifa Recomendada: <strong id="lleva-suggested-label">RD$ 250</strong></div>
+                  <div style="font-size: 0.75rem; color: var(--color-lleva); margin-top: 4px; text-align: center;">💡 Tráfico actual: <span id="lleva-traffic-status">Normal</span></div>
+                  <div style="display: flex; align-items: center; gap: 8px; margin-top: 10px;">
+                    <label style="margin: 0; font-size: 0.85rem;">Tu oferta:</label>
+                    <div style="display: flex; align-items: center; gap: 4px; flex: 1;">
+                      <button onclick="window.adjustLlevaOffer(-50)">-</button>
+                      <input type="number" id="lleva-user-fare" value="250" min="100" step="50">
+                      <button onclick="window.adjustLlevaOffer(50)">+</button>
+                    </div>
+                  </div>
+                </div>
+                <button class="btn btn-primary w-100 mt-2" id="lleva-btn-submit" onclick="window.startLlevaNegotiation()">Solicitar Mensajero</button>
               </div>
 
               <!-- Simulador de Ofertas (Oculto inicialmente) -->
-              <div class="card panel-card" id="indrive-offers-card" style="display: none;">
-                <h3>Ofertas de Mensajeros</h3>
-                <p class="searching-pulse">🔍 Buscando mensajeros disponibles...</p>
-                <div class="offers-list" id="indrive-offers-list">
+              <div class="card panel-card" id="lleva-offers-card" style="display: none;">
+                <h3 style="margin-bottom: 10px;">Ofertas de Mensajeros</h3>
+                <div class="offers-list" id="lleva-offers-list">
                   <!-- Inyectado dinámicamente -->
                 </div>
               </div>
 
               <!-- Estado de Viaje y Chat (Oculto inicialmente) -->
-              <div class="card panel-card" id="indrive-status-card" style="display: none;">
-                <div class="status-header">
-                  <h3>Estado del Envío</h3>
-                  <span class="status-badge" id="indrive-trip-status">Conductor asignado</span>
+              <div class="card panel-card" id="lleva-status-card" style="display: none;">
+                <h3 style="margin-bottom: 10px;">Estado del Envío</h3>
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+                    <span class="status-badge" id="lleva-trip-status">Conductor asignado</span>
                 </div>
-                <div class="driver-profile-mini" id="indrive-assigned-driver-info">
+                <div class="driver-profile-mini" id="lleva-assigned-driver-info">
                   <!-- Perfil inyectado -->
                 </div>
                 
@@ -437,23 +478,23 @@
                 </div>
                 
                 <!-- Chat con el conductor -->
-                <div class="indrive-chat-box">
-                  <div class="chat-messages" id="indrive-chat-messages">
+                <div class="lleva-chat-box">
+                  <div class="chat-messages" id="lleva-chat-messages">
                     <!-- Mensajes de chat -->
                   </div>
                   <div class="chat-input-row">
-                    <input type="text" id="indrive-chat-input" placeholder="Escribe un mensaje..." onkeypress="window.sendIndriveChatMessage(event)">
-                    <button class="btn-chat-send" onclick="window.triggerSendChatMessage()">➡️</button>
+                    <input type="text" id="lleva-chat-input" placeholder="Escribe un mensaje..." onkeypress="window.sendLlevaChatMessage(event)">
+                    <button class="btn-chat-send" onclick="window.triggerSendLlevaChatMessage()">➤</button>
                   </div>
                 </div>
-                <button class="btn btn-secondary w-100 mt-2" onclick="window.cancelIndriveTrip()">Cancelar Pedido</button>
+                <button class="btn btn-secondary w-100 mt-2" onclick="window.cancelLlevaTrip()">Cancelar Pedido</button>
               </div>
             </div>
 
             <!-- Mapa SVG Interactivo -->
-            <div class="indrive-map-container">
+            <div class="lleva-map-container">
               <div class="map-wrapper">
-                <svg id="indrive-svg-map" viewBox="0 0 400 400" width="100%" height="100%">
+                <svg id="lleva-svg-map" viewBox="0 0 400 400" width="100%" height="100%">
                   <!-- Grilla de Ciudad simulada -->
                   <defs>
                     <pattern id="grid-pattern" width="40" height="40" patternUnits="userSpaceOnUse">
@@ -734,6 +775,104 @@
                   <li><strong>Precio Total:</strong> <span id="instala-booked-price" style="color:var(--color-instala); font-weight:bold;">RD$ 1,200</span></li>
                 </ul>
                 <div class="instala-status-badge mt-2">Cita Confirmada</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- VISTA: MI PERFIL / REGISTRO -->
+        <section class="app-view" id="profile-view">
+          <div class="view-header">
+            <h2>Mi Perfil</h2>
+            <p>Registra tus datos para agilizar las solicitudes en todos nuestros servicios.</p>
+          </div>
+          
+          <div class="profile-layout">
+            <div class="card panel-card profile-card-main">
+              <div class="profile-avatar-box">
+                <div class="profile-avatar-circle" id="profile-avatar-display">👤</div>
+                <h3 id="profile-name-display">Usuario TeloCorpGroup</h3>
+                <p class="profile-subtitle" id="profile-email-display">Sin registro</p>
+              </div>
+              
+              <form id="profile-form" class="profile-form" onsubmit="window.saveUserProfile(event)">
+                <div class="form-group">
+                  <label>Nombre Completo</label>
+                  <input type="text" id="profile-name" placeholder="Tu nombre completo" required>
+                </div>
+                <div class="form-group">
+                  <label>Correo Electrónico</label>
+                  <input type="email" id="profile-email" placeholder="correo@ejemplo.com" required>
+                </div>
+                <div class="form-group">
+                  <label>Teléfono / WhatsApp</label>
+                  <input type="tel" id="profile-phone" placeholder="+1 (809) 000-0000">
+                </div>
+                <div class="form-group">
+                  <label>Dirección Principal</label>
+                  <input type="text" id="profile-address" placeholder="Calle, Número, Sector, Ciudad">
+                </div>
+                <div class="form-group">
+                  <label>Ciudad / Municipio</label>
+                  <select id="profile-city">
+                    <option value="">Selecciona tu ciudad</option>
+                    <option value="Santo Domingo">Santo Domingo</option>
+                    <option value="Santiago">Santiago</option>
+                    <option value="La Vega">La Vega</option>
+                    <option value="Punta Cana">Punta Cana</option>
+                    <option value="Puerto Plata">Puerto Plata</option>
+                    <option value="Moca">Moca</option>
+                    <option value="San Pedro">San Pedro de Macorís</option>
+                    <option value="Otra">Otra</option>
+                  </select>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 mt-2">Guardar Perfil</button>
+              </form>
+            </div>
+            
+            <div class="card panel-card">
+              <h3 style="margin-bottom: 16px;">Mis Servicios Activos</h3>
+              <div class="profile-services-list">
+                <div class="profile-service-item" onclick="window.switchAppView('sales-view')">
+                  <span class="service-icon" style="background: rgba(221,34,0,0.1); color: var(--color-primary);">🛒</span>
+                  <div>
+                    <strong>TeloSales</strong>
+                    <p>Accede al marketplace</p>
+                  </div>
+                  <span style="color: var(--text-muted);">›</span>
+                </div>
+                <div class="profile-service-item" onclick="window.switchAppView('educa-view')">
+                  <span class="service-icon" style="background: rgba(139,92,246,0.1); color: var(--color-educa);">🎓</span>
+                  <div>
+                    <strong>TeloEduca</strong>
+                    <p>Continúa aprendiendo</p>
+                  </div>
+                  <span style="color: var(--text-muted);">›</span>
+                </div>
+                <div class="profile-service-item" onclick="window.switchAppView('lleva-view')">
+                  <span class="service-icon" style="background: rgba(245,158,11,0.1); color: var(--color-lleva);">📦</span>
+                  <div>
+                    <strong>TeloLleva</strong>
+                    <p>Solicitar un envío</p>
+                  </div>
+                  <span style="color: var(--text-muted);">›</span>
+                </div>
+                <div class="profile-service-item" onclick="window.switchAppView('repara-view')">
+                  <span class="service-icon" style="background: rgba(139,92,246,0.1); color: var(--color-repara);">🔧</span>
+                  <div>
+                    <strong>TeloRepara</strong>
+                    <p>Reparar un dispositivo</p>
+                  </div>
+                  <span style="color: var(--text-muted);">›</span>
+                </div>
+                <div class="profile-service-item" onclick="window.switchAppView('instala-view')">
+                  <span class="service-icon" style="background: rgba(236,72,153,0.1); color: var(--color-instala);">🛠️</span>
+                  <div>
+                    <strong>TeloInstala</strong>
+                    <p>Agendar una instalación</p>
+                  </div>
+                  <span style="color: var(--text-muted);">›</span>
+                </div>
               </div>
             </div>
           </div>
@@ -1271,17 +1410,21 @@
         <span class="nav-icon">🛒</span>
         <span class="nav-label">Sales</span>
       </button>
-      <button class="nav-item" data-target="educa-view">
-        <span class="nav-icon">🎓</span>
-        <span class="nav-label">Educa</span>
-      </button>
       <button class="nav-item" data-target="lleva-view">
         <span class="nav-icon">📦</span>
         <span class="nav-label">Lleva</span>
       </button>
-      <button class="nav-item" data-target="support-view">
-        <span class="nav-icon">🎧</span>
-        <span class="nav-label">Soporte</span>
+      <button class="nav-item" data-target="repara-view">
+        <span class="nav-icon">🔧</span>
+        <span class="nav-label">Repara</span>
+      </button>
+      <button class="nav-item" data-target="instala-view">
+        <span class="nav-icon">🛠️</span>
+        <span class="nav-label">Instala</span>
+      </button>
+      <button class="nav-item" id="bottom-nav-menu-btn" onclick="window.toggleMobileMenu(); return false;">
+        <span class="nav-icon">☰</span>
+        <span class="nav-label">Menú</span>
       </button>
       <button class="nav-item" id="nav-integrations-item-mobile" data-target="integrations-view" style="display: none;">
         <span class="nav-icon">🔌</span>

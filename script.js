@@ -1,7 +1,7 @@
 /**
  * TeloCorpGroup - Super App Core Logic
  * Implementa Navegación SPA, Persistencia (localStorage) y lógica de E-commerce,
- * Logística tipo inDrive (Ofertas y SVG), Academia tipo Platzi (Syllabus, Video Player y Diplomas).
+ * Logística TeloLleva (Ofertas y SVG), Academia TeloEduca (Syllabus, Video Player y Diplomas).
  */
 
 // ==========================================
@@ -20,6 +20,13 @@ const AppState = {
   dbBookings: [],
   dbEduca: [],
   dbLeads: [],
+  userProfile: {
+    name: '',
+    email: '',
+    phone: '',
+    address: '',
+    city: ''
+  },
   integrations: {
     supabaseUrl: '',
     supabaseKey: '',
@@ -64,6 +71,8 @@ const AppState = {
     if(savedIntegrations) {
       this.integrations = { ...this.integrations, ...JSON.parse(savedIntegrations) };
     }
+    const savedProfile = localStorage.getItem('teloUserProfile');
+    if(savedProfile) this.userProfile = { ...this.userProfile, ...JSON.parse(savedProfile) };
   },
   
   saveState: function() {
@@ -80,6 +89,7 @@ const AppState = {
     localStorage.setItem('teloDbBookings', JSON.stringify(this.dbBookings));
     localStorage.setItem('teloDbEduca', JSON.stringify(this.dbEduca));
     localStorage.setItem('teloDbLeads', JSON.stringify(this.dbLeads));
+    localStorage.setItem('teloUserProfile', JSON.stringify(this.userProfile));
   }
 };
 
@@ -2505,6 +2515,7 @@ window.switchAppView = function(viewId) {
     'repara-view': 'Soporte Técnico TeloRepara',
     'instala-view': 'Instalaciones TeloInstala',
     'about-view': 'Quiénes Somos',
+    'profile-view': 'Mi Perfil',
     'support-view': 'Hub Administrativo Central',
     'integrations-view': 'Conectores e Integraciones de Servicios'
   };
@@ -3956,14 +3967,14 @@ window.printCertificate = function() {
 };
 
 // ==========================================
-// TELOLLEVA: INDRIVE SYSTEM (NEGOTIATION & ROUTE SVG)
+// TELOLLEVA: SISTEMA DE NEGOCIACIÓN DE TARIFAS Y RUTA SVG
 // ==========================================
-let indriveBiddingTimer = null;
-let indriveActiveDriver = null;
-let currentIndriveVehicle = 'moto';
+let llevaBiddingTimer = null;
+let llevaActiveDriver = null;
+let currentLlevaVehicle = 'moto';
 
-window.selectIndriveVehicle = function(type) {
-  currentIndriveVehicle = type;
+window.selectLlevaVehicle = function(type) {
+  currentLlevaVehicle = type;
   
   // Actualizar UI
   document.querySelectorAll('.vehicle-option').forEach(opt => {
@@ -3983,83 +3994,110 @@ window.selectIndriveVehicle = function(type) {
     if (strong) strong.style.color = 'var(--color-lleva)';
   }
   
-  window.updateIndrivePrice();
+  window.updateLlevaPrice();
 };
 
-window.updateIndrivePrice = function() {
-  const origen = document.getElementById('indrive-origen').value;
-  const destino = document.getElementById('indrive-destino').value;
+// Backwards compat alias
+window.selectIndriveVehicle = window.selectLlevaVehicle;
+
+window.updateLlevaPrice = function() {
+  const origen = document.getElementById('lleva-origen') ? document.getElementById('lleva-origen').value : '';
+  const destino = document.getElementById('lleva-destino') ? document.getElementById('lleva-destino').value : '';
   
   let basePrice = 250;
   
+  // Tarifas por ruta
   if (origen.startsWith('SD-') && destino.startsWith('Santiago-')) {
     basePrice = 2200;
   } else if (origen.startsWith('SD-') && destino.startsWith('LaVega-')) {
     basePrice = 1800;
   } else if (origen.startsWith('SD-') && destino.startsWith('PuntaCana-')) {
     basePrice = 4500;
+  } else if (origen.startsWith('SD-') && destino.startsWith('PuertoPlata-')) {
+    basePrice = 3800;
+  } else if (origen.startsWith('SD-') && destino.startsWith('Moca-')) {
+    basePrice = 2000;
   } else if (origen.startsWith('Santiago-') && destino.startsWith('LaVega-')) {
     basePrice = 800;
   } else if (origen === destino) {
     basePrice = 200;
+  } else if (origen.startsWith('SD-') && destino.startsWith('SD-')) {
+    basePrice = 400; // dentro de SD
   } else {
     basePrice = 1500;
   }
   
+  // Simulación de tráfico (hora pico = +20%)
+  const hour = new Date().getHours();
+  const isRushHour = (hour >= 7 && hour <= 9) || (hour >= 17 && hour <= 20);
+  const trafficMultiplier = isRushHour ? 1.2 : 1.0;
+  const trafficLabel = isRushHour ? '🔴 Hora pico' : '🟢 Normal';
+  const trafficEl = document.getElementById('lleva-traffic-status');
+  if (trafficEl) trafficEl.innerText = trafficLabel;
+  
   // Aplicar multiplicadores según vehículo
-  let multiplier = 1.0;
-  if (currentIndriveVehicle === 'car') {
-    multiplier = 1.5;
-  } else if (currentIndriveVehicle === 'cargo') {
-    multiplier = 2.5;
+  let vehicleMultiplier = 1.0;
+  if (currentLlevaVehicle === 'car') {
+    vehicleMultiplier = 1.5;
+  } else if (currentLlevaVehicle === 'cargo') {
+    vehicleMultiplier = 2.5;
   }
   
-  const finalPrice = Math.round((basePrice * multiplier) / 10) * 10;
+  const finalPrice = Math.round((basePrice * trafficMultiplier * vehicleMultiplier) / 10) * 10;
   
-  document.getElementById('indrive-suggested-label').innerText = `RD$ ${finalPrice}`;
-  document.getElementById('indrive-user-fare').value = finalPrice;
+  const suggestEl = document.getElementById('lleva-suggested-label');
+  const fareEl = document.getElementById('lleva-user-fare');
+  if (suggestEl) suggestEl.innerText = `RD$ ${finalPrice}`;
+  if (fareEl) fareEl.value = finalPrice;
 };
 
-window.adjustIndriveOffer = function(delta) {
-  const input = document.getElementById('indrive-user-fare');
+// Backwards compat alias
+window.updateIndrivePrice = window.updateLlevaPrice;
+
+window.adjustLlevaOffer = function(delta) {
+  const input = document.getElementById('lleva-user-fare');
+  if (!input) return;
   let val = parseInt(input.value) || 200;
   val += delta;
   if(val < 100) val = 100;
   input.value = val;
 };
 
-window.startIndriveNegotiation = function() {
-  const userFare = parseInt(document.getElementById('indrive-user-fare').value) || 200;
-  const origin = document.getElementById('indrive-origen').value;
-  const destination = document.getElementById('indrive-destino').value;
+// Backwards compat alias
+window.adjustIndriveOffer = window.adjustLlevaOffer;
+
+window.startLlevaNegotiation = function() {
+  const userFare = parseInt(document.getElementById('lleva-user-fare').value) || 200;
+  const origin = document.getElementById('lleva-origen').value;
+  const destination = document.getElementById('lleva-destino').value;
   
-  document.getElementById('indrive-request-card').style.display = 'none';
-  const offersCard = document.getElementById('indrive-offers-card');
+  document.getElementById('lleva-request-card').style.display = 'none';
+  const offersCard = document.getElementById('lleva-offers-card');
   offersCard.style.display = 'block';
-  
-  const offersList = document.getElementById('indrive-offers-list');
-  offersList.innerHTML = '';
+  offersCard.innerHTML = `<h3 style="margin-bottom: 10px;">Ofertas de Mensajeros</h3><p class="searching-pulse" style="color: var(--color-lleva); font-style: italic; text-align: center;">🔍 Buscando mensajeros disponibles...</p>`;
   
   // Set up SVG Map status
   const mapOverlay = document.getElementById('map-status-overlay');
-  mapOverlay.innerText = `Buscando mensajeros para: ${origin} ➡️ ${destination}`;
+  if (mapOverlay) mapOverlay.innerText = `Buscando mensajeros para: ${origin} ➡️ ${destination}`;
   
   // Reset active icons
-  document.getElementById('pin-origen').setAttribute('opacity', '0');
-  document.getElementById('pin-destino').setAttribute('opacity', '0');
-  document.getElementById('messenger-car').setAttribute('opacity', '0');
-  document.getElementById('map-route-path').setAttribute('d', '');
+  ['pin-origen', 'pin-destino', 'messenger-car'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.setAttribute('opacity', '0');
+  });
+  const routePath = document.getElementById('map-route-path');
+  if (routePath) routePath.setAttribute('d', '');
 
   // Simulate counter offers in 2 seconds
-  indriveBiddingTimer = setTimeout(() => {
+  llevaBiddingTimer = setTimeout(() => {
     let drivers = [];
-    if (currentIndriveVehicle === 'moto') {
+    if (currentLlevaVehicle === 'moto') {
       drivers = [
         { name: 'Yohan Cabrera', avatar: '🏍️', rating: '4.9 ★', vehicle: 'Motor Honda CGL (SD Express)', price: userFare, distance: '3 mins' },
         { name: 'José Luis Medina', avatar: '⚡', rating: '5.0 ★', vehicle: 'Super-Motor Eléctrico (Súper Rápido)', price: Math.round(userFare * 1.05 / 10) * 10, distance: '2 mins' },
-        { name: 'Carlos Abreu', avatar: '🛵', rating: '4.7 ★', vehicle: 'Scooter Delivery (Económico)', price: Math.round(userFare * 0.95 / 10) * 10, distance: '5 mins' }
+        { name: 'Carlos Abreu', avatar: '🛥️', rating: '4.7 ★', vehicle: 'Scooter Delivery (Económico)', price: Math.round(userFare * 0.95 / 10) * 10, distance: '5 mins' }
       ];
-    } else if (currentIndriveVehicle === 'car') {
+    } else if (currentLlevaVehicle === 'car') {
       drivers = [
         { name: 'Manuel Ortiz', avatar: '🚗', rating: '4.8 ★', vehicle: 'Kia Picanto (Aire acondicionado)', price: userFare, distance: '5 mins' },
         { name: 'Ricardo Gómez', avatar: '🚘', rating: '4.9 ★', vehicle: 'Toyota Corolla (Confort Premium)', price: Math.round(userFare * 1.15 / 10) * 10, distance: '7 mins' },
@@ -4073,9 +4111,9 @@ window.startIndriveNegotiation = function() {
       ];
     }
     
-    // Remove pulse text
-    const pulsing = offersCard.querySelector('.searching-pulse');
-    if(pulsing) pulsing.style.display = 'none';
+    const offersList = document.createElement('div');
+    offersList.className = 'offers-list';
+    offersList.id = 'lleva-offers-list';
     
     drivers.forEach(d => {
       offersList.innerHTML += `
@@ -4089,22 +4127,28 @@ window.startIndriveNegotiation = function() {
           </div>
           <div class="driver-action">
             <span class="driver-price">RD$ ${d.price}</span>
-            <button class="btn btn-primary btn-sm" onclick="window.acceptIndriveOffer('${d.name}', '${d.avatar}', ${d.price}, '${d.vehicle}')">Aceptar</button>
+            <button class="btn btn-primary btn-sm" onclick="window.acceptLlevaOffer('${d.name}', '${d.avatar}', ${d.price}, '${d.vehicle}')">Aceptar</button>
           </div>
         </div>
       `;
     });
+    
+    offersCard.innerHTML = `<h3 style="margin-bottom: 10px;">Ofertas de Mensajeros</h3>`;
+    offersCard.appendChild(offersList);
   }, 2000);
 };
 
-window.acceptIndriveOffer = function(name, avatar, price, vehicle) {
-  document.getElementById('indrive-offers-card').style.display = 'none';
-  document.getElementById('indrive-status-card').style.display = 'block';
+// Backwards compat alias
+window.startIndriveNegotiation = window.startLlevaNegotiation;
+
+window.acceptLlevaOffer = function(name, avatar, price, vehicle) {
+  document.getElementById('lleva-offers-card').style.display = 'none';
+  document.getElementById('lleva-status-card').style.display = 'block';
   
-  indriveActiveDriver = { name, avatar, price, vehicle };
+  llevaActiveDriver = { name, avatar, price, vehicle };
   
   // Inject mini profile
-  document.getElementById('indrive-assigned-driver-info').innerHTML = `
+  document.getElementById('lleva-assigned-driver-info').innerHTML = `
     <div class="driver-avatar">${avatar}</div>
     <div style="flex:1;">
       <h4>${name} (Asignado)</h4>
@@ -4117,14 +4161,17 @@ window.acceptIndriveOffer = function(name, avatar, price, vehicle) {
   animateSVGRoute();
   
   // Set up chat
-  const chatMsgs = document.getElementById('indrive-chat-messages');
-  chatMsgs.innerHTML = '';
+  const chatMsgs = document.getElementById('lleva-chat-messages');
+  if (chatMsgs) chatMsgs.innerHTML = '';
   
   // Welcome message from driver
   setTimeout(() => {
-    appendIndriveChatMessage(name, `¡Hola! Voy de camino a recoger el envío en el punto acordado.`, 'driver');
+    appendLlevaChatMessage(name, `¡Hola! Voy de camino a recoger el envío en el punto acordado.`, 'driver');
   }, 1000);
 };
+
+// Backwards compat alias
+window.acceptIndriveOffer = window.acceptLlevaOffer;
 
 function animateSVGRoute() {
   const pinA = document.getElementById('pin-origen');
@@ -4159,10 +4206,13 @@ function animateSVGRoute() {
   car.setAttribute('opacity', '1');
   car.setAttribute('transform', `translate(${x1}, ${y1})`);
   
-  mapOverlay.innerText = `🛵 Conductor ${indriveActiveDriver.name} en camino al origen.`;
-  document.getElementById('indrive-trip-status').innerText = 'En camino';
-  document.getElementById('indrive-trip-status').style.background = 'rgba(245, 158, 11, 0.1)';
-  document.getElementById('indrive-trip-status').style.color = 'var(--color-lleva)';
+  if(mapOverlay) mapOverlay.innerText = `🛥️ Conductor ${llevaActiveDriver ? llevaActiveDriver.name : ''} en camino al origen.`;
+  const tripStatus = document.getElementById('lleva-trip-status');
+  if(tripStatus) {
+    tripStatus.innerText = 'En camino';
+    tripStatus.style.background = 'rgba(245, 158, 11, 0.1)';
+    tripStatus.style.color = 'var(--color-lleva)';
+  }
   
   let start = null;
   const duration = 8000;
@@ -4178,20 +4228,22 @@ function animateSVGRoute() {
     car.setAttribute('transform', `translate(${point.x}, ${point.y})`);
     
     if (percent < 0.35) {
-      mapOverlay.innerText = `🛵 Conductor ${indriveActiveDriver.name} retirando el envío...`;
+      if(mapOverlay) mapOverlay.innerText = `🛥️ Conductor ${llevaActiveDriver ? llevaActiveDriver.name : ''} retirando el envío...`;
     } else if (percent < 0.95) {
-      document.getElementById('indrive-trip-status').innerText = 'En ruta';
-      mapOverlay.innerText = `🚚 En tránsito al destino.`;
+      if(tripStatus) tripStatus.innerText = 'En ruta';
+      if(mapOverlay) mapOverlay.innerText = `🚚 En tránsito al destino.`;
     } else {
-      document.getElementById('indrive-trip-status').innerText = 'Entregado';
-      document.getElementById('indrive-trip-status').style.background = 'rgba(16, 185, 129, 0.1)';
-      document.getElementById('indrive-trip-status').style.color = '#10b981';
-      mapOverlay.innerText = `✅ ¡Envío entregado con éxito por ${indriveActiveDriver.name}!`;
-      appendIndriveChatMessage(indriveActiveDriver.name, `He entregado las mercancías con éxito. ¡Muchas gracias por confiar en TeloLleva!`, 'driver');
+      if(tripStatus) {
+        tripStatus.innerText = 'Entregado';
+        tripStatus.style.background = 'rgba(16, 185, 129, 0.1)';
+        tripStatus.style.color = '#10b981';
+      }
+      if(mapOverlay) mapOverlay.innerText = `✅ ¡Envío entregado con éxito por ${llevaActiveDriver ? llevaActiveDriver.name : 'el mensajero'}!`;
+      if(llevaActiveDriver) appendLlevaChatMessage(llevaActiveDriver.name, `He entregado las mercancías con éxito. ¡Muchas gracias por confiar en TeloLleva!`, 'driver');
       window.showToast('Envío entregado con éxito', 'success');
     }
     
-    if (progress < duration && indriveActiveDriver) {
+    if (progress < duration && llevaActiveDriver) {
       window.requestAnimationFrame(step);
     }
   }
@@ -4199,21 +4251,25 @@ function animateSVGRoute() {
   window.requestAnimationFrame(step);
 }
 
-window.sendIndriveChatMessage = function(event) {
+window.sendLlevaChatMessage = function(event) {
   if (event.key === 'Enter') {
-    window.triggerSendChatMessage();
+    window.triggerSendLlevaChatMessage();
   }
 };
 
-window.triggerSendChatMessage = function() {
-  const input = document.getElementById('indrive-chat-input');
+// Backwards compat alias
+window.sendIndriveChatMessage = window.sendLlevaChatMessage;
+
+window.triggerSendLlevaChatMessage = function() {
+  const input = document.getElementById('lleva-chat-input');
+  if (!input) return;
   const text = input.value.trim();
   if(!text) return;
   
-  appendIndriveChatMessage('Tú', text, 'user');
+  appendLlevaChatMessage('Tú', text, 'user');
   input.value = '';
   
-  if(indriveActiveDriver) {
+  if(llevaActiveDriver) {
     setTimeout(() => {
       const answers = [
         "¡Excelente, copiado!",
@@ -4223,17 +4279,20 @@ window.triggerSendChatMessage = function() {
         "Sin problemas, voy con cuidado."
       ];
       const randomAnswer = answers[Math.floor(Math.random() * answers.length)];
-      appendIndriveChatMessage(indriveActiveDriver.name, randomAnswer, 'driver');
+      appendLlevaChatMessage(llevaActiveDriver.name, randomAnswer, 'driver');
     }, 1500);
   }
 };
 
+// Backwards compat alias
+window.triggerSendChatMessage = window.triggerSendLlevaChatMessage;
+
 window.sendQuickChatMessage = function(text) {
   if(!text) return;
   
-  appendIndriveChatMessage('Tú', text, 'user');
+  appendLlevaChatMessage('Tú', text, 'user');
   
-  if(indriveActiveDriver) {
+  if(llevaActiveDriver) {
     setTimeout(() => {
       const answers = [
         "¡Excelente, copiado!",
@@ -4243,13 +4302,13 @@ window.sendQuickChatMessage = function(text) {
         "Sin problemas, voy con cuidado."
       ];
       const randomAnswer = answers[Math.floor(Math.random() * answers.length)];
-      appendIndriveChatMessage(indriveActiveDriver.name, randomAnswer, 'driver');
+      appendLlevaChatMessage(llevaActiveDriver.name, randomAnswer, 'driver');
     }, 1200);
   }
 };
 
-function appendIndriveChatMessage(sender, text, type) {
-  const chatMsgs = document.getElementById('indrive-chat-messages');
+function appendLlevaChatMessage(sender, text, type) {
+  const chatMsgs = document.getElementById('lleva-chat-messages');
   if(!chatMsgs) return;
   
   chatMsgs.innerHTML += `
@@ -4260,22 +4319,36 @@ function appendIndriveChatMessage(sender, text, type) {
   chatMsgs.scrollTop = chatMsgs.scrollHeight;
 }
 
-window.cancelIndriveTrip = function() {
-  clearTimeout(indriveBiddingTimer);
-  indriveActiveDriver = null;
+// Backwards compat alias
+function appendIndriveChatMessage(sender, text, type) {
+  appendLlevaChatMessage(sender, text, type);
+}
+
+window.cancelLlevaTrip = function() {
+  clearTimeout(llevaBiddingTimer);
+  llevaActiveDriver = null;
   
-  document.getElementById('indrive-status-card').style.display = 'none';
-  document.getElementById('indrive-offers-card').style.display = 'none';
-  document.getElementById('indrive-request-card').style.display = 'block';
+  ['lleva-status-card', 'lleva-offers-card'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+  const reqCard = document.getElementById('lleva-request-card');
+  if (reqCard) reqCard.style.display = 'block';
   
-  document.getElementById('pin-origen').setAttribute('opacity', '0');
-  document.getElementById('pin-destino').setAttribute('opacity', '0');
-  document.getElementById('messenger-car').setAttribute('opacity', '0');
-  document.getElementById('map-route-path').setAttribute('d', '');
+  ['pin-origen', 'pin-destino', 'messenger-car'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.setAttribute('opacity', '0');
+  });
+  const routePath = document.getElementById('map-route-path');
+  if (routePath) routePath.setAttribute('d', '');
   
-  document.getElementById('map-status-overlay').innerText = 'Mapa fuera de línea - Ingrese ruta';
+  const mapOverlay = document.getElementById('map-status-overlay');
+  if (mapOverlay) mapOverlay.innerText = 'Mapa fuera de línea - Ingrese ruta';
   window.showToast('Envío cancelado', 'error');
 };
+
+// Backwards compat alias
+window.cancelIndriveTrip = window.cancelLlevaTrip;
 
 // ==========================================
 // TOAST NOTIFICATIONS
@@ -5577,7 +5650,7 @@ function getLocalChatbotResponse(userText) {
         resolve("🛒 **TeloSales** es nuestra tienda de comercio electrónico y covers personalizados de alta calidad. Puedes navegar por la pestaña 'TeloSales' para ver nuestro catálogo, agregar productos a tu carrito y realizar la compra de manera rápida y segura.");
       } else if (txt.includes('lleva') || txt.includes('envio') || txt.includes('delivery') || txt.includes('mensajeria') || txt.includes('transporte') || txt.includes('uber') || txt.includes('indrive')) {
         resolve("📦 **TeloLleva** es nuestra plataforma de logística inteligente. Ofrecemos envíos express para tus compras y un cotizador de tarifas de mensajería interactivo en la pestaña 'TeloLleva'. ¡Ingresa tu punto de origen y destino para cotizar y solicitar un mensajero!");
-      } else if (txt.includes('educa') || txt.includes('curso') || txt.includes('academia') || txt.includes('aprender') || txt.includes('platzi') || txt.includes('duolingo')) {
+      } else if (txt.includes('educa') || txt.includes('curso') || txt.includes('academia') || txt.includes('aprender') || txt.includes('estudiar') || txt.includes('certificado')) {
         resolve("🎓 **TeloEduca** es nuestra academia online de desarrollo profesional. Ofrecemos cursos y diplomados prácticos en Tecnología y Marketing Digital con material grabado, foros de consulta y exámenes. Mira la pestaña 'TeloEduca' para inscribirte y estudiar a tu propio ritmo.");
       } else if (txt.includes('repara') || txt.includes('daño') || txt.includes('pantalla') || txt.includes('celular') || txt.includes('laptop') || txt.includes('computadora')) {
         resolve("🔧 **TeloRepara** ofrece soporte técnico express. Si tu celular o laptop tiene fallas (pantalla rota, no enciende, etc.), indícalo en la pestaña 'TeloRepara' para obtener una cotización automática. Nuestros mensajeros retiran el equipo a domicilio y lo devuelven reparado.");
@@ -5713,3 +5786,85 @@ window.closeMobileMenu = function() {
     overlay.classList.remove('active');
   }
 };
+
+// ==========================================
+// PERFIL DE USUARIO (MI PERFIL VIEW)
+// ==========================================
+window.saveUserProfile = function(event) {
+  event.preventDefault();
+  
+  const name = document.getElementById('profile-name').value.trim();
+  const email = document.getElementById('profile-email').value.trim();
+  const phone = document.getElementById('profile-phone').value.trim();
+  const address = document.getElementById('profile-address').value.trim();
+  const cityEl = document.getElementById('profile-city');
+  const city = cityEl ? cityEl.value : '';
+  
+  AppState.userProfile = { name, email, phone, address, city };
+  AppState.saveState();
+  
+  // Update display
+  const nameDisplay = document.getElementById('profile-name-display');
+  const emailDisplay = document.getElementById('profile-email-display');
+  const avatarDisplay = document.getElementById('profile-avatar-display');
+  if (nameDisplay) nameDisplay.innerText = name || 'Usuario TeloCorpGroup';
+  if (emailDisplay) emailDisplay.innerText = email || 'Sin registro';
+  if (avatarDisplay) avatarDisplay.innerText = name ? name.charAt(0).toUpperCase() : '👤';
+  
+  window.showToast('Perfil guardado exitosamente ✓', 'success');
+  
+  // Autofill service forms with profile data
+  window.autofillProfileInForms();
+};
+
+window.loadUserProfile = function() {
+  const profile = AppState.userProfile;
+  if (!profile || !profile.name) return;
+  
+  const nameEl = document.getElementById('profile-name');
+  const emailEl = document.getElementById('profile-email');
+  const phoneEl = document.getElementById('profile-phone');
+  const addressEl = document.getElementById('profile-address');
+  const cityEl = document.getElementById('profile-city');
+  const nameDisplay = document.getElementById('profile-name-display');
+  const emailDisplay = document.getElementById('profile-email-display');
+  const avatarDisplay = document.getElementById('profile-avatar-display');
+  
+  if (nameEl && profile.name) nameEl.value = profile.name;
+  if (emailEl && profile.email) emailEl.value = profile.email;
+  if (phoneEl && profile.phone) phoneEl.value = profile.phone;
+  if (addressEl && profile.address) addressEl.value = profile.address;
+  if (cityEl && profile.city) cityEl.value = profile.city;
+  
+  if (nameDisplay) nameDisplay.innerText = profile.name || 'Usuario TeloCorpGroup';
+  if (emailDisplay) emailDisplay.innerText = profile.email || 'Sin registro';
+  if (avatarDisplay && profile.name) avatarDisplay.innerText = profile.name.charAt(0).toUpperCase();
+};
+
+window.autofillProfileInForms = function() {
+  const profile = AppState.userProfile;
+  if (!profile || !profile.name) return;
+  
+  // Autofill TeloRepara address
+  const reparaAddress = document.getElementById('repara-address');
+  if (reparaAddress && !reparaAddress.value && profile.address) {
+    reparaAddress.value = profile.address;
+  }
+};
+
+// Schedule/datetime toggle for TeloLleva
+document.addEventListener('DOMContentLoaded', function() {
+  const scheduleSelect = document.getElementById('lleva-schedule');
+  if (scheduleSelect) {
+    scheduleSelect.addEventListener('change', function() {
+      const datetimeWrapper = document.getElementById('lleva-datetime-wrapper');
+      if (datetimeWrapper) {
+        datetimeWrapper.style.display = (this.value === 'scheduled') ? 'block' : 'none';
+      }
+    });
+  }
+  
+  // Load user profile into the profile form on page load
+  window.loadUserProfile();
+});
+
