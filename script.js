@@ -2464,6 +2464,11 @@ function initNavigation() {
 }
 
 window.switchAppView = function(viewId) {
+  // Cerrar menú móvil si está abierto
+  if (window.closeMobileMenu) {
+    window.closeMobileMenu();
+  }
+
   // Pausar fake video si salimos de la clase
   if(viewId !== 'educa-classroom-view' && isVideoPlaying) {
     window.togglePlayPauseVideo();
@@ -5681,5 +5686,30 @@ window.submitPartnerApplication = async function(e) {
       submitBtn.innerText = oldText;
       submitBtn.disabled = false;
     }
+  }
+};
+
+// ==========================================
+// CONTROL DEL MENÚ DE NAVEGACIÓN MÓVIL
+// ==========================================
+window.toggleMobileMenu = function() {
+  const sidebar = document.querySelector('.app-sidebar');
+  const overlay = document.querySelector('.sidebar-overlay');
+  if (sidebar) {
+    sidebar.classList.toggle('open');
+  }
+  if (overlay) {
+    overlay.classList.toggle('active');
+  }
+};
+
+window.closeMobileMenu = function() {
+  const sidebar = document.querySelector('.app-sidebar');
+  const overlay = document.querySelector('.sidebar-overlay');
+  if (sidebar) {
+    sidebar.classList.remove('open');
+  }
+  if (overlay) {
+    overlay.classList.remove('active');
   }
 };

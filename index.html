@@ -20,9 +20,12 @@
     
     <!-- Sidebar / Navegación Lateral (Escritorio) -->
     <aside class="app-sidebar">
-      <div class="sidebar-brand" id="sidebar-brand-logo" style="cursor: pointer;">
-        <img src="assets/telocorpgroup-mark.png" alt="Logo" class="sidebar-logo">
-        <span class="sidebar-title">TeloCorp</span>
+      <div class="sidebar-brand" id="sidebar-brand-logo" style="cursor: pointer; display: flex; align-items: center; justify-content: space-between; width: 100%;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <img src="assets/telocorpgroup-mark.png" alt="Logo" class="sidebar-logo">
+          <span class="sidebar-title">TeloCorp</span>
+        </div>
+        <button class="mobile-sidebar-close" onclick="window.closeMobileMenu()" aria-label="Cerrar menú">×</button>
       </div>
       
       <nav class="sidebar-nav">
@@ -70,8 +73,13 @@
       
       <!-- Topbar Superior -->
       <header class="app-topbar">
-        <div class="topbar-title">
-          <h1 id="current-view-title">Bienvenido a TeloCorpGroup</h1>
+        <div class="topbar-left-area" style="display: flex; align-items: center; gap: 12px;">
+          <button class="mobile-menu-btn" onclick="window.toggleMobileMenu()" aria-label="Menú">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+          <div class="topbar-title">
+            <h1 id="current-view-title">Bienvenido a TeloCorpGroup</h1>
+          </div>
         </div>
         
         <div class="topbar-right-area" style="display: flex; align-items: center; gap: 16px;">
@@ -1493,6 +1501,8 @@
       <button class="btn btn-secondary" onclick="window.closeCertificateModal()">Cerrar Ventana</button>
     </div>
   </div>
+
+  <div class="sidebar-overlay" onclick="window.closeMobileMenu()"></div>
 
   <script src="script.js"></script>
 </body>

@@ -74,7 +74,22 @@ body {
 }
 
 @media (max-width: 768px) {
-  .app-sidebar { display: none; }
+  .app-sidebar {
+    position: fixed;
+    top: 0;
+    left: -260px; /* hidden off-screen to the left */
+    bottom: 0;
+    width: 260px;
+    background: #080c14;
+    z-index: 1100;
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.7);
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex !important; /* overrides display:none in desktop/javascript if any */
+  }
+
+  .app-sidebar.open {
+    transform: translateX(260px); /* slide in */
+  }
 }
 
 .sidebar-brand {
@@ -3368,6 +3383,75 @@ input:checked + .slider:before {
     margin-left: auto !important;
     margin-right: auto !important;
   }
+}
+
+/* --------------------------------------------------------------------------
+   MEJORAS FASE 5: NAVEGACIÓN MÓVIL (HAMBURGER MENU & SLIDE SIDEBAR)
+   -------------------------------------------------------------------------- */
+
+.mobile-menu-btn {
+  display: none;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+  outline: none;
+}
+
+.mobile-menu-btn:hover {
+  color: var(--text-main);
+  transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+  .mobile-menu-btn {
+    display: flex; /* show only on mobile */
+  }
+}
+
+.mobile-sidebar-close {
+  display: none;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.8rem;
+  cursor: pointer;
+  padding: 4px;
+  transition: var(--transition);
+}
+
+.mobile-sidebar-close:hover {
+  color: var(--color-primary);
+}
+
+@media (max-width: 768px) {
+  .mobile-sidebar-close {
+    display: block; /* show only on mobile sidebar */
+  }
+}
+
+/* Overlay dark background for mobile slide-out menu */
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 1090;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.sidebar-overlay.active {
+  opacity: 1;
+  visibility: visible;
 }
 
 
