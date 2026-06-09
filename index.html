@@ -10,6 +10,7 @@
   <meta name="theme-color" content="#06090e">
   
   <link rel="stylesheet" href="styles.css">
+  <link rel="manifest" href="manifest.json">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -19,7 +20,7 @@
     
     <!-- Sidebar / Navegación Lateral (Escritorio) -->
     <aside class="app-sidebar">
-      <div class="sidebar-brand">
+      <div class="sidebar-brand" id="sidebar-brand-logo" style="cursor: pointer;">
         <img src="assets/telocorpgroup-mark.png" alt="Logo" class="sidebar-logo">
         <span class="sidebar-title">TeloCorp</span>
       </div>
@@ -49,11 +50,15 @@
           <span class="nav-icon">🛠️</span>
           <span class="nav-label">TeloInstala</span>
         </button>
+        <button class="nav-item" data-target="about-view">
+          <span class="nav-icon">👥</span>
+          <span class="nav-label">Quiénes Somos</span>
+        </button>
         <button class="nav-item" data-target="support-view">
           <span class="nav-icon">🎧</span>
           <span class="nav-label">Soporte</span>
         </button>
-        <button class="nav-item" data-target="integrations-view">
+        <button class="nav-item" id="nav-integrations-item" data-target="integrations-view" style="display: none;">
           <span class="nav-icon">🔌</span>
           <span class="nav-label">Integración</span>
         </button>
@@ -706,19 +711,108 @@
           </div>
         </section>
 
+        <!-- VISTA: QUIÉNES SOMOS -->
+        <section class="app-view" id="about-view">
+          <div class="view-header">
+            <h2>Quiénes Somos</h2>
+            <p>Conoce al Clúster Digital TeloCorpGroup y a nuestro equipo multidisciplinario.</p>
+          </div>
+          
+          <div class="about-container">
+            <!-- Misión, Visión, Valores -->
+            <div class="grid-2-col" style="margin-bottom: 30px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+              <div class="card panel-card text-card">
+                <h3 style="color: var(--color-educa); display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+                  <span>🎯</span> Nuestra Misión
+                </h3>
+                <p style="line-height: 1.5;">Impulsar la transformación digital de las empresas dominicanas y del Caribe a través de un clúster integrado de servicios tecnológicos, logísticos, educativos y de soporte técnico con estándares de clase mundial.</p>
+              </div>
+              <div class="card panel-card text-card">
+                <h3 style="color: var(--color-lleva); display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+                  <span>👁️</span> Nuestra Visión
+                </h3>
+                <p style="line-height: 1.5;">Ser el conglomerado digital líder en la región, democratizando el acceso a herramientas avanzadas de comercio electrónico, educación, logística inteligente y soporte de hardware.</p>
+              </div>
+            </div>
+
+            <!-- Valores -->
+            <div class="card panel-card" style="margin-bottom: 30px;">
+              <h3 style="text-align: center; margin-bottom: 24px; font-size: 1.25rem;">Nuestros Valores Core</h3>
+              <div class="valores-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px;">
+                <div class="valor-item" style="text-align: center; padding: 10px;">
+                  <span style="font-size: 2.2rem; display: block; margin-bottom: 8px;">💡</span>
+                  <strong style="display: block; margin-bottom: 4px;">Innovación Constante</strong>
+                  <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0; line-height: 1.4;">Evolucionamos con las tecnologías emergentes y de Inteligencia Artificial.</p>
+                </div>
+                <div class="valor-item" style="text-align: center; padding: 10px;">
+                  <span style="font-size: 2.2rem; display: block; margin-bottom: 8px;">🤝</span>
+                  <strong style="display: block; margin-bottom: 4px;">Colaboración Activa</strong>
+                  <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0; line-height: 1.4;">Buscamos la sinergia e integración entre todas las empresas del clúster.</p>
+                </div>
+                <div class="valor-item" style="text-align: center; padding: 10px;">
+                  <span style="font-size: 2.2rem; display: block; margin-bottom: 8px;">🛡️</span>
+                  <strong style="display: block; margin-bottom: 4px;">Transparencia Total</strong>
+                  <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0; line-height: 1.4;">Negociación directa de tarifas de mensajería y cotizaciones abiertas.</p>
+                </div>
+                <div class="valor-item" style="text-align: center; padding: 10px;">
+                  <span style="font-size: 2.2rem; display: block; margin-bottom: 8px;">⚡</span>
+                  <strong style="display: block; margin-bottom: 4px;">Excelencia Operativa</strong>
+                  <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0; line-height: 1.4;">Servicios técnicos rápidos, confiables y de calidad garantizada.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- El Clúster Digital -->
+            <div class="card panel-card text-card" style="margin-bottom: 30px; text-align: center; padding: 24px;">
+              <h3 style="margin-bottom: 10px;">El Concepto de Clúster Digital (Conglomerado)</h3>
+              <p style="max-width: 800px; margin: 0 auto; line-height: 1.6; color: var(--text-muted);">
+                TeloCorpGroup no es una sola empresa, sino un <strong>conglomerado de empresas y servicios independientes</strong> conectados por una misma marca, infraestructura y cultura tecnológica. Cada división opera de forma autónoma pero colaborativa para ofrecer soluciones integrales de e-commerce, logística, formación y soporte.
+              </p>
+            </div>
+
+            <!-- El Equipo -->
+            <h3 style="margin: 30px 0 20px 0; text-align: center; font-size: 1.25rem;">Líderes de las Unidades de Servicio</h3>
+            <div class="team-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 20px;">
+              <div class="card panel-card team-card" style="text-align: center; padding: 20px; transition: transform 0.2s;">
+                <div style="font-size: 2.5rem; margin-bottom: 10px;">👑</div>
+                <h4 style="margin: 0 0 4px 0;">Balmis Reynoso</h4>
+                <p style="font-size: 0.8rem; color: var(--color-educa); font-weight: bold; margin-bottom: 8px;">Director General (CEO del Clúster)</p>
+                <p style="font-size: 0.75rem; color: var(--text-muted); margin: 0; line-height: 1.4;">Especialista en Estrategia de Negocios y Transformación Martech.</p>
+              </div>
+              <div class="card panel-card team-card" style="text-align: center; padding: 20px; transition: transform 0.2s;">
+                <div style="font-size: 2.5rem; margin-bottom: 10px;">🔧</div>
+                <h4 style="margin: 0 0 4px 0;">Ing. Ramón Abreu</h4>
+                <p style="font-size: 0.8rem; color: var(--color-repara); font-weight: bold; margin-bottom: 8px;">Director Técnico de Hardware</p>
+                <p style="font-size: 0.75rem; color: var(--text-muted); margin: 0; line-height: 1.4;">Especialista en reparación de componentes y arquitectura de TeloRepara.</p>
+              </div>
+              <div class="card panel-card team-card" style="text-align: center; padding: 20px; transition: transform 0.2s;">
+                <div style="font-size: 2.5rem; margin-bottom: 10px;">💻</div>
+                <h4 style="margin: 0 0 4px 0;">Ing. Carlos Medina</h4>
+                <p style="font-size: 0.8rem; color: var(--color-sales); font-weight: bold; margin-bottom: 8px;">Arquitecto de Integración & Ciberseguridad</p>
+                <p style="font-size: 0.75rem; color: var(--text-muted); margin: 0; line-height: 1.4;">Encargado de Supabase, webhooks, seguridad HMAC y Odoo ERP.</p>
+              </div>
+              <div class="card panel-card team-card" style="text-align: center; padding: 20px; transition: transform 0.2s;">
+                <div style="font-size: 2.5rem; margin-bottom: 10px;">📦</div>
+                <h4 style="margin: 0 0 4px 0;">Laura Rijo</h4>
+                <p style="font-size: 0.8rem; color: var(--color-lleva); font-weight: bold; margin-bottom: 8px;">Coordinadora de Logística & Soporte</p>
+                <p style="font-size: 0.75rem; color: var(--text-muted); margin: 0; line-height: 1.4;">Gestión de envíos TeloLleva, asignación de citas y operaciones del clúster.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <!-- VISTA: SOPORTE Y CONTACTO -->
         <section class="app-view" id="support-view">
           <div class="view-header">
             <h2>Soporte y Contacto Central</h2>
-            <p>Comunícate con nuestro Hub Administrativo.</p>
+            <p>Comunícate con nuestro Hub Administrativo o chatea en tiempo real con TeloAsistente.</p>
           </div>
           
-          <div class="contact-layout">
+          <div class="contact-layout grid-2-col-support">
+            <!-- Columna Izquierda: Formulario de Contacto -->
             <div class="card panel-card">
               <h3>Envía un Mensaje</h3>
-              <!-- Formulario de Web3Forms -->
               <form id="super-contact-form">
-                <!-- ATENCIÓN USUARIO: Sustituye YOUR_ACCESS_KEY por tu clave real de Web3Forms generada para telocorpgroup@gmail.com -->
                 <input type="hidden" name="access_key" value="267eefc0-fac6-428f-8741-b46bc348c0fa">
                 <input type="hidden" name="subject" id="dynamic-subject" value="Nuevo contacto desde TeloCorpGroup App">
                 
@@ -743,11 +837,73 @@
                   <label>Mensaje</label>
                   <textarea name="message" required placeholder="¿En qué te podemos ayudar?" rows="4"></textarea>
                 </div>
-                <!-- Honeypot -->
                 <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
                 
                 <button type="submit" class="btn btn-primary w-100" id="form-submit-btn">Enviar Mensaje Seguro</button>
               </form>
+            </div>
+
+            <!-- Columna Derecha: Chatbot y Redes Oficiales -->
+            <div class="support-right-column">
+              <!-- Chatbot de TeloAsistente -->
+              <div class="card panel-card chatbot-card">
+                <div class="chatbot-header">
+                  <div class="chatbot-avatar-container">
+                    <span class="chatbot-avatar-icon">🤖</span>
+                    <span class="online-status-dot"></span>
+                  </div>
+                  <div class="chatbot-info">
+                    <h4>TeloAsistente</h4>
+                    <small id="telo-chatbot-status">Asistente Virtual Central</small>
+                  </div>
+                </div>
+                <div class="chatbot-messages" id="telo-chatbot-messages">
+                  <div class="chat-msg bot-msg">
+                    <div class="msg-bubble">
+                      ¡Hola! 👋 Soy <strong>TeloAsistente</strong>, el agente inteligente de TeloCorpGroup. Estoy aquí para ayudarte a navegar por nuestro clúster digital (TeloSales, TeloLleva, TeloEduca, TeloRepara y TeloInstala). ¿En qué te puedo asesorar hoy?
+                    </div>
+                  </div>
+                </div>
+                <div class="chatbot-input-area">
+                  <input type="text" id="telo-chatbot-input" placeholder="Pregúntame sobre nuestros servicios..." onkeypress="window.handleChatbotKeyPress(event)">
+                  <button class="btn-chat-send" onclick="window.sendChatbotMessage()">➡️</button>
+                </div>
+              </div>
+
+              <!-- Canales Oficiales / Redes -->
+              <div class="card panel-card contact-channels-card">
+                <h3>Canales Oficiales de TeloCorp</h3>
+                <div class="contact-channels-list">
+                  <a href="https://wa.me/18298068092" target="_blank" class="channel-item whatsapp">
+                    <span class="channel-icon">💬</span>
+                    <div class="channel-details">
+                      <strong>WhatsApp Oficial</strong>
+                      <p>+1 (829) 806-8092</p>
+                    </div>
+                  </a>
+                  <a href="mailto:soporte@telocg.com" class="channel-item email">
+                    <span class="channel-icon">📧</span>
+                    <div class="channel-details">
+                      <strong>Correo Central</strong>
+                      <p>soporte@telocg.com</p>
+                    </div>
+                  </a>
+                  <a href="https://instagram.com/telocorpgroup" target="_blank" class="channel-item instagram">
+                    <span class="channel-icon">📸</span>
+                    <div class="channel-details">
+                      <strong>Instagram</strong>
+                      <p>@telocorpgroup</p>
+                    </div>
+                  </a>
+                  <div class="channel-item address">
+                    <span class="channel-icon">📍</span>
+                    <div class="channel-details">
+                      <strong>Oficinas Centrales</strong>
+                      <p>Av. Rómulo Betancourt 1302, Bella Vista, Santo Domingo, R.D.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -842,6 +998,48 @@
                 </div>
               </div>
 
+              <!-- Conector D: IA Gemini (TeloAsistente) -->
+              <div class="card panel-card integration-card" id="gemini-connector-card">
+                <div class="integration-card-header">
+                  <div class="integration-title-wrapper">
+                    <span class="integration-icon">🤖</span>
+                    <h3>IA Gemini (TeloAsistente)</h3>
+                  </div>
+                </div>
+                <p class="integration-desc">Ingresa tu API Key de Google AI Studio para habilitar respuestas inteligentes con el modelo Gemini 2.5 Flash en Soporte.</p>
+                <div class="form-group">
+                  <label>Gemini API Key</label>
+                  <input type="password" id="int-gemini-key" placeholder="AIzaSy..." class="integration-input">
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                  <button class="btn btn-primary btn-sm" onclick="window.saveGeminiConfig()">Guardar API Key</button>
+                </div>
+              </div>
+
+              <!-- Conector E: Seguridad HMAC -->
+              <div class="card panel-card integration-card" id="hmac-connector-card">
+                <div class="integration-card-header">
+                  <div class="integration-title-wrapper">
+                    <span class="integration-icon">🔒</span>
+                    <h3>Seguridad de Webhooks (HMAC)</h3>
+                  </div>
+                  <div class="switch-container">
+                    <label class="switch">
+                      <input type="checkbox" id="int-hmac-enabled" onchange="window.toggleHMACIntegration()">
+                      <span class="slider round"></span>
+                    </label>
+                  </div>
+                </div>
+                <p class="integration-desc">Firma digitalmente los payloads de los webhooks utilizando SHA-256. El destinatario (ej. n8n) puede verificar la firma usando el header `X-Telo-Signature`.</p>
+                <div class="form-group">
+                  <label>Clave Secreta HMAC (Secret Key)</label>
+                  <input type="password" id="int-hmac-secret" placeholder="Firma secreta para cifrado..." class="integration-input">
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                  <button class="btn btn-primary btn-sm" onclick="window.saveHMACConfig()">Guardar Secreto</button>
+                </div>
+              </div>
+
             </div>
 
             <!-- Columna Derecha: Consola de Diagnóstico y Pruebas -->
@@ -864,6 +1062,120 @@
                   </div>
                   <pre class="debug-console" id="debug-console-output">> Esperando interacción... Configura un webhook y haz clic en probar o realiza una acción en la app para registrar llamadas a la red.</pre>
                 </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Consola de Datos Integrados -->
+          <div class="card panel-card database-console-card" style="margin-top: 25px; width: 100%;">
+            <div class="database-console-header">
+              <div class="database-title-wrapper">
+                <span class="database-icon">📊</span>
+                <h3>Consola de Datos Integrados (Base de Datos Local)</h3>
+              </div>
+              <div class="database-actions">
+                <button class="btn btn-secondary btn-sm" onclick="window.refreshDatabaseConsole()">Actualizar</button>
+                <button class="btn btn-secondary btn-sm" onclick="window.clearDatabaseConsole()">Limpiar Registros</button>
+              </div>
+            </div>
+            <p class="integration-desc" style="margin-bottom: 20px;">Monitorea en tiempo real los datos capturados y persistidos en las bases de datos de todos los servicios del clúster.</p>
+            
+            <div class="tabs-database">
+              <button class="tab-db-btn active" id="btn-db-sales" onclick="window.switchDbTab('tab-db-sales')">🛒 TeloSales (Ventas)</button>
+              <button class="tab-db-btn" id="btn-db-bookings" onclick="window.switchDbTab('tab-db-bookings')">🔧 TeloRepara / Instala (Reservas)</button>
+              <button class="tab-db-btn" id="btn-db-educa" onclick="window.switchDbTab('tab-db-educa')">🎓 TeloEduca (Progreso)</button>
+              <button class="tab-db-btn" id="btn-db-leads" onclick="window.switchDbTab('tab-db-leads')">🎧 Soporte (Leads)</button>
+            </div>
+
+            <div class="tab-db-content active" id="tab-db-sales">
+              <div class="table-responsive">
+                <table class="db-table">
+                  <thead>
+                    <tr>
+                      <th>ID Orden</th>
+                      <th>Cliente</th>
+                      <th>Productos</th>
+                      <th>Total</th>
+                      <th>Método</th>
+                      <th>Fecha/Hora</th>
+                      <th>Estado Webhook</th>
+                    </tr>
+                  </thead>
+                  <tbody id="db-sales-tbody">
+                    <tr>
+                      <td colspan="7" class="empty-db-row">No hay transacciones registradas.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="tab-db-content" id="tab-db-bookings">
+              <div class="table-responsive">
+                <table class="db-table">
+                  <thead>
+                    <tr>
+                      <th>ID Reserva</th>
+                      <th>Servicio</th>
+                      <th>Cliente</th>
+                      <th>Fecha</th>
+                      <th>Hora</th>
+                      <th>Detalles</th>
+                      <th>Fecha/Hora</th>
+                      <th>Estado Webhook</th>
+                    </tr>
+                  </thead>
+                  <tbody id="db-bookings-tbody">
+                    <tr>
+                      <td colspan="8" class="empty-db-row">No hay servicios agendados.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="tab-db-content" id="tab-db-educa">
+              <div class="table-responsive">
+                <table class="db-table">
+                  <thead>
+                    <tr>
+                      <th>ID Progreso</th>
+                      <th>Curso</th>
+                      <th>Estudiante</th>
+                      <th>Módulo</th>
+                      <th>Estado</th>
+                      <th>Fecha/Hora</th>
+                    </tr>
+                  </thead>
+                  <tbody id="db-educa-tbody">
+                    <tr>
+                      <td colspan="6" class="empty-db-row">No hay progresos registrados.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="tab-db-content" id="tab-db-leads">
+              <div class="table-responsive">
+                <table class="db-table">
+                  <thead>
+                    <tr>
+                      <th>ID Lead</th>
+                      <th>Nombre</th>
+                      <th>Email</th>
+                      <th>Asunto</th>
+                      <th>Mensaje</th>
+                      <th>Fecha/Hora</th>
+                      <th>Estado Webhook</th>
+                    </tr>
+                  </thead>
+                  <tbody id="db-leads-tbody">
+                    <tr>
+                      <td colspan="7" class="empty-db-row">No hay leads ingresados.</td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
@@ -894,7 +1206,7 @@
         <span class="nav-icon">🎧</span>
         <span class="nav-label">Soporte</span>
       </button>
-      <button class="nav-item" data-target="integrations-view">
+      <button class="nav-item" id="nav-integrations-item-mobile" data-target="integrations-view" style="display: none;">
         <span class="nav-icon">🔌</span>
         <span class="nav-label">Integras.</span>
       </button>

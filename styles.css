@@ -2868,5 +2868,278 @@ input:checked + .slider:before {
   background: rgba(236, 72, 153, 0.08) !important;
 }
 
+/* --------------------------------------------------------------------------
+   SOPORTE Y CHATBOT DE TELOASISTENTE
+   -------------------------------------------------------------------------- */
+.grid-2-col-support {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 30px;
+  align-items: start;
+}
+@media (max-width: 992px) {
+  .grid-2-col-support {
+    grid-template-columns: 1fr;
+  }
+}
+.support-right-column {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+.chatbot-card {
+  display: flex;
+  flex-direction: column;
+  height: 400px;
+  padding: 0 !important; /* Reset padding for chatbot frame */
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+.chatbot-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  background: rgba(255, 255, 255, 0.02);
+  border-bottom: 1px solid var(--border-color);
+}
+.chatbot-avatar-container {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(221, 34, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(221, 34, 0, 0.2);
+}
+.chatbot-avatar-icon {
+  font-size: 1.4rem;
+}
+.online-status-dot {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  background: #10b981;
+  border: 2px solid var(--bg-app);
+  border-radius: 50%;
+}
+.chatbot-info h4 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+.chatbot-info small {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+.chatbot-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: rgba(0, 0, 0, 0.15);
+}
+.chat-msg {
+  display: flex;
+  max-width: 85%;
+}
+.chat-msg.bot-msg {
+  align-self: flex-start;
+}
+.chat-msg.user-msg {
+  align-self: flex-end;
+}
+.chat-msg .msg-bubble {
+  padding: 10px 16px;
+  border-radius: 16px;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+.chat-msg.bot-msg .msg-bubble {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  border-top-left-radius: 4px;
+}
+.chat-msg.user-msg .msg-bubble {
+  background: var(--color-primary);
+  color: white;
+  border-top-right-radius: 4px;
+}
+.chatbot-input-area {
+  display: flex;
+  border-top: 1px solid var(--border-color);
+  background: rgba(0, 0, 0, 0.2);
+}
+.chatbot-input-area input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  padding: 16px 20px;
+  color: white;
+  font-size: 0.9rem;
+}
+.chatbot-input-area input:focus {
+  outline: none;
+}
+.btn-chat-send {
+  background: transparent;
+  border: none;
+  padding: 0 20px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: var(--transition);
+}
+.btn-chat-send:hover {
+  transform: scale(1.1);
+}
+
+/* Redes y canales de contacto */
+.contact-channels-card {
+  display: flex;
+  flex-direction: column;
+}
+.contact-channels-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-top: 15px;
+}
+.channel-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 18px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: inherit;
+  text-decoration: none;
+  transition: var(--transition);
+}
+.channel-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateX(5px);
+}
+.channel-item .channel-icon {
+  font-size: 1.5rem;
+}
+.channel-details strong {
+  display: block;
+  font-size: 0.9rem;
+  margin-bottom: 2px;
+}
+.channel-details p {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* Quiénes somos - Team card hovers */
+.team-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 8px 20px rgba(221, 34, 0, 0.1);
+}
+
+/* --------------------------------------------------------------------------
+   CONSOLA DE DATOS INTEGRADOS
+   -------------------------------------------------------------------------- */
+.database-console-card {
+  border: 1px solid var(--border-color);
+}
+.database-console-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 12px;
+}
+.database-title-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.database-title-wrapper h3 {
+  margin: 0;
+}
+.database-actions {
+  display: flex;
+  gap: 10px;
+}
+.tabs-database {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 10px;
+}
+.tab-db-btn {
+  padding: 10px 18px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: var(--transition);
+}
+.tab-db-btn:hover {
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.02);
+}
+.tab-db-btn.active {
+  color: white;
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--border-color);
+}
+.tab-db-content {
+  display: none;
+}
+.tab-db-content.active {
+  display: block;
+}
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+.db-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.85rem;
+}
+.db-table th {
+  padding: 12px 16px;
+  color: var(--text-muted);
+  border-bottom: 2px solid var(--border-color);
+  font-weight: 600;
+}
+.db-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-main);
+}
+.db-table tr:hover {
+  background: rgba(255, 255, 255, 0.01);
+}
+.empty-db-row {
+  text-align: center;
+  color: var(--text-muted) !important;
+  padding: 24px !important;
+  font-style: italic;
+}
+
 
 

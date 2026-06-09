@@ -16,6 +16,10 @@ const AppState = {
   classNotes: {},
   appliedCoupon: null,
   passedQuizzes: [],
+  dbSales: [],
+  dbBookings: [],
+  dbEduca: [],
+  dbLeads: [],
   integrations: {
     supabaseUrl: '',
     supabaseKey: '',
@@ -24,7 +28,10 @@ const AppState = {
     stripeWebhook: '',
     n8nLeadsUrl: '',
     n8nOrdersUrl: '',
-    n8nServicesUrl: ''
+    n8nServicesUrl: '',
+    geminiKey: '',
+    hmacEnabled: false,
+    hmacSecret: ''
   },
   
   loadState: function() {
@@ -37,6 +44,10 @@ const AppState = {
     const savedCoupon = localStorage.getItem('teloAppliedCoupon');
     const savedQuizzes = localStorage.getItem('teloPassedQuizzes');
     const savedIntegrations = localStorage.getItem('teloIntegrations');
+    const savedDbSales = localStorage.getItem('teloDbSales');
+    const savedDbBookings = localStorage.getItem('teloDbBookings');
+    const savedDbEduca = localStorage.getItem('teloDbEduca');
+    const savedDbLeads = localStorage.getItem('teloDbLeads');
     
     if(savedCart) this.cart = JSON.parse(savedCart);
     if(savedCourses) this.courses = JSON.parse(savedCourses);
@@ -46,6 +57,10 @@ const AppState = {
     if(savedNotes) this.classNotes = JSON.parse(savedNotes);
     if(savedCoupon) this.appliedCoupon = JSON.parse(savedCoupon);
     if(savedQuizzes) this.passedQuizzes = JSON.parse(savedQuizzes);
+    if(savedDbSales) this.dbSales = JSON.parse(savedDbSales);
+    if(savedDbBookings) this.dbBookings = JSON.parse(savedDbBookings);
+    if(savedDbEduca) this.dbEduca = JSON.parse(savedDbEduca);
+    if(savedDbLeads) this.dbLeads = JSON.parse(savedDbLeads);
     if(savedIntegrations) {
       this.integrations = { ...this.integrations, ...JSON.parse(savedIntegrations) };
     }
@@ -61,6 +76,10 @@ const AppState = {
     localStorage.setItem('teloAppliedCoupon', JSON.stringify(this.appliedCoupon));
     localStorage.setItem('teloPassedQuizzes', JSON.stringify(this.passedQuizzes));
     localStorage.setItem('teloIntegrations', JSON.stringify(this.integrations));
+    localStorage.setItem('teloDbSales', JSON.stringify(this.dbSales));
+    localStorage.setItem('teloDbBookings', JSON.stringify(this.dbBookings));
+    localStorage.setItem('teloDbEduca', JSON.stringify(this.dbEduca));
+    localStorage.setItem('teloDbLeads', JSON.stringify(this.dbLeads));
   }
 };
 
@@ -2381,6 +2400,15 @@ const coursesDatabase = [
 document.addEventListener('DOMContentLoaded', () => {
   AppState.loadState();
   
+  // Registrar Service Worker para PWA
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js')
+        .then(reg => console.log('Service Worker registrado con éxito:', reg.scope))
+        .catch(err => console.error('Fallo al registrar Service Worker:', err));
+    });
+  }
+
   initNavigation();
   renderProducts('all');
   renderPlatziCourses('all');
@@ -2390,6 +2418,15 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   setupContactForm();
   setupPlatziDashboard();
+  
+  // Inicializar Puerta de Administración y Chatbot
+  if (window.initAdminGate) {
+    window.initAdminGate();
+  }
+  if (window.initChatbot) {
+    window.initChatbot();
+  }
+
   if (window.setupIntegrationsUI) {
     window.setupIntegrationsUI();
   }
@@ -2462,6 +2499,7 @@ window.switchAppView = function(viewId) {
     'lleva-view': 'Logística TeloLleva',
     'repara-view': 'Soporte Técnico TeloRepara',
     'instala-view': 'Instalaciones TeloInstala',
+    'about-view': 'Quiénes Somos',
     'support-view': 'Hub Administrativo Central',
     'integrations-view': 'Conectores e Integraciones de Servicios'
   };
@@ -2955,13 +2993,14 @@ window.updateQuantity = function(id, delta) {
   }
 };
 
-window.checkoutCart = function() {
+window.checkoutCart = async function() {
   if(AppState.cart.length === 0) {
     window.showToast('El carrito está vacío', 'error');
     return;
   }
   
   const totalAmount = parseFloat(document.getElementById('cart-total-price').innerText.replace('RD$', '').replace(/,/g, '').trim());
+  const productsText = AppState.cart.map(item => `${item.title} (x${item.quantity})`).join(', ');
   
   // Si Stripe está habilitado, validamos datos
   if (AppState.integrations && AppState.integrations.stripeEnabled) {
@@ -3000,18 +3039,36 @@ window.checkoutCart = function() {
         window.logToDiagnosticConsole('out', `Procesando Cobro Stripe Webhook: ${targetUrl}`, JSON.stringify(payload, null, 2));
       }
       
+      const payloadStr = JSON.stringify(payload);
+      const headers = { 'Content-Type': 'application/json' };
+      
+      if (AppState.integrations.hmacEnabled && AppState.integrations.hmacSecret) {
+        try {
+          const sig = await calculateHMAC(AppState.integrations.hmacSecret, payloadStr);
+          headers['X-Telo-Signature'] = sig;
+          if (window.logToDiagnosticConsole) {
+            window.logToDiagnosticConsole('info', `Firma HMAC Generada: ${sig.slice(0, 15)}... (cabecera X-Telo-Signature)`);
+          }
+        } catch (e) {
+          console.error("Error signing HMAC:", e);
+        }
+      }
+      
       fetch(targetUrl, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        headers: headers,
+        body: payloadStr
       })
       .then(async (response) => {
         const respText = await response.text();
+        const statusStr = `Sincronizado (${response.status})`;
         if (response.ok) {
           window.showToast('¡Pago de Stripe procesado e integrado con éxito!', 'success');
           if (window.logToDiagnosticConsole) {
             window.logToDiagnosticConsole('success', `Stripe aprobó el pago (HTTP ${response.status})`, respText);
           }
+          
+          window.addDbSalesRecord(cardName, productsText, totalAmount, "Stripe", statusStr);
           
           // Limpiar carrito
           AppState.cart = [];
@@ -3032,6 +3089,7 @@ window.checkoutCart = function() {
           if (window.logToDiagnosticConsole) {
             window.logToDiagnosticConsole('error', `Stripe rechazó el cargo (HTTP ${response.status})`, respText);
           }
+          window.addDbSalesRecord(cardName, productsText, totalAmount, "Stripe", `Fallo (${response.status})`);
         }
       })
       .catch(error => {
@@ -3040,6 +3098,7 @@ window.checkoutCart = function() {
         if (window.logToDiagnosticConsole) {
           window.logToDiagnosticConsole('error', `Fallo de conexión en pasarela Stripe: ${error.message}`);
         }
+        window.addDbSalesRecord(cardName, productsText, totalAmount, "Stripe", 'Error Red');
       })
       .finally(() => {
         checkoutBtn.innerText = oldText;
@@ -3048,6 +3107,7 @@ window.checkoutCart = function() {
       
     } else {
       // Si Stripe está activo pero no configuraron Webhook
+      window.addDbSalesRecord(cardName, productsText, totalAmount, "Stripe (Local)", 'Local');
       setTimeout(() => {
         window.showToast('Pago aprobado (Modo Local / Sin Webhook)', 'success');
         if (window.logToDiagnosticConsole) {
@@ -3089,30 +3149,52 @@ window.checkoutCart = function() {
         window.logToDiagnosticConsole('out', `Disparando Orden a n8n Ventas Webhook: ${AppState.integrations.n8nOrdersUrl}`, JSON.stringify(payload, null, 2));
       }
       
-      fetch(AppState.integrations.n8nOrdersUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      })
-      .then(async (response) => {
-        const respText = await response.text();
-        if (response.ok) {
-          if (window.logToDiagnosticConsole) {
-            window.logToDiagnosticConsole('success', `Orden sincronizada en n8n/Odoo (HTTP ${response.status})`, respText);
-          }
-        } else {
-          if (window.logToDiagnosticConsole) {
-            window.logToDiagnosticConsole('error', `n8n rechazó la orden (HTTP ${response.status})`, respText);
-          }
+      const payloadStr = JSON.stringify(payload);
+      const headers = { 'Content-Type': 'application/json' };
+      
+      // Realizar firma HMAC
+      const fireSimulatedFetch = async () => {
+        if (AppState.integrations.hmacEnabled && AppState.integrations.hmacSecret) {
+          try {
+            const sig = await calculateHMAC(AppState.integrations.hmacSecret, payloadStr);
+            headers['X-Telo-Signature'] = sig;
+            if (window.logToDiagnosticConsole) {
+              window.logToDiagnosticConsole('info', `Firma HMAC Generada: ${sig.slice(0, 15)}... (cabecera X-Telo-Signature)`);
+            }
+          } catch(e) {}
         }
-      })
-      .catch(error => {
-        console.error(error);
-        if (window.logToDiagnosticConsole) {
-          window.logToDiagnosticConsole('error', `Fallo al enviar orden en background: ${error.message}`);
-        }
-      });
+        
+        fetch(AppState.integrations.n8nOrdersUrl, {
+          method: 'POST',
+          headers: headers,
+          body: payloadStr
+        })
+        .then(async (response) => {
+          const respText = await response.text();
+          if (response.ok) {
+            window.addDbSalesRecord("Cliente TeloSales", productsText, totalAmount, "Simulación Webhook", `Sincronizado (${response.status})`);
+            if (window.logToDiagnosticConsole) {
+              window.logToDiagnosticConsole('success', `Orden sincronizada en n8n/Odoo (HTTP ${response.status})`, respText);
+            }
+          } else {
+            window.addDbSalesRecord("Cliente TeloSales", productsText, totalAmount, "Simulación Webhook", `Fallo (${response.status})`);
+            if (window.logToDiagnosticConsole) {
+              window.logToDiagnosticConsole('error', `n8n rechazó la orden (HTTP ${response.status})`, respText);
+            }
+          }
+        })
+        .catch(error => {
+          console.error(error);
+          window.addDbSalesRecord("Cliente TeloSales", productsText, totalAmount, "Simulación Webhook", 'Error Red');
+          if (window.logToDiagnosticConsole) {
+            window.logToDiagnosticConsole('error', `Fallo al enviar orden en background: ${error.message}`);
+          }
+        });
+      };
+      
+      fireSimulatedFetch();
     } else {
+      window.addDbSalesRecord("Cliente TeloSales", productsText, totalAmount, "Simulación Local", 'Local');
       if (window.logToDiagnosticConsole) {
         window.logToDiagnosticConsole('warn', 'Orden simulada localmente (Webhook de Ventas no configurado)');
       }
@@ -3392,15 +3474,28 @@ window.selectClassroomLecture = function(lectureId) {
 
 window.toggleCompleteClass = function() {
   const isCompleted = AppState.completedClasses.includes(activeLectureId);
+  let stateLabel = 'Clase Completada';
   if(isCompleted) {
     AppState.completedClasses = AppState.completedClasses.filter(id => id !== activeLectureId);
     window.showToast('Clase marcada como pendiente', 'error');
+    stateLabel = 'Clase Pendiente';
   } else {
     AppState.completedClasses.push(activeLectureId);
     window.showToast('¡Clase completada! Sigue así.', 'success');
   }
   AppState.saveState();
   
+  // Log note taking in database console
+  const course = coursesDatabase.find(c => c.id === activeCourseId);
+  let classTitle = activeLectureId;
+  if (course) {
+    course.modules.forEach(m => {
+      const cls = m.classes.find(c => c.id === activeLectureId);
+      if (cls) classTitle = `${course.title} - ${cls.title}`;
+    });
+  }
+  window.addDbEducaRecord(course ? course.title : "Curso", "Estudiante TeloEduca", classTitle, stateLabel);
+
   // Refresh classroom UI
   loadClassroomContent();
   renderPlatziCourses();
@@ -3588,6 +3683,17 @@ window.saveCurrentClassNotes = function() {
   if (!AppState.classNotes) AppState.classNotes = {};
   AppState.classNotes[activeLectureId] = notesTextarea.value;
   AppState.saveState();
+  
+  // Log note taking in database console
+  const course = coursesDatabase.find(c => c.id === activeCourseId);
+  let classTitle = activeLectureId;
+  if (course) {
+    course.modules.forEach(m => {
+      const cls = m.classes.find(c => c.id === activeLectureId);
+      if (cls) classTitle = `${course.title} - ${cls.title}`;
+    });
+  }
+  window.addDbEducaRecord(course ? course.title : "Curso", "Estudiante TeloEduca", classTitle, "Apunte Guardado");
 };
 
 window.downloadClassNotes = function() {
@@ -4204,7 +4310,7 @@ function setupContactForm() {
   const form = document.getElementById('super-contact-form');
   if(!form) return;
   
-  form.addEventListener('submit', function(e) {
+  form.addEventListener('submit', async function(e) {
     e.preventDefault();
     
     const formData = new FormData(form);
@@ -4228,24 +4334,42 @@ function setupContactForm() {
         window.logToDiagnosticConsole('out', `Enviando Lead a n8n CRM Webhook: ${AppState.integrations.n8nLeadsUrl}`, JSON.stringify(dataObj, null, 2));
       }
       
+      const payloadStr = JSON.stringify(dataObj);
+      const headers = { 'Content-Type': 'application/json' };
+      
+      if (AppState.integrations.hmacEnabled && AppState.integrations.hmacSecret) {
+        try {
+          const sig = await calculateHMAC(AppState.integrations.hmacSecret, payloadStr);
+          headers['X-Telo-Signature'] = sig;
+          if (window.logToDiagnosticConsole) {
+            window.logToDiagnosticConsole('info', `Firma HMAC Generada: ${sig.slice(0, 15)}... (cabecera X-Telo-Signature)`);
+          }
+        } catch (e) {
+          console.error("Error signing HMAC:", e);
+        }
+      }
+      
       fetch(AppState.integrations.n8nLeadsUrl, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(dataObj)
+        headers: headers,
+        body: payloadStr
       })
       .then(async (response) => {
         const respText = await response.text();
+        const statusStr = `Sincronizado (${response.status})`;
         if (response.ok) {
           window.showToast('Mensaje enviado exitosamente vía n8n webhook.', 'success');
           if (window.logToDiagnosticConsole) {
             window.logToDiagnosticConsole('success', `Lead recibido por n8n (HTTP ${response.status})`, respText);
           }
+          window.addDbLeadsRecord(dataObj.name, dataObj.email, dataObj.department, dataObj.message, statusStr);
           form.reset();
         } else {
           window.showToast(`Error al enviar el lead (HTTP ${response.status})`, 'error');
           if (window.logToDiagnosticConsole) {
             window.logToDiagnosticConsole('error', `n8n rechazó el lead (HTTP ${response.status})`, respText);
           }
+          window.addDbLeadsRecord(dataObj.name, dataObj.email, dataObj.department, dataObj.message, `Fallo (${response.status})`);
         }
       })
       .catch(error => {
@@ -4254,6 +4378,7 @@ function setupContactForm() {
         if (window.logToDiagnosticConsole) {
           window.logToDiagnosticConsole('error', `Fallo de conexión al enviar lead: ${error.message}`);
         }
+        window.addDbLeadsRecord(dataObj.name, dataObj.email, dataObj.department, dataObj.message, 'Error Red');
       })
       .finally(() => {
         btn.innerText = oldText;
@@ -4275,6 +4400,7 @@ function setupContactForm() {
           if (window.logToDiagnosticConsole) {
             window.logToDiagnosticConsole('success', 'Web3Forms recibió el lead con éxito (HTTP 200)');
           }
+          window.addDbLeadsRecord(dataObj.name, dataObj.email, dataObj.department, dataObj.message, 'Web3Forms');
           form.reset();
         } else {
           const data = await response.json();
@@ -4283,12 +4409,14 @@ function setupContactForm() {
               if (window.logToDiagnosticConsole) {
                 window.logToDiagnosticConsole('warn', 'Simulación de Web3Forms completada (Access Key de prueba)');
               }
+              window.addDbLeadsRecord(dataObj.name, dataObj.email, dataObj.department, dataObj.message, 'Web3Forms (Simul.)');
               form.reset();
           } else {
               window.showToast('Error al enviar el formulario.', 'error');
               if (window.logToDiagnosticConsole) {
                 window.logToDiagnosticConsole('error', 'Web3Forms devolvió un error', JSON.stringify(data));
               }
+              window.addDbLeadsRecord(dataObj.name, dataObj.email, dataObj.department, dataObj.message, 'Fallo Web3Forms');
           }
         }
       })
@@ -4298,6 +4426,7 @@ function setupContactForm() {
         if (window.logToDiagnosticConsole) {
           window.logToDiagnosticConsole('error', `Fallo de red al conectar con Web3Forms: ${error.message}`);
         }
+        window.addDbLeadsRecord(dataObj.name, dataObj.email, dataObj.department, dataObj.message, 'Error Red');
       })
       .finally(() => {
         btn.innerText = oldText;
@@ -4447,29 +4576,52 @@ window.bookReparaService = function() {
       window.logToDiagnosticConsole('out', `Enviando Reserva TeloRepara a n8n: ${AppState.integrations.n8nServicesUrl}`, JSON.stringify(payload, null, 2));
     }
     
-    fetch(AppState.integrations.n8nServicesUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    })
-    .then(async (response) => {
-      const respText = await response.text();
-      if (response.ok) {
-        if (window.logToDiagnosticConsole) {
-          window.logToDiagnosticConsole('success', `Reserva recibida por n8n (HTTP ${response.status})`, respText);
-        }
-      } else {
-        if (window.logToDiagnosticConsole) {
-          window.logToDiagnosticConsole('error', `n8n rechazó la reserva (HTTP ${response.status})`, respText);
-        }
+    const payloadStr = JSON.stringify(payload);
+    const headers = { 'Content-Type': 'application/json' };
+    
+    const fireReparaFetch = async () => {
+      if (AppState.integrations.hmacEnabled && AppState.integrations.hmacSecret) {
+        try {
+          const sig = await calculateHMAC(AppState.integrations.hmacSecret, payloadStr);
+          headers['X-Telo-Signature'] = sig;
+          if (window.logToDiagnosticConsole) {
+            window.logToDiagnosticConsole('info', `Firma HMAC Generada: ${sig.slice(0, 15)}... (cabecera X-Telo-Signature)`);
+          }
+        } catch(e) {}
       }
-    })
-    .catch(error => {
-      console.error(error);
-      if (window.logToDiagnosticConsole) {
-        window.logToDiagnosticConsole('error', `Fallo de red al enviar reserva a n8n: ${error.message}`);
-      }
-    });
+      
+      fetch(AppState.integrations.n8nServicesUrl, {
+        method: 'POST',
+        headers: headers,
+        body: payloadStr
+      })
+      .then(async (response) => {
+        const respText = await response.text();
+        const statusStr = `Sincronizado (${response.status})`;
+        if (response.ok) {
+          if (window.logToDiagnosticConsole) {
+            window.logToDiagnosticConsole('success', `Reserva recibida por n8n (HTTP ${response.status})`, respText);
+          }
+          window.addDbBookingsRecord("TeloRepara", "Cliente TeloRepara", new Date().toLocaleDateString(), timeVal, `Falla: ${issueText} | Disp: ${deviceText}`, statusStr);
+        } else {
+          if (window.logToDiagnosticConsole) {
+            window.logToDiagnosticConsole('error', `n8n rechazó la reserva (HTTP ${response.status})`, respText);
+          }
+          window.addDbBookingsRecord("TeloRepara", "Cliente TeloRepara", new Date().toLocaleDateString(), timeVal, `Falla: ${issueText} | Disp: ${deviceText}`, `Fallo (${response.status})`);
+        }
+      })
+      .catch(error => {
+        console.error(error);
+        if (window.logToDiagnosticConsole) {
+          window.logToDiagnosticConsole('error', `Fallo de red al enviar reserva a n8n: ${error.message}`);
+        }
+        window.addDbBookingsRecord("TeloRepara", "Cliente TeloRepara", new Date().toLocaleDateString(), timeVal, `Falla: ${issueText} | Disp: ${deviceText}`, 'Error Red');
+      });
+    };
+    
+    fireReparaFetch();
+  } else {
+    window.addDbBookingsRecord("TeloRepara", "Cliente TeloRepara", new Date().toLocaleDateString(), timeVal, `Falla: ${issueText} | Disp: ${deviceText}`, 'Local');
   }
   
   clearTimeout(reparaSimTimer1);
@@ -4606,29 +4758,52 @@ window.bookInstalaService = function() {
       window.logToDiagnosticConsole('out', `Enviando Reserva TeloInstala a n8n: ${AppState.integrations.n8nServicesUrl}`, JSON.stringify(payload, null, 2));
     }
     
-    fetch(AppState.integrations.n8nServicesUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    })
-    .then(async (response) => {
-      const respText = await response.text();
-      if (response.ok) {
-        if (window.logToDiagnosticConsole) {
-          window.logToDiagnosticConsole('success', `Reserva recibida por n8n (HTTP ${response.status})`, respText);
-        }
-      } else {
-        if (window.logToDiagnosticConsole) {
-          window.logToDiagnosticConsole('error', `n8n rechazó la reserva (HTTP ${response.status})`, respText);
-        }
+    const payloadStr = JSON.stringify(payload);
+    const headers = { 'Content-Type': 'application/json' };
+    
+    const fireInstalaFetch = async () => {
+      if (AppState.integrations.hmacEnabled && AppState.integrations.hmacSecret) {
+        try {
+          const sig = await calculateHMAC(AppState.integrations.hmacSecret, payloadStr);
+          headers['X-Telo-Signature'] = sig;
+          if (window.logToDiagnosticConsole) {
+            window.logToDiagnosticConsole('info', `Firma HMAC Generada: ${sig.slice(0, 15)}... (cabecera X-Telo-Signature)`);
+          }
+        } catch(e) {}
       }
-    })
-    .catch(error => {
-      console.error(error);
-      if (window.logToDiagnosticConsole) {
-        window.logToDiagnosticConsole('error', `Fallo de red al enviar reserva a n8n: ${error.message}`);
-      }
-    });
+      
+      fetch(AppState.integrations.n8nServicesUrl, {
+        method: 'POST',
+        headers: headers,
+        body: payloadStr
+      })
+      .then(async (response) => {
+        const respText = await response.text();
+        const statusStr = `Sincronizado (${response.status})`;
+        if (response.ok) {
+          if (window.logToDiagnosticConsole) {
+            window.logToDiagnosticConsole('success', `Reserva recibida por n8n (HTTP ${response.status})`, respText);
+          }
+          window.addDbBookingsRecord("TeloInstala", "Cliente TeloInstala", formattedDate, timeText, `Servicio: ${serviceText} | Técnico: ${tech.name}`, statusStr);
+        } else {
+          if (window.logToDiagnosticConsole) {
+            window.logToDiagnosticConsole('error', `n8n rechazó la reserva (HTTP ${response.status})`, respText);
+          }
+          window.addDbBookingsRecord("TeloInstala", "Cliente TeloInstala", formattedDate, timeText, `Servicio: ${serviceText} | Técnico: ${tech.name}`, `Fallo (${response.status})`);
+        }
+      })
+      .catch(error => {
+        console.error(error);
+        if (window.logToDiagnosticConsole) {
+          window.logToDiagnosticConsole('error', `Fallo de red al enviar reserva a n8n: ${error.message}`);
+        }
+        window.addDbBookingsRecord("TeloInstala", "Cliente TeloInstala", formattedDate, timeText, `Servicio: ${serviceText} | Técnico: ${tech.name}`, 'Error Red');
+      });
+    };
+    
+    fireInstalaFetch();
+  } else {
+    window.addDbBookingsRecord("TeloInstala", "Cliente TeloInstala", formattedDate, timeText, `Servicio: ${serviceText} | Técnico: ${tech.name}`, 'Local');
   }
 };
 
@@ -4645,6 +4820,11 @@ window.setupIntegrationsUI = function() {
   const n8nOrdersUrlEl = document.getElementById('int-n8n-orders-url');
   const n8nServicesUrlEl = document.getElementById('int-n8n-services-url');
   
+  // Nuevos campos
+  const geminiKeyEl = document.getElementById('int-gemini-key');
+  const hmacEnabledEl = document.getElementById('int-hmac-enabled');
+  const hmacSecretEl = document.getElementById('int-hmac-secret');
+  
   if(!urlEl) return; // Si no estamos en la página correcta todavía
   
   // Rellenar valores guardados
@@ -4656,6 +4836,10 @@ window.setupIntegrationsUI = function() {
   n8nLeadsUrlEl.value = AppState.integrations.n8nLeadsUrl || '';
   n8nOrdersUrlEl.value = AppState.integrations.n8nOrdersUrl || '';
   n8nServicesUrlEl.value = AppState.integrations.n8nServicesUrl || '';
+  
+  if(geminiKeyEl) geminiKeyEl.value = AppState.integrations.geminiKey || '';
+  if(hmacEnabledEl) hmacEnabledEl.checked = AppState.integrations.hmacEnabled || false;
+  if(hmacSecretEl) hmacSecretEl.value = AppState.integrations.hmacSecret || '';
   
   // Actualizar visibilidad de form de tarjeta en el carrito
   const ccFormContainer = document.getElementById('stripe-checkout-form-container');
@@ -4673,6 +4857,11 @@ window.setupIntegrationsUI = function() {
       statusSupabase.className = "connection-status-pill disconnected";
       statusSupabase.innerText = "Desconectado";
     }
+  }
+  
+  // Refrescar consola de datos
+  if (window.refreshDatabaseConsole) {
+    window.refreshDatabaseConsole();
   }
 };
 
@@ -4726,6 +4915,37 @@ window.saveN8NConfig = function() {
   
   if (window.logToDiagnosticConsole) {
     window.logToDiagnosticConsole('success', "Orquestador n8n Webhooks Actualizados", `Leads CRM URL: ${leads || 'No configurada'}\nVentas/Orders URL: ${orders || 'No configurada'}\nServicios URL: ${services || 'No configurada'}`);
+  }
+};
+
+window.saveGeminiConfig = function() {
+  const key = document.getElementById('int-gemini-key').value.trim();
+  AppState.integrations.geminiKey = key;
+  AppState.saveState();
+  window.showToast("API Key de Gemini guardada", "success");
+  if (window.logToDiagnosticConsole) {
+    window.logToDiagnosticConsole('success', "Configuración Gemini Actualizada", `Clave: ${key ? key.slice(0, 10) + "..." : 'No configurada'}`);
+  }
+};
+
+window.toggleHMACIntegration = function() {
+  const hmacEnabledEl = document.getElementById('int-hmac-enabled');
+  const isEnabled = hmacEnabledEl.checked;
+  AppState.integrations.hmacEnabled = isEnabled;
+  AppState.saveState();
+  window.showToast(isEnabled ? "Firma de Webhooks HMAC habilitada" : "Firma de Webhooks HMAC deshabilitada", "success");
+  if (window.logToDiagnosticConsole) {
+    window.logToDiagnosticConsole('warn', isEnabled ? "Seguridad HMAC activada. Todos los webhooks salientes irán firmados." : "Seguridad HMAC desactivada.");
+  }
+};
+
+window.saveHMACConfig = function() {
+  const secret = document.getElementById('int-hmac-secret').value.trim();
+  AppState.integrations.hmacSecret = secret;
+  AppState.saveState();
+  window.showToast("Clave Secreta HMAC guardada", "success");
+  if (window.logToDiagnosticConsole) {
+    window.logToDiagnosticConsole('success', "Configuración HMAC Actualizada", `Secreto: ${secret ? 'Configurado (Oculto)' : 'Vacío'}`);
   }
 };
 
@@ -4841,8 +5061,79 @@ window.logToDiagnosticConsole = function(type, message, details = '') {
   consoleEl.scrollTop = consoleEl.scrollHeight;
 };
 
+// ==========================================
+// WEBHOOKS Y SEGURIDAD CON FIRMA HMAC SHA-256
+// ==========================================
+async function calculateHMAC(secret, message) {
+  const enc = new TextEncoder();
+  const keyData = enc.encode(secret);
+  const msgData = enc.encode(message);
+  
+  const key = await crypto.subtle.importKey(
+    "raw",
+    keyData,
+    { name: "HMAC", hash: { name: "SHA-256" } },
+    false,
+    ["sign"]
+  );
+  
+  const signature = await crypto.subtle.sign(
+    "HMAC",
+    key,
+    msgData
+  );
+  
+  return Array.from(new Uint8Array(signature))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+async function sendSignedWebhook(url, payload) {
+  if (!url) return 'No Configurado';
+  
+  const payloadStr = JSON.stringify(payload);
+  const headers = { 'Content-Type': 'application/json' };
+  
+  if (AppState.integrations.hmacEnabled && AppState.integrations.hmacSecret) {
+    try {
+      const signature = await calculateHMAC(AppState.integrations.hmacSecret, payloadStr);
+      headers['X-Telo-Signature'] = signature;
+      if (window.logToDiagnosticConsole) {
+        window.logToDiagnosticConsole('info', `Firma HMAC Generada: ${signature.slice(0, 15)}... (cabecera X-Telo-Signature)`);
+      }
+    } catch (e) {
+      console.error("Error signing HMAC:", e);
+    }
+  }
+  
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: headers,
+      body: payloadStr
+    });
+    const respText = await response.text();
+    if (response.ok) {
+      if (window.logToDiagnosticConsole) {
+        window.logToDiagnosticConsole('success', `Webhook enviado con éxito (HTTP ${response.status})`, respText);
+      }
+      return `Sincronizado (${response.status})`;
+    } else {
+      if (window.logToDiagnosticConsole) {
+        window.logToDiagnosticConsole('error', `Rechazado por servidor (HTTP ${response.status})`, respText);
+      }
+      return `Fallo (${response.status})`;
+    }
+  } catch (error) {
+    if (window.logToDiagnosticConsole) {
+      window.logToDiagnosticConsole('error', `Fallo de red al enviar webhook: ${error.message}`);
+    }
+    return 'Error Red';
+  }
+}
+
 // Webhook testers
-window.testTriggerLeadWebhook = function() {
+window.testTriggerLeadWebhook = async function() {
   const url = AppState.integrations.n8nLeadsUrl;
   if(!url) {
     window.showToast("Configura y guarda la URL del Webhook de Leads primero", "error");
@@ -4858,31 +5149,20 @@ window.testTriggerLeadWebhook = function() {
   };
   
   window.showToast("Enviando lead de prueba a n8n...", "success");
-  window.logToDiagnosticConsole('out', `POST Trigger Lead Test: ${url}`, JSON.stringify(payload, null, 2));
+  if (window.logToDiagnosticConsole) {
+    window.logToDiagnosticConsole('out', `POST Trigger Lead Test: ${url}`, JSON.stringify(payload, null, 2));
+  }
   
-  fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
-  })
-  .then(async (response) => {
-    const text = await response.text();
-    if(response.ok) {
-      window.showToast("Webhook de Leads disparado con éxito", "success");
-      window.logToDiagnosticConsole('success', `n8n respondió con éxito (HTTP ${response.status})`, text);
-    } else {
-      window.showToast(`Error del servidor (HTTP ${response.status})`, "error");
-      window.logToDiagnosticConsole('error', `n8n rechazó la petición (HTTP ${response.status})`, text);
-    }
-  })
-  .catch(error => {
-    console.error(error);
-    window.showToast("Fallo al conectar con el webhook", "error");
-    window.logToDiagnosticConsole('error', `Error de red al conectar con n8n Leads Webhook: ${error.message}`);
-  });
+  const status = await sendSignedWebhook(url, payload);
+  window.addDbLeadsRecord(payload.name, payload.email, payload.department, payload.message, status);
+  if (status.startsWith('Sincronizado')) {
+    window.showToast("Webhook de Leads disparado con éxito", "success");
+  } else {
+    window.showToast("Webhook de Leads fallido", "error");
+  }
 };
 
-window.testTriggerOrderWebhook = function() {
+window.testTriggerOrderWebhook = async function() {
   const url = AppState.integrations.n8nOrdersUrl;
   if(!url) {
     window.showToast("Configura y guarda la URL del Webhook de Ventas primero", "error");
@@ -4903,31 +5183,21 @@ window.testTriggerOrderWebhook = function() {
   };
   
   window.showToast("Enviando orden de prueba a n8n...", "success");
-  window.logToDiagnosticConsole('out', `POST Trigger Order Test: ${url}`, JSON.stringify(payload, null, 2));
+  if (window.logToDiagnosticConsole) {
+    window.logToDiagnosticConsole('out', `POST Trigger Order Test: ${url}`, JSON.stringify(payload, null, 2));
+  }
   
-  fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
-  })
-  .then(async (response) => {
-    const text = await response.text();
-    if(response.ok) {
-      window.showToast("Webhook de Ventas disparado con éxito", "success");
-      window.logToDiagnosticConsole('success', `n8n procesó la orden con éxito (HTTP ${response.status})`, text);
-    } else {
-      window.showToast(`Error del servidor (HTTP ${response.status})`, "error");
-      window.logToDiagnosticConsole('error', `n8n rechazó la orden (HTTP ${response.status})`, text);
-    }
-  })
-  .catch(error => {
-    console.error(error);
-    window.showToast("Fallo al conectar con el webhook", "error");
-    window.logToDiagnosticConsole('error', `Error de red al conectar con n8n Orders Webhook: ${error.message}`);
-  });
+  const status = await sendSignedWebhook(url, payload);
+  const itemsText = payload.items.map(item => `${item.title} (x${item.quantity})`).join(', ');
+  window.addDbSalesRecord(payload.cardholderName, itemsText, payload.amount, payload.paymentMethod, status);
+  if (status.startsWith('Sincronizado')) {
+    window.showToast("Webhook de Ventas disparado con éxito", "success");
+  } else {
+    window.showToast("Webhook de Ventas fallido", "error");
+  }
 };
 
-window.testTriggerServiceWebhook = function() {
+window.testTriggerServiceWebhook = async function() {
   const url = AppState.integrations.n8nServicesUrl;
   if(!url) {
     window.showToast("Configura y guarda la URL del Webhook de Servicios primero", "error");
@@ -4945,26 +5215,374 @@ window.testTriggerServiceWebhook = function() {
   };
   
   window.showToast("Enviando reserva de prueba a n8n...", "success");
-  window.logToDiagnosticConsole('out', `POST Trigger Service Test: ${url}`, JSON.stringify(payload, null, 2));
+  if (window.logToDiagnosticConsole) {
+    window.logToDiagnosticConsole('out', `POST Trigger Service Test: ${url}`, JSON.stringify(payload, null, 2));
+  }
   
-  fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
-  })
-  .then(async (response) => {
-    const text = await response.text();
-    if(response.ok) {
-      window.showToast("Webhook de Servicios disparado con éxito", "success");
-      window.logToDiagnosticConsole('success', `n8n registró el servicio con éxito (HTTP ${response.status})`, text);
-    } else {
-      window.showToast(`Error del servidor (HTTP ${response.status})`, "error");
-      window.logToDiagnosticConsole('error', `n8n rechazó la reserva de servicio (HTTP ${response.status})`, text);
-    }
-  })
-  .catch(error => {
-    console.error(error);
-    window.showToast("Fallo al conectar con el webhook", "error");
-    window.logToDiagnosticConsole('error', `Error de red al conectar con n8n Services Webhook: ${error.message}`);
-  });
+  const status = await sendSignedWebhook(url, payload);
+  window.addDbBookingsRecord(payload.serviceType, "Cliente de Prueba", new Date().toLocaleDateString(), "24-48 horas", `Dispositivo: ${payload.device} | Falla: ${payload.issue}`, status);
+  if (status.startsWith('Sincronizado')) {
+    window.showToast("Webhook de Servicios disparado con éxito", "success");
+  } else {
+    window.showToast("Webhook de Servicios fallido", "error");
+  }
 };
+
+// ==========================================
+// PUERTA DE ACCESO ADMINISTRATIVO OCULTA (HIDDEN GATE)
+// ==========================================
+window.initAdminGate = function() {
+  const logo = document.getElementById('sidebar-brand-logo');
+  if (logo) {
+    let dblClickCount = 0;
+    logo.addEventListener('dblclick', () => {
+      dblClickCount++;
+      if (dblClickCount >= 5) {
+        showIntegrationsNavItem();
+        localStorage.setItem('teloAdminActive', 'true');
+        window.showToast("¡Modo Administrador Desbloqueado!", "success");
+        if (window.logToDiagnosticConsole) {
+          window.logToDiagnosticConsole('success', "Acceso administrativo desbloqueado mediante 5 dobles clics.");
+        }
+        dblClickCount = 0; // reset
+      }
+    });
+  }
+  
+  // Revisar si ya tiene acceso guardado o query string
+  const urlParams = new URLSearchParams(window.location.search);
+  const isAdminParam = urlParams.get('admin') === 'true';
+  const isLocalStorageAdmin = localStorage.getItem('teloAdminActive') === 'true';
+  
+  if (isAdminParam || isLocalStorageAdmin) {
+    showIntegrationsNavItem();
+  }
+};
+
+function showIntegrationsNavItem() {
+  const desktopItem = document.getElementById('nav-integrations-item');
+  const mobileItem = document.getElementById('nav-integrations-item-mobile');
+  if (desktopItem) desktopItem.style.display = 'flex';
+  if (mobileItem) mobileItem.style.display = 'flex';
+}
+
+// ==========================================
+// CONSOLA DE DATOS INTEGRADOS - LOGS DE BASE DE DATOS
+// ==========================================
+window.addDbSalesRecord = function(client, products, total, method, status) {
+  if (!AppState.dbSales) AppState.dbSales = [];
+  const record = {
+    id: 'SL-' + Math.floor(1000 + Math.random() * 9000),
+    client: client || 'Cliente TeloSales',
+    products: products,
+    total: 'RD$ ' + Number(total).toLocaleString(),
+    method: method || 'Local',
+    date: new Date().toLocaleString(),
+    status: status || 'Local'
+  };
+  AppState.dbSales.unshift(record);
+  if (AppState.dbSales.length > 50) AppState.dbSales.pop();
+  AppState.saveState();
+  window.refreshDatabaseConsole();
+};
+
+window.addDbBookingsRecord = function(serviceType, client, date, time, details, status) {
+  if (!AppState.dbBookings) AppState.dbBookings = [];
+  const record = {
+    id: 'BK-' + Math.floor(1000 + Math.random() * 9000),
+    service: serviceType,
+    client: client || 'Cliente TeloCorp',
+    date: date,
+    time: time,
+    details: details,
+    timestamp: new Date().toLocaleString(),
+    status: status || 'Local'
+  };
+  AppState.dbBookings.unshift(record);
+  if (AppState.dbBookings.length > 50) AppState.dbBookings.pop();
+  AppState.saveState();
+  window.refreshDatabaseConsole();
+};
+
+window.addDbEducaRecord = function(course, student, module, state) {
+  if (!AppState.dbEduca) AppState.dbEduca = [];
+  const record = {
+    id: 'ED-' + Math.floor(1000 + Math.random() * 9000),
+    course: course,
+    student: student || 'Estudiante TeloEduca',
+    module: module,
+    state: state,
+    date: new Date().toLocaleString()
+  };
+  AppState.dbEduca.unshift(record);
+  if (AppState.dbEduca.length > 50) AppState.dbEduca.pop();
+  AppState.saveState();
+  window.refreshDatabaseConsole();
+};
+
+window.addDbLeadsRecord = function(name, email, department, message, status) {
+  if (!AppState.dbLeads) AppState.dbLeads = [];
+  const record = {
+    id: 'LD-' + Math.floor(1000 + Math.random() * 9000),
+    name: name,
+    email: email,
+    department: department,
+    message: message.length > 50 ? message.substring(0, 50) + '...' : message,
+    date: new Date().toLocaleString(),
+    status: status || 'Local'
+  };
+  AppState.dbLeads.unshift(record);
+  if (AppState.dbLeads.length > 50) AppState.dbLeads.pop();
+  AppState.saveState();
+  window.refreshDatabaseConsole();
+};
+
+window.refreshDatabaseConsole = function() {
+  // Sales
+  const salesTbody = document.getElementById('db-sales-tbody');
+  if (salesTbody) {
+    const list = AppState.dbSales || [];
+    if (list.length === 0) {
+      salesTbody.innerHTML = '<tr><td colspan="7" class="empty-db-row">No hay transacciones registradas.</td></tr>';
+    } else {
+      salesTbody.innerHTML = list.map(item => `
+        <tr>
+          <td><strong>${item.id}</strong></td>
+          <td>${item.client}</td>
+          <td>${item.products}</td>
+          <td>${item.total}</td>
+          <td>${item.method}</td>
+          <td>${item.date}</td>
+          <td><span class="connection-status-pill ${item.status.includes('Sincronizado') || item.status === 'Local' ? 'connected' : 'disconnected'}">${item.status}</span></td>
+        </tr>
+      `).join('');
+    }
+  }
+
+  // Bookings
+  const bookingsTbody = document.getElementById('db-bookings-tbody');
+  if (bookingsTbody) {
+    const list = AppState.dbBookings || [];
+    if (list.length === 0) {
+      bookingsTbody.innerHTML = '<tr><td colspan="8" class="empty-db-row">No hay servicios agendados.</td></tr>';
+    } else {
+      bookingsTbody.innerHTML = list.map(item => `
+        <tr>
+          <td><strong>${item.id}</strong></td>
+          <td>${item.service}</td>
+          <td>${item.client}</td>
+          <td>${item.date}</td>
+          <td>${item.time}</td>
+          <td>${item.details}</td>
+          <td>${item.timestamp}</td>
+          <td><span class="connection-status-pill ${item.status.includes('Sincronizado') || item.status === 'Local' ? 'connected' : 'disconnected'}">${item.status}</span></td>
+        </tr>
+      `).join('');
+    }
+  }
+
+  // Educa
+  const educaTbody = document.getElementById('db-educa-tbody');
+  if (educaTbody) {
+    const list = AppState.dbEduca || [];
+    if (list.length === 0) {
+      educaTbody.innerHTML = '<tr><td colspan="6" class="empty-db-row">No hay progresos registrados.</td></tr>';
+    } else {
+      educaTbody.innerHTML = list.map(item => `
+        <tr>
+          <td><strong>${item.id}</strong></td>
+          <td>${item.course}</td>
+          <td>${item.student}</td>
+          <td>${item.module}</td>
+          <td><span class="connection-status-pill connected">${item.state}</span></td>
+          <td>${item.date}</td>
+        </tr>
+      `).join('');
+    }
+  }
+
+  // Leads
+  const leadsTbody = document.getElementById('db-leads-tbody');
+  if (leadsTbody) {
+    const list = AppState.dbLeads || [];
+    if (list.length === 0) {
+      leadsTbody.innerHTML = '<tr><td colspan="7" class="empty-db-row">No hay leads ingresados.</td></tr>';
+    } else {
+      leadsTbody.innerHTML = list.map(item => `
+        <tr>
+          <td><strong>${item.id}</strong></td>
+          <td>${item.name}</td>
+          <td>${item.email}</td>
+          <td>${item.department}</td>
+          <td>${item.message}</td>
+          <td>${item.date}</td>
+          <td><span class="connection-status-pill ${item.status.includes('Sincronizado') || item.status.includes('Web3Forms') || item.status === 'Local' ? 'connected' : 'disconnected'}">${item.status}</span></td>
+        </tr>
+      `).join('');
+    }
+  }
+};
+
+window.switchDbTab = function(tabId) {
+  // Hide all tab contents
+  document.querySelectorAll('.tab-db-content').forEach(el => el.classList.remove('active'));
+  // Show target tab content
+  const target = document.getElementById(tabId);
+  if (target) target.classList.add('active');
+
+  // Mark tabs active
+  document.querySelectorAll('.tab-db-btn').forEach(btn => btn.classList.remove('active'));
+  
+  // Find button targeting this tabId
+  const clickedBtn = document.getElementById(`btn-${tabId.replace('tab-db-', 'db-')}`) || document.querySelector(`.tab-db-btn[onclick*="${tabId}"]`);
+  if (clickedBtn) clickedBtn.classList.add('active');
+};
+
+window.clearDatabaseConsole = function() {
+  if (confirm('¿Estás seguro de que deseas vaciar las bases de datos locales de TeloCorpGroup?')) {
+    AppState.dbSales = [];
+    AppState.dbBookings = [];
+    AppState.dbEduca = [];
+    AppState.dbLeads = [];
+    AppState.saveState();
+    window.refreshDatabaseConsole();
+    window.showToast('Bases de datos locales vaciadas', 'success');
+  }
+};
+
+// ==========================================
+// CHATBOT DE TELOASISTENTE (SUPPORT CENTRAL)
+// ==========================================
+window.initChatbot = function() {
+  const chatMessages = document.getElementById('telo-chatbot-messages');
+  if (chatMessages && chatMessages.children.length <= 1) {
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+};
+
+window.handleChatbotKeyPress = function(e) {
+  if (e.key === 'Enter') {
+    window.sendChatbotMessage();
+  }
+};
+
+window.sendChatbotMessage = async function() {
+  const inputEl = document.getElementById('telo-chatbot-input');
+  if (!inputEl) return;
+  
+  const text = inputEl.value.trim();
+  if (!text) return;
+  
+  // Agregar mensaje del usuario a la pantalla
+  appendChatMessage(text, 'user');
+  inputEl.value = '';
+  
+  // Indicador de "Escribiendo..."
+  const botMessagesEl = document.getElementById('telo-chatbot-messages');
+  const typingBubble = document.createElement('div');
+  typingBubble.className = 'chat-msg bot-msg typing-msg';
+  typingBubble.innerHTML = `<div class="msg-bubble"><em>TeloAsistente está escribiendo...</em></div>`;
+  botMessagesEl.appendChild(typingBubble);
+  botMessagesEl.scrollTop = botMessagesEl.scrollHeight;
+
+  const status = document.getElementById('telo-chatbot-status');
+  if (status) status.innerText = 'Pensando...';
+  
+  try {
+    let responseText = '';
+    const geminiKey = AppState.integrations.geminiKey;
+    
+    if (geminiKey) {
+      responseText = await callGeminiAPI(geminiKey, text);
+    } else {
+      responseText = await getLocalChatbotResponse(text);
+    }
+    
+    typingBubble.remove();
+    appendChatMessage(responseText, 'bot');
+  } catch (error) {
+    console.error("Error chatbot response:", error);
+    typingBubble.remove();
+    appendChatMessage("Disculpa, ha ocurrido un error al procesar tu solicitud. Por favor intenta de nuevo o escríbenos a soporte@telocg.com.", 'bot');
+  } finally {
+    if (status) status.innerText = 'Asistente Virtual Central';
+  }
+};
+
+function appendChatMessage(text, sender) {
+  const botMessagesEl = document.getElementById('telo-chatbot-messages');
+  if (!botMessagesEl) return;
+  
+  const msgDiv = document.createElement('div');
+  msgDiv.className = `chat-msg ${sender}-msg`;
+  msgDiv.innerHTML = `<div class="msg-bubble">${formatChatText(text)}</div>`;
+  botMessagesEl.appendChild(msgDiv);
+  botMessagesEl.scrollTop = botMessagesEl.scrollHeight;
+}
+
+function formatChatText(text) {
+  return text
+    .replace(/\n/g, '<br>')
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g, '<em>$1</em>');
+}
+
+async function callGeminiAPI(apiKey, promptText) {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+  const systemInstruction = `Eres TeloAsistente, el agente de soporte inteligente de TeloCorpGroup (TELOCG), un clúster digital dominicano. Tus servicios son: TeloSales (marketplace de covers y tecnología), TeloLleva (logística rápida y segura de delivery e igualas de mensajería), TeloEduca (academia online de marketing digital, tecnología, etc.), TeloRepara (reparación técnica de hardware) y TeloInstala (servicios de instalación por técnicos calificados). Responde de manera profesional, amigable y corporativa, siempre en español. No menciones a Pulso ni RCP. Sé conciso y asertivo.`;
+  
+  const payload = {
+    contents: [{
+      parts: [{
+        text: `${systemInstruction}\n\nPregunta del usuario: ${promptText}`
+      }]
+    }]
+  };
+  
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    
+    if (!res.ok) {
+      throw new Error(`Gemini API returned status ${res.status}`);
+    }
+    
+    const data = await res.json();
+    if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts[0]) {
+      return data.candidates[0].content.parts[0].text;
+    }
+    return "No pude obtener una respuesta inteligente. ¿En qué más te puedo ayudar?";
+  } catch (err) {
+    console.error("Gemini API Error:", err);
+    return await getLocalChatbotResponse(promptText);
+  }
+}
+
+function getLocalChatbotResponse(userText) {
+  const txt = userText.toLowerCase();
+  
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      if (txt.includes('hola') || txt.includes('buenos dias') || txt.includes('buenas tardes')) {
+        resolve("¡Hola! 👋 Soy **TeloAsistente**, tu asesor de TeloCorpGroup. ¿Sobre cuál de nuestras divisiones (TeloSales, TeloLleva, TeloEduca, TeloRepara o TeloInstala) deseas información hoy?");
+      } else if (txt.includes('sales') || txt.includes('tienda') || txt.includes('comprar') || txt.includes('cover') || txt.includes('precio') || txt.includes('producto')) {
+        resolve("🛒 **TeloSales** es nuestra tienda de comercio electrónico y covers personalizados de alta calidad. Puedes navegar por la pestaña 'TeloSales' para ver nuestro catálogo, agregar productos a tu carrito y realizar la compra de manera rápida y segura.");
+      } else if (txt.includes('lleva') || txt.includes('envio') || txt.includes('delivery') || txt.includes('mensajeria') || txt.includes('transporte') || txt.includes('uber') || txt.includes('indrive')) {
+        resolve("📦 **TeloLleva** es nuestra plataforma de logística inteligente. Ofrecemos envíos express para tus compras y un cotizador de tarifas de mensajería interactivo en la pestaña 'TeloLleva'. ¡Ingresa tu punto de origen y destino para cotizar y solicitar un mensajero!");
+      } else if (txt.includes('educa') || txt.includes('curso') || txt.includes('academia') || txt.includes('aprender') || txt.includes('platzi') || txt.includes('duolingo')) {
+        resolve("🎓 **TeloEduca** es nuestra academia online de desarrollo profesional. Ofrecemos cursos y diplomados prácticos en Tecnología y Marketing Digital con material grabado, foros de consulta y exámenes. Mira la pestaña 'TeloEduca' para inscribirte y estudiar a tu propio ritmo.");
+      } else if (txt.includes('repara') || txt.includes('daño') || txt.includes('pantalla') || txt.includes('celular') || txt.includes('laptop') || txt.includes('computadora')) {
+        resolve("🔧 **TeloRepara** ofrece soporte técnico express. Si tu celular o laptop tiene fallas (pantalla rota, no enciende, etc.), indícalo en la pestaña 'TeloRepara' para obtener una cotización automática. Nuestros mensajeros retiran el equipo a domicilio y lo devuelven reparado.");
+      } else if (txt.includes('instala') || txt.includes('tecnico') || txt.includes('camara') || txt.includes('red') || txt.includes('configurar')) {
+        resolve("🛠️ **TeloInstala** conecta tu hogar u oficina con ingenieros y técnicos calificados para montaje de redes, instalación de cámaras de seguridad, configuración de servidores y cableado estructurado. Puedes agendar y calendarizar tu cita en la pestaña 'TeloInstala'.");
+      } else if (txt.includes('contacto') || txt.includes('whatsapp') || txt.includes('correo') || txt.includes('email') || txt.includes('telefono') || txt.includes('oficina') || txt.includes('ubicacion')) {
+        resolve("Puedes contactar al corporativo central a través de:\n- **WhatsApp:** +1 (829) 806-8092\n- **Correo Central:** soporte@telocg.com\n- **Oficinas:** Av. Rómulo Betancourt 1302, Bella Vista, Santo Domingo, R.D.");
+      } else {
+        resolve("TeloCorpGroup es un clúster digital líder que integra soluciones de e-commerce, logística, educación y soporte técnico. ¿Deseas saber más sobre TeloSales, TeloLleva, TeloEduca, TeloRepara o TeloInstala? También puedes escribirnos a soporte@telocg.com.");
+      }
+    }, 800);
+  });
+}
