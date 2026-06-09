@@ -5579,10 +5579,107 @@ function getLocalChatbotResponse(userText) {
       } else if (txt.includes('instala') || txt.includes('tecnico') || txt.includes('camara') || txt.includes('red') || txt.includes('configurar')) {
         resolve("🛠️ **TeloInstala** conecta tu hogar u oficina con ingenieros y técnicos calificados para montaje de redes, instalación de cámaras de seguridad, configuración de servidores y cableado estructurado. Puedes agendar y calendarizar tu cita en la pestaña 'TeloInstala'.");
       } else if (txt.includes('contacto') || txt.includes('whatsapp') || txt.includes('correo') || txt.includes('email') || txt.includes('telefono') || txt.includes('oficina') || txt.includes('ubicacion')) {
-        resolve("Puedes contactar al corporativo central a través de:\n- **WhatsApp:** +1 (829) 806-8092\n- **Correo Central:** soporte@telocg.com\n- **Oficinas:** Av. Rómulo Betancourt 1302, Bella Vista, Santo Domingo, R.D.");
+        resolve("Puedes contactar al corporativo central a través de:\n- **WhatsApp:** +1 (809) 903-8707\n- **Correo Central:** soporte@telocg.com\n- **Oficinas:** Santo Domingo, R.D.");
       } else {
         resolve("TeloCorpGroup es un clúster digital líder que integra soluciones de e-commerce, logística, educación y soporte técnico. ¿Deseas saber más sobre TeloSales, TeloLleva, TeloEduca, TeloRepara o TeloInstala? También puedes escribirnos a soporte@telocg.com.");
       }
     }, 800);
   });
 }
+
+// Handler para el Formulario de Postulación de Socios (Programa de Socios y Alianzas)
+window.submitPartnerApplication = async function(e) {
+  if (e) e.preventDefault();
+  
+  const name = document.getElementById('partner-name').value.trim();
+  const email = document.getElementById('partner-email').value.trim();
+  const type = document.getElementById('partner-type').value;
+  const proposal = document.getElementById('partner-proposal').value.trim();
+  
+  const form = document.getElementById('partner-apply-form');
+  const submitBtn = form.querySelector('button[type="submit"]');
+  const oldText = submitBtn ? submitBtn.innerText : 'Enviar Propuesta de Socio';
+  
+  if (submitBtn) {
+    submitBtn.innerText = 'Enviando...';
+    submitBtn.disabled = true;
+  }
+  
+  const dataObj = {
+    name: name,
+    email: email,
+    department: `Socio (${type === 'Proponer Nuevo Servicio' ? 'Nuevo' : 'Existente'})`,
+    message: proposal,
+    timestamp: new Date().toISOString()
+  };
+  
+  // Si tenemos configurado el Webhook de Leads en n8n
+  if (AppState.integrations && AppState.integrations.n8nLeadsUrl) {
+    if (window.logToDiagnosticConsole) {
+      window.logToDiagnosticConsole('out', `Enviando Postulación de Socio a n8n CRM Webhook: ${AppState.integrations.n8nLeadsUrl}`, JSON.stringify(dataObj, null, 2));
+    }
+    
+    const payloadStr = JSON.stringify(dataObj);
+    const headers = { 'Content-Type': 'application/json' };
+    
+    if (AppState.integrations.hmacEnabled && AppState.integrations.hmacSecret) {
+      try {
+        const sig = await calculateHMAC(AppState.integrations.hmacSecret, payloadStr);
+        headers['X-Telo-Signature'] = sig;
+        if (window.logToDiagnosticConsole) {
+          window.logToDiagnosticConsole('info', `Firma HMAC Generada para Socio: ${sig.slice(0, 15)}... (cabecera X-Telo-Signature)`);
+        }
+      } catch (err) {
+        console.error("Error signing HMAC for partner:", err);
+      }
+    }
+    
+    try {
+      const response = await fetch(AppState.integrations.n8nLeadsUrl, {
+        method: 'POST',
+        headers: headers,
+        body: payloadStr
+      });
+      const respText = await response.text();
+      const statusStr = `Sincronizado (${response.status})`;
+      if (response.ok) {
+        window.showToast('Propuesta de socio enviada con éxito.', 'success');
+        if (window.logToDiagnosticConsole) {
+          window.logToDiagnosticConsole('success', `Postulación recibida por n8n (HTTP ${response.status})`, respText);
+        }
+        window.addDbLeadsRecord(name, email, `Socio (${type === 'Proponer Nuevo Servicio' ? 'Nuevo' : 'Existente'})`, proposal, statusStr);
+        form.reset();
+      } else {
+        window.showToast(`Error al enviar propuesta (HTTP ${response.status})`, 'error');
+        if (window.logToDiagnosticConsole) {
+          window.logToDiagnosticConsole('error', `n8n rechazó la postulación (HTTP ${response.status})`, respText);
+        }
+        window.addDbLeadsRecord(name, email, `Socio (${type === 'Proponer Nuevo Servicio' ? 'Nuevo' : 'Existente'})`, proposal, `Fallo (${response.status})`);
+      }
+    } catch (err) {
+      console.error(err);
+      window.showToast('Error de red al enviar propuesta a n8n.', 'error');
+      if (window.logToDiagnosticConsole) {
+        window.logToDiagnosticConsole('error', `Fallo de red al enviar postulación: ${err.message}`);
+      }
+      window.addDbLeadsRecord(name, email, `Socio (${type === 'Proponer Nuevo Servicio' ? 'Nuevo' : 'Existente'})`, proposal, 'Error Red');
+    } finally {
+      if (submitBtn) {
+        submitBtn.innerText = oldText;
+        submitBtn.disabled = false;
+      }
+    }
+  } else {
+    // Fallback de envío local a la consola de base de datos
+    window.showToast('Postulación de socio registrada exitosamente en base de datos local.', 'success');
+    if (window.logToDiagnosticConsole) {
+      window.logToDiagnosticConsole('warn', 'Postulación de socio guardada localmente (n8n no configurado)');
+    }
+    window.addDbLeadsRecord(name, email, `Socio (${type === 'Proponer Nuevo Servicio' ? 'Nuevo' : 'Existente'})`, proposal, 'Local');
+    if (form) form.reset();
+    if (submitBtn) {
+      submitBtn.innerText = oldText;
+      submitBtn.disabled = false;
+    }
+  }
+};
