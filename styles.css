@@ -289,10 +289,18 @@ body {
 }
 
 .hero-card img {
-  width: 80px;
-  border-radius: 16px;
+  width: 150px;
+  border-radius: 20px;
   margin-bottom: 20px;
-  box-shadow: 0 10px 30px rgba(221, 34, 0, 0.3);
+  border: 2px solid rgba(221, 34, 0, 0.3);
+  box-shadow: 0 10px 30px rgba(221, 34, 0, 0.4), 0 0 20px rgba(221, 34, 0, 0.2);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.hero-card:hover img {
+  transform: scale(1.08) rotate(2deg);
+  border-color: var(--color-primary);
+  box-shadow: 0 15px 40px rgba(221, 34, 0, 0.6), 0 0 30px rgba(221, 34, 0, 0.4);
 }
 
 .hero-card h2 {
@@ -412,17 +420,24 @@ body {
 .form-group input, .form-group select, .form-group textarea {
   width: 100%;
   padding: 12px;
-  background: rgba(0,0,0,0.2);
-  border: 1px solid var(--border-color);
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: var(--radius-sm);
-  color: white;
+  color: #f8fafc;
   font-size: 1rem;
-  transition: border-color 0.3s;
+  transition: all 0.3s;
 }
 
 .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
   outline: none;
   border-color: var(--color-primary);
+  background: rgba(0, 0, 0, 0.6);
+  box-shadow: 0 0 10px rgba(221, 34, 0, 0.25);
+}
+
+select, select option {
+  background-color: #0b111e !important;
+  color: #f8fafc !important;
 }
 
 /* --------------------------------------------------------------------------

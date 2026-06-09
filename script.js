@@ -2492,7 +2492,7 @@ window.switchAppView = function(viewId) {
   
   // Actualizar título global si existe
   const titleMap = {
-    'home-view': 'Bienvenido al Clúster',
+    'home-view': 'Bienvenido a TeloCorpGroup',
     'sales-view': 'TeloSales Store',
     'educa-view': 'Academia TeloEduca',
     'educa-classroom-view': 'Aula de Clases TeloEduca',
