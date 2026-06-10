@@ -1,5 +1,5 @@
 /**
- * TeloCorpGroup - Super App Core Logic
+ * Telo\u2019 Corp Group - Super App Core Logic
  * Implementa Navegación SPA, Persistencia (localStorage) y lógica de E-commerce,
  * Logística TeloLleva (Ofertas y SVG), Academia TeloEduca (Syllabus, Video Player y Diplomas).
  */
@@ -2507,7 +2507,7 @@ window.switchAppView = function(viewId) {
   
   // Actualizar título global si existe
   const titleMap = {
-    'home-view': 'Bienvenido a TeloCorpGroup',
+    'home-view': 'Bienvenido a Telo\u2019 Corp Group',
     'sales-view': 'TeloSales Store',
     'educa-view': 'Academia TeloEduca',
     'educa-classroom-view': 'Aula de Clases TeloEduca',
@@ -5517,7 +5517,7 @@ window.switchDbTab = function(tabId) {
 };
 
 window.clearDatabaseConsole = function() {
-  if (confirm('¿Estás seguro de que deseas vaciar las bases de datos locales de TeloCorpGroup?')) {
+  if (confirm('¿Estás seguro de que deseas vaciar las bases de datos locales de Telo\u2019 Corp Group?')) {
     AppState.dbSales = [];
     AppState.dbBookings = [];
     AppState.dbEduca = [];
@@ -5611,7 +5611,7 @@ async function callGeminiAPI(apiKey, promptText) {
   // Construir contexto del catálogo
   const catalogContext = buildCatalogContext();
   
-  const systemInstruction = `Eres TeloAsistente, el agente de soporte inteligente de TeloCorpGroup (TELOCG), un clúster digital dominicano con sede en Santo Domingo, R.D. Teléfono: +1 (809) 903-8707. Email: soporte@telocg.com.
+  const systemInstruction = `Eres TeloAsistente, el agente de soporte inteligente de Telo\u2019 Corp Group (TELOCG), un clúster digital dominicano con sede en Santo Domingo, R.D. Teléfono: +1 (809) 903-8707. Email: soporte@telocg.com.
 
 Nuestros servicios:
 - TeloSales: marketplace de productos tecnológicos, covers personalizados y accesorios. Email: telosales@telocg.com
@@ -5695,7 +5695,7 @@ function getLocalChatbotResponse(userText) {
       }
       // Saludo
       if (txt.includes('hola') || txt.includes('buenos') || txt.includes('buenas') || txt.includes('hey')) {
-        resolve("¡Hola! 👋 Soy **TeloAsistente**, tu asesor de TeloCorpGroup. ¿Sobre cuál de nuestras divisiones deseas información?\n\n🛒 TeloSales · 📦 TeloLleva · 🎓 TeloEduca · 🔧 TeloRepara · 🛠️ TeloInstala");
+        resolve("¡Hola! 👋 Soy **TeloAsistente**, tu asesor de Telo\u2019 Corp Group. ¿Sobre cuál de nuestras divisiones deseas información?\n\n🛒 TeloSales · 📦 TeloLleva · 🎓 TeloEduca · 🔧 TeloRepara · 🛠️ TeloInstala");
       } else if (txt.includes('sales') || txt.includes('tienda') || txt.includes('comprar') || txt.includes('cover') || txt.includes('precio') || txt.includes('producto') || txt.includes('accesorio')) {
         resolve("🛒 **TeloSales** es nuestro marketplace de productos tecnológicos y covers personalizados de alta calidad. Navega en la pestaña **TeloSales** para ver todo el catálogo, agregar al carrito y realizar tu compra de forma segura.\n\nEmail: telosales@telocg.com");
       } else if (txt.includes('lleva') || txt.includes('envio') || txt.includes('envío') || txt.includes('delivery') || txt.includes('mensajeria') || txt.includes('transporte') || txt.includes('tarifa') || txt.includes('cuesta') || txt.includes('mensajero')) {
@@ -5707,13 +5707,13 @@ function getLocalChatbotResponse(userText) {
       } else if (txt.includes('instala') || txt.includes('tecnico') || txt.includes('técnico') || txt.includes('camara') || txt.includes('cámara') || txt.includes('red') || txt.includes('solar') || txt.includes('cctv') || txt.includes('configurar')) {
         resolve("🛠️ **TeloInstala** conecta tu hogar u oficina con técnicos calificados para:\n\n• Cámaras CCTV\n• Redes estructuradas\n• Paneles solares\n• Instalaciones eléctricas\n• Configuración de servidores\n\nAgenda tu cita en la pestaña **TeloInstala**. Email: teloinstala@telocg.com");
       } else if (txt.includes('contacto') || txt.includes('whatsapp') || txt.includes('correo') || txt.includes('email') || txt.includes('telefono') || txt.includes('teléfono') || txt.includes('oficina') || txt.includes('ubicacion') || txt.includes('ubicación') || txt.includes('soporte')) {
-        resolve("📞 **Canales oficiales de TeloCorpGroup:**\n\n- 💬 **WhatsApp:** +1 (809) 903-8707\n- 📧 **Email Central:** soporte@telocg.com\n- 📍 **Oficinas:** Santo Domingo, R.D.\n\nTambién puedes visitar **TeloConnect** desde el menú lateral para enviar un mensaje directo.");
+        resolve("📞 **Canales oficiales de Telo\u2019 Corp Group:**\n\n- 💬 **WhatsApp:** +1 (809) 903-8707\n- 📧 **Email Central:** soporte@telocg.com\n- 📍 **Oficinas:** Santo Domingo, R.D.\n\nTambién puedes visitar **TeloConnect** desde el menú lateral para enviar un mensaje directo.");
       } else if (txt.includes('socio') || txt.includes('alianza') || txt.includes('partner') || txt.includes('invertir') || txt.includes('franquicia')) {
-        resolve("🤝 **Programa de Socios TeloCorpGroup:**\n\nPuedes unirte como socio de cualquiera de nuestras empresas, ya sea como **agente independiente**, **empresa de servicios** o **desarrollando un nuevo servicio** bajo la estrategia TeloCorpGroup.\n\nVisita la sección **Conviértete en Socio** en el menú lateral para postularte.");
+        resolve("🤝 **Programa de Socios Telo\u2019 Corp Group:**\n\nPuedes unirte como socio de cualquiera de nuestras empresas, ya sea como **agente independiente**, **empresa de servicios** o **desarrollando un nuevo servicio** bajo la estrategia Telo\u2019 Corp Group.\n\nVisita la sección **Conviértete en Socio** en el menú lateral para postularte.");
       } else if (txt.includes('equipo') || txt.includes('director') || txt.includes('fundador') || txt.includes('quienes') || txt.includes('quiénes')) {
-        resolve("👔 **Equipo directivo de TeloCorpGroup:**\n\n• 🏆 **Director General:** Ing. Luis Miguel Herrera\n• 📋 **Coordinador Logística:** Julio Miguel Herrera\n• ⚙️ **Arquitecto de Integración:** Ing. Balmis Reynoso\n\nConoce más sobre nosotros en la sección **Quiénes Somos**.");
+        resolve("👔 **Equipo directivo de Telo\u2019 Corp Group:**\n\n• 🏆 **Director General:** Ing. Luis Miguel Herrera\n• 📋 **Coordinador Logística:** Julio Miguel Herrera\n• ⚙️ **Arquitecto de Integración:** Ing. Balmis Reynoso\n\nConoce más sobre nosotros en la sección **Quiénes Somos**.");
       } else {
-        resolve("Soy **TeloAsistente**, tu guía en el ecosistema digital de **TeloCorpGroup**. 🌐\n\nPuedo ayudarte con:\n🛒 Productos y precios (TeloSales)\n📦 Envíos y logística (TeloLleva)\n🎓 Cursos y academias (TeloEduca)\n🔧 Reparaciones (TeloRepara)\n🛠️ Instalaciones técnicas (TeloInstala)\n\n¿Sobre qué quieres saber?");
+        resolve("Soy **TeloAsistente**, tu guía en el ecosistema digital de **Telo\u2019 Corp Group**. 🌐\n\nPuedo ayudarte con:\n🛒 Productos y precios (TeloSales)\n📦 Envíos y logística (TeloLleva)\n🎓 Cursos y academias (TeloEduca)\n🔧 Reparaciones (TeloRepara)\n🛠️ Instalaciones técnicas (TeloInstala)\n\n¿Sobre qué quieres saber?");
       }
     }, 700);
   });
@@ -5861,7 +5861,7 @@ window.saveUserProfile = function(event) {
   const nameDisplay = document.getElementById('profile-name-display');
   const emailDisplay = document.getElementById('profile-email-display');
   const avatarDisplay = document.getElementById('profile-avatar-display');
-  if (nameDisplay) nameDisplay.innerText = name || 'Usuario TeloCorpGroup';
+  if (nameDisplay) nameDisplay.innerText = name || 'Usuario Telo\u2019 Corp Group';
   if (emailDisplay) emailDisplay.innerText = email || 'Sin registro';
   if (avatarDisplay) avatarDisplay.innerText = name ? name.charAt(0).toUpperCase() : '👤';
   
@@ -5890,7 +5890,7 @@ window.loadUserProfile = function() {
   if (addressEl && profile.address) addressEl.value = profile.address;
   if (cityEl && profile.city) cityEl.value = profile.city;
   
-  if (nameDisplay) nameDisplay.innerText = profile.name || 'Usuario TeloCorpGroup';
+  if (nameDisplay) nameDisplay.innerText = profile.name || 'Usuario Telo\u2019 Corp Group';
   if (emailDisplay) emailDisplay.innerText = profile.email || 'Sin registro';
   if (avatarDisplay && profile.name) avatarDisplay.innerText = profile.name.charAt(0).toUpperCase();
 };
