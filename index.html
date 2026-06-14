@@ -93,7 +93,7 @@
             <!-- Botón Chat TeloAsistente -->
             <button class="action-btn chat-toggle-btn" id="global-chat-btn" onclick="window.toggleChatWidget()" aria-label="TeloAsistente" title="TeloAsistente IA">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="action-icon"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-              <span class="action-badge chat-badge" id="global-chat-badge" style="display:none;">1</span>
+              <span class="action-badge chat-badge" id="global-chat-badge" hidden aria-live="polite">1</span>
             </button>
             
             <!-- Botón de Favoritos (Lista de deseos) -->
@@ -165,14 +165,14 @@
           </div>
           
           <!-- Barra de Búsqueda y Ordenamiento Avanzado -->
-          <div class="sales-controls-bar" style="margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); padding: 12px 16px; border: 1px solid var(--border-color); border-radius: 8px;">
-            <div class="search-input-wrapper" style="position: relative; flex: 1; min-width: 250px;">
-              <span class="search-icon" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); opacity: 0.5; font-size: 0.9rem;">🔍</span>
-              <input type="search" id="sales-search" placeholder="Buscar covers, cables, cargadores..." oninput="window.filterAndSortProducts()" style="width: 100%; box-sizing: border-box; padding: 8px 12px 8px 34px; font-size: 0.9rem; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-color); border-radius: 4px; outline: none; transition: border-color 0.2s;">
+          <div class="sales-controls-bar">
+            <div class="search-input-wrapper">
+              <span class="search-icon">🔍</span>
+              <input type="search" id="sales-search" placeholder="Buscar covers, cables, cargadores..." oninput="window.filterAndSortProducts()">
             </div>
-            <div class="sort-select-wrapper" style="display: flex; align-items: center; gap: 8px; font-size: 0.9rem; color: var(--text-muted);">
+            <div class="sort-select-wrapper">
               <span>Ordenar por:</span>
-              <select id="sales-sort" onchange="window.filterAndSortProducts()" style="padding: 8px 12px; font-size: 0.9rem; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-color); border-radius: 4px; outline: none; cursor: pointer;">
+              <select id="sales-sort" onchange="window.filterAndSortProducts()">
                 <option value="featured">Destacados</option>
                 <option value="price-asc">Precio: Bajo a Alto</option>
                 <option value="price-desc">Precio: Alto a Bajo</option>
@@ -311,11 +311,11 @@
                 </div>
                 
                 <div class="tab-content" id="tab-notes">
-                  <div class="notes-container" style="display: flex; flex-direction: column; gap: 12px;">
-                    <h4 style="margin: 0; font-size: 1.05rem;">Apuntes de la Clase 📝</h4>
-                    <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">Escribe aquí tus notas importantes de la lección. Se guardarán automáticamente por clase.</p>
-                    <textarea id="classroom-notes-textarea" rows="8" placeholder="Escribe tus apuntes aquí... Ej: Fórmulas de Excel se inician siempre con '='..." style="width: 100%; box-sizing: border-box; padding: 12px; font-family: monospace; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-color); border-radius: 6px; resize: vertical; outline: none; line-height: 1.4;" oninput="window.saveCurrentClassNotes()"></textarea>
-                    <div style="display: flex; justify-content: flex-end;">
+                  <div class="notes-container">
+                    <h4 class="notes-header">Apuntes de la Clase 📝</h4>
+                    <p class="notes-description">Escribe aquí tus notas importantes de la lección. Se guardarán automáticamente por clase.</p>
+                    <textarea id="classroom-notes-textarea" rows="8" placeholder="Escribe tus apuntes aquí... Ej: Fórmulas de Excel se inician siempre con '='..." oninput="window.saveCurrentClassNotes()"></textarea>
+                    <div class="notes-actions">
                       <button class="btn btn-secondary btn-sm" onclick="window.downloadClassNotes()">📥 Descargar Apuntes (.txt)</button>
                     </div>
                   </div>
@@ -337,7 +337,7 @@
               <div class="syllabus-modules" id="classroom-syllabus-container">
                 <!-- Temario Inyectado dinámicamente -->
               </div>
-              <div class="syllabus-certificate-unlock" id="syllabus-cert-unlock-box" style="display:none; margin-top:20px;">
+              <div class="syllabus-certificate-unlock" id="syllabus-cert-unlock-box" hidden>
                 <div class="certificate-badge">🏆 ¡Curso Completado!</div>
                 <button class="btn btn-primary w-100" onclick="window.showCertificate()">Obtener Certificado</button>
               </div>
@@ -424,21 +424,21 @@
                 </div>
                 <div class="form-group">
                   <label>Tipo de Vehículo</label>
-                  <div class="vehicle-select-container" style="display: flex; gap: 8px; margin-top: 6px;">
-                    <div class="vehicle-option active" data-type="moto" onclick="window.selectLlevaVehicle('moto')" style="flex: 1; text-align: center; padding: 10px 6px; border: 1px solid var(--color-lleva); background: rgba(245,158,11,0.08); border-radius: 6px; cursor: pointer; transition: all 0.2s;">
-                      <div style="font-size: 1.5rem;">🏍️</div>
+                  <div class="vehicle-select-container">
+                    <div class="vehicle-option active" data-type="moto" onclick="window.selectLlevaVehicle('moto')">
+                      <div>🏍️</div>
                       <strong>Moto</strong>
-                      <div style="font-size: 0.7rem; color: var(--text-muted);">Hasta 5kg</div>
+                      <div>Hasta 5kg</div>
                     </div>
-                    <div class="vehicle-option" data-type="car" onclick="window.selectLlevaVehicle('car')" style="flex: 1; text-align: center; padding: 10px 6px; border: 1px solid var(--border-color); background: var(--bg-card); border-radius: 6px; cursor: pointer; transition: all 0.2s;">
-                      <div style="font-size: 1.5rem;">🚗</div>
+                    <div class="vehicle-option" data-type="car" onclick="window.selectLlevaVehicle('car')">
+                      <div>🚗</div>
                       <strong>Auto</strong>
-                      <div style="font-size: 0.7rem; color: var(--text-muted);">Hasta 20kg</div>
+                      <div>Hasta 20kg</div>
                     </div>
-                    <div class="vehicle-option" data-type="cargo" onclick="window.selectLlevaVehicle('cargo')" style="flex: 1; text-align: center; padding: 10px 6px; border: 1px solid var(--border-color); background: var(--bg-card); border-radius: 6px; cursor: pointer; transition: all 0.2s;">
-                      <div style="font-size: 1.5rem;">🚚</div>
+                    <div class="vehicle-option" data-type="cargo" onclick="window.selectLlevaVehicle('cargo')">
+                      <div>🚚</div>
                       <strong>Furgón</strong>
-                      <div style="font-size: 0.7rem; color: var(--text-muted);">Hasta 500kg</div>
+                      <div>Hasta 500kg</div>
                     </div>
                   </div>
                 </div>
@@ -720,38 +720,37 @@
                 <p style="font-size:0.8rem; color:var(--text-muted); text-align:center; margin-top:4px;">Incluye: Mano de obra especializada y garantía de 30 días.</p>
               </div>
 
-              <!-- Selector de Técnicos -->
-              <div class="form-group mt-2" style="margin-bottom: 15px;">
+              <div class="form-group mt-2">
                 <label>Selecciona el Técnico Certificado</label>
-                <div class="tech-select-grid" style="display: flex; flex-direction: column; gap: 8px; margin-top: 6px;">
-                  <div class="tech-option active" data-tech="ramon" onclick="window.selectInstalaTech('ramon')" style="display: flex; align-items: center; gap: 10px; padding: 8px 12px; border: 1px solid var(--color-instala); background: rgba(236,72,153,0.08); border-radius: 6px; cursor: pointer; transition: all 0.2s;">
-                    <span style="font-size: 1.8rem;">👷‍♂️</span>
-                    <div style="flex: 1;">
-                      <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <strong style="font-size: 0.85rem; color: var(--color-instala);">Ramón Abreu</strong>
-                        <span style="font-size: 0.75rem; color: #fbbf24;">★★★★★ 4.9</span>
+                <div class="tech-select-grid">
+                  <div class="tech-option active" data-tech="ramon" onclick="window.selectInstalaTech('ramon')">
+                    <span>👷‍♂️</span>
+                    <div class="tech-info">
+                      <div class="tech-header-row">
+                        <strong>Ramón Abreu</strong>
+                        <span class="tech-rating">★★★★★ 4.9</span>
                       </div>
-                      <small style="font-size: 0.7rem; color: var(--text-muted);">Instalador Senior • TV & AC</small>
+                      <small>Instalador Senior • TV & AC</small>
                     </div>
                   </div>
-                  <div class="tech-option" data-tech="carlos" onclick="window.selectInstalaTech('carlos')" style="display: flex; align-items: center; gap: 10px; padding: 8px 12px; border: 1px solid var(--border-color); background: var(--bg-card); border-radius: 6px; cursor: pointer; transition: all 0.2s;">
-                    <span style="font-size: 1.8rem;">👨‍🔧</span>
-                    <div style="flex: 1;">
-                      <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <strong style="font-size: 0.85rem;">Carlos Medina</strong>
-                        <span style="font-size: 0.75rem; color: #fbbf24;">★★★★☆ 4.7</span>
+                  <div class="tech-option" data-tech="carlos" onclick="window.selectInstalaTech('carlos')">
+                    <span>👨‍🔧</span>
+                    <div class="tech-info">
+                      <div class="tech-header-row">
+                        <strong>Carlos Medina</strong>
+                        <span class="tech-rating">★★★★☆ 4.7</span>
                       </div>
-                      <small style="font-size: 0.7rem; color: var(--text-muted);">Especialista • Redes & Domótica</small>
+                      <small>Especialista • Redes & Domótica</small>
                     </div>
                   </div>
-                  <div class="tech-option" data-tech="laura" onclick="window.selectInstalaTech('laura')" style="display: flex; align-items: center; gap: 10px; padding: 8px 12px; border: 1px solid var(--border-color); background: var(--bg-card); border-radius: 6px; cursor: pointer; transition: all 0.2s;">
-                    <span style="font-size: 1.8rem;">👩‍🔧</span>
-                    <div style="flex: 1;">
-                      <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <strong style="font-size: 0.85rem;">Laura Rijo</strong>
-                        <span style="font-size: 0.75rem; color: #fbbf24;">★★★★★ 4.8</span>
+                  <div class="tech-option" data-tech="laura" onclick="window.selectInstalaTech('laura')">
+                    <span>👩‍🔧</span>
+                    <div class="tech-info">
+                      <div class="tech-header-row">
+                        <strong>Laura Rijo</strong>
+                        <span class="tech-rating">★★★★★ 4.8</span>
                       </div>
-                      <small style="font-size: 0.7rem; color: var(--text-muted);">Técnica • Cerraduras & Smart Home</small>
+                      <small>Técnica • Cerraduras & Smart Home</small>
                     </div>
                   </div>
                 </div>

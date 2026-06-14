@@ -201,7 +201,7 @@ body {
   gap: var(--spacing-md);
   padding: var(--spacing-md) var(--spacing-lg);
   background: transparent;
-  border: none;
+  border: 1px solid transparent;
   border-radius: var(--radius-xl);
   color: var(--text-muted);
   font-size: 0.95rem;
@@ -294,6 +294,8 @@ body {
   display: flex;
   align-items: center;
   gap: var(--spacing-md);
+  flex: 1;
+  min-width: 0;
 }
 
 .mobile-menu-btn {
@@ -308,6 +310,7 @@ body {
   justify-content: center;
   cursor: pointer;
   transition: var(--transition);
+  flex-shrink: 0;
 }
 
 @media (max-width: 768px) {
@@ -319,22 +322,57 @@ body {
   color: var(--text-main);
 }
 
+.topbar-title {
+  flex: 1;
+  min-width: 0;
+}
+
 .topbar-title h1 {
   font-size: 1.25rem;
   font-weight: 700;
   letter-spacing: -0.3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .topbar-right-area {
   display: flex;
   align-items: center;
   gap: var(--spacing-lg);
+  flex-shrink: 0;
 }
 
 .topbar-actions {
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
+}
+
+@media (max-width: 640px) {
+  .app-topbar {
+    padding: 0 var(--spacing-md);
+  }
+  .topbar-left-area {
+    gap: var(--spacing-xs) !important;
+  }
+  .topbar-right-area {
+    gap: var(--spacing-sm) !important;
+  }
+  .topbar-actions {
+    gap: var(--spacing-xs) !important;
+  }
+  .topbar-title {
+    max-width: 140px;
+  }
+  .action-btn, .profile-btn, .mobile-menu-btn {
+    width: 38px !important;
+    height: 38px !important;
+  }
+  .action-btn svg, .profile-btn svg {
+    width: 15px !important;
+    height: 15px !important;
+  }
 }
 
 /* Premium action buttons */
@@ -452,6 +490,9 @@ body {
 .app-view {
   display: none;
   animation: fadeInUp 0.3s ease-out forwards;
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
 }
 
 .app-view.active {
@@ -2077,10 +2118,50 @@ select, select option {
   color: var(--text-main);
   text-decoration: none;
   font-size: 0.9rem;
+}
+
+.notes-container {
   display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.notes-header {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.notes-description {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.notes-container textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: var(--spacing-md);
+  font-family: monospace;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-main);
+  border-radius: var(--radius-md);
+  resize: vertical;
+  outline: none;
+  line-height: 1.5;
   transition: var(--transition);
+}
+
+.notes-container textarea:focus {
+  border-color: var(--color-educa);
+  background: rgba(0, 0, 0, 0.45);
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
+}
+
+.notes-actions {
+  display: flex;
+  justify-content: flex-end;
 }
 
 .resources-list a:hover {
@@ -2765,3 +2846,523 @@ select, select option {
 }
 
 .flex-1 { flex: 1; }
+
+/* ==========================================================================
+   TELOASISTENTE IA - GLOBAL FLOATING CHAT WIDGET
+   ========================================================================== */
+.telo-chat-widget {
+  position: fixed;
+  bottom: 90px;
+  right: var(--spacing-xl);
+  width: 380px;
+  height: 520px;
+  background: rgba(10, 15, 30, 0.85);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg), 0 0 32px rgba(14, 165, 233, 0.15);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 999;
+  transform: translateY(20px) scale(0.95);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.telo-chat-widget.open {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+  visibility: visible;
+  pointer-events: all;
+}
+
+.telo-chat-widget-header {
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: rgba(15, 23, 42, 0.9);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.telo-chat-widget-identity {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.telo-chat-widget-avatar {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.telo-chat-widget-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.telo-chat-online-dot {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 10px;
+  height: 10px;
+  background-color: var(--color-success);
+  border: 2px solid #0f172a;
+  border-radius: 50%;
+  animation: onlinePulse 2s infinite ease-out;
+}
+
+@keyframes onlinePulse {
+  0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+  70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+.telo-chat-widget-info h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0;
+  color: white;
+}
+
+.telo-chat-widget-info small {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.telo-chat-widget-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.telo-chat-ctrl-btn {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: var(--text-muted);
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.telo-chat-ctrl-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.telo-chat-close-btn:hover {
+  background: var(--color-error);
+  border-color: var(--color-error);
+}
+
+.telo-chat-widget-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  background: rgba(0, 0, 0, 0.15);
+}
+
+/* Chat Bubbles */
+.telo-chat-widget-messages .chat-msg {
+  max-width: 85%;
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  animation: messageSlideIn 0.25s ease-out forwards;
+}
+
+@keyframes messageSlideIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.telo-chat-widget-messages .bot-msg {
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  color: #f1f5f9;
+  align-self: flex-start;
+  border-bottom-left-radius: 2px;
+}
+
+.telo-chat-widget-messages .user-msg {
+  background: linear-gradient(135deg, var(--color-educa) 0%, #0284c7 100%);
+  color: white;
+  align-self: flex-end;
+  border-bottom-right-radius: 2px;
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.2);
+}
+
+.telo-chat-widget-messages .typing-msg {
+  background: rgba(30, 41, 59, 0.4);
+  color: var(--text-muted);
+  align-self: flex-start;
+  font-style: italic;
+}
+
+.telo-chat-quick-replies {
+  display: flex;
+  gap: var(--spacing-sm);
+  overflow-x: auto;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  background: rgba(0, 0, 0, 0.1);
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+  scrollbar-width: none;
+}
+
+.telo-chat-quick-replies::-webkit-scrollbar {
+  display: none;
+}
+
+.quick-reply-btn {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--color-educa);
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: var(--transition);
+}
+
+.quick-reply-btn:hover {
+  background: rgba(14, 165, 233, 0.1);
+  border-color: rgba(14, 165, 233, 0.3);
+  transform: translateY(-1px);
+}
+
+.telo-chat-widget-input {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: rgba(15, 23, 42, 0.95);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  gap: var(--spacing-sm);
+}
+
+.telo-chat-widget-input input {
+  flex: 1;
+  background: rgba(0, 0, 0, 0.4) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: var(--radius-md) !important;
+  padding: 10px 14px !important;
+  color: white !important;
+  font-size: 0.85rem !important;
+  outline: none !important;
+}
+
+.telo-chat-widget-input input:focus {
+  border-color: var(--color-educa) !important;
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15) !important;
+}
+
+.telo-chat-send-btn {
+  background: var(--color-educa);
+  border: none;
+  color: white;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.telo-chat-send-btn:hover {
+  background: #0284c7;
+  transform: scale(1.05);
+}
+
+.telo-chat-send-btn svg {
+  margin-left: 2px;
+}
+
+/* Chat Backdrop */
+.telo-chat-backdrop {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  z-index: 990;
+  transition: var(--transition);
+}
+
+.telo-chat-backdrop.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: all;
+}
+
+/* Responsiveness for Chat Widget */
+@media (max-width: 640px) {
+  .telo-chat-widget {
+    right: 0;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 80vh;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+    z-index: 1200; /* overlay everything on mobile */
+  }
+}
+
+/* ==========================================================================
+   WISHLIST DRAWER & OVERLAY
+   ========================================================================== */
+.wishlist-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  visibility: hidden;
+  transition: var(--transition);
+  z-index: 200;
+  pointer-events: none;
+}
+
+.wishlist-overlay.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: all;
+}
+
+.wishlist-drawer {
+  position: fixed;
+  top: 0; 
+  right: -400px;
+  width: 100%;
+  max-width: 400px;
+  height: 100vh;
+  background: linear-gradient(180deg, #0f172a 0%, #060911 100%);
+  box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+  display: flex;
+  flex-direction: column;
+  transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 210;
+}
+
+.wishlist-drawer.active {
+  right: 0;
+}
+
+.wishlist-header {
+  padding: var(--spacing-xl);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.close-wishlist {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 2rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.close-wishlist:hover {
+  color: var(--text-main);
+}
+
+.wishlist-items {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--spacing-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.wishlist-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  background: var(--bg-panel);
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255,255,255,0.03);
+}
+
+.wishlist-item-img {
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  flex-shrink: 0;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.wishlist-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.wishlist-item-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.wishlist-item-price {
+  font-size: 0.85rem;
+  color: var(--color-sales);
+  font-weight: bold;
+}
+
+.wishlist-item-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.btn-wishlist-remove {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-muted);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  transition: var(--transition);
+}
+
+.btn-wishlist-remove:hover {
+  background: var(--color-error);
+  color: white;
+  border-color: var(--color-error);
+}
+
+@media (max-width: 480px) {
+  .wishlist-drawer {
+    max-width: 100%;
+  }
+}
+
+/* ==========================================================================
+   SIDEBAR OVERLAY (Mobile)
+   ========================================================================== */
+.sidebar-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  visibility: hidden;
+  transition: var(--transition);
+  z-index: 1050;
+  pointer-events: none;
+}
+
+.sidebar-overlay.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: all;
+}
+
+/* ==========================================================================
+   TELOINSTALA: TECH SELECTOR
+   ========================================================================== */
+.tech-select-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-sm);
+}
+
+.tech-option {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: 10px 16px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-panel);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.tech-option:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.tech-option.active {
+  border-color: var(--color-instala);
+  background: rgba(16, 185, 129, 0.08); /* Consistent green background */
+}
+
+.tech-option.active strong {
+  color: var(--color-instala);
+}
+
+.tech-option span:first-child {
+  font-size: 1.8rem;
+}
+
+.tech-option .tech-info {
+  flex: 1;
+}
+
+.tech-option .tech-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tech-option strong {
+  font-size: 0.85rem;
+}
+
+.tech-option .tech-rating {
+  font-size: 0.75rem;
+  color: #fbbf24;
+}
+
+.tech-option small {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
