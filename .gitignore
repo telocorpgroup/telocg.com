@@ -3,3 +3,13 @@ Thumbs.db
 .env
 node_modules/
 dist/
+.engram/
+.neural_bridge/
+.neural_state.md
+CLAUDE.md
+*.docx
+*.pdf
+*.zip
+*.bat
+*.mp4
+vault/
