@@ -116,9 +116,37 @@ body {
 .sidebar-brand {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  width: 100%;
   gap: var(--spacing-md);
   margin-bottom: var(--spacing-2xl);
   padding: 0 var(--spacing-md);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.sidebar-brand-left {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+/* Topbar Areas */
+.topbar-left-area,
+.topbar-right-area {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.topbar-right-area {
+  gap: var(--spacing-lg);
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
 }
 
 .sidebar-logo {
