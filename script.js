@@ -2579,7 +2579,7 @@ function renderProducts(category) {
         <button class="product-wishlist-heart ${isFavorite ? 'active' : ''}" onclick="event.stopPropagation(); window.toggleProductWishlist('${product.id}')" title="${isFavorite ? 'Eliminar de favoritos' : 'Añadir a favoritos'}" style="outline: none;">
           ${isFavorite ? '❤️' : '🤍'}
         </button>
-        <div class="product-image" onclick="window.openProductModal('${product.id}')" style="cursor:pointer;">${product.icon}</div>
+        <div class="product-image" onclick="window.openProductModal('${product.id}')" style="cursor:pointer;">${product.icon.replace('<img ', '<img loading="lazy" width="300" height="300" ')}</div>
         <div class="product-info">
           ${stockHtml}
           <h3 class="product-title" onclick="window.openProductModal('${product.id}')" style="cursor:pointer;">${product.title}</h3>
