@@ -271,7 +271,7 @@
         <section class="view" id="view-lleva">
           <div class="view__header">
             <h2>TeloLleva</h2>
-            <p>Mensajería express con negociación de tarifas y seguimiento en tiempo real.</p>
+            <p>Mensajería express con selección real de ubicación, negociación de tarifas y seguimiento en vivo.</p>
           </div>
           <div class="lleva-layout">
             <div class="lleva__panel">
@@ -279,38 +279,14 @@
               <div class="card" id="lleva-form-card">
                 <h3 class="card__title">Solicitar Envío</h3>
                 <div class="form-group">
-                  <label for="lleva-origin">Punto de Recogida</label>
-                  <select id="lleva-origin" class="select-control">
-                    <option value="SD-Naco">Santo Domingo (Naco)</option>
-                    <option value="SD-BellaVista">Santo Domingo (Bella Vista)</option>
-                    <option value="SD-Gazcue">Santo Domingo (Gazcue)</option>
-                    <option value="SD-LosMinas">Santo Domingo Este (Los Minas)</option>
-                    <option value="SD-Herrera">Santo Domingo Oeste (Herrera)</option>
-                    <option value="SD-Norte">Santo Domingo Norte (Villa Mella)</option>
-                    <option value="Santiago-Centro">Santiago (Centro)</option>
-                    <option value="Santiago-Gurabo">Santiago (Gurabo)</option>
-                    <option value="LaVega-Centro">La Vega (Centro)</option>
-                    <option value="PuntaCana-Bavaro">Punta Cana (Bávaro)</option>
-                    <option value="PuertoPlata-Centro">Puerto Plata (Centro)</option>
-                    <option value="Moca-Centro">Moca (Centro)</option>
-                  </select>
+                  <label for="lleva-origin-input">📍 Punto de Recogida</label>
+                  <input type="text" id="lleva-origin-input" class="input-control" placeholder="Escribe la dirección de recogida..." autocomplete="off">
+                  <input type="hidden" id="lleva-origin-lat"><input type="hidden" id="lleva-origin-lng">
                 </div>
                 <div class="form-group">
-                  <label for="lleva-dest">Punto de Entrega</label>
-                  <select id="lleva-dest" class="select-control">
-                    <option value="SD-BellaVista">Santo Domingo (Bella Vista)</option>
-                    <option value="SD-Naco">Santo Domingo (Naco)</option>
-                    <option value="SD-Gazcue">Santo Domingo (Gazcue)</option>
-                    <option value="SD-LosMinas">Santo Domingo Este (Los Minas)</option>
-                    <option value="SD-Herrera">Santo Domingo Oeste (Herrera)</option>
-                    <option value="SD-Norte">Santo Domingo Norte (Villa Mella)</option>
-                    <option value="Santiago-Centro">Santiago (Centro)</option>
-                    <option value="Santiago-Gurabo">Santiago (Gurabo)</option>
-                    <option value="LaVega-Centro">La Vega (Centro)</option>
-                    <option value="PuntaCana-Bavaro">Punta Cana (Bávaro)</option>
-                    <option value="PuertoPlata-Centro">Puerto Plata (Centro)</option>
-                    <option value="Moca-Centro">Moca (Centro)</option>
-                  </select>
+                  <label for="lleva-dest-input">📍 Punto de Entrega</label>
+                  <input type="text" id="lleva-dest-input" class="input-control" placeholder="Escribe la dirección de entrega..." autocomplete="off">
+                  <input type="hidden" id="lleva-dest-lat"><input type="hidden" id="lleva-dest-lng">
                 </div>
                 <div class="form-group">
                   <label for="lleva-item">¿Qué envías?</label>
@@ -337,26 +313,14 @@
                 <div class="form-group">
                   <label>Tipo de Vehículo</label>
                   <div class="vehicle-grid">
-                    <button class="vehicle-option active" data-vehicle="moto" type="button">
-                      <span class="vehicle-option__icon">🏍️</span>
-                      <strong>Moto</strong>
-                      <small>Hasta 5kg</small>
-                    </button>
-                    <button class="vehicle-option" data-vehicle="car" type="button">
-                      <span class="vehicle-option__icon">🚗</span>
-                      <strong>Auto</strong>
-                      <small>Hasta 20kg</small>
-                    </button>
-                    <button class="vehicle-option" data-vehicle="cargo" type="button">
-                      <span class="vehicle-option__icon">🚚</span>
-                      <strong>Furgón</strong>
-                      <small>Hasta 500kg</small>
-                    </button>
+                    <button class="vehicle-option active" data-vehicle="moto" type="button"><span class="vehicle-option__icon">🏍️</span><strong>Moto</strong><small>Hasta 5kg</small></button>
+                    <button class="vehicle-option" data-vehicle="car" type="button"><span class="vehicle-option__icon">🚗</span><strong>Auto</strong><small>Hasta 20kg</small></button>
+                    <button class="vehicle-option" data-vehicle="cargo" type="button"><span class="vehicle-option__icon">🚚</span><strong>Furgón</strong><small>Hasta 500kg</small></button>
                   </div>
                 </div>
                 <div class="fare-box">
-                  <div class="fare-box__suggested">Tarifa Recomendada: <strong id="lleva-fare-label">RD$ 250</strong></div>
-                  <small class="fare-box__traffic">Tráfico: <span id="lleva-traffic">Normal</span></small>
+                  <div class="fare-box__suggested">Tarifa Estimada: <strong id="lleva-fare-label">RD$ 250</strong></div>
+                  <small class="fare-box__traffic">Distancia: <span id="lleva-distance">--</span> · ETA: <span id="lleva-eta-est">--</span></small>
                   <div class="fare-box__offer">
                     <label>Tu oferta:</label>
                     <div class="fare-box__controls">
@@ -366,11 +330,9 @@
                     </div>
                   </div>
                 </div>
-                <label class="checkbox-control">
-                  <input type="checkbox" id="lleva-recurring">
-                  <span>Servicio recurrente (iguala mensual)</span>
-                </label>
+                <label class="checkbox-control"><input type="checkbox" id="lleva-recurring"><span>Servicio recurrente (iguala mensual)</span></label>
                 <button class="btn btn--primary btn--full" id="lleva-submit">Solicitar Mensajero</button>
+                <a href="https://wa.me/18099038707?text=Hola%20TeloLleva%2C%20necesito%20un%20env%C3%ADo" target="_blank" class="btn btn--whatsapp btn--full">💬 Solicitar por WhatsApp</a>
               </div>
               <!-- Offers Card -->
               <div class="card" id="lleva-offers-card" hidden>
@@ -391,19 +353,9 @@
                 <button class="btn btn--danger btn--full" id="lleva-cancel">Cancelar Pedido</button>
               </div>
             </div>
-            <!-- Map -->
-            <div class="lleva__map">
-              <svg id="lleva-map" viewBox="0 0 400 400" aria-label="Mapa de ruta">
-                <defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0L0 0 0 40" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="1"/></pattern></defs>
-                <rect width="400" height="400" fill="#080c14"/><rect width="400" height="400" fill="url(#grid)"/>
-                <path d="M0 100H400" stroke="rgba(255,255,255,0.08)" stroke-width="6"/><path d="M0 300H400" stroke="rgba(255,255,255,0.08)" stroke-width="6"/>
-                <path d="M100 0V400" stroke="rgba(255,255,255,0.08)" stroke-width="6"/><path d="M300 0V400" stroke="rgba(255,255,255,0.08)" stroke-width="6"/>
-                <path id="map-route" d="" fill="none" stroke="var(--c-lleva)" stroke-width="3" stroke-dasharray="8,6"/>
-                <g id="map-pin-a" opacity="0"><circle r="8" fill="rgba(16,185,129,0.3)"/><circle r="5" fill="#10b981"/></g>
-                <g id="map-pin-b" opacity="0"><circle r="8" fill="rgba(239,68,68,0.3)"/><circle r="5" fill="#ef4444"/></g>
-                <g id="map-courier" opacity="0"><circle r="10" fill="rgba(245,158,11,0.3)"/><circle r="6" fill="var(--c-lleva)"/></g>
-              </svg>
-              <div class="lleva__map-status" id="map-status">Ingresa origen y destino</div>
+            <!-- Google Map -->
+            <div class="lleva__map" id="lleva-google-map">
+              <div id="gmap" style="width:100%;height:100%;min-height:400px;border-radius:var(--radius-lg);"></div>
             </div>
           </div>
         </section>
@@ -412,40 +364,63 @@
         <section class="view" id="view-repara">
           <div class="view__header">
             <h2>TeloRepara</h2>
-            <p>Diagnóstico express y reparación a domicilio para dispositivos y electrodomésticos.</p>
+            <p>Diagnóstico, reparación y mantenimiento a domicilio con seguimiento completo.</p>
           </div>
           <div class="repara-layout">
             <div class="card">
-              <h3 class="card__title">Cotizador de Reparación</h3>
+              <h3 class="card__title">Solicitar Reparación</h3>
               <div class="form-group">
                 <label for="repara-device">Tipo de Dispositivo</label>
                 <select id="repara-device" class="select-control">
                   <option value="phone">Celular / Smartphone</option>
-                  <option value="laptop">Laptop / Computadora</option>
-                  <option value="tablet">Tablet</option>
+                  <option value="laptop">Laptop / PC de Escritorio</option>
+                  <option value="tablet">Tablet / iPad</option>
                   <option value="tv">Televisor / Smart TV</option>
+                  <option value="console">Consola de Videojuegos</option>
+                  <option value="printer">Impresora / Scanner</option>
                   <option value="appliance">Electrodoméstico</option>
+                  <option value="inverter">Inversor / UPS</option>
+                  <option value="ac">Aire Acondicionado</option>
                 </select>
               </div>
               <div class="form-group">
                 <label for="repara-issue">Falla Principal</label>
                 <select id="repara-issue" class="select-control">
-                  <option value="screen">Pantalla rota / Rayada</option>
-                  <option value="battery">Problemas de batería</option>
+                  <option value="screen">Pantalla rota / Sin imagen</option>
+                  <option value="battery">Problemas de batería / No carga</option>
                   <option value="power">No enciende</option>
                   <option value="water">Daño por líquido</option>
-                  <option value="system">Sistema lento / Virus</option>
+                  <option value="system">Sistema lento / Virus / Formateo</option>
+                  <option value="port">Puerto de carga / Jack dañado</option>
+                  <option value="speaker">Audio / Altavoz / Micrófono</option>
+                  <option value="camera">Cámara defectuosa</option>
+                  <option value="network">Sin WiFi / Bluetooth / Señal</option>
+                  <option value="overheating">Sobrecalentamiento</option>
+                  <option value="other">Otra falla (describir abajo)</option>
                 </select>
+              </div>
+              <div class="form-group">
+                <label for="repara-brand">Marca y Modelo</label>
+                <input type="text" id="repara-brand" class="input-control" placeholder="Ej. iPhone 15 Pro, Samsung S24...">
+              </div>
+              <div class="form-group">
+                <label for="repara-desc">Descripción del Problema</label>
+                <textarea id="repara-desc" class="input-control" rows="2" placeholder="Describe con detalle qué le sucede a tu dispositivo..."></textarea>
               </div>
               <div class="quote-box">
                 <div class="quote-box__price">Estimado: <strong id="repara-price">RD$ 1,500</strong></div>
-                <small>Tiempo: <span id="repara-time">24-48 horas</span></small>
+                <small>Tiempo: <span id="repara-time">24-48 horas</span> · Garantía 90 días</small>
               </div>
               <div class="form-group">
                 <label for="repara-address">Dirección de Recogida</label>
                 <input type="text" id="repara-address" class="input-control" placeholder="Calle, Número, Sector">
               </div>
+              <div class="form-group">
+                <label for="repara-contact">Teléfono / WhatsApp</label>
+                <input type="tel" id="repara-contact" class="input-control" placeholder="+1 (809) 000-0000">
+              </div>
               <button class="btn btn--primary btn--full" id="repara-submit">Reservar Reparación</button>
+              <a href="https://wa.me/18099038707?text=Hola%20TeloRepara%2C%20necesito%20una%20reparaci%C3%B3n" target="_blank" class="btn btn--whatsapp btn--full">💬 Cotizar por WhatsApp</a>
             </div>
             <div class="repara__visual">
               <div class="card">
@@ -472,10 +447,14 @@
                   <p class="phone-diagram__label" id="hw-label">Selecciona un componente</p>
                 </div>
               </div>
-              <!-- Tracker -->
+              <!-- Tracker + CRM -->
               <div class="card" id="repara-tracker" hidden>
                 <h3 class="card__title">Seguimiento</h3>
                 <div class="tracker-steps" id="repara-steps"></div>
+              </div>
+              <div class="card">
+                <h3 class="card__title">📋 Historial de Reparaciones</h3>
+                <div class="crm-list" id="repara-crm-list"><p class="text-muted text-center">Sin reparaciones previas registradas.</p></div>
               </div>
             </div>
           </div>
@@ -485,7 +464,7 @@
         <section class="view" id="view-instala">
           <div class="view__header">
             <h2>TeloInstala</h2>
-            <p>Instalaciones profesionales del hogar: TV, climatización, redes y domótica.</p>
+            <p>Instalaciones profesionales: TV, climatización, redes, domótica, seguridad y más.</p>
           </div>
           <div class="instala-layout">
             <div class="card">
@@ -493,11 +472,18 @@
               <div class="form-group">
                 <label for="instala-service">Servicio Técnico</label>
                 <select id="instala-service" class="select-control">
-                  <option value="tv">Montaje de TV en Pared</option>
-                  <option value="ac">Instalación de Aire Acondicionado</option>
-                  <option value="smart">Domótica / Smart Home</option>
-                  <option value="network">Cableado y Wifi Mesh</option>
-                  <option value="lock">Cerradura Inteligente</option>
+                  <option value="tv">Montaje de TV en Pared (incluye soporte)</option>
+                  <option value="ac">Instalación de Aire Acondicionado Split</option>
+                  <option value="ac-maint">Mantenimiento / Limpieza de AC</option>
+                  <option value="smart">Domótica / Smart Home (Alexa/Google)</option>
+                  <option value="network">Cableado Estructurado y Wifi Mesh</option>
+                  <option value="lock">Cerradura Inteligente / Control de Acceso</option>
+                  <option value="camera">Cámaras de Seguridad (CCTV / IP)</option>
+                  <option value="electrical">Instalación Eléctrica / Tomacorrientes</option>
+                  <option value="plumbing">Plomería y Grifería</option>
+                  <option value="antenna">Antena Satelital / TV por Cable</option>
+                  <option value="solar">Paneles Solares / Inversor</option>
+                  <option value="furniture">Ensamblaje de Muebles</option>
                 </select>
               </div>
               <div class="form-group">
@@ -509,7 +495,16 @@
                 <select id="instala-time" class="select-control">
                   <option value="am">Mañana (8:00 - 12:00)</option>
                   <option value="pm">Tarde (2:00 - 6:00)</option>
+                  <option value="evening">Noche (6:00 - 9:00 PM)</option>
                 </select>
+              </div>
+              <div class="form-group">
+                <label for="instala-address">Dirección</label>
+                <input type="text" id="instala-address" class="input-control" placeholder="Calle, Número, Sector, Ciudad">
+              </div>
+              <div class="form-group">
+                <label for="instala-notes">Notas Adicionales</label>
+                <textarea id="instala-notes" class="input-control" rows="2" placeholder="Detalles: modelo de AC, tamaño de TV, acceso al techo..."></textarea>
               </div>
               <div class="quote-box">
                 <div class="quote-box__price">Costo: <strong id="instala-price">RD$ 1,200</strong></div>
@@ -518,37 +513,23 @@
               <div class="form-group">
                 <label>Técnico Certificado</label>
                 <div class="tech-grid">
-                  <button class="tech-card active" data-tech="ramon" type="button">
-                    <span class="tech-card__avatar">👷‍♂️</span>
-                    <div class="tech-card__info">
-                      <strong>Ramón Abreu</strong>
-                      <small>Senior • TV & AC</small>
-                      <span class="tech-card__rating">★ 4.9</span>
-                    </div>
-                  </button>
-                  <button class="tech-card" data-tech="carlos" type="button">
-                    <span class="tech-card__avatar">👨‍🔧</span>
-                    <div class="tech-card__info">
-                      <strong>Carlos Medina</strong>
-                      <small>Redes & Domótica</small>
-                      <span class="tech-card__rating">★ 4.7</span>
-                    </div>
-                  </button>
-                  <button class="tech-card" data-tech="laura" type="button">
-                    <span class="tech-card__avatar">👩‍🔧</span>
-                    <div class="tech-card__info">
-                      <strong>Laura Rijo</strong>
-                      <small>Smart Home</small>
-                      <span class="tech-card__rating">★ 4.8</span>
-                    </div>
-                  </button>
+                  <button class="tech-card active" data-tech="ramon" type="button"><span class="tech-card__avatar">👷‍♂️</span><div class="tech-card__info"><strong>Ramón Abreu</strong><small>Senior · TV, AC & Solar</small><span class="tech-card__rating">★ 4.9 · 320 servicios</span></div></button>
+                  <button class="tech-card" data-tech="carlos" type="button"><span class="tech-card__avatar">👨‍🔧</span><div class="tech-card__info"><strong>Carlos Medina</strong><small>Redes, CCTV & Domótica</small><span class="tech-card__rating">★ 4.7 · 185 servicios</span></div></button>
+                  <button class="tech-card" data-tech="laura" type="button"><span class="tech-card__avatar">👩‍🔧</span><div class="tech-card__info"><strong>Laura Rijo</strong><small>Smart Home & Eléctrica</small><span class="tech-card__rating">★ 4.8 · 240 servicios</span></div></button>
                 </div>
               </div>
               <button class="btn btn--primary btn--full" id="instala-submit">Agendar Instalación</button>
+              <a href="https://wa.me/18099038707?text=Hola%20TeloInstala%2C%20necesito%20una%20instalaci%C3%B3n" target="_blank" class="btn btn--whatsapp btn--full">💬 Agendar por WhatsApp</a>
             </div>
-            <div class="card" id="instala-confirmation" hidden>
-              <h3 class="card__title">Cita Confirmada</h3>
-              <div class="confirmation-details" id="instala-details"></div>
+            <div class="instala__right">
+              <div class="card" id="instala-confirmation" hidden>
+                <h3 class="card__title">Cita Confirmada ✓</h3>
+                <div class="confirmation-details" id="instala-details"></div>
+              </div>
+              <div class="card">
+                <h3 class="card__title">📋 Historial de Instalaciones</h3>
+                <div class="crm-list" id="instala-crm-list"><p class="text-muted text-center">Sin instalaciones previas registradas.</p></div>
+              </div>
             </div>
           </div>
         </section>
@@ -769,13 +750,20 @@
   <!-- Toast Container -->
   <div class="toast-container" id="toasts" aria-live="polite"></div>
 
-  <!-- Chat Widget -->
+  <!-- Chat Widget (FAB flotante) -->
+  <button class="chat-fab" id="chat-fab" aria-label="Abrir TeloAsistente">🤖</button>
   <div class="chat-widget" id="chat-widget" hidden>
     <div class="chat-widget__header"><h4>TeloAsistente</h4><button class="chat-widget__close" id="chat-close">×</button></div>
     <div class="chat-widget__messages" id="chat-messages"></div>
     <div class="chat-widget__input"><input type="text" id="chat-input" placeholder="Escribe tu pregunta..."><button class="btn btn--primary btn--icon" id="chat-send">➤</button></div>
   </div>
 
+  <!-- Google Maps API (Places + Directions) -->
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=GOOGLE_MAPS_API_KEY&libraries=places&callback=initGoogleMaps&loading=async"></script>
+  <!-- PayPal SDK -->
+  <script src="https://www.paypal.com/sdk/js?client-id=PAYPAL_CLIENT_ID&currency=USD&locale=es_DO" data-sdk-integration-source="button-factory" defer></script>
+  <!-- Supabase JS Client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" defer></script>
   <script src="script.js"></script>
 </body>
 </html>

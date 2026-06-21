@@ -814,3 +814,38 @@ textarea.input-control { resize: vertical; min-height: 80px; }
 
 /* ─── Map courier transition ─── */
 #map-courier { transition: transform 0.12s linear; }
+
+/* ═══════════════════════════════════════════════════════════════
+   v2.2 — FAB Chat, WhatsApp, CRM, lazy images
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ─── Chat FAB ─── */
+.chat-fab { position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, var(--c-primary), #991b1b); color: white; font-size: 1.5rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(220,38,38,0.4); z-index: 340; transition: transform var(--duration) var(--ease), box-shadow var(--duration); border: none; cursor: pointer; }
+.chat-fab:hover { transform: scale(1.08); box-shadow: 0 6px 24px rgba(220,38,38,0.5); }
+.chat-fab.hidden { display: none; }
+@media (max-width: 768px) { .chat-fab { bottom: calc(var(--bottom-nav-h) + 16px); } }
+
+/* ─── WhatsApp Button ─── */
+.btn--whatsapp { background: #25d366; color: white; font-weight: 700; margin-top: 8px; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.btn--whatsapp:hover { background: #1ebe57; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(37,211,102,0.3); }
+
+/* ─── CRM List ─── */
+.crm-list { max-height: 200px; overflow-y: auto; }
+.crm-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--c-border); font-size: 0.8rem; }
+.crm-item:last-child { border-bottom: none; }
+.crm-item__info strong { display: block; margin-bottom: 2px; }
+.crm-item__status { font-size: 0.7rem; font-weight: 600; padding: 2px 8px; border-radius: var(--radius-full); }
+.crm-item__status--active { background: var(--c-lleva-soft); color: var(--c-lleva); }
+.crm-item__status--done { background: rgba(16,185,129,0.1); color: var(--c-success); }
+
+/* ─── Instala right column ─── */
+.instala__right { display: flex; flex-direction: column; gap: 16px; }
+@media (max-width: 900px) { .instala-layout { grid-template-columns: 1fr; } }
+
+/* ─── Lazy image placeholder ─── */
+.product-card__image img[loading="lazy"] { background: var(--c-surface-2); }
+.product-card__image img { transition: opacity 0.3s; }
+
+/* ─── Google Maps container ─── */
+#gmap { background: var(--c-surface-2); border-radius: var(--radius-lg); }
+.lleva__map { border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--c-border); min-height: 400px; }

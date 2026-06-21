@@ -788,33 +788,73 @@ function filterCoursesByPath(path) {
 // TELOLLEVA — LOGISTICS
 // ═══════════════════════════════════════════════════════════════
 
-const llevaZones = { 'SD-Naco': [180,120], 'SD-BellaVista': [200,160], 'SD-Gazcue': [160,180], 'SD-LosMinas': [300,200], 'SD-Herrera': [100,220], 'SD-Norte': [150,80], 'Santiago-Centro': [120,320], 'Santiago-Gurabo': [160,340], 'LaVega-Centro': [200,300], 'PuntaCana-Bavaro': [340,280], 'PuertoPlata-Centro': [100,360], 'Moca-Centro': [140,290] };
+const llevaZones = {};
+let gmapInstance = null, gmapDirectionsService = null, gmapDirectionsRenderer = null, gmapOriginMarker = null, gmapDestMarker = null;
 
-function updateLlevaPrice() {
-  const origin = document.getElementById('lleva-origin').value;
-  const dest = document.getElementById('lleva-dest').value;
-  const vehicle = document.querySelector('.vehicle-option.active')?.dataset.vehicle || 'moto';
-  const basePrice = { moto: 150, car: 350, cargo: 800 };
-  const o = llevaZones[origin], d = llevaZones[dest];
-  const dist = o && d ? Math.sqrt(Math.pow(o[0]-d[0], 2) + Math.pow(o[1]-d[1], 2)) : 100;
-  const price = Math.round(basePrice[vehicle] + dist * 1.2);
-  document.getElementById('lleva-fare-label').textContent = `RD$ ${price}`;
-  document.getElementById('lleva-fare').value = price;
-  // Update map
-  updateLlevaMap(origin, dest);
+// Google Maps Initialization (called by script callback)
+window.initGoogleMaps = function() {
+  const mapDiv = document.getElementById('gmap');
+  if (!mapDiv) return;
+  gmapInstance = new google.maps.Map(mapDiv, { center: { lat: 18.486, lng: -69.931 }, zoom: 13, mapTypeControl: false, streetViewControl: false, styles: [{ elementType: 'geometry', stylers: [{ color: '#1a1a2e' }] }, { elementType: 'labels.text.fill', stylers: [{ color: '#94a3b8' }] }, { elementType: 'labels.text.stroke', stylers: [{ color: '#0a0f1a' }] }, { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#2d3748' }] }, { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#0c1929' }] }] });
+  gmapDirectionsService = new google.maps.DirectionsService();
+  gmapDirectionsRenderer = new google.maps.DirectionsRenderer({ map: gmapInstance, suppressMarkers: false, polylineOptions: { strokeColor: '#f59e0b', strokeWeight: 4, strokeOpacity: 0.8 } });
+
+  // Places Autocomplete for origin
+  const originInput = document.getElementById('lleva-origin-input');
+  const destInput = document.getElementById('lleva-dest-input');
+  if (originInput && google.maps.places) {
+    const originAC = new google.maps.places.Autocomplete(originInput, { componentRestrictions: { country: 'do' }, fields: ['geometry', 'formatted_address'] });
+    originAC.addListener('place_changed', () => {
+      const place = originAC.getPlace();
+      if (place.geometry) {
+        document.getElementById('lleva-origin-lat').value = place.geometry.location.lat();
+        document.getElementById('lleva-origin-lng').value = place.geometry.location.lng();
+        calculateLlevaRoute();
+      }
+    });
+    const destAC = new google.maps.places.Autocomplete(destInput, { componentRestrictions: { country: 'do' }, fields: ['geometry', 'formatted_address'] });
+    destAC.addListener('place_changed', () => {
+      const place = destAC.getPlace();
+      if (place.geometry) {
+        document.getElementById('lleva-dest-lat').value = place.geometry.location.lat();
+        document.getElementById('lleva-dest-lng').value = place.geometry.location.lng();
+        calculateLlevaRoute();
+      }
+    });
+  }
+};
+
+function calculateLlevaRoute() {
+  const oLat = parseFloat(document.getElementById('lleva-origin-lat').value);
+  const oLng = parseFloat(document.getElementById('lleva-origin-lng').value);
+  const dLat = parseFloat(document.getElementById('lleva-dest-lat').value);
+  const dLng = parseFloat(document.getElementById('lleva-dest-lng').value);
+  if (!oLat || !dLat || !gmapDirectionsService) return;
+
+  gmapDirectionsService.route({
+    origin: { lat: oLat, lng: oLng },
+    destination: { lat: dLat, lng: dLng },
+    travelMode: google.maps.TravelMode.DRIVING
+  }, (result, status) => {
+    if (status === 'OK') {
+      gmapDirectionsRenderer.setDirections(result);
+      const leg = result.routes[0].legs[0];
+      const distKm = leg.distance.value / 1000;
+      const etaMin = Math.ceil(leg.duration.value / 60);
+      document.getElementById('lleva-distance').textContent = leg.distance.text;
+      document.getElementById('lleva-eta-est').textContent = leg.duration.text;
+      // Calculate price based on distance + vehicle
+      const vehicle = document.querySelector('.vehicle-option.active')?.dataset.vehicle || 'moto';
+      const basePrice = { moto: 120, car: 250, cargo: 600 };
+      const pricePerKm = { moto: 20, car: 30, cargo: 50 };
+      const price = Math.round(basePrice[vehicle] + distKm * pricePerKm[vehicle]);
+      document.getElementById('lleva-fare-label').textContent = `RD$ ${price}`;
+      document.getElementById('lleva-fare').value = price;
+    }
+  });
 }
 
-function updateLlevaMap(origin, dest) {
-  const o = llevaZones[origin], d = llevaZones[dest];
-  if (!o || !d) return;
-  const pinA = document.getElementById('map-pin-a');
-  const pinB = document.getElementById('map-pin-b');
-  const route = document.getElementById('map-route');
-  pinA.setAttribute('transform', `translate(${o[0]},${o[1]})`); pinA.setAttribute('opacity', '1');
-  pinB.setAttribute('transform', `translate(${d[0]},${d[1]})`); pinB.setAttribute('opacity', '1');
-  route.setAttribute('d', `M${o[0]},${o[1]} C${(o[0]+d[0])/2},${o[1]} ${(o[0]+d[0])/2},${d[1]} ${d[0]},${d[1]}`);
-  document.getElementById('map-status').textContent = `Ruta: ${origin} → ${dest}`;
-}
+function updateLlevaPrice() { calculateLlevaRoute(); }
 
 function startLlevaRequest() {
   const payload = {
@@ -938,8 +978,8 @@ function sendLlevaChatMessage() {
 // TELOREPARA & TELOINSTALA
 // ═══════════════════════════════════════════════════════════════
 
-const reparaPrices = { phone: { screen: 1500, battery: 800, power: 2000, water: 2500, system: 1000 }, laptop: { screen: 3500, battery: 2000, power: 4000, water: 5000, system: 1500 }, tablet: { screen: 2000, battery: 1200, power: 2500, water: 3000, system: 1200 }, tv: { screen: 8000, battery: 0, power: 3000, water: 5000, system: 2000 }, appliance: { screen: 0, battery: 0, power: 2500, water: 3000, system: 1500 } };
-const reparaTimes = { screen: '24-48h', battery: '2-4h', power: '48-72h', water: '72h', system: '2-4h' };
+const reparaPrices = { phone: { screen: 1500, battery: 800, power: 2000, water: 2500, system: 1000, port: 900, speaker: 1200, camera: 1800, network: 700, overheating: 1500, other: 1500 }, laptop: { screen: 3500, battery: 2000, power: 4000, water: 5000, system: 1500, port: 1200, speaker: 1000, camera: 800, network: 900, overheating: 2000, other: 2000 }, tablet: { screen: 2000, battery: 1200, power: 2500, water: 3000, system: 1200, port: 1000, speaker: 900, camera: 1500, network: 700, overheating: 1500, other: 1500 }, tv: { screen: 8000, battery: 0, power: 3000, water: 5000, system: 2000, port: 1500, speaker: 2500, camera: 0, network: 1200, overheating: 2000, other: 2500 }, console: { screen: 0, battery: 0, power: 3500, water: 4000, system: 2500, port: 1500, speaker: 1200, camera: 0, network: 1800, overheating: 2500, other: 2000 }, printer: { screen: 0, battery: 0, power: 2000, water: 3000, system: 1500, port: 1000, speaker: 0, camera: 0, network: 1200, overheating: 1000, other: 1500 }, appliance: { screen: 0, battery: 0, power: 2500, water: 3000, system: 1500, port: 0, speaker: 0, camera: 0, network: 0, overheating: 2000, other: 2000 }, inverter: { screen: 0, battery: 4500, power: 3500, water: 5000, system: 3000, port: 0, speaker: 0, camera: 0, network: 0, overheating: 2500, other: 3000 }, ac: { screen: 0, battery: 0, power: 3000, water: 4000, system: 2500, port: 0, speaker: 0, camera: 0, network: 0, overheating: 3000, other: 2500 } };
+const reparaTimes = { screen: '24-48h', battery: '2-4h', power: '48-72h', water: '72h', system: '2-4h', port: '2-4h', speaker: '24h', camera: '24-48h', network: '1-2h', overheating: '24-48h', other: '48h' };
 
 function updateReparaQuote() {
   const device = document.getElementById('repara-device').value;
@@ -977,8 +1017,8 @@ function bookRepara() {
   showToast('Reparación reservada · Ticket ' + ticket);
 }
 
-const instalaPrices = { tv: 1200, ac: 4500, smart: 2800, network: 3500, lock: 2000 };
-const instalaNames = { tv: 'Montaje de TV en Pared', ac: 'Instalación Aire Acondicionado', smart: 'Domótica / Smart Home', network: 'Cableado y Wifi Mesh', lock: 'Cerradura Inteligente' };
+const instalaPrices = { tv: 1200, ac: 4500, 'ac-maint': 2000, smart: 2800, network: 3500, lock: 2000, camera: 5500, electrical: 1500, plumbing: 1800, antenna: 1200, solar: 25000, furniture: 1500 };
+const instalaNames = { tv: 'Montaje de TV en Pared', ac: 'Instalación Aire Acondicionado', 'ac-maint': 'Mantenimiento de AC', smart: 'Domótica / Smart Home', network: 'Cableado y Wifi Mesh', lock: 'Cerradura Inteligente', camera: 'Cámaras de Seguridad', electrical: 'Instalación Eléctrica', plumbing: 'Plomería y Grifería', antenna: 'Antena Satelital', solar: 'Paneles Solares', furniture: 'Ensamblaje de Muebles' };
 
 function updateInstalaPrice() {
   const service = document.getElementById('instala-service').value;
@@ -1039,8 +1079,11 @@ function renderProfileServices() {
 
 function toggleChat(show) {
   const widget = document.getElementById('chat-widget');
-  widget.hidden = show !== undefined ? !show : !widget.hidden;
-  if (!widget.hidden && document.getElementById('chat-messages').children.length === 0) {
+  const fab = document.getElementById('chat-fab');
+  const shouldShow = show !== undefined ? show : widget.hidden;
+  widget.hidden = !shouldShow;
+  fab.classList.toggle('hidden', shouldShow);
+  if (shouldShow && document.getElementById('chat-messages').children.length === 0) {
     appendChatMessage('bot', '¡Hola! Soy TeloAsistente. ¿En qué puedo ayudarte hoy?');
   }
 }
@@ -1168,7 +1211,8 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btn-coupon')?.addEventListener('click', applyCoupon);
   document.getElementById('coupon-input')?.addEventListener('keydown', e => { if (e.key === 'Enter') applyCoupon(); });
   document.getElementById('btn-chat').addEventListener('click', () => toggleChat());
-  document.getElementById('btn-open-chat')?.addEventListener('click', () => { toggleChat(true); switchView('support'); });
+  document.getElementById('chat-fab').addEventListener('click', () => toggleChat(true));
+  document.getElementById('btn-open-chat')?.addEventListener('click', () => { toggleChat(true); });
   document.getElementById('chat-close').addEventListener('click', () => toggleChat(false));
   document.getElementById('chat-send').addEventListener('click', sendChatMessage);
   document.getElementById('chat-input').addEventListener('keydown', e => { if (e.key === 'Enter') sendChatMessage(); });
@@ -1217,13 +1261,11 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // TeloLleva
-  document.getElementById('lleva-origin').addEventListener('change', updateLlevaPrice);
-  document.getElementById('lleva-dest').addEventListener('change', updateLlevaPrice);
   document.querySelectorAll('.vehicle-option').forEach(opt => {
     opt.addEventListener('click', () => {
       document.querySelectorAll('.vehicle-option').forEach(o => o.classList.remove('active'));
       opt.classList.add('active');
-      updateLlevaPrice();
+      calculateLlevaRoute();
     });
   });
   document.getElementById('lleva-fare-minus').addEventListener('click', () => { const inp = document.getElementById('lleva-fare'); inp.value = Math.max(100, parseInt(inp.value) - 50); });
@@ -1295,7 +1337,6 @@ document.addEventListener('DOMContentLoaded', () => {
   updateWishlistBadge();
   loadProfile();
   loadIntegrations();
-  updateLlevaPrice();
   updateReparaQuote();
   updateInstalaPrice();
   updateEducaProgress();
