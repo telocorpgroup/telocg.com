@@ -94,6 +94,19 @@ const State = {
 };
 
 // ═══════════════════════════════════════════════════════════════
+// IMAGE CDN — Optimiza imágenes via proxy (wsrv.nl convierte a WebP automáticamente)
+// ═══════════════════════════════════════════════════════════════
+
+const IMG_CDN_BASE = 'https://wsrv.nl/?url=https://telocg.com/';
+function cdnImage(localPath, width = 400) {
+  // wsrv.nl es un CDN gratuito que redimensiona y convierte a WebP automáticamente
+  return `${IMG_CDN_BASE}${encodeURIComponent(localPath)}&w=${width}&output=webp&q=75`;
+}
+function cdnImageFull(localPath) {
+  return `${IMG_CDN_BASE}${encodeURIComponent(localPath)}&w=800&output=webp&q=80`;
+}
+
+// ═══════════════════════════════════════════════════════════════
 // PRODUCT DATABASE
 // ═══════════════════════════════════════════════════════════════
 
@@ -254,7 +267,7 @@ function renderProducts() {
       <div class="product-card__image">
         ${p.badge ? `<span class="product-badge ${p.discount ? 'product-badge--sale' : ''}">${p.badge}</span>` : ''}
         <button class="product-card__wish ${State.wishlist.includes(p.id) ? 'active' : ''}" data-wish="${p.id}" aria-label="Favorito" title="Añadir a favoritos">${State.wishlist.includes(p.id) ? '❤️' : '🤍'}</button>
-        <img src="${p.image}" alt="${p.title}" loading="lazy">
+        <img src="${cdnImage(p.image)}" alt="${p.title}" loading="lazy" decoding="async" width="400" height="400">
         ${p.freeShipping ? '<span class="product-card__shipping">🚚 Envío gratis</span>' : ''}
       </div>
       <div class="product-card__body">
@@ -314,7 +327,7 @@ function openProductModal(id) {
   body.innerHTML = `
     <div class="product-detail">
       <div class="product-detail__gallery">
-        <div class="product-detail__main-img"><img src="${p.image}" alt="${p.title}"></div>
+        <div class="product-detail__main-img"><img src="${cdnImageFull(p.image)}" alt="${p.title}"></div>
         ${p.freeShipping ? '<div class="product-detail__ship-note">🚚 Envío gratis a todo el país · Entrega en 24-48h</div>' : ''}
       </div>
       <div class="product-detail__info">
@@ -347,7 +360,7 @@ function openProductModal(id) {
           </div>
           ${p.reviews.map(r => `<div class="review-item"><div class="review-item__header"><span class="review-item__user">${r.user} <span class="review-item__verified">✓ Compra verificada</span></span><span class="review-item__date">${r.date}</span></div><div class="review-item__stars">${'★'.repeat(r.rating)}</div><p class="review-item__text">${r.text}</p></div>`).join('')}
         </div>
-        ${related.length ? `<div class="related-products"><h3>Productos relacionados</h3><div class="related-products__grid">${related.map(r => `<div class="related-card" onclick="openProductModal('${r.id}')"><img src="${r.image}" alt="${r.title}"><div class="related-card__title">${r.title}</div><div class="related-card__price">RD$ ${r.price.toLocaleString()}</div></div>`).join('')}</div></div>` : ''}
+        ${related.length ? `<div class="related-products"><h3>Productos relacionados</h3><div class="related-products__grid">${related.map(r => `<div class="related-card" onclick="openProductModal('${r.id}')"><img src="${cdnImage(r.image, 200)}" alt="${r.title}" loading="lazy"><div class="related-card__title">${r.title}</div><div class="related-card__price">RD$ ${r.price.toLocaleString()}</div></div>`).join('')}</div></div>` : ''}
       </div>
     </div>`;
   modal.classList.add('active');
@@ -419,7 +432,7 @@ function renderCart() {
     container.innerHTML = shipProgress + State.cart.map(item => {
       const p = products.find(x => x.id === item.id);
       if (!p) return '';
-      return `<div class="cart-item"><div class="cart-item__img"><img src="${p.image}" alt="${p.title}"></div><div class="cart-item__info"><div class="cart-item__title">${p.title}</div><div class="cart-item__price">RD$ ${(p.price * item.qty).toLocaleString()}</div><div class="cart-item__actions"><button onclick="updateCartQty('${item.id}',-1)">−</button><span class="cart-item__qty">${item.qty}</span><button onclick="updateCartQty('${item.id}',1)">+</button><button onclick="removeFromCart('${item.id}')" style="margin-left:auto;color:var(--c-danger);">✕</button></div></div></div>`;
+      return `<div class="cart-item"><div class="cart-item__img"><img src="${cdnImage(p.image, 100)}" alt="${p.title}"></div><div class="cart-item__info"><div class="cart-item__title">${p.title}</div><div class="cart-item__price">RD$ ${(p.price * item.qty).toLocaleString()}</div><div class="cart-item__actions"><button onclick="updateCartQty('${item.id}',-1)">−</button><span class="cart-item__qty">${item.qty}</span><button onclick="updateCartQty('${item.id}',1)">+</button><button onclick="removeFromCart('${item.id}')" style="margin-left:auto;color:var(--c-danger);">✕</button></div></div></div>`;
     }).join('');
   }
 
@@ -496,7 +509,7 @@ function renderWishlist() {
   container.innerHTML = State.wishlist.map(id => {
     const p = products.find(x => x.id === id);
     if (!p) return '';
-    return `<div class="cart-item" style="cursor:pointer" onclick="openProductModal('${id}')"><div class="cart-item__img"><img src="${p.image}" alt="${p.title}"></div><div class="cart-item__info"><div class="cart-item__title">${p.title}</div><div class="cart-item__price">RD$ ${p.price.toLocaleString()}</div></div></div>`;
+    return `<div class="cart-item" style="cursor:pointer" onclick="openProductModal('${id}')"><div class="cart-item__img"><img src="${cdnImage(p.image, 100)}" alt="${p.title}"></div><div class="cart-item__info"><div class="cart-item__title">${p.title}</div><div class="cart-item__price">RD$ ${p.price.toLocaleString()}</div></div></div>`;
   }).join('');
 }
 
