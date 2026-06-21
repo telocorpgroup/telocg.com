@@ -68,10 +68,6 @@
           <svg class="sidebar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
           <span>Mi Perfil</span>
         </button>
-        <button class="sidebar__link" data-view="integrations" id="nav-integrations" hidden>
-          <svg class="sidebar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
-          <span>Integraciones</span>
-        </button>
       </nav>
     </aside>
 
@@ -647,58 +643,6 @@
         </section>
 
         <!-- INTEGRACIONES -->
-        <section class="view" id="view-integrations">
-          <div class="view__header">
-            <h2>Integraciones</h2>
-            <p>Conecta la plataforma con Supabase, Stripe, n8n y Gemini para funcionalidad completa.</p>
-          </div>
-          <div class="integrations-layout">
-            <div class="integrations__settings">
-              <div class="card integration-card">
-                <div class="integration-card__header"><span>🗄️</span><h3>Supabase (Base de Datos)</h3><span class="status-pill" id="status-supabase">Desconectado</span></div>
-                <p class="text-muted">Persiste clientes, transacciones y progreso educativo en la nube.</p>
-                <div class="form-group"><label for="int-sb-url">URL</label><input type="url" id="int-sb-url" class="input-control" placeholder="https://xxx.supabase.co"></div>
-                <div class="form-group"><label for="int-sb-key">Anon Key</label><input type="password" id="int-sb-key" class="input-control" placeholder="eyJhbG..."></div>
-                <div class="btn-row"><button class="btn btn--ghost btn--sm" id="btn-test-sb">Probar</button><button class="btn btn--primary btn--sm" id="btn-save-sb">Guardar</button></div>
-              </div>
-              <div class="card integration-card">
-                <div class="integration-card__header"><span>💳</span><h3>Stripe (Pagos)</h3><label class="toggle"><input type="checkbox" id="int-stripe-on"><span class="toggle__slider"></span></label></div>
-                <p class="text-muted">Procesa pagos con tarjeta para TeloSales.</p>
-                <div class="form-group"><label for="int-stripe-pk">Publishable Key</label><input type="text" id="int-stripe-pk" class="input-control" placeholder="pk_test_..."></div>
-                <div class="form-group"><label for="int-stripe-wh">Webhook URL</label><input type="url" id="int-stripe-wh" class="input-control" placeholder="https://n8n.../webhook/stripe"></div>
-                <div class="btn-row"><button class="btn btn--primary btn--sm" id="btn-save-stripe">Guardar</button></div>
-              </div>
-              <div class="card integration-card">
-                <div class="integration-card__header"><span>⚙️</span><h3>n8n / Odoo ERP</h3><span class="status-pill status-pill--active">Activo</span></div>
-                <p class="text-muted">Webhooks para CRM, ventas y reservas de servicios.</p>
-                <div class="form-group"><label for="int-n8n-leads">Webhook CRM Leads</label><input type="url" id="int-n8n-leads" class="input-control" placeholder="https://n8n.../webhook/leads"></div>
-                <div class="form-group"><label for="int-n8n-orders">Webhook Ventas</label><input type="url" id="int-n8n-orders" class="input-control" placeholder="https://n8n.../webhook/orders"></div>
-                <div class="form-group"><label for="int-n8n-services">Webhook Servicios</label><input type="url" id="int-n8n-services" class="input-control" placeholder="https://n8n.../webhook/bookings"></div>
-                <div class="btn-row"><button class="btn btn--primary btn--sm" id="btn-save-n8n">Guardar</button></div>
-              </div>
-              <div class="card integration-card">
-                <div class="integration-card__header"><span>🤖</span><h3>Gemini IA</h3></div>
-                <p class="text-muted">API Key para TeloAsistente con Gemini 2.5 Flash.</p>
-                <div class="form-group"><label for="int-gemini">API Key</label><input type="password" id="int-gemini" class="input-control" placeholder="AIzaSy..."></div>
-                <div class="btn-row"><button class="btn btn--primary btn--sm" id="btn-save-gemini">Guardar</button></div>
-              </div>
-              <div class="card integration-card">
-                <div class="integration-card__header"><span>🔒</span><h3>HMAC (Seguridad)</h3><label class="toggle"><input type="checkbox" id="int-hmac-on"><span class="toggle__slider"></span></label></div>
-                <p class="text-muted">Firma SHA-256 para webhooks salientes.</p>
-                <div class="form-group"><label for="int-hmac-secret">Clave Secreta</label><input type="password" id="int-hmac-secret" class="input-control" placeholder="Secreto HMAC..."></div>
-                <div class="btn-row"><button class="btn btn--primary btn--sm" id="btn-save-hmac">Guardar</button></div>
-              </div>
-            </div>
-            <div class="integrations__console">
-              <div class="card">
-                <h3 class="card__title">Consola de Diagnóstico</h3>
-                <div class="btn-row"><button class="btn btn--ghost btn--sm" id="btn-test-leads">Probar Leads</button><button class="btn btn--ghost btn--sm" id="btn-test-orders">Probar Ventas</button><button class="btn btn--ghost btn--sm" id="btn-test-services">Probar Servicios</button><button class="btn btn--ghost btn--sm" id="btn-clear-console">Limpiar</button></div>
-                <pre class="debug-console" id="debug-console">&gt; Esperando interacción...</pre>
-              </div>
-            </div>
-          </div>
-        </section>
-
       </div><!-- /views -->
     </main>
 
@@ -752,16 +696,14 @@
 
   <!-- Chat Widget (FAB flotante) -->
   <button class="chat-fab" id="chat-fab" aria-label="Abrir TeloAsistente">🤖</button>
-  <div class="chat-widget" id="chat-widget" hidden>
-    <div class="chat-widget__header"><h4>TeloAsistente</h4><button class="chat-widget__close" id="chat-close">×</button></div>
+  <div class="chat-widget" id="chat-widget" style="display:none;">
+    <div class="chat-widget__header"><h4>TeloAsistente</h4><button class="chat-widget__close" id="chat-close" type="button" aria-label="Cerrar chat">×</button></div>
     <div class="chat-widget__messages" id="chat-messages"></div>
-    <div class="chat-widget__input"><input type="text" id="chat-input" placeholder="Escribe tu pregunta..."><button class="btn btn--primary btn--icon" id="chat-send">➤</button></div>
+    <div class="chat-widget__input"><input type="text" id="chat-input" placeholder="Escribe tu pregunta..."><button class="btn btn--primary btn--icon" id="chat-send" type="button">➤</button></div>
   </div>
 
-  <!-- Google Maps API (Places + Directions) -->
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key=GOOGLE_MAPS_API_KEY&libraries=places&callback=initGoogleMaps&loading=async"></script>
-  <!-- PayPal SDK -->
-  <script src="https://www.paypal.com/sdk/js?client-id=PAYPAL_CLIENT_ID&currency=USD&locale=es_DO" data-sdk-integration-source="button-factory" defer></script>
+  <!-- Google Maps API -->
+  <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB6Fw9dciFlipwPONefQbbUB0tJBDWibF&libraries=places&callback=initGoogleMaps"></script>
   <!-- Supabase JS Client -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" defer></script>
   <script src="script.js"></script>

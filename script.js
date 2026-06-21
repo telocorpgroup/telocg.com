@@ -8,13 +8,20 @@
 // ═══════════════════════════════════════════════════════════════
 
 const BackendService = {
-  config: { supabaseUrl: '', supabaseKey: '', stripeKey: '', n8nLeads: '', n8nOrders: '', n8nServices: '', geminiKey: '', hmacSecret: '', hmacEnabled: false, stripeEnabled: false },
-
-  loadConfig() {
-    const saved = localStorage.getItem('telo_integrations');
-    if (saved) Object.assign(this.config, JSON.parse(saved));
+  // API keys configuradas (solo claves públicas/frontend-safe)
+  config: {
+    supabaseUrl: 'https://your-project.supabase.co', // Reemplazar con tu URL real de Supabase
+    supabaseKey: 'sb_publishable_AgpNN0k_KfW0moe6f1CKXg_qP2GKJCm',
+    stripeKey: 'pk_test_51TkuAq9ZSlwyfnkhjbXuSXVif4wSmAghZt9Ytp3ei3UX4wZJmNyQ0ByqYp39PNe7hB9xoraN6n668YZylpO1QVgQ00mavVqCgD',
+    geminiKey: 'AIzaSyB6Fw9dciFlipwPONefQbbUB0tJBDWibF',
+    n8nLeads: '',
+    n8nOrders: '',
+    n8nServices: '',
+    stripeEnabled: true
   },
-  saveConfig() { localStorage.setItem('telo_integrations', JSON.stringify(this.config)); },
+
+  loadConfig() { /* Keys are hardcoded above — no localStorage needed for core services */ },
+  saveConfig() { },
 
   async supabaseQuery(table, method = 'GET', body = null) {
     if (!this.config.supabaseUrl || !this.config.supabaseKey) return null;
@@ -1080,9 +1087,11 @@ function renderProfileServices() {
 function toggleChat(show) {
   const widget = document.getElementById('chat-widget');
   const fab = document.getElementById('chat-fab');
-  const shouldShow = show !== undefined ? show : widget.hidden;
-  widget.hidden = !shouldShow;
-  fab.classList.toggle('hidden', shouldShow);
+  if (!widget || !fab) return;
+  const isOpen = widget.style.display !== 'none';
+  const shouldShow = show !== undefined ? show : !isOpen;
+  widget.style.display = shouldShow ? 'flex' : 'none';
+  fab.style.display = shouldShow ? 'none' : 'flex';
   if (shouldShow && document.getElementById('chat-messages').children.length === 0) {
     appendChatMessage('bot', '¡Hola! Soy TeloAsistente. ¿En qué puedo ayudarte hoy?');
   }
@@ -1126,58 +1135,6 @@ async function submitContactForm(e) {
   BackendService.supabaseQuery('leads', 'POST', data);
   form.reset();
   showToast('Mensaje enviado correctamente');
-}
-
-// ═══════════════════════════════════════════════════════════════
-// INTEGRATIONS PAGE
-// ═══════════════════════════════════════════════════════════════
-
-function loadIntegrations() {
-  const c = BackendService.config;
-  document.getElementById('int-sb-url').value = c.supabaseUrl || '';
-  document.getElementById('int-sb-key').value = c.supabaseKey || '';
-  document.getElementById('int-stripe-pk').value = c.stripeKey || '';
-  document.getElementById('int-stripe-wh').value = c.stripeWebhook || '';
-  document.getElementById('int-stripe-on').checked = c.stripeEnabled;
-  document.getElementById('int-n8n-leads').value = c.n8nLeads || '';
-  document.getElementById('int-n8n-orders').value = c.n8nOrders || '';
-  document.getElementById('int-n8n-services').value = c.n8nServices || '';
-  document.getElementById('int-gemini').value = c.geminiKey || '';
-  document.getElementById('int-hmac-on').checked = c.hmacEnabled;
-  document.getElementById('int-hmac-secret').value = c.hmacSecret || '';
-  updateIntegrationStatus();
-}
-
-function saveIntegration(section) {
-  const c = BackendService.config;
-  if (section === 'sb') { c.supabaseUrl = document.getElementById('int-sb-url').value.trim(); c.supabaseKey = document.getElementById('int-sb-key').value.trim(); }
-  else if (section === 'stripe') { c.stripeKey = document.getElementById('int-stripe-pk').value.trim(); c.stripeWebhook = document.getElementById('int-stripe-wh').value.trim(); c.stripeEnabled = document.getElementById('int-stripe-on').checked; }
-  else if (section === 'n8n') { c.n8nLeads = document.getElementById('int-n8n-leads').value.trim(); c.n8nOrders = document.getElementById('int-n8n-orders').value.trim(); c.n8nServices = document.getElementById('int-n8n-services').value.trim(); }
-  else if (section === 'gemini') { c.geminiKey = document.getElementById('int-gemini').value.trim(); }
-  else if (section === 'hmac') { c.hmacEnabled = document.getElementById('int-hmac-on').checked; c.hmacSecret = document.getElementById('int-hmac-secret').value.trim(); }
-  BackendService.saveConfig();
-  updateIntegrationStatus();
-  showToast('Configuración guardada');
-}
-
-function updateIntegrationStatus() {
-  const c = BackendService.config;
-  const sbStatus = document.getElementById('status-supabase');
-  if (c.supabaseUrl && c.supabaseKey) { sbStatus.textContent = 'Conectado'; sbStatus.className = 'status-pill status-pill--active'; }
-  else { sbStatus.textContent = 'Desconectado'; sbStatus.className = 'status-pill'; }
-}
-
-async function testSupabase() {
-  const result = await BackendService.supabaseQuery('', 'GET');
-  const console = document.getElementById('debug-console');
-  if (result !== null) { console.textContent += `\n[OK] Supabase conectado`; showToast('Conexión exitosa'); }
-  else { console.textContent += `\n[ERR] No se pudo conectar a Supabase`; showToast('Error de conexión', 'error'); }
-}
-
-function logToConsole(msg) {
-  const el = document.getElementById('debug-console');
-  el.textContent += `\n${new Date().toLocaleTimeString()} | ${msg}`;
-  el.scrollTop = el.scrollHeight;
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -1315,28 +1272,12 @@ document.addEventListener('DOMContentLoaded', () => {
     showToast('Propuesta enviada exitosamente');
   });
 
-  // Integrations
-  document.getElementById('btn-save-sb')?.addEventListener('click', () => saveIntegration('sb'));
-  document.getElementById('btn-test-sb')?.addEventListener('click', testSupabase);
-  document.getElementById('btn-save-stripe')?.addEventListener('click', () => saveIntegration('stripe'));
-  document.getElementById('btn-save-n8n')?.addEventListener('click', () => saveIntegration('n8n'));
-  document.getElementById('btn-save-gemini')?.addEventListener('click', () => saveIntegration('gemini'));
-  document.getElementById('btn-save-hmac')?.addEventListener('click', () => saveIntegration('hmac'));
-  document.getElementById('btn-clear-console')?.addEventListener('click', () => { document.getElementById('debug-console').textContent = '> Consola limpia'; });
-  document.getElementById('btn-test-leads')?.addEventListener('click', () => { BackendService.sendWebhook(BackendService.config.n8nLeads, { event: 'test', timestamp: new Date().toISOString() }).then(r => logToConsole(`Leads: ${r.ok ? 'OK' : r.error}`)); });
-  document.getElementById('btn-test-orders')?.addEventListener('click', () => { BackendService.sendWebhook(BackendService.config.n8nOrders, { event: 'test', timestamp: new Date().toISOString() }).then(r => logToConsole(`Orders: ${r.ok ? 'OK' : r.error}`)); });
-  document.getElementById('btn-test-services')?.addEventListener('click', () => { BackendService.sendWebhook(BackendService.config.n8nServices, { event: 'test', timestamp: new Date().toISOString() }).then(r => logToConsole(`Services: ${r.ok ? 'OK' : r.error}`)); });
-
-  // Keyboard shortcut for integrations (Ctrl+Shift+I)
-  document.addEventListener('keydown', e => { if (e.ctrlKey && e.shiftKey && e.key === 'I') { e.preventDefault(); document.getElementById('nav-integrations').hidden = false; switchView('integrations'); loadIntegrations(); } });
-
   // Initial renders
   renderProducts();
   renderCourses();
   updateCartBadge();
   updateWishlistBadge();
   loadProfile();
-  loadIntegrations();
   updateReparaQuote();
   updateInstalaPrice();
   updateEducaProgress();

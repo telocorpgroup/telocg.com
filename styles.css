@@ -544,21 +544,27 @@ textarea.input-control { resize: vertical; min-height: 80px; }
 /* ─── About & Team ─── */
 .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
 @media (max-width: 600px) { .about-grid { grid-template-columns: 1fr; } }
-.values-card { margin-bottom: 24px; }
-.values-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; margin-top: 16px; }
-.value-item { text-align: center; }
-.value-item span { font-size: 2rem; display: block; margin-bottom: 6px; }
-.value-item strong { display: block; font-size: 0.85rem; margin-bottom: 4px; }
-.value-item p { font-size: 0.75rem; color: var(--c-text-muted); margin: 0; }
-.team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
-.team-card { background: var(--c-surface); border: 1px solid var(--c-border); border-radius: var(--radius-lg); padding: 20px; text-align: center; }
-.team-card__avatar { font-size: 2.2rem; margin-bottom: 8px; }
-.team-card h4 { font-size: 0.9rem; margin-bottom: 2px; }
-.team-card__role { font-size: 0.75rem; color: var(--c-primary); font-weight: 600; margin-bottom: 6px; }
-.team-card small { font-size: 0.7rem; color: var(--c-text-muted); }
-.partner-card { margin-top: 8px; }
-.partner-card h3 { margin-bottom: 8px; }
-.partner-card > p { color: var(--c-text-muted); font-size: 0.9rem; margin-bottom: 20px; }
+.about-grid .card h3 { font-size: 1.1rem; margin-bottom: 10px; }
+.about-grid .card p { color: var(--c-text-muted); font-size: 0.9rem; line-height: 1.7; }
+.values-card { margin-bottom: 28px; padding: 28px; }
+.values-card h3 { font-size: 1.15rem; margin-bottom: 20px; }
+.values-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+@media (max-width: 768px) { .values-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 400px) { .values-grid { grid-template-columns: 1fr; } }
+.value-item { text-align: center; padding: 12px 8px; }
+.value-item span { font-size: 2.2rem; display: block; margin-bottom: 8px; }
+.value-item strong { display: block; font-size: 0.9rem; margin-bottom: 6px; }
+.value-item p { font-size: 0.78rem; color: var(--c-text-muted); margin: 0; line-height: 1.5; }
+.team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; margin-bottom: 28px; }
+.team-card { background: var(--c-surface); border: 1px solid var(--c-border); border-radius: var(--radius-lg); padding: 24px 20px; text-align: center; transition: transform var(--duration), border-color var(--duration); }
+.team-card:hover { transform: translateY(-3px); border-color: var(--c-border-strong); }
+.team-card__avatar { font-size: 2.5rem; margin-bottom: 12px; display: block; }
+.team-card h4 { font-size: 0.95rem; margin-bottom: 4px; }
+.team-card__role { font-size: 0.78rem; color: var(--c-primary); font-weight: 700; margin-bottom: 8px; }
+.team-card small { font-size: 0.72rem; color: var(--c-text-muted); line-height: 1.4; }
+.partner-card { margin-top: 8px; padding: 28px; }
+.partner-card h3 { font-size: 1.15rem; margin-bottom: 10px; }
+.partner-card > p { color: var(--c-text-muted); font-size: 0.9rem; margin-bottom: 20px; line-height: 1.5; }
 .partner-form { display: flex; flex-direction: column; gap: 0; }
 
 /* ─── Support ─── */
@@ -672,7 +678,7 @@ textarea.input-control { resize: vertical; min-height: 80px; }
 @keyframes toastIn { from { opacity: 0; transform: translateY(12px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
 /* ─── Chat Widget ─── */
-.chat-widget { position: fixed; bottom: 80px; right: 24px; width: 340px; max-height: 450px; background: var(--c-surface); border: 1px solid var(--c-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); display: flex; flex-direction: column; z-index: 350; overflow: hidden; }
+.chat-widget { position: fixed; bottom: 80px; right: 24px; width: 340px; max-height: 450px; background: var(--c-surface); border: 1px solid var(--c-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); display: none; flex-direction: column; z-index: 350; overflow: hidden; animation: viewIn 0.2s var(--ease); }
 @media (max-width: 768px) { .chat-widget { bottom: calc(var(--bottom-nav-h) + 12px); right: 12px; left: 12px; width: auto; } }
 .chat-widget__header { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid var(--c-border); background: rgba(0,0,0,0.2); }
 .chat-widget__header h4 { font-size: 0.9rem; }
