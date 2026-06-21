@@ -1,12 +1,13 @@
 {
-  "name": "TeloCorpGroup Super App",
+  "name": "Telo' Corp Group",
   "short_name": "TeloCorp",
-  "description": "Super App del Clúster Digital TeloCorpGroup (TeloSales, TeloEduca, TeloLleva, TeloRepara, TeloInstala)",
+  "description": "Plataforma digital integrada: comercio, educación, logística y servicios técnicos.",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#06090e",
-  "theme_color": "#06090e",
+  "background_color": "#0a0f1a",
+  "theme_color": "#0a0f1a",
   "orientation": "portrait-primary",
+  "categories": ["business", "shopping", "education"],
   "icons": [
     {
       "src": "assets/telocorpgroup-mark.png",

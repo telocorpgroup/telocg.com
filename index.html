@@ -3,385 +3,286 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Telo’ Corp Group | Super App Dashboard</title>
-  
-  <!-- SEO & Meta Tags -->
-  <meta name="description" content="Telo’ Corp Group: Super App del Clúster Digital (conglomerado de empresas). Accede a TeloSales, TeloEduca y TeloLleva desde un solo lugar.">
-  <meta name="theme-color" content="#06090e">
-  
+  <title>Telo' Corp Group | Plataforma Digital</title>
+  <meta name="description" content="Telo' Corp Group: Plataforma digital integrada — TeloSales, TeloEduca, TeloLleva, TeloRepara y TeloInstala. Comercio, educación, logística y servicios técnicos.">
+  <meta name="theme-color" content="#0a0f1a">
+  <meta property="og:title" content="Telo' Corp Group | Plataforma Digital">
+  <meta property="og:description" content="Conglomerado digital con comercio electrónico, academia, logística y soporte técnico.">
+  <meta property="og:image" content="assets/telocorpgroup-logo.jpg">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://telocg.com">
+  <link rel="icon" type="image/png" href="assets/telocorpgroup-mark.png">
+  <link rel="apple-touch-icon" href="assets/telocorpgroup-mark.png">
+  <link rel="manifest" href="manifest.json">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
-  <link rel="manifest" href="manifest.json">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-
-  <!-- Contenedor Global App Shell -->
-  <div class="app-container">
-    
-    <!-- Sidebar / Navegación Lateral (Escritorio) -->
-    <aside class="app-sidebar" role="navigation" aria-label="Navegación principal del sitio">
-      <div class="sidebar-brand" id="sidebar-brand-logo" onclick="window.switchAppView('home-view')" role="button" tabindex="0" aria-label="Ir a la página de inicio">
-        <div class="sidebar-brand-left">
-          <img src="assets/telocorpgroup-mark.png" alt="Logo de Telo' Corp Group" class="sidebar-logo">
-          <span class="sidebar-title">TeloCorp</span>
-        </div>
-        <button class="mobile-sidebar-close" onclick="window.closeMobileMenu()" aria-label="Cerrar menú de navegación">×</button>
+  <div class="app" id="app">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar" aria-label="Navegación principal">
+      <div class="sidebar__brand" role="button" tabindex="0" aria-label="Ir al inicio" data-view="home">
+        <img src="assets/telocorpgroup-mark.png" alt="Telo' Corp Group" class="sidebar__logo" width="40" height="40">
+        <span class="sidebar__title">TeloCorp</span>
+        <button class="sidebar__close" id="sidebar-close" aria-label="Cerrar menú">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
       </div>
-      
-      <nav class="sidebar-nav" aria-label="Menú principal">
-        <button class="nav-item active" data-target="home-view" aria-current="page">
-          <span class="nav-icon" aria-hidden="true">🏠</span>
-          <span class="nav-label">Inicio</span>
+      <nav class="sidebar__nav" aria-label="Menú principal">
+        <button class="sidebar__link active" data-view="home" aria-current="page">
+          <svg class="sidebar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          <span>Inicio</span>
         </button>
-        <button class="nav-item" data-target="sales-view">
-          <span class="nav-icon" aria-hidden="true">🛒</span>
-          <span class="nav-label">TeloSales</span>
+        <button class="sidebar__link" data-view="sales">
+          <svg class="sidebar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+          <span>TeloSales</span>
         </button>
-        <button class="nav-item" data-target="educa-view">
-          <span class="nav-icon" aria-hidden="true">🎓</span>
-          <span class="nav-label">TeloEduca</span>
+        <button class="sidebar__link" data-view="educa">
+          <svg class="sidebar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
+          <span>TeloEduca</span>
         </button>
-        <button class="nav-item" data-target="lleva-view">
-          <span class="nav-icon" aria-hidden="true">📦</span>
-          <span class="nav-label">TeloLleva</span>
+        <button class="sidebar__link" data-view="lleva">
+          <svg class="sidebar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+          <span>TeloLleva</span>
         </button>
-        <button class="nav-item" data-target="repara-view">
-          <span class="nav-icon" aria-hidden="true">🔧</span>
-          <span class="nav-label">TeloRepara</span>
+        <button class="sidebar__link" data-view="repara">
+          <svg class="sidebar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
+          <span>TeloRepara</span>
         </button>
-        <button class="nav-item" data-target="instala-view">
-          <span class="nav-icon" aria-hidden="true">🛠️</span>
-          <span class="nav-label">TeloInstala</span>
+        <button class="sidebar__link" data-view="instala">
+          <svg class="sidebar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          <span>TeloInstala</span>
         </button>
-        <button class="nav-item" data-target="about-view">
-          <span class="nav-icon" aria-hidden="true">👥</span>
-          <span class="nav-label">Quiénes Somos</span>
+        <div class="sidebar__separator"></div>
+        <button class="sidebar__link" data-view="about">
+          <svg class="sidebar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+          <span>Quiénes Somos</span>
         </button>
-        <button class="nav-item" data-target="support-view">
-          <span class="nav-icon" aria-hidden="true">🎧</span>
-          <span class="nav-label">Soporte</span>
+        <button class="sidebar__link" data-view="support">
+          <svg class="sidebar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          <span>Soporte</span>
         </button>
-        <button class="nav-item" data-target="profile-view">
-          <span class="nav-icon" aria-hidden="true">👤</span>
-          <span class="nav-label">Mi Perfil</span>
+        <button class="sidebar__link" data-view="profile">
+          <svg class="sidebar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <span>Mi Perfil</span>
         </button>
-        <button class="nav-item" id="nav-integrations-item" data-target="integrations-view" hidden>
-          <span class="nav-icon" aria-hidden="true">🔌</span>
-          <span class="nav-label">Integración</span>
+        <button class="sidebar__link" data-view="integrations" id="nav-integrations" hidden>
+          <svg class="sidebar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+          <span>Integraciones</span>
         </button>
       </nav>
     </aside>
 
-    <!-- Contenido Principal -->
-    <main class="app-main">
-      
-      <!-- Topbar Superior -->
-      <header class="app-topbar">
-        <div class="topbar-left-area" style="display: flex; align-items: center; gap: 12px;">
-          <button class="mobile-menu-btn" onclick="window.toggleMobileMenu()" aria-label="Abrir menú de navegación">
-            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+    <!-- Main Content -->
+    <main class="main" id="main">
+      <!-- Topbar -->
+      <header class="topbar">
+        <div class="topbar__left">
+          <button class="topbar__menu" id="menu-toggle" aria-label="Abrir menú">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
           </button>
-          <div class="topbar-title">
-            <h1 id="current-view-title">Bienvenido a Telo’ Corp Group</h1>
-          </div>
+          <h1 class="topbar__title" id="view-title">Bienvenido</h1>
         </div>
-        
-        <div class="topbar-right-area" style="display: flex; align-items: center; gap: 16px;">
-          <!-- Acciones principales -->
-          <div class="topbar-actions" style="display: flex; align-items: center; gap: 12px;">
-            
-            <!-- Botón Chat TeloAsistente -->
-            <button class="action-btn chat-toggle-btn" id="global-chat-btn" onclick="window.toggleChatWidget()" aria-label="TeloAsistente" title="TeloAsistente IA">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="action-icon" aria-hidden="true" focusable="false"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-              <span class="action-badge chat-badge" id="global-chat-badge" hidden aria-live="polite">1</span>
-            </button>
-            
-            <!-- Botón de Favoritos (Lista de deseos) -->
-            <button class="action-btn wishlist-btn" id="global-wishlist-btn" onclick="window.toggleWishlist()" aria-label="Lista de deseos">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="action-icon" aria-hidden="true" focusable="false"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-              <span class="action-badge wishlist-badge" id="global-wishlist-badge">0</span>
-            </button>
-            
-            <!-- Botón de Carrito de Compras -->
-            <button class="action-btn cart-btn" id="global-cart-btn" aria-label="Carrito de compras">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="action-icon" aria-hidden="true" focusable="false"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
-              <span class="action-badge cart-badge" id="global-cart-badge">0</span>
-            </button>
-            
-          </div>
-          
-          <!-- Botón Mi Perfil -->
-          <button class="action-btn profile-btn" onclick="window.switchAppView('profile-view')" aria-label="Mi Perfil" title="Mi Perfil">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="action-icon"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        <div class="topbar__right">
+          <button class="topbar__action" id="btn-chat" aria-label="Asistente IA" title="TeloAsistente">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          </button>
+          <button class="topbar__action" id="btn-wishlist" aria-label="Favoritos">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+            <span class="topbar__badge" id="wishlist-badge" hidden>0</span>
+          </button>
+          <button class="topbar__action" id="btn-cart" aria-label="Carrito">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+            <span class="topbar__badge" id="cart-badge" hidden>0</span>
+          </button>
+          <button class="topbar__action topbar__action--profile" id="btn-profile" aria-label="Mi perfil" data-view="profile">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
           </button>
         </div>
       </header>
 
-      <!-- Vistas Dinámicas (SPA) -->
-      <div class="app-content-area">
-        
-        <!-- VISTA: INICIO -->
-        <section class="app-view active" id="home-view">
-          <div class="hero-card">
-            <img src="assets/telocorpgroup-logo.jpg" alt="Telo’ Corp Group Logo">
-            <h2>Telo’ Corp Group</h2>
-            <p>Conglomerado de empresas independientes conectadas por una misma marca e infraestructura tecnológica.</p>
+      <!-- Views Container -->
+      <div class="views" id="views">
+
+        <!-- HOME -->
+        <section class="view active" id="view-home">
+          <div class="hero">
+            <img src="assets/telocorpgroup-logo.jpg" alt="Telo' Corp Group" class="hero__logo" width="140" height="140">
+            <h2 class="hero__title">Telo' Corp Group</h2>
+            <p class="hero__subtitle">Conglomerado de empresas independientes conectadas por una misma marca e infraestructura tecnológica.</p>
           </div>
-          
-          <div class="hubs-grid">
-            <div class="hub-shortcut" onclick="window.switchAppView('sales-view')">
-              <div class="hub-icon sales-icon">🛒</div>
-              <h3>TeloSales</h3>
-              <p>Comercio y Tecnología</p>
-            </div>
-            <div class="hub-shortcut" onclick="window.switchAppView('educa-view')">
-              <div class="hub-icon educa-icon">🎓</div>
-              <h3>TeloEduca</h3>
-              <p>Capacitación Online</p>
-            </div>
-            <div class="hub-shortcut" onclick="window.switchAppView('lleva-view')">
-              <div class="hub-icon lleva-icon">📦</div>
-              <h3>TeloLleva</h3>
-              <p>Envíos y Logística</p>
-            </div>
-            <div class="hub-shortcut" onclick="window.switchAppView('repara-view')">
-              <div class="hub-icon repara-icon">🔧</div>
-              <h3>TeloRepara</h3>
-              <p>Soporte y Reparaciones</p>
-            </div>
-            <div class="hub-shortcut" onclick="window.switchAppView('instala-view')">
-              <div class="hub-icon instala-icon">🛠️</div>
-              <h3>TeloInstala</h3>
-              <p>Instalaciones Hogar</p>
-            </div>
+          <div class="services-grid">
+            <article class="service-card service-card--sales" role="button" tabindex="0" data-view="sales">
+              <div class="service-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg></div>
+              <h3 class="service-card__title">TeloSales</h3>
+              <p class="service-card__desc">Comercio y Tecnología</p>
+            </article>
+            <article class="service-card service-card--educa" role="button" tabindex="0" data-view="educa">
+              <div class="service-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg></div>
+              <h3 class="service-card__title">TeloEduca</h3>
+              <p class="service-card__desc">Capacitación Online</p>
+            </article>
+            <article class="service-card service-card--lleva" role="button" tabindex="0" data-view="lleva">
+              <div class="service-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>
+              <h3 class="service-card__title">TeloLleva</h3>
+              <p class="service-card__desc">Envíos y Logística</p>
+            </article>
+            <article class="service-card service-card--repara" role="button" tabindex="0" data-view="repara">
+              <div class="service-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg></div>
+              <h3 class="service-card__title">TeloRepara</h3>
+              <p class="service-card__desc">Soporte Técnico</p>
+            </article>
+            <article class="service-card service-card--instala" role="button" tabindex="0" data-view="instala">
+              <div class="service-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+              <h3 class="service-card__title">TeloInstala</h3>
+              <p class="service-card__desc">Instalaciones del Hogar</p>
+            </article>
           </div>
         </section>
 
-        <!-- VISTA: TELOSALES -->
-        <section class="app-view" id="sales-view">
-          <div class="view-header">
+        <!-- TELOSALES -->
+        <section class="view" id="view-sales">
+          <div class="view__header">
             <h2>TeloSales Store</h2>
-            <p>Catálogo de covers y tecnología premium. Haz clic en un producto para ver especificaciones y opiniones reales.</p>
+            <p>Catálogo de tecnología y accesorios premium con envío express.</p>
           </div>
-          
-          <!-- Barra de Búsqueda y Ordenamiento Avanzado -->
-          <div class="sales-controls-bar">
-            <div class="search-input-wrapper">
-              <span class="search-icon">🔍</span>
-              <input type="search" id="sales-search" placeholder="Buscar covers, cables, cargadores..." oninput="window.filterAndSortProducts()">
+          <div class="sales-toolbar">
+            <div class="search-box">
+              <svg class="search-box__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="search" id="sales-search" class="search-box__input" placeholder="Buscar productos..." aria-label="Buscar productos">
             </div>
-            <div class="sort-select-wrapper">
-              <span>Ordenar por:</span>
-              <select id="sales-sort" onchange="window.filterAndSortProducts()">
-                <option value="featured">Destacados</option>
-                <option value="price-asc">Precio: Bajo a Alto</option>
-                <option value="price-desc">Precio: Alto a Bajo</option>
-                <option value="rating-desc">Mejor Valorados</option>
-              </select>
-            </div>
+            <select id="sales-sort" class="select-control" aria-label="Ordenar productos">
+              <option value="featured">Destacados</option>
+              <option value="price-asc">Precio: Bajo a Alto</option>
+              <option value="price-desc">Precio: Alto a Bajo</option>
+              <option value="rating-desc">Mejor Valorados</option>
+            </select>
           </div>
-
-          <div class="filters-scroll">
-            <button class="filter-chip active" data-cat="all">Todos</button>
-            <button class="filter-chip" data-cat="cases">Covers & Casos</button>
-            <button class="filter-chip" data-cat="tech">Cables y Carga</button>
-            <button class="filter-chip" data-cat="audio">Dispositivos Audio</button>
-            <button class="filter-chip" data-cat="equipos">Equipamiento Industrial y Fitness</button>
+          <div class="filter-chips" role="tablist" aria-label="Categorías">
+            <button class="chip active" data-cat="all" role="tab" aria-selected="true">Todos</button>
+            <button class="chip" data-cat="cases" role="tab" aria-selected="false">Covers</button>
+            <button class="chip" data-cat="tech" role="tab" aria-selected="false">Cables y Carga</button>
+            <button class="chip" data-cat="audio" role="tab" aria-selected="false">Audio</button>
+            <button class="chip" data-cat="equipos" role="tab" aria-selected="false">Equipamiento</button>
           </div>
-
-          <div class="products-grid" id="sales-products-grid">
-            <!-- Renderizado por JS -->
-          </div>
+          <div class="products-grid" id="products-grid" role="tabpanel"></div>
         </section>
 
-        <!-- VISTA: TELOEDUCA -->
-        <section class="app-view" id="educa-view">
-          <div class="view-header">
+        <!-- TELOEDUCA -->
+        <section class="view" id="view-educa">
+          <div class="view__header">
             <h2>Academia TeloEduca</h2>
-            <p>Academia digital de alto nivel con rutas de aprendizaje estructuradas, certificaciones y talleres interactivos.</p>
+            <p>Rutas de aprendizaje estructuradas con certificaciones verificables.</p>
           </div>
-
-          <!-- Dashboard de Estudiante -->
-          <div class="educa-dashboard-banner">
-            <div class="student-info-row">
-              <span class="student-welcome">👋 ¡Hola, Estudiante!</span>
-              <span class="student-active-badge">Matriculado Central</span>
+          <div class="educa-progress-banner">
+            <div class="educa-progress-banner__info">
+              <span class="educa-progress-banner__greeting">Tu Progreso Global</span>
+              <strong id="educa-progress-pct">0% completado</strong>
             </div>
-            <div class="student-progress-card">
-              <div class="progress-info">
-                <span>Tu Progreso Global en la Academia:</span>
-                <strong id="global-progress-percentage">0% completado</strong>
-              </div>
-              <div class="progress-bar-container">
-                <div class="progress-bar-filled" id="global-progress-bar-filled" style="width: 0%;"></div>
-              </div>
-            </div>
+            <div class="progress-bar"><div class="progress-bar__fill" id="educa-progress-fill" style="width:0%"></div></div>
           </div>
-
-          <!-- Rutas de Aprendizaje (Escuelas) -->
-          <h3 class="section-subtitle">Rutas de Especialización (Escuelas)</h3>
-          <div class="learning-paths-grid">
-            <div class="path-card" data-path="tech">
-              <div class="path-icon">🤖</div>
-              <h4>Escuela de Tecnología e IA</h4>
-              <p>Domina prompts, IA básica y fundamentos técnicos.</p>
-            </div>
-            <div class="path-card" data-path="business">
-              <div class="path-icon">📈</div>
-              <h4>Escuela de Negocios y Oficina</h4>
-              <p>Aprende Excel avanzado y productividad corporativa.</p>
-            </div>
-            <div class="path-card" data-path="languages">
-              <div class="path-icon">🗣️</div>
-              <h4>Escuela de Idiomas & Call Center</h4>
-              <p>Inglés técnico enfocado en puestos de Call Center y atención internacional.</p>
-            </div>
+          <h3 class="section-title">Rutas de Especialización</h3>
+          <div class="paths-grid">
+            <article class="path-card" data-path="tech">
+              <div class="path-card__icon">🤖</div>
+              <h4>Tecnología e IA</h4>
+              <p>Prompts, automatización y fundamentos técnicos.</p>
+            </article>
+            <article class="path-card" data-path="business">
+              <div class="path-card__icon">📈</div>
+              <h4>Negocios y Oficina</h4>
+              <p>Excel avanzado y productividad corporativa.</p>
+            </article>
+            <article class="path-card" data-path="languages">
+              <div class="path-card__icon">🗣️</div>
+              <h4>Idiomas & Call Center</h4>
+              <p>Inglés técnico para atención internacional.</p>
+            </article>
           </div>
-
-          <h3 class="section-subtitle mt-3">Todos los Talleres Disponibles</h3>
-          <div class="courses-grid" id="educa-courses-grid">
-            <!-- Renderizado por JS -->
-          </div>
+          <h3 class="section-title">Talleres Disponibles</h3>
+          <div class="courses-grid" id="courses-grid"></div>
         </section>
 
-        <!-- VISTA: AULA DE CLASES (TELOEDUCA CLASSROOM) -->
-        <section class="app-view" id="educa-classroom-view">
-          <div class="classroom-back-header">
-            <button class="btn btn-secondary btn-back-dashboard" onclick="window.switchAppView('educa-view')">⬅️ Volver a Cursos</button>
-            <h2 id="classroom-course-title">Excel Avanzado para Negocios</h2>
+        <!-- TELOEDUCA CLASSROOM -->
+        <section class="view" id="view-classroom">
+          <div class="classroom-header">
+            <button class="btn btn--ghost" id="btn-back-courses">← Volver a Cursos</button>
+            <h2 id="classroom-title">Curso</h2>
           </div>
-          
           <div class="classroom-layout">
-            <!-- Panel Principal: Reproductor y Recursos -->
-            <div class="classroom-main">
-              <!-- Reproductor de Video Platzi Style -->
-              <div class="classroom-player-wrapper">
-                <div class="video-player-container">
-                  <div class="video-placeholder">
-                    <div class="video-overlay-play" onclick="window.togglePlayPauseVideo()">
-                      <span id="video-play-icon">▶️</span>
-                    </div>
-                    <div class="video-watermark">TeloEduca Academy</div>
-                    <span class="video-lecture-title" id="video-lecture-title">Clase 1: Introducción a la Interfaz</span>
+            <div class="classroom__main">
+              <div class="video-player" id="video-player">
+                <div class="video-player__screen">
+                  <div class="video-player__overlay" id="video-overlay">
+                    <button class="video-player__play-btn" id="video-play-btn" aria-label="Reproducir">▶</button>
                   </div>
-                  <!-- Barra de controles -->
-                  <div class="player-controls">
-                    <button class="btn-player-play" onclick="window.togglePlayPauseVideo()" id="player-btn-play">▶️</button>
-                    <div class="player-progress-bar" onclick="window.seekVideo(event)">
-                      <div class="player-progress-filled" id="player-progress-filled" style="width: 0%;"></div>
-                    </div>
-                    <span class="player-time-display" id="player-time-display">00:00 / 10:00</span>
-                    <button class="btn-player-cinema" onclick="window.toggleCinemaMode()" title="Modo Cine" style="background: transparent; border: none; color: white; cursor: pointer; font-size: 1.1rem; padding: 0 4px; transition: var(--transition); outline: none;">🎬</button>
-                    <button class="btn-player-fullscreen" onclick="window.toggleVideoFullscreen()">📺</button>
-                  </div>
+                  <span class="video-player__title" id="video-title">Clase 1</span>
                 </div>
-                <div class="classroom-class-actions">
-                  <h3 id="classroom-lecture-title-sub">Clase 1: Introducción a la Interfaz</h3>
-                  <button class="btn btn-primary" id="btn-complete-class" onclick="window.toggleCompleteClass()">Marcar como Completada ✓</button>
+                <div class="video-player__controls">
+                  <button class="video-player__btn" id="video-toggle">▶</button>
+                  <div class="video-player__progress" id="video-progress-bar"><div class="video-player__progress-fill" id="video-progress-fill"></div></div>
+                  <span class="video-player__time" id="video-time">00:00 / 10:00</span>
                 </div>
               </div>
-              
-              <!-- Pestañas de la Clase -->
+              <div class="classroom-actions">
+                <h3 id="classroom-lesson-title">Clase 1</h3>
+                <button class="btn btn--primary" id="btn-complete-class">Marcar Completada ✓</button>
+              </div>
               <div class="classroom-tabs">
-                <div class="tab-headers">
-                  <button class="tab-header-btn active" onclick="window.switchClassroomTab(event, 'tab-resources')">Recursos de Clase</button>
-                  <button class="tab-header-btn" onclick="window.switchClassroomTab(event, 'tab-forum')">Comunidad y Preguntas</button>
-                  <button class="tab-header-btn" onclick="window.switchClassroomTab(event, 'tab-notes')">Mis Apuntes 📝</button>
+                <div class="classroom-tabs__header">
+                  <button class="classroom-tabs__btn active" data-tab="resources">Recursos</button>
+                  <button class="classroom-tabs__btn" data-tab="forum">Comunidad</button>
+                  <button class="classroom-tabs__btn" data-tab="notes">Mis Apuntes</button>
                 </div>
-                
-                <div class="tab-content active" id="tab-resources">
-                  <div class="resources-list">
-                    <h4>Material de Descarga</h4>
-                    <ul>
-                      <li><a href="#" onclick="event.preventDefault(); window.showToast('Descargando Guía PDF de Atajos...', 'success')">📄 Guía Completa de Atajos de Teclado.pdf</a></li>
-                      <li><a href="#" onclick="event.preventDefault(); window.showToast('Descargando Hoja de Trabajo...', 'success')">📊 Plantilla Práctica de Fórmulas Avanzadas.xlsx</a></li>
-                      <li><a href="#" onclick="event.preventDefault(); window.showToast('Abriendo enlace de referencia...', 'success')">🔗 Enlace Oficial: Documentación de Soporte</a></li>
-                    </ul>
+                <div class="classroom-tabs__panel active" id="tab-resources">
+                  <ul class="resources-list" id="resources-list"></ul>
+                </div>
+                <div class="classroom-tabs__panel" id="tab-forum">
+                  <div class="forum-messages" id="forum-messages"></div>
+                  <div class="forum-input">
+                    <input type="text" id="forum-input" placeholder="Pregunta sobre esta clase...">
+                    <button class="btn btn--primary btn--sm" id="btn-forum-post">Enviar</button>
                   </div>
                 </div>
-                
-                <div class="tab-content" id="tab-forum">
-                  <div class="forum-comments" id="forum-comments-container">
-                    <!-- Comentarios inyectados -->
-                  </div>
-                  <div class="forum-input-row">
-                    <input type="text" id="forum-input" placeholder="Pregunta algo sobre esta clase...">
-                    <button class="btn btn-primary" onclick="window.postForumQuestion()">Preguntar</button>
-                  </div>
+                <div class="classroom-tabs__panel" id="tab-notes">
+                  <textarea id="classroom-notes" rows="6" placeholder="Escribe tus apuntes aquí..."></textarea>
+                  <button class="btn btn--ghost btn--sm" id="btn-download-notes">📥 Descargar</button>
                 </div>
-                
-                <div class="tab-content" id="tab-notes">
-                  <div class="notes-container">
-                    <h4 class="notes-header">Apuntes de la Clase 📝</h4>
-                    <p class="notes-description">Escribe aquí tus notas importantes de la lección. Se guardarán automáticamente por clase.</p>
-                    <textarea id="classroom-notes-textarea" rows="8" placeholder="Escribe tus apuntes aquí... Ej: Fórmulas de Excel se inician siempre con '='..." oninput="window.saveCurrentClassNotes()"></textarea>
-                    <div class="notes-actions">
-                      <button class="btn btn-secondary btn-sm" onclick="window.downloadClassNotes()">📥 Descargar Apuntes (.txt)</button>
-                    </div>
-                  </div>
-                </div>
-
               </div>
             </div>
-            
-            <!-- Panel Lateral: Temario (Syllabus) -->
-            <div class="classroom-sidebar">
-              <h3>Temario del Curso</h3>
+            <aside class="classroom__sidebar">
+              <h3>Temario</h3>
               <div class="syllabus-progress">
-                <span>Tu avance:</span>
-                <strong id="syllabus-progress-percent">0%</strong>
-                <div class="progress-bar-small">
-                  <div class="progress-bar-small-filled" id="syllabus-progress-bar-filled" style="width: 0%;"></div>
-                </div>
+                <span>Avance:</span><strong id="syllabus-pct">0%</strong>
+                <div class="progress-bar progress-bar--sm"><div class="progress-bar__fill" id="syllabus-fill"></div></div>
               </div>
-              <div class="syllabus-modules" id="classroom-syllabus-container">
-                <!-- Temario Inyectado dinámicamente -->
+              <div class="syllabus-list" id="syllabus-list"></div>
+              <div class="syllabus-cert" id="syllabus-cert" hidden>
+                <span class="syllabus-cert__badge">🏆 Curso Completado</span>
+                <button class="btn btn--primary btn--full" id="btn-certificate">Obtener Certificado</button>
               </div>
-              <div class="syllabus-certificate-unlock" id="syllabus-cert-unlock-box" hidden>
-                <div class="certificate-badge">🏆 ¡Curso Completado!</div>
-                <button class="btn btn-primary w-100" onclick="window.showCertificate()">Obtener Certificado</button>
-              </div>
-            </div>
+            </aside>
           </div>
         </section>
 
-        <!-- VISTA: TELOLLEVA -->
-        <section class="app-view" id="lleva-view">
-          <div class="view-header">
-            <h2>Logística TeloLleva</h2>
-            <p>Servicio de mensajería express con negociación de tarifas en tiempo real, múltiples puntos de entrega y seguimiento GPS.</p>
+        <!-- TELOLLEVA -->
+        <section class="view" id="view-lleva">
+          <div class="view__header">
+            <h2>TeloLleva</h2>
+            <p>Mensajería express con negociación de tarifas y seguimiento en tiempo real.</p>
           </div>
-          
           <div class="lleva-layout">
-            <!-- Panel de Pedido / Ofertas -->
-            <div class="lleva-panel">
-              <!-- Formulario de Oferta -->
-              <div class="card panel-card" id="lleva-request-card">
-                <h3>Solicitar Envío</h3>
+            <div class="lleva__panel">
+              <!-- Request Form -->
+              <div class="card" id="lleva-form-card">
+                <h3 class="card__title">Solicitar Envío</h3>
                 <div class="form-group">
-                  <label>Punto de Recogida (Origen)</label>
-                  <select id="lleva-origen" onchange="window.updateLlevaPrice()">
+                  <label for="lleva-origin">Punto de Recogida</label>
+                  <select id="lleva-origin" class="select-control">
                     <option value="SD-Naco">Santo Domingo (Naco)</option>
                     <option value="SD-BellaVista">Santo Domingo (Bella Vista)</option>
-                    <option value="SD-Gazcue">Santo Domingo (Gazcue)</option>
-                    <option value="SD-LosMinas">Santo Domingo Este (Los Minas)</option>
-                    <option value="SD-Herrera">Santo Domingo Oeste (Herrera)</option>
-                    <option value="SD-Norte">Santo Domingo Norte (Villa Mella)</option>
-                    <option value="Santiago-Gurabo">Santiago (Gurabo)</option>
-                    <option value="Santiago-Centro">Santiago (Centro)</option>
-                    <option value="LaVega-Centro">La Vega (Centro)</option>
-                    <option value="PuntaCana-Bavaro">Punta Cana (Bávaro)</option>
-                    <option value="PuertoPlata-Centro">Puerto Plata (Centro)</option>
-                    <option value="Moca-Centro">Moca (Centro)</option>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label>Punto de Entrega (Destino)</label>
-                  <select id="lleva-destino" onchange="window.updateLlevaPrice()">
-                    <option value="SD-BellaVista">Santo Domingo (Bella Vista)</option>
-                    <option value="SD-Naco">Santo Domingo (Naco)</option>
                     <option value="SD-Gazcue">Santo Domingo (Gazcue)</option>
                     <option value="SD-LosMinas">Santo Domingo Este (Los Minas)</option>
                     <option value="SD-Herrera">Santo Domingo Oeste (Herrera)</option>
@@ -395,171 +296,130 @@
                   </select>
                 </div>
                 <div class="form-group">
-                  <label>¿Qué envías?</label>
-                  <input type="text" id="lleva-item" placeholder="Ej. Documentos, Ropa, Electrónicos" value="Documentos Importantes">
+                  <label for="lleva-dest">Punto de Entrega</label>
+                  <select id="lleva-dest" class="select-control">
+                    <option value="SD-BellaVista">Santo Domingo (Bella Vista)</option>
+                    <option value="SD-Naco">Santo Domingo (Naco)</option>
+                    <option value="SD-Gazcue">Santo Domingo (Gazcue)</option>
+                    <option value="SD-LosMinas">Santo Domingo Este (Los Minas)</option>
+                    <option value="SD-Herrera">Santo Domingo Oeste (Herrera)</option>
+                    <option value="SD-Norte">Santo Domingo Norte (Villa Mella)</option>
+                    <option value="Santiago-Centro">Santiago (Centro)</option>
+                    <option value="Santiago-Gurabo">Santiago (Gurabo)</option>
+                    <option value="LaVega-Centro">La Vega (Centro)</option>
+                    <option value="PuntaCana-Bavaro">Punta Cana (Bávaro)</option>
+                    <option value="PuertoPlata-Centro">Puerto Plata (Centro)</option>
+                    <option value="Moca-Centro">Moca (Centro)</option>
+                  </select>
                 </div>
                 <div class="form-group">
-                  <label>Tipo de Vehículo</label>
-                <div class="form-group">
-                  <label>Detalles del Paquete (Opcional)</label>
-                  <input type="text" id="lleva-package-details" placeholder="Peso aprox., dimensiones, frágil, etc.">
+                  <label for="lleva-item">¿Qué envías?</label>
+                  <input type="text" id="lleva-item" class="input-control" placeholder="Ej. Documentos, Electrónicos">
                 </div>
                 <div class="form-group">
-                  <label>Horario de Recogida</label>
-                  <select id="lleva-schedule">
+                  <label for="lleva-details">Detalles del Paquete</label>
+                  <input type="text" id="lleva-details" class="input-control" placeholder="Peso, dimensiones, frágil...">
+                </div>
+                <div class="form-group">
+                  <label for="lleva-schedule">Horario de Recogida</label>
+                  <select id="lleva-schedule" class="select-control">
                     <option value="now">Ahora mismo (Express)</option>
                     <option value="30min">En 30 minutos</option>
                     <option value="1h">En 1 hora</option>
                     <option value="2h">En 2 horas</option>
-                    <option value="scheduled">Programar fecha y hora</option>
+                    <option value="scheduled">Programar fecha</option>
                   </select>
                 </div>
-                <div class="form-group" id="lleva-datetime-wrapper" style="display:none;">
-                  <label>Fecha y Hora</label>
-                  <input type="datetime-local" id="lleva-datetime">
-                </div>
-                <div class="form-group">
-                  <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                    <input type="checkbox" id="lleva-recurrente" style="width: auto; accent-color: var(--color-lleva);">
-                    <span>Servicio recurrente (iguala mensual)</span>
-                  </label>
+                <div class="form-group" id="lleva-datetime-group" hidden>
+                  <label for="lleva-datetime">Fecha y Hora</label>
+                  <input type="datetime-local" id="lleva-datetime" class="input-control">
                 </div>
                 <div class="form-group">
                   <label>Tipo de Vehículo</label>
-                  <div class="vehicle-select-container">
-                    <div class="vehicle-option active" data-type="moto" onclick="window.selectLlevaVehicle('moto')">
-                      <div>🏍️</div>
+                  <div class="vehicle-grid">
+                    <button class="vehicle-option active" data-vehicle="moto" type="button">
+                      <span class="vehicle-option__icon">🏍️</span>
                       <strong>Moto</strong>
-                      <div>Hasta 5kg</div>
-                    </div>
-                    <div class="vehicle-option" data-type="car" onclick="window.selectLlevaVehicle('car')">
-                      <div>🚗</div>
+                      <small>Hasta 5kg</small>
+                    </button>
+                    <button class="vehicle-option" data-vehicle="car" type="button">
+                      <span class="vehicle-option__icon">🚗</span>
                       <strong>Auto</strong>
-                      <div>Hasta 20kg</div>
-                    </div>
-                    <div class="vehicle-option" data-type="cargo" onclick="window.selectLlevaVehicle('cargo')">
-                      <div>🚚</div>
+                      <small>Hasta 20kg</small>
+                    </button>
+                    <button class="vehicle-option" data-vehicle="cargo" type="button">
+                      <span class="vehicle-option__icon">🚚</span>
                       <strong>Furgón</strong>
-                      <div>Hasta 500kg</div>
+                      <small>Hasta 500kg</small>
+                    </button>
+                  </div>
+                </div>
+                <div class="fare-box">
+                  <div class="fare-box__suggested">Tarifa Recomendada: <strong id="lleva-fare-label">RD$ 250</strong></div>
+                  <small class="fare-box__traffic">Tráfico: <span id="lleva-traffic">Normal</span></small>
+                  <div class="fare-box__offer">
+                    <label>Tu oferta:</label>
+                    <div class="fare-box__controls">
+                      <button class="btn btn--icon" id="lleva-fare-minus" type="button">−</button>
+                      <input type="number" id="lleva-fare" class="input-control input-control--sm" value="250" min="100" step="50">
+                      <button class="btn btn--icon" id="lleva-fare-plus" type="button">+</button>
                     </div>
                   </div>
                 </div>
-                <div class="lleva-fare-box">
-                  <div class="suggested-price">Tarifa Recomendada: <strong id="lleva-suggested-label">RD$ 250</strong></div>
-                  <div style="font-size: 0.75rem; color: var(--color-lleva); margin-top: 4px; text-align: center;">💡 Tráfico actual: <span id="lleva-traffic-status">Normal</span></div>
-                  <div style="display: flex; align-items: center; gap: 8px; margin-top: 10px;">
-                    <label style="margin: 0; font-size: 0.85rem;">Tu oferta:</label>
-                    <div style="display: flex; align-items: center; gap: 4px; flex: 1;">
-                      <button onclick="window.adjustLlevaOffer(-50)">-</button>
-                      <input type="number" id="lleva-user-fare" value="250" min="100" step="50">
-                      <button onclick="window.adjustLlevaOffer(50)">+</button>
-                    </div>
-                  </div>
-                </div>
-                <button class="btn btn-primary w-100 mt-2" id="lleva-btn-submit" onclick="window.startLlevaNegotiation()">Solicitar Mensajero</button>
+                <label class="checkbox-control">
+                  <input type="checkbox" id="lleva-recurring">
+                  <span>Servicio recurrente (iguala mensual)</span>
+                </label>
+                <button class="btn btn--primary btn--full" id="lleva-submit">Solicitar Mensajero</button>
               </div>
-
-              <!-- Simulador de Ofertas (Oculto inicialmente) -->
-              <div class="card panel-card" id="lleva-offers-card" style="display: none;">
-                <h3 style="margin-bottom: 10px;">Ofertas de Mensajeros</h3>
-                <div class="offers-list" id="lleva-offers-list">
-                  <!-- Inyectado dinámicamente -->
-                </div>
+              <!-- Offers Card -->
+              <div class="card" id="lleva-offers-card" hidden>
+                <h3 class="card__title">Ofertas de Mensajeros</h3>
+                <div class="offers-list" id="lleva-offers-list"></div>
               </div>
-
-              <!-- Estado de Viaje y Chat (Oculto inicialmente) -->
-              <div class="card panel-card" id="lleva-status-card" style="display: none;">
-                <h3 style="margin-bottom: 10px;">Estado del Envío</h3>
-                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
-                    <span class="status-badge" id="lleva-trip-status">Conductor asignado</span>
-                </div>
-                <div class="driver-profile-mini" id="lleva-assigned-driver-info">
-                  <!-- Perfil inyectado -->
-                </div>
-                
-                <!-- Respuestas rápidas -->
-                <div class="chat-quick-replies" style="display: flex; gap: 6px; overflow-x: auto; margin-bottom: 8px; padding-bottom: 4px; scrollbar-width: none; -ms-overflow-style: none;">
-                  <span onclick="window.sendQuickChatMessage('Ya salgo con el paquete')" style="background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; cursor: pointer; white-space: nowrap; transition: var(--transition);">🏃‍♂️ Ya salgo</span>
-                  <span onclick="window.sendQuickChatMessage('Estoy en la entrada principal')" style="background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; cursor: pointer; white-space: nowrap; transition: var(--transition);">🏢 Estoy en la entrada</span>
-                  <span onclick="window.sendQuickChatMessage('¿Necesita cambio de efectivo?')" style="background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; cursor: pointer; white-space: nowrap; transition: var(--transition);">💵 ¿Tiene cambio?</span>
-                  <span onclick="window.sendQuickChatMessage('El paquete está listo')" style="background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; cursor: pointer; white-space: nowrap; transition: var(--transition);">📦 Paquete listo</span>
-                </div>
-                
-                <!-- Chat con el conductor -->
-                <div class="lleva-chat-box">
-                  <div class="chat-messages" id="lleva-chat-messages">
-                    <!-- Mensajes de chat -->
-                  </div>
-                  <div class="chat-input-row">
-                    <input type="text" id="lleva-chat-input" placeholder="Escribe un mensaje..." onkeypress="window.sendLlevaChatMessage(event)">
-                    <button class="btn-chat-send" onclick="window.triggerSendLlevaChatMessage()">➤</button>
+              <!-- Trip Status Card -->
+              <div class="card" id="lleva-status-card" hidden>
+                <h3 class="card__title">Estado del Envío</h3>
+                <div class="trip-status" id="lleva-trip-info"></div>
+                <div class="chat-box" id="lleva-chat">
+                  <div class="chat-box__messages" id="lleva-chat-messages"></div>
+                  <div class="chat-box__input">
+                    <input type="text" id="lleva-chat-input" class="input-control" placeholder="Mensaje al conductor...">
+                    <button class="btn btn--primary btn--icon" id="lleva-chat-send">➤</button>
                   </div>
                 </div>
-                <button class="btn btn-secondary w-100 mt-2" onclick="window.cancelLlevaTrip()">Cancelar Pedido</button>
+                <button class="btn btn--danger btn--full" id="lleva-cancel">Cancelar Pedido</button>
               </div>
             </div>
-
-            <!-- Mapa SVG Interactivo -->
-            <div class="lleva-map-container">
-              <div class="map-wrapper">
-                <svg id="lleva-svg-map" viewBox="0 0 400 400" width="100%" height="100%">
-                  <!-- Grilla de Ciudad simulada -->
-                  <defs>
-                    <pattern id="grid-pattern" width="40" height="40" patternUnits="userSpaceOnUse">
-                      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
-                    </pattern>
-                  </defs>
-                  <rect width="100%" height="100%" fill="#080c14" />
-                  <rect width="100%" height="100%" fill="url(#grid-pattern)" />
-                  
-                  <!-- Calles/Avenidas principales -->
-                  <path d="M 0 100 L 400 100" stroke="rgba(255,255,255,0.1)" stroke-width="8" />
-                  <path d="M 0 300 L 400 300" stroke="rgba(255,255,255,0.1)" stroke-width="8" />
-                  <path d="M 100 0 L 100 400" stroke="rgba(255,255,255,0.1)" stroke-width="8" />
-                  <path d="M 300 0 L 300 400" stroke="rgba(255,255,255,0.1)" stroke-width="8" />
-                  <path d="M 0 0 L 400 400" stroke="rgba(255,255,255,0.05)" stroke-width="4" stroke-dasharray="5,5" />
-                  
-                  <!-- Ruta de Entrega (Se dibuja por JS) -->
-                  <path id="map-route-path" d="" fill="none" stroke="var(--color-lleva)" stroke-width="4" stroke-dasharray="8,8" />
-
-                  <!-- Pines de Origen y Destino -->
-                  <g id="pin-origen" class="map-pin" opacity="0">
-                    <circle cx="0" cy="0" r="10" fill="rgba(16, 185, 129, 0.3)" class="pulse-ring" />
-                    <circle cx="0" cy="0" r="6" fill="#10b981" />
-                    <text x="-4" y="-12" fill="#10b981" font-size="10" font-weight="bold">A</text>
-                  </g>
-                  <g id="pin-destino" class="map-pin" opacity="0">
-                    <circle cx="0" cy="0" r="10" fill="rgba(239, 68, 68, 0.3)" class="pulse-ring" />
-                    <circle cx="0" cy="0" r="6" fill="#ef4444" />
-                    <text x="-4" y="-12" fill="#ef4444" font-size="10" font-weight="bold">B</text>
-                  </g>
-                  
-                  <!-- Icono de Mensajero Movible -->
-                  <g id="messenger-car" class="map-car" opacity="0">
-                    <circle cx="0" cy="0" r="12" fill="rgba(245, 158, 11, 0.4)" class="pulse-ring" />
-                    <circle cx="0" cy="0" r="8" fill="var(--color-lleva)" />
-                    <text x="-5" y="4" font-size="12">🏍️</text>
-                  </g>
-                </svg>
-                <div class="map-status-overlay" id="map-status-overlay">Mapa fuera de línea - Ingrese ruta</div>
-              </div>
+            <!-- Map -->
+            <div class="lleva__map">
+              <svg id="lleva-map" viewBox="0 0 400 400" aria-label="Mapa de ruta">
+                <defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0L0 0 0 40" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="1"/></pattern></defs>
+                <rect width="400" height="400" fill="#080c14"/><rect width="400" height="400" fill="url(#grid)"/>
+                <path d="M0 100H400" stroke="rgba(255,255,255,0.08)" stroke-width="6"/><path d="M0 300H400" stroke="rgba(255,255,255,0.08)" stroke-width="6"/>
+                <path d="M100 0V400" stroke="rgba(255,255,255,0.08)" stroke-width="6"/><path d="M300 0V400" stroke="rgba(255,255,255,0.08)" stroke-width="6"/>
+                <path id="map-route" d="" fill="none" stroke="var(--c-lleva)" stroke-width="3" stroke-dasharray="8,6"/>
+                <g id="map-pin-a" opacity="0"><circle r="8" fill="rgba(16,185,129,0.3)"/><circle r="5" fill="#10b981"/></g>
+                <g id="map-pin-b" opacity="0"><circle r="8" fill="rgba(239,68,68,0.3)"/><circle r="5" fill="#ef4444"/></g>
+                <g id="map-courier" opacity="0"><circle r="10" fill="rgba(245,158,11,0.3)"/><circle r="6" fill="var(--c-lleva)"/></g>
+              </svg>
+              <div class="lleva__map-status" id="map-status">Ingresa origen y destino</div>
             </div>
           </div>
         </section>
 
-        <!-- VISTA: TELOREPARA -->
-        <section class="app-view" id="repara-view">
-          <div class="view-header">
-            <h2>Soporte Técnico TeloRepara</h2>
-            <p>Diagnóstico express y reserva de reparación a domicilio para tus dispositivos y electrodomésticos.</p>
+        <!-- TELOREPARA -->
+        <section class="view" id="view-repara">
+          <div class="view__header">
+            <h2>TeloRepara</h2>
+            <p>Diagnóstico express y reparación a domicilio para dispositivos y electrodomésticos.</p>
           </div>
-          
           <div class="repara-layout">
-            <div class="card panel-card">
-              <h3>Cotizador de Reparación</h3>
+            <div class="card">
+              <h3 class="card__title">Cotizador de Reparación</h3>
               <div class="form-group">
-                <label>Tipo de Dispositivo</label>
-                <select id="repara-device" onchange="window.updateReparaQuote()">
+                <label for="repara-device">Tipo de Dispositivo</label>
+                <select id="repara-device" class="select-control">
                   <option value="phone">Celular / Smartphone</option>
                   <option value="laptop">Laptop / Computadora</option>
                   <option value="tablet">Tablet</option>
@@ -568,1137 +428,352 @@
                 </select>
               </div>
               <div class="form-group">
-                <label>Falla Principal</label>
-                <select id="repara-issue" onchange="window.updateReparaQuote()">
+                <label for="repara-issue">Falla Principal</label>
+                <select id="repara-issue" class="select-control">
                   <option value="screen">Pantalla rota / Rayada</option>
-                  <option value="battery">Problemas de batería / Carga</option>
+                  <option value="battery">Problemas de batería</option>
                   <option value="power">No enciende</option>
                   <option value="water">Daño por líquido</option>
                   <option value="system">Sistema lento / Virus</option>
                 </select>
               </div>
-              
-              <div class="repara-quote-box">
-                <div class="suggested-price">Costo Estimado de Reparación: <strong id="repara-quote-price">RD$ 1,500</strong></div>
-                <p style="font-size:0.8rem; color:var(--text-muted); text-align:center; margin-top:4px;">Tiempo estimado: <span id="repara-quote-time">24-48 horas</span></p>
+              <div class="quote-box">
+                <div class="quote-box__price">Estimado: <strong id="repara-price">RD$ 1,500</strong></div>
+                <small>Tiempo: <span id="repara-time">24-48 horas</span></small>
               </div>
-              
-              <div class="form-group mt-2">
-                <label>Dirección de Recogida</label>
-                <input type="text" id="repara-address" placeholder="Calle, Número, Sector" value="Av. Churchill, Bella Vista">
+              <div class="form-group">
+                <label for="repara-address">Dirección de Recogida</label>
+                <input type="text" id="repara-address" class="input-control" placeholder="Calle, Número, Sector">
               </div>
-              
-              <button class="btn btn-primary w-100 mt-2" onclick="window.bookReparaService()">Reservar Servicio de Reparación</button>
+              <button class="btn btn--primary btn--full" id="repara-submit">Reservar Reparación</button>
             </div>
-            
-            <!-- Columna Derecha: Hardware SVG o Tracker -->
-            <div class="repara-right-column" style="display: flex; flex-direction: column; gap: 32px; width: 100%;">
-              <!-- Visualizador de Hardware (SVG Clickable) -->
-              <div class="card panel-card" id="repara-hardware-card" style="text-align: center;">
-                <h3>Mapa Físico de Fallas</h3>
-                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px; line-height: 1.4;">Haz clic en el componente defectuoso del celular para diagnosticar la falla al instante.</p>
-                <div class="phone-svg-wrapper" style="max-width: 170px; margin: 0 auto; position: relative;">
-                  <svg viewBox="0 0 200 400" width="100%" style="filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5)); transition: var(--transition);">
-                    <!-- Cuerpo del Celular -->
-                    <rect x="10" y="10" width="180" height="380" rx="25" fill="#090d16" stroke="var(--color-repara)" stroke-width="3" />
-                    <!-- Pantalla (Clicable) -->
-                    <rect id="svg-part-screen" x="18" y="40" width="164" height="300" rx="8" fill="rgba(139, 92, 246, 0.05)" stroke="rgba(139, 92, 246, 0.3)" stroke-width="2" style="cursor: pointer; transition: all 0.3s;" onclick="window.selectHardwareFault('screen')" onmouseover="window.showHardwareLabel('Pantalla táctil y cristal')" onmouseout="window.clearHardwareLabel()" />
-                    <!-- Altavoz / Botón Superior -->
-                    <rect x="80" y="22" width="40" height="6" rx="3" fill="#334155" />
-                    <!-- Cámara Frontal -->
-                    <circle cx="65" cy="25" r="4" fill="#1e293b" />
-                    
-                    <!-- Batería Interna (Clicable) -->
-                    <g id="svg-part-battery" style="cursor: pointer; transition: all 0.3s;" onclick="window.selectHardwareFault('battery')" onmouseover="window.showHardwareLabel('Batería / Sistema de alimentación')" onmouseout="window.clearHardwareLabel()">
-                      <rect x="35" y="70" width="130" height="90" rx="6" fill="rgba(16, 185, 129, 0.05)" stroke="rgba(16, 185, 129, 0.3)" stroke-width="1.5" />
-                      <text x="75" y="122" fill="#10b981" font-size="10" font-family="sans-serif" font-weight="bold" opacity="0.6">BATERÍA</text>
-                      <rect x="85" y="85" width="30" height="15" fill="none" stroke="#10b981" stroke-dasharray="2,2" stroke-width="1.5" />
+            <div class="repara__visual">
+              <div class="card">
+                <h3 class="card__title">Diagnóstico Visual</h3>
+                <p class="text-muted">Toca el componente defectuoso para diagnóstico instantáneo.</p>
+                <div class="phone-diagram">
+                  <svg viewBox="0 0 200 400" class="phone-svg" aria-label="Diagrama de celular">
+                    <rect x="10" y="10" width="180" height="380" rx="25" fill="#090d16" stroke="var(--c-repara)" stroke-width="2.5"/>
+                    <rect id="hw-screen" x="18" y="40" width="164" height="300" rx="8" fill="rgba(139,92,246,0.04)" stroke="rgba(139,92,246,0.25)" stroke-width="1.5" class="hw-part" data-part="screen" tabindex="0" role="button" aria-label="Pantalla"/>
+                    <rect x="80" y="22" width="40" height="6" rx="3" fill="#1e293b"/><circle cx="65" cy="25" r="4" fill="#1e293b"/>
+                    <g id="hw-battery" class="hw-part" data-part="battery" tabindex="0" role="button" aria-label="Batería">
+                      <rect x="35" y="70" width="130" height="80" rx="6" fill="rgba(16,185,129,0.04)" stroke="rgba(16,185,129,0.25)" stroke-width="1.5"/>
+                      <text x="70" y="115" fill="#10b981" font-size="9" font-family="Inter,sans-serif" opacity="0.7">BATERÍA</text>
                     </g>
-                    
-                    <!-- Tarjeta Madre / Sistema (Clicable) -->
-                    <g id="svg-part-system" style="cursor: pointer; transition: all 0.3s;" onclick="window.selectHardwareFault('system')" onmouseover="window.showHardwareLabel('Placa base y Microprocesador')" onmouseout="window.clearHardwareLabel()">
-                      <rect x="35" y="175" width="130" height="90" rx="6" fill="rgba(239, 68, 68, 0.05)" stroke="rgba(239, 68, 68, 0.3)" stroke-width="1.5" />
-                      <text x="63" y="227" fill="#ef4444" font-size="10" font-family="sans-serif" font-weight="bold" opacity="0.6">PLACA MADRE</text>
-                      <circle cx="100" cy="200" r="10" fill="none" stroke="#ef4444" stroke-dasharray="2,2" stroke-width="1.5" />
+                    <g id="hw-board" class="hw-part" data-part="system" tabindex="0" role="button" aria-label="Placa madre">
+                      <rect x="35" y="165" width="130" height="80" rx="6" fill="rgba(239,68,68,0.04)" stroke="rgba(239,68,68,0.25)" stroke-width="1.5"/>
+                      <text x="55" y="210" fill="#ef4444" font-size="9" font-family="Inter,sans-serif" opacity="0.7">PLACA MADRE</text>
                     </g>
-                    
-                    <!-- Puerto de Carga (Clicable) -->
-                    <g id="svg-part-port" style="cursor: pointer; transition: all 0.3s;" onclick="window.selectHardwareFault('port')" onmouseover="window.showHardwareLabel('Puerto de carga USB-C / Jack')" onmouseout="window.clearHardwareLabel()">
-                      <path d="M 80 320 L 120 320 L 115 340 L 85 340 Z" fill="rgba(245, 158, 11, 0.05)" stroke="rgba(245, 158, 11, 0.3)" stroke-width="1.5" />
-                      <text x="70" y="312" fill="#f59e0b" font-size="8" font-family="sans-serif" font-weight="bold" opacity="0.6">PUERTO CARGA</text>
+                    <g id="hw-port" class="hw-part" data-part="port" tabindex="0" role="button" aria-label="Puerto de carga">
+                      <rect x="75" y="310" width="50" height="20" rx="4" fill="rgba(245,158,11,0.04)" stroke="rgba(245,158,11,0.25)" stroke-width="1.5"/>
+                      <text x="77" y="305" fill="#f59e0b" font-size="7" font-family="Inter,sans-serif" opacity="0.7">PUERTO</text>
                     </g>
-                    
-                    <!-- Cristal roto (Decorativo, brilla si selecciona screen) -->
-                    <path id="svg-screen-crack" d="M 30 50 L 70 110 M 70 110 L 120 90 M 70 110 L 90 220" fill="none" stroke="#ffffff" stroke-width="1" opacity="0" style="pointer-events: none; transition: opacity 0.3s;" />
                   </svg>
-                  <!-- Leyenda Hover -->
-                  <div id="svg-hover-label" style="margin-top: 15px; font-size: 0.8rem; font-weight: bold; color: var(--color-repara); min-height: 18px; transition: color 0.2s;">Pasa el cursor sobre el teléfono...</div>
+                  <p class="phone-diagram__label" id="hw-label">Selecciona un componente</p>
                 </div>
               </div>
-
-              <!-- Diagnóstico / Seguimiento (Oculto inicialmente) -->
-              <div class="card panel-card" id="repara-tracker-card" style="display:none;">
-                <h3>Seguimiento del Diagnóstico</h3>
-                <div class="repara-steps">
-                  <div class="repara-step active" id="rep-step-1">
-                    <div class="step-num">1</div>
-                    <div class="step-desc">
-                      <strong>Servicio Solicitado</strong>
-                      <p id="rep-date-1">Hoy</p>
-                    </div>
-                  </div>
-                  <div class="repara-step" id="rep-step-2">
-                    <div class="step-num">2</div>
-                    <div class="step-desc">
-                      <strong>Mensajero en Camino</strong>
-                      <p>Retiro de dispositivo a domicilio</p>
-                    </div>
-                  </div>
-                  <div class="repara-step" id="rep-step-3">
-                    <div class="step-num">3</div>
-                    <div class="step-desc">
-                      <strong>En Diagnóstico Técnico</strong>
-                      <p>Evaluación de placa y componentes</p>
-                    </div>
-                  </div>
-                  <div class="repara-step" id="rep-step-4">
-                    <div class="step-num">4</div>
-                    <div class="step-desc">
-                      <strong>Reparación Finalizada</strong>
-                      <p>Pruebas de calidad y testeo</p>
-                    </div>
-                  </div>
-                </div>
-                <div class="repara-tech-report mt-3">
-                  <h4>Reporte del Técnico Asignado</h4>
-                  <div class="tech-profile-mini">
-                    <span style="font-size:2rem;">👨‍🔧</span>
-                    <div>
-                      <strong>Téc. Ing. Carlos Medina</strong>
-                      <p style="font-size:0.8rem; color:var(--text-muted);">Especialista Certificado en Microelectrónica</p>
-                    </div>
-                  </div>
-                  <p class="tech-log" id="repara-tech-log">Esperando recepción del dispositivo para iniciar diagnóstico.</p>
-                </div>
+              <!-- Tracker -->
+              <div class="card" id="repara-tracker" hidden>
+                <h3 class="card__title">Seguimiento</h3>
+                <div class="tracker-steps" id="repara-steps"></div>
               </div>
             </div>
           </div>
         </section>
 
-        <!-- VISTA: TELOINSTALA -->
-        <section class="app-view" id="instala-view">
-          <div class="view-header">
-            <h2>Instalaciones Profesionales TeloInstala</h2>
-            <p>Servicios técnicos de instalación del hogar para Smart TV, climatización, redes y hogares inteligentes.</p>
+        <!-- TELOINSTALA -->
+        <section class="view" id="view-instala">
+          <div class="view__header">
+            <h2>TeloInstala</h2>
+            <p>Instalaciones profesionales del hogar: TV, climatización, redes y domótica.</p>
           </div>
-          
           <div class="instala-layout">
-            <div class="card panel-card">
-              <h3>Selecciona el Servicio</h3>
+            <div class="card">
+              <h3 class="card__title">Agendar Servicio</h3>
               <div class="form-group">
-                <label>Servicio Técnico</label>
-                <select id="instala-service" onchange="window.updateInstalaPrice()">
-                  <option value="tv">Montaje de TV en Pared (Soporte)</option>
-                  <option value="ac">Instalación de Aire Acondicionado Split</option>
-                  <option value="smart">Configuración de Domótica / Smart Home</option>
-                  <option value="network">Cableado Estructurado y Wifi Mesh</option>
-                  <option value="lock">Instalación de Cerradura Inteligente</option>
+                <label for="instala-service">Servicio Técnico</label>
+                <select id="instala-service" class="select-control">
+                  <option value="tv">Montaje de TV en Pared</option>
+                  <option value="ac">Instalación de Aire Acondicionado</option>
+                  <option value="smart">Domótica / Smart Home</option>
+                  <option value="network">Cableado y Wifi Mesh</option>
+                  <option value="lock">Cerradura Inteligente</option>
                 </select>
               </div>
               <div class="form-group">
-                <label>Fecha del Servicio</label>
-                <input type="date" id="instala-date" value="2026-06-01">
+                <label for="instala-date">Fecha del Servicio</label>
+                <input type="date" id="instala-date" class="input-control">
               </div>
               <div class="form-group">
-                <label>Horario Preferido</label>
-                <select id="instala-time">
-                  <option value="am">Mañana (8:00 AM - 12:00 PM)</option>
-                  <option value="pm">Tarde (2:00 PM - 6:00 PM)</option>
+                <label for="instala-time">Horario</label>
+                <select id="instala-time" class="select-control">
+                  <option value="am">Mañana (8:00 - 12:00)</option>
+                  <option value="pm">Tarde (2:00 - 6:00)</option>
                 </select>
               </div>
-              
-              <div class="instala-quote-box">
-                <div class="suggested-price">Costo del Servicio: <strong id="instala-quote-price">RD$ 1,200</strong></div>
-                <p style="font-size:0.8rem; color:var(--text-muted); text-align:center; margin-top:4px;">Incluye: Mano de obra especializada y garantía de 30 días.</p>
+              <div class="quote-box">
+                <div class="quote-box__price">Costo: <strong id="instala-price">RD$ 1,200</strong></div>
+                <small>Incluye mano de obra y garantía 30 días</small>
               </div>
-
-              <div class="form-group mt-2">
-                <label>Selecciona el Técnico Certificado</label>
-                <div class="tech-select-grid">
-                  <div class="tech-option active" data-tech="ramon" onclick="window.selectInstalaTech('ramon')">
-                    <span>👷‍♂️</span>
-                    <div class="tech-info">
-                      <div class="tech-header-row">
-                        <strong>Ramón Abreu</strong>
-                        <span class="tech-rating">★★★★★ 4.9</span>
-                      </div>
-                      <small>Instalador Senior • TV & AC</small>
+              <div class="form-group">
+                <label>Técnico Certificado</label>
+                <div class="tech-grid">
+                  <button class="tech-card active" data-tech="ramon" type="button">
+                    <span class="tech-card__avatar">👷‍♂️</span>
+                    <div class="tech-card__info">
+                      <strong>Ramón Abreu</strong>
+                      <small>Senior • TV & AC</small>
+                      <span class="tech-card__rating">★ 4.9</span>
                     </div>
-                  </div>
-                  <div class="tech-option" data-tech="carlos" onclick="window.selectInstalaTech('carlos')">
-                    <span>👨‍🔧</span>
-                    <div class="tech-info">
-                      <div class="tech-header-row">
-                        <strong>Carlos Medina</strong>
-                        <span class="tech-rating">★★★★☆ 4.7</span>
-                      </div>
-                      <small>Especialista • Redes & Domótica</small>
+                  </button>
+                  <button class="tech-card" data-tech="carlos" type="button">
+                    <span class="tech-card__avatar">👨‍🔧</span>
+                    <div class="tech-card__info">
+                      <strong>Carlos Medina</strong>
+                      <small>Redes & Domótica</small>
+                      <span class="tech-card__rating">★ 4.7</span>
                     </div>
-                  </div>
-                  <div class="tech-option" data-tech="laura" onclick="window.selectInstalaTech('laura')">
-                    <span>👩‍🔧</span>
-                    <div class="tech-info">
-                      <div class="tech-header-row">
-                        <strong>Laura Rijo</strong>
-                        <span class="tech-rating">★★★★★ 4.8</span>
-                      </div>
-                      <small>Técnica • Cerraduras & Smart Home</small>
+                  </button>
+                  <button class="tech-card" data-tech="laura" type="button">
+                    <span class="tech-card__avatar">👩‍🔧</span>
+                    <div class="tech-card__info">
+                      <strong>Laura Rijo</strong>
+                      <small>Smart Home</small>
+                      <span class="tech-card__rating">★ 4.8</span>
                     </div>
-                  </div>
+                  </button>
                 </div>
               </div>
-              
-              <button class="btn btn-primary w-100" onclick="window.bookInstalaService()">Agendar Instalador</button>
+              <button class="btn btn--primary btn--full" id="instala-submit">Agendar Instalación</button>
             </div>
-            
-            <!-- Confirmación / Agenda (Oculto inicialmente) -->
-            <div class="card panel-card" id="instala-summary-card" style="display:none;">
-              <h3>Instalador Asignado</h3>
-              <div class="tech-profile-mini">
-                <span id="instala-summary-tech-avatar" style="font-size:2.5rem;">👷‍♂️</span>
-                <div style="flex:1;">
-                  <h4 id="instala-summary-tech-name">Ramón Abreu</h4>
-                  <p id="instala-summary-tech-desc" style="font-size:0.8rem; color:var(--text-muted);">Instalador Senior • Certificación TeloInstala</p>
-                  <span id="instala-summary-tech-rating" class="stars-display">★★★★★ 4.9</span>
-                </div>
-              </div>
-              
-              <div class="instala-booking-details mt-3">
-                <h4>Detalle de tu Cita</h4>
-                <ul>
-                  <li><strong>Servicio:</strong> <span id="instala-booked-service">Montaje de TV en Pared</span></li>
-                  <li><strong>Fecha:</strong> <span id="instala-booked-date">01 de Junio, 2026</span></li>
-                  <li><strong>Horario:</strong> <span id="instala-booked-time">Mañana (8:00 AM - 12:00 PM)</span></li>
-                  <li><strong>Precio Total:</strong> <span id="instala-booked-price" style="color:var(--color-instala); font-weight:bold;">RD$ 1,200</span></li>
-                </ul>
-                <div class="instala-status-badge mt-2">Cita Confirmada</div>
-              </div>
+            <div class="card" id="instala-confirmation" hidden>
+              <h3 class="card__title">Cita Confirmada</h3>
+              <div class="confirmation-details" id="instala-details"></div>
             </div>
           </div>
         </section>
 
-        <!-- VISTA: MI PERFIL / REGISTRO -->
-        <section class="app-view" id="profile-view">
-          <div class="view-header">
-            <h2>Mi Perfil</h2>
-            <p>Registra tus datos para agilizar las solicitudes en todos nuestros servicios.</p>
-          </div>
-          
-          <div class="profile-layout">
-            <div class="card panel-card profile-card-main">
-              <div class="profile-avatar-box">
-                <div class="profile-avatar-circle" id="profile-avatar-display">👤</div>
-                <h3 id="profile-name-display">Usuario Telo’ Corp Group</h3>
-                <p class="profile-subtitle" id="profile-email-display">Sin registro</p>
-              </div>
-              
-              <form id="profile-form" class="profile-form" onsubmit="window.saveUserProfile(event)">
-                <div class="form-group">
-                  <label>Nombre Completo</label>
-                  <input type="text" id="profile-name" placeholder="Tu nombre completo" required>
-                </div>
-                <div class="form-group">
-                  <label>Correo Electrónico</label>
-                  <input type="email" id="profile-email" placeholder="correo@ejemplo.com" required>
-                </div>
-                <div class="form-group">
-                  <label>Teléfono / WhatsApp</label>
-                  <input type="tel" id="profile-phone" placeholder="+1 (809) 000-0000">
-                </div>
-                <div class="form-group">
-                  <label>Dirección Principal</label>
-                  <input type="text" id="profile-address" placeholder="Calle, Número, Sector, Ciudad">
-                </div>
-                <div class="form-group">
-                  <label>Ciudad / Municipio</label>
-                  <select id="profile-city">
-                    <option value="">Selecciona tu ciudad</option>
-                    <option value="Santo Domingo">Santo Domingo</option>
-                    <option value="Santiago">Santiago</option>
-                    <option value="La Vega">La Vega</option>
-                    <option value="Punta Cana">Punta Cana</option>
-                    <option value="Puerto Plata">Puerto Plata</option>
-                    <option value="Moca">Moca</option>
-                    <option value="San Pedro">San Pedro de Macorís</option>
-                    <option value="Otra">Otra</option>
-                  </select>
-                </div>
-                <button type="submit" class="btn btn-primary w-100 mt-2">Guardar Perfil</button>
-              </form>
-            </div>
-            
-            <div class="card panel-card">
-              <h3 style="margin-bottom: 16px;">Mis Servicios Activos</h3>
-              <div class="profile-services-list">
-                <div class="profile-service-item" onclick="window.switchAppView('sales-view')">
-                  <span class="service-icon" style="background: rgba(221,34,0,0.1); color: var(--color-primary);">🛒</span>
-                  <div>
-                    <strong>TeloSales</strong>
-                    <p>Accede al marketplace</p>
-                  </div>
-                  <span style="color: var(--text-muted);">›</span>
-                </div>
-                <div class="profile-service-item" onclick="window.switchAppView('educa-view')">
-                  <span class="service-icon" style="background: rgba(139,92,246,0.1); color: var(--color-educa);">🎓</span>
-                  <div>
-                    <strong>TeloEduca</strong>
-                    <p>Continúa aprendiendo</p>
-                  </div>
-                  <span style="color: var(--text-muted);">›</span>
-                </div>
-                <div class="profile-service-item" onclick="window.switchAppView('lleva-view')">
-                  <span class="service-icon" style="background: rgba(245,158,11,0.1); color: var(--color-lleva);">📦</span>
-                  <div>
-                    <strong>TeloLleva</strong>
-                    <p>Solicitar un envío</p>
-                  </div>
-                  <span style="color: var(--text-muted);">›</span>
-                </div>
-                <div class="profile-service-item" onclick="window.switchAppView('repara-view')">
-                  <span class="service-icon" style="background: rgba(139,92,246,0.1); color: var(--color-repara);">🔧</span>
-                  <div>
-                    <strong>TeloRepara</strong>
-                    <p>Reparar un dispositivo</p>
-                  </div>
-                  <span style="color: var(--text-muted);">›</span>
-                </div>
-                <div class="profile-service-item" onclick="window.switchAppView('instala-view')">
-                  <span class="service-icon" style="background: rgba(236,72,153,0.1); color: var(--color-instala);">🛠️</span>
-                  <div>
-                    <strong>TeloInstala</strong>
-                    <p>Agendar una instalación</p>
-                  </div>
-                  <span style="color: var(--text-muted);">›</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- VISTA: QUIÉNES SOMOS -->
-        <section class="app-view" id="about-view">
-          <div class="view-header">
+        <!-- QUIÉNES SOMOS -->
+        <section class="view" id="view-about">
+          <div class="view__header">
             <h2>Quiénes Somos</h2>
-            <p>Conoce al Clúster Digital Telo’ Corp Group y a nuestro equipo multidisciplinario.</p>
+            <p>El Clúster Digital Telo' Corp Group y su equipo multidisciplinario.</p>
           </div>
-          
-          <div class="about-container">
-            <!-- Misión, Visión, Valores -->
-            <div class="grid-2-col" style="margin-bottom: 30px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
-              <div class="card panel-card text-card">
-                <h3 style="color: var(--color-educa); display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
-                  <span>🎯</span> Nuestra Misión
-                </h3>
-                <p style="line-height: 1.5;">Impulsar la transformación digital de las empresas dominicanas y del Caribe a través de un clúster integrado de servicios tecnológicos, logísticos, educativos y de soporte técnico con estándares de clase mundial.</p>
-              </div>
-              <div class="card panel-card text-card">
-                <h3 style="color: var(--color-lleva); display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
-                  <span>👁️</span> Nuestra Visión
-                </h3>
-                <p style="line-height: 1.5;">Ser el conglomerado digital líder en la región, democratizando el acceso a herramientas avanzadas de comercio electrónico, educación, logística inteligente y soporte de hardware.</p>
-              </div>
+          <div class="about-grid">
+            <article class="card card--accent-blue">
+              <h3>🎯 Misión</h3>
+              <p>Impulsar la transformación digital de empresas dominicanas a través de un clúster integrado de servicios tecnológicos, logísticos, educativos y de soporte técnico.</p>
+            </article>
+            <article class="card card--accent-amber">
+              <h3>👁️ Visión</h3>
+              <p>Ser el conglomerado digital líder en la región, democratizando el acceso a herramientas avanzadas de comercio, educación y logística inteligente.</p>
+            </article>
+          </div>
+          <div class="card values-card">
+            <h3 class="text-center">Valores Core</h3>
+            <div class="values-grid">
+              <div class="value-item"><span>💡</span><strong>Innovación</strong><p>Evolucionamos con tecnologías emergentes e IA.</p></div>
+              <div class="value-item"><span>🤝</span><strong>Colaboración</strong><p>Sinergia entre todas las empresas del clúster.</p></div>
+              <div class="value-item"><span>🛡️</span><strong>Transparencia</strong><p>Negociación directa y cotizaciones abiertas.</p></div>
+              <div class="value-item"><span>⚡</span><strong>Excelencia</strong><p>Servicios rápidos, confiables y garantizados.</p></div>
             </div>
-
-            <!-- Valores -->
-            <div class="card panel-card" style="margin-bottom: 30px;">
-              <h3 style="text-align: center; margin-bottom: 24px; font-size: 1.25rem;">Nuestros Valores Core</h3>
-              <div class="valores-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px;">
-                <div class="valor-item" style="text-align: center; padding: 10px;">
-                  <span style="font-size: 2.2rem; display: block; margin-bottom: 8px;">💡</span>
-                  <strong style="display: block; margin-bottom: 4px;">Innovación Constante</strong>
-                  <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0; line-height: 1.4;">Evolucionamos con las tecnologías emergentes y de Inteligencia Artificial.</p>
-                </div>
-                <div class="valor-item" style="text-align: center; padding: 10px;">
-                  <span style="font-size: 2.2rem; display: block; margin-bottom: 8px;">🤝</span>
-                  <strong style="display: block; margin-bottom: 4px;">Colaboración Activa</strong>
-                  <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0; line-height: 1.4;">Buscamos la sinergia e integración entre todas las empresas del clúster.</p>
-                </div>
-                <div class="valor-item" style="text-align: center; padding: 10px;">
-                  <span style="font-size: 2.2rem; display: block; margin-bottom: 8px;">🛡️</span>
-                  <strong style="display: block; margin-bottom: 4px;">Transparencia Total</strong>
-                  <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0; line-height: 1.4;">Negociación directa de tarifas de mensajería y cotizaciones abiertas.</p>
-                </div>
-                <div class="valor-item" style="text-align: center; padding: 10px;">
-                  <span style="font-size: 2.2rem; display: block; margin-bottom: 8px;">⚡</span>
-                  <strong style="display: block; margin-bottom: 4px;">Excelencia Operativa</strong>
-                  <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0; line-height: 1.4;">Servicios técnicos rápidos, confiables y de calidad garantizada.</p>
-                </div>
+          </div>
+          <h3 class="section-title">Equipo Directivo</h3>
+          <div class="team-grid">
+            <article class="team-card"><div class="team-card__avatar">👑</div><h4>Ing. Luis M. Herrera</h4><p class="team-card__role">Director General (CEO)</p><small>Estrategia de Negocios y Transformación Digital</small></article>
+            <article class="team-card"><div class="team-card__avatar">🔧</div><h4>Ing. Ramón Abreu</h4><p class="team-card__role">Director Técnico</p><small>Hardware y TeloRepara</small></article>
+            <article class="team-card"><div class="team-card__avatar">💻</div><h4>Ing. Balmis Reynoso</h4><p class="team-card__role">Arquitecto de Integración</p><small>Ciberseguridad y ERP</small></article>
+            <article class="team-card"><div class="team-card__avatar">📦</div><h4>Julio M. Herrera</h4><p class="team-card__role">Coord. Logística</p><small>TeloLleva y Operaciones</small></article>
+          </div>
+          <div class="card partner-card">
+            <h3>🤝 Programa de Socios</h3>
+            <p>¿Eres agente independiente o empresa de servicios? Únete al ecosistema Telo' Corp Group.</p>
+            <form id="partner-form" class="partner-form">
+              <div class="form-row">
+                <div class="form-group"><label for="partner-name">Nombre / Empresa</label><input type="text" id="partner-name" class="input-control" required placeholder="Tu nombre o razón social"></div>
+                <div class="form-group"><label for="partner-email">Correo</label><input type="email" id="partner-email" class="input-control" required placeholder="correo@empresa.com"></div>
               </div>
-            </div>
-
-            <!-- El Clúster Digital -->
-            <div class="card panel-card text-card" style="margin-bottom: 30px; text-align: center; padding: 24px;">
-              <h3 style="margin-bottom: 10px;">El Concepto de Clúster Digital (Conglomerado)</h3>
-              <p style="max-width: 800px; margin: 0 auto; line-height: 1.6; color: var(--text-muted);">
-                Telo’ Corp Group no es una sola empresa, sino un <strong>conglomerado de empresas y servicios independientes</strong> conectados por una misma marca, infraestructura y cultura tecnológica. Cada división opera de forma autónoma pero colaborativa para ofrecer soluciones integrales de e-commerce, logística, formación y soporte.
-              </p>
-            </div>
-
-            <!-- El Equipo -->
-            <h3 style="margin: 30px 0 20px 0; text-align: center; font-size: 1.25rem;">Líderes de las Unidades de Servicio</h3>
-            <div class="team-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 20px;">
-              <div class="card panel-card team-card" style="text-align: center; padding: 20px; transition: transform 0.2s;">
-                <div style="font-size: 2.5rem; margin-bottom: 10px;">👑</div>
-                <h4 style="margin: 0 0 4px 0;">Ing. Luis Miguel Herrera</h4>
-                <p style="font-size: 0.8rem; color: var(--color-primary); font-weight: bold; margin-bottom: 8px;">Director General (CEO del Clúster)</p>
-                <p style="font-size: 0.75rem; color: var(--text-muted); margin: 0; line-height: 1.4;">Especialista en Estrategia de Negocios y Transformación Martech del Conglomerado.</p>
-              </div>
-              <div class="card panel-card team-card" style="text-align: center; padding: 20px; transition: transform 0.2s;">
-                <div style="font-size: 2.5rem; margin-bottom: 10px;">🔧</div>
-                <h4 style="margin: 0 0 4px 0;">Ing. Ramón Abreu</h4>
-                <p style="font-size: 0.8rem; color: var(--color-repara); font-weight: bold; margin-bottom: 8px;">Director Técnico de Hardware</p>
-                <p style="font-size: 0.75rem; color: var(--text-muted); margin: 0; line-height: 1.4;">Especialista en reparación de componentes y arquitectura de TeloRepara.</p>
-              </div>
-              <div class="card panel-card team-card" style="text-align: center; padding: 20px; transition: transform 0.2s;">
-                <div style="font-size: 2.5rem; margin-bottom: 10px;">💻</div>
-                <h4 style="margin: 0 0 4px 0;">Ing. Balmis Reynoso</h4>
-                <p style="font-size: 0.8rem; color: var(--color-educa); font-weight: bold; margin-bottom: 8px;">Arquitecto de Integración & Ciberseguridad</p>
-                <p style="font-size: 0.75rem; color: var(--text-muted); margin: 0; line-height: 1.4;">Encargado de Supabase, webhooks, seguridad HMAC y Odoo ERP en Telo’ Corp Group.</p>
-              </div>
-              <div class="card panel-card team-card" style="text-align: center; padding: 20px; transition: transform 0.2s;">
-                <div style="font-size: 2.5rem; margin-bottom: 10px;">📦</div>
-                <h4 style="margin: 0 0 4px 0;">Julio Miguel Herrera</h4>
-                <p style="font-size: 0.8rem; color: var(--color-lleva); font-weight: bold; margin-bottom: 8px;">Coordinador de Logística & Soporte</p>
-                <p style="font-size: 0.75rem; color: var(--text-muted); margin: 0; line-height: 1.4;">Gestión de envíos TeloLleva, asignación de citas y operaciones del clúster.</p>
-              </div>
-            </div>
-
-            <!-- Programa de Socios y Alianzas -->
-            <div class="card panel-card partner-apply-card" style="margin-top: 35px; padding: 30px;">
-              <h3 style="text-align: center; margin-bottom: 15px; color: var(--color-primary); font-size: 1.3rem;">🤝 Programa de Socios y Alianzas</h3>
-              <p style="text-align: center; max-width: 700px; margin: 0 auto 25px auto; color: var(--text-muted); line-height: 1.5; font-size: 0.9rem;">
-                ¿Eres un agente independiente, una empresa de servicios o tienes una idea para expandir nuestro ecosistema? Conviértete en socio de Telo’ Corp Group y ofrece tus soluciones bajo nuestra estrategia y marca de confianza.
-              </p>
-              
-              <div class="partner-apply-layout">
-                <!-- Información del Programa -->
-                <div class="partner-info-col">
-                  <h4 style="margin-bottom: 12px; font-size: 1.05rem;">Modalidades de Asociación</h4>
-                  <div class="partner-mode" style="margin-bottom: 16px;">
-                    <strong style="color: var(--color-educa); display: block; margin-bottom: 4px;">💼 1. Socio de Unidad Existente</strong>
-                    <span style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.4; display: block;">Únete como agente de entrega en TeloLleva, técnico de hardware certificado en TeloRepara, o proveedor en TeloSales.</span>
-                  </div>
-                  <div class="partner-mode">
-                    <strong style="color: var(--color-lleva); display: block; margin-bottom: 4px;">🚀 2. Desarrollador de Nueva División</strong>
-                    <span style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.4; display: block;">Propón un nuevo vertical de servicio digital bajo la marca, estrategia corporativa y arquitectura tecnológica de Telo’ Corp Group.</span>
-                  </div>
-                </div>
-
-                <!-- Formulario de Contacto para Socios -->
-                <div class="partner-form-col">
-                  <form id="partner-apply-form" onsubmit="window.submitPartnerApplication(event)">
-                    <div class="form-group" style="margin-bottom: 12px;">
-                      <label style="font-size: 0.8rem; margin-bottom: 4px;">Nombre Completo o Empresa</label>
-                      <input type="text" id="partner-name" required placeholder="Ej: Juan Pérez o Servicios SRL" style="padding: 10px; font-size: 0.9rem;">
-                    </div>
-                    <div class="form-group" style="margin-bottom: 12px;">
-                      <label style="font-size: 0.8rem; margin-bottom: 4px;">Correo Electrónico</label>
-                      <input type="email" id="partner-email" required placeholder="correo@empresa.com" style="padding: 10px; font-size: 0.9rem;">
-                    </div>
-                    <div class="form-group" style="margin-bottom: 12px;">
-                      <label style="font-size: 0.8rem; margin-bottom: 4px;">Tipo de Alianza</label>
-                      <select id="partner-type" required style="padding: 10px; font-size: 0.9rem; background: #0b111e; color: white;">
-                        <option value="Agente/Empresa de Servicios Existente">Socio de Unidad Existente (Lleva/Repara/Sales/Instala)</option>
-                        <option value="Proponer Nuevo Servicio">Desarrollar un Nuevo Servicio bajo TeloCorp</option>
-                      </select>
-                    </div>
-                    <div class="form-group" style="margin-bottom: 16px;">
-                      <label style="font-size: 0.8rem; margin-bottom: 4px;">Propuesta o Perfil</label>
-                      <textarea id="partner-proposal" required placeholder="Describe brevemente tus servicios o propuesta de alianza..." rows="3" style="padding: 10px; font-size: 0.9rem; resize: none;"></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100" style="padding: 10px; font-size: 0.9rem;">Enviar Propuesta de Socio</button>
-                  </form>
-                </div>
-              </div>
-            </div>
+              <div class="form-group"><label for="partner-type">Tipo de Alianza</label><select id="partner-type" class="select-control" required><option value="existing">Socio de Unidad Existente</option><option value="new">Proponer Nuevo Servicio</option></select></div>
+              <div class="form-group"><label for="partner-proposal">Propuesta</label><textarea id="partner-proposal" class="input-control" rows="3" required placeholder="Describe tus servicios o propuesta..."></textarea></div>
+              <button type="submit" class="btn btn--primary">Enviar Propuesta</button>
+            </form>
           </div>
         </section>
 
-        <!-- VISTA: SOPORTE Y CONTACTO -->
-        <section class="app-view" id="support-view">
-          <div class="view-header">
+        <!-- SOPORTE -->
+        <section class="view" id="view-support">
+          <div class="view__header">
             <h2>TeloConnect</h2>
-            <p>Centro de comunicaciones oficial de Telo’ Corp Group. Envínos un mensaje, conectáte con TeloAsistente IA o accede a nuestros canales directos.</p>
+            <p>Centro de comunicaciones. Contacto directo, chat IA o canales oficiales.</p>
           </div>
-          
-          <div class="contact-layout grid-2-col-support">
-            <!-- Columna Izquierda: Formulario de Contacto -->
-            <div class="card panel-card">
-              <h3>Envía un Mensaje</h3>
-              <form id="super-contact-form">
+          <div class="support-layout">
+            <div class="card">
+              <h3 class="card__title">Envía un Mensaje</h3>
+              <form id="contact-form">
                 <input type="hidden" name="access_key" value="267eefc0-fac6-428f-8741-b46bc348c0fa">
-                <input type="hidden" name="subject" id="dynamic-subject" value="Nuevo contacto desde Telo’ Corp Group App">
-                
-                <div class="form-group">
-                  <label>Nombre Completo</label>
-                  <input type="text" name="name" required placeholder="Tu nombre">
-                </div>
-                <div class="form-group">
-                  <label>Correo Electrónico</label>
-                  <input type="email" name="email" required placeholder="tu@correo.com">
-                </div>
-                <div class="form-group">
-                  <label>Dirigido a:</label>
-                  <select name="department" id="contact-department" required onchange="window.updateFormSubject()">
-                    <option value="Administración Central">Hub Administrativo (@telocg.com)</option>
-                    <option value="TeloSales">TeloSales (@telocg.com)</option>
-                    <option value="TeloEduca">TeloEduca (@telocg.com)</option>
-                    <option value="TeloLleva">TeloLleva (@telocg.com)</option>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label>Mensaje</label>
-                  <textarea name="message" required placeholder="¿En qué te podemos ayudar?" rows="4"></textarea>
-                </div>
-                <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
-                
-                <button type="submit" class="btn btn-primary w-100" id="form-submit-btn">Enviar Mensaje Seguro</button>
+                <div class="form-group"><label for="contact-name">Nombre</label><input type="text" id="contact-name" name="name" class="input-control" required placeholder="Tu nombre"></div>
+                <div class="form-group"><label for="contact-email">Correo</label><input type="email" id="contact-email" name="email" class="input-control" required placeholder="tu@correo.com"></div>
+                <div class="form-group"><label for="contact-dept">Dirigido a</label><select id="contact-dept" name="department" class="select-control" required><option value="central">Hub Administrativo</option><option value="sales">TeloSales</option><option value="educa">TeloEduca</option><option value="lleva">TeloLleva</option><option value="repara">TeloRepara</option></select></div>
+                <div class="form-group"><label for="contact-msg">Mensaje</label><textarea id="contact-msg" name="message" class="input-control" rows="4" required placeholder="¿En qué podemos ayudar?"></textarea></div>
+                <button type="submit" class="btn btn--primary btn--full">Enviar Mensaje</button>
               </form>
             </div>
-
-            <!-- Columna Derecha: Canales Oficiales -->
-            <div class="support-right-column">
-              <!-- Abrir Chatbot desde TeloConnect -->
-              <div class="card panel-card telo-connect-chat-promo" onclick="window.toggleChatWidget()" style="cursor:pointer; text-align:center; padding: 32px 24px;">
-                <div style="font-size: 3rem; margin-bottom: 12px;">🤖</div>
-                <h3 style="margin-bottom: 8px;">TeloAsistente IA</h3>
-                <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:20px;">Resuelve tus dudas al instante sobre cualquier servicio de Telo’ Corp Group.</p>
-                <span class="btn btn-primary" style="display:inline-block;">Abrir Chat ›</span>
+            <div class="support__channels">
+              <div class="card card--interactive" id="btn-open-chat" role="button" tabindex="0">
+                <div class="card__icon-lg">🤖</div>
+                <h3>TeloAsistente IA</h3>
+                <p>Respuestas instantáneas sobre cualquier servicio.</p>
+                <span class="btn btn--primary btn--sm">Abrir Chat</span>
               </div>
-
-              <!-- Canales Oficiales / Redes -->
-              <div class="card panel-card contact-channels-card">
-                <h3>Canales Oficiales de TeloCorp</h3>
-                <div class="contact-channels-list">
-                  <a href="https://wa.me/18099038707" target="_blank" class="channel-item whatsapp">
-                    <span class="channel-icon">💬</span>
-                    <div class="channel-details">
-                      <strong>WhatsApp Oficial</strong>
-                      <p>+1 (809) 903-8707</p>
-                    </div>
-                  </a>
-                  <a href="mailto:soporte@telocg.com" class="channel-item email">
-                    <span class="channel-icon">📧</span>
-                    <div class="channel-details">
-                      <strong>Correo Central</strong>
-                      <p>soporte@telocg.com</p>
-                    </div>
-                  </a>
-                  <a href="https://instagram.com/telocorpgroup" target="_blank" class="channel-item instagram">
-                    <span class="channel-icon">📸</span>
-                    <div class="channel-details">
-                      <strong>Instagram</strong>
-                      <p>@telocorpgroup</p>
-                    </div>
-                  </a>
-                  <div class="channel-item address">
-                    <span class="channel-icon">📍</span>
-                    <div class="channel-details">
-                      <strong>Oficinas Centrales</strong>
-                      <p>Santo Domingo, R.D.</p>
-                    </div>
-                  </div>
-                </div>
+              <div class="card channels-card">
+                <h3 class="card__title">Canales Oficiales</h3>
+                <a href="https://wa.me/18099038707" target="_blank" rel="noopener" class="channel-link"><span>💬</span><div><strong>WhatsApp</strong><small>+1 (809) 903-8707</small></div></a>
+                <a href="mailto:soporte@telocg.com" class="channel-link"><span>📧</span><div><strong>Correo</strong><small>soporte@telocg.com</small></div></a>
+                <a href="https://instagram.com/telocorpgroup" target="_blank" rel="noopener" class="channel-link"><span>📸</span><div><strong>Instagram</strong><small>@telocorpgroup</small></div></a>
+                <div class="channel-link"><span>📍</span><div><strong>Oficina</strong><small>Santo Domingo, R.D.</small></div></div>
               </div>
             </div>
           </div>
         </section>
 
-        <!-- VISTA: INTEGRACIONES Y CONECTORES DE SERVICIOS -->
-        <section class="app-view" id="integrations-view">
-          <div class="view-header">
-            <h2>Configuración de Servicios Conectados</h2>
-            <p>Configura las credenciales y webhooks para sincronizar TELOCG en tiempo real con Supabase, Stripe y tus automatizaciones de n8n / Odoo ERP.</p>
+        <!-- MI PERFIL -->
+        <section class="view" id="view-profile">
+          <div class="view__header">
+            <h2>Mi Perfil</h2>
+            <p>Datos personales para agilizar tus solicitudes.</p>
           </div>
-          
-          <div class="integrations-grid">
-            <!-- Columna Izquierda: Configuración de Conectores -->
-            <div class="integrations-settings-panel">
-              
-              <!-- Conector A: Supabase Cloud -->
-              <div class="card panel-card integration-card" id="supabase-connector-card">
-                <div class="integration-card-header">
-                  <div class="integration-title-wrapper">
-                    <span class="integration-icon">🗄️</span>
-                    <h3>Base de Datos Supabase</h3>
-                  </div>
-                  <span class="connection-status-pill disconnected" id="status-supabase">Desconectado</span>
-                </div>
-                <p class="integration-desc">Sincroniza y persiste clientes, transacciones y progresos de aprendizaje en tu base de datos central en la nube.</p>
-                <div class="form-group">
-                  <label>Supabase URL</label>
-                  <input type="text" id="int-supabase-url" placeholder="https://xxxxxxxxxxxxxx.supabase.co" class="integration-input">
-                </div>
-                <div class="form-group">
-                  <label>Supabase Anon Key</label>
-                  <input type="password" id="int-supabase-key" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." class="integration-input">
-                </div>
-                <div style="display: flex; gap: 10px; margin-top: 10px;">
-                  <button class="btn btn-secondary btn-sm" onclick="window.testSupabaseConnection()">Probar Conexión</button>
-                  <button class="btn btn-primary btn-sm" onclick="window.saveSupabaseConfig()">Guardar</button>
-                </div>
+          <div class="profile-layout">
+            <div class="card">
+              <div class="profile-header">
+                <div class="profile-header__avatar" id="profile-avatar">👤</div>
+                <h3 id="profile-display-name">Usuario</h3>
+                <p id="profile-display-email" class="text-muted">Sin registro</p>
               </div>
-
-              <!-- Conector B: Pasarela de Pago Stripe -->
-              <div class="card panel-card integration-card" id="stripe-connector-card">
-                <div class="integration-card-header">
-                  <div class="integration-title-wrapper">
-                    <span class="integration-icon">💳</span>
-                    <h3>Pasarela Stripe (Tarjetas)</h3>
-                  </div>
-                  <div class="switch-container">
-                    <label class="switch">
-                      <input type="checkbox" id="int-stripe-enabled" onchange="window.toggleStripeIntegration()">
-                      <span class="slider round"></span>
-                    </label>
-                  </div>
-                </div>
-                <p class="integration-desc">Habilita pagos reales o sandbox de tarjeta de crédito/débito para TeloSales Store usando Stripe Elements.</p>
-                <div class="form-group">
-                  <label>Stripe Publishable Key (pk_test/...)</label>
-                  <input type="text" id="int-stripe-key" placeholder="pk_test_xxxxxxxxxxxxxxxxxxxxxxxx" class="integration-input">
-                </div>
-                <div class="form-group">
-                  <label>Stripe Webhook URL (n8n Payment Intent)</label>
-                  <input type="text" id="int-stripe-webhook" placeholder="https://n8n.tuconsorcio.com/webhook/stripe-payments" class="integration-input">
-                </div>
-                <div style="display: flex; gap: 10px; margin-top: 10px;">
-                  <button class="btn btn-primary btn-sm" onclick="window.saveStripeConfig()">Guardar</button>
-                </div>
-              </div>
-
-              <!-- Conector C: Orquestador n8n / Webhooks Odoo -->
-              <div class="card panel-card integration-card" id="n8n-connector-card">
-                <div class="integration-card-header">
-                  <div class="integration-title-wrapper">
-                    <span class="integration-icon">⚙️</span>
-                    <h3>Orquestación n8n & Odoo ERP</h3>
-                  </div>
-                  <span class="connection-status-pill active">Webhook Activo</span>
-                </div>
-                <p class="integration-desc">Define los endpoints de automatización de n8n. El orquestador enviará los payloads y los sincronizará en Odoo CRM, Ventas y Facturación.</p>
-                <div class="form-group">
-                  <label>n8n Webhook CRM Leads (Soporte)</label>
-                  <input type="text" id="int-n8n-leads-url" placeholder="https://n8n.tuconsorcio.com/webhook/sales-leads" class="integration-input">
-                </div>
-                <div class="form-group">
-                  <label>n8n Webhook Ventas/Órdenes (TeloSales)</label>
-                  <input type="text" id="int-n8n-orders-url" placeholder="https://n8n.tuconsorcio.com/webhook/telo-orders" class="integration-input">
-                </div>
-                <div class="form-group">
-                  <label>n8n Webhook Reservas de Servicios (Repara/Instala)</label>
-                  <input type="text" id="int-n8n-services-url" placeholder="https://n8n.tuconsorcio.com/webhook/telo-bookings" class="integration-input">
-                </div>
-                <div style="display: flex; gap: 10px; margin-top: 10px;">
-                  <button class="btn btn-primary btn-sm" onclick="window.saveN8NConfig()">Guardar Webhooks</button>
-                </div>
-              </div>
-
-              <!-- Conector D: IA Gemini (TeloAsistente) -->
-              <div class="card panel-card integration-card" id="gemini-connector-card">
-                <div class="integration-card-header">
-                  <div class="integration-title-wrapper">
-                    <span class="integration-icon">🤖</span>
-                    <h3>IA Gemini (TeloAsistente)</h3>
-                  </div>
-                </div>
-                <p class="integration-desc">Ingresa tu API Key de Google AI Studio para habilitar respuestas inteligentes con el modelo Gemini 2.5 Flash en Soporte.</p>
-                <div class="form-group">
-                  <label>Gemini API Key</label>
-                  <input type="password" id="int-gemini-key" placeholder="AIzaSy..." class="integration-input">
-                </div>
-                <div style="display: flex; gap: 10px; margin-top: 10px;">
-                  <button class="btn btn-primary btn-sm" onclick="window.saveGeminiConfig()">Guardar API Key</button>
-                </div>
-              </div>
-
-              <!-- Conector E: Seguridad HMAC -->
-              <div class="card panel-card integration-card" id="hmac-connector-card">
-                <div class="integration-card-header">
-                  <div class="integration-title-wrapper">
-                    <span class="integration-icon">🔒</span>
-                    <h3>Seguridad de Webhooks (HMAC)</h3>
-                  </div>
-                  <div class="switch-container">
-                    <label class="switch">
-                      <input type="checkbox" id="int-hmac-enabled" onchange="window.toggleHMACIntegration()">
-                      <span class="slider round"></span>
-                    </label>
-                  </div>
-                </div>
-                <p class="integration-desc">Firma digitalmente los payloads de los webhooks utilizando SHA-256. El destinatario (ej. n8n) puede verificar la firma usando el header `X-Telo-Signature`.</p>
-                <div class="form-group">
-                  <label>Clave Secreta HMAC (Secret Key)</label>
-                  <input type="password" id="int-hmac-secret" placeholder="Firma secreta para cifrado..." class="integration-input">
-                </div>
-                <div style="display: flex; gap: 10px; margin-top: 10px;">
-                  <button class="btn btn-primary btn-sm" onclick="window.saveHMACConfig()">Guardar Secreto</button>
-                </div>
-              </div>
-
+              <form id="profile-form">
+                <div class="form-group"><label for="profile-name">Nombre Completo</label><input type="text" id="profile-name" class="input-control" required placeholder="Tu nombre"></div>
+                <div class="form-group"><label for="profile-email">Correo Electrónico</label><input type="email" id="profile-email" class="input-control" required placeholder="correo@ejemplo.com"></div>
+                <div class="form-group"><label for="profile-phone">Teléfono / WhatsApp</label><input type="tel" id="profile-phone" class="input-control" placeholder="+1 (809) 000-0000"></div>
+                <div class="form-group"><label for="profile-address">Dirección</label><input type="text" id="profile-address" class="input-control" placeholder="Calle, Número, Sector"></div>
+                <div class="form-group"><label for="profile-city">Ciudad</label><select id="profile-city" class="select-control"><option value="">Selecciona tu ciudad</option><option>Santo Domingo</option><option>Santiago</option><option>La Vega</option><option>Punta Cana</option><option>Puerto Plata</option><option>Moca</option><option>San Pedro de Macorís</option><option>Otra</option></select></div>
+                <button type="submit" class="btn btn--primary btn--full">Guardar Perfil</button>
+              </form>
             </div>
-
-            <!-- Columna Derecha: Consola de Diagnóstico y Pruebas -->
-            <div class="integrations-diagnostic-panel">
-              <div class="card panel-card diagnostic-card">
-                <h3>Consola de Diagnóstico de Red (HTTP Logs)</h3>
-                <p class="integration-desc" style="margin-bottom: 15px;">Dispara solicitudes HTTP POST simuladas o reales y observa la respuesta del servidor en tiempo real. Útil para depurar endpoints de n8n, Supabase y CORS.</p>
-                
-                <div class="diagnostic-actions">
-                  <button class="btn btn-secondary btn-sm" onclick="window.testTriggerLeadWebhook()">Probar Leads</button>
-                  <button class="btn btn-secondary btn-sm" onclick="window.testTriggerOrderWebhook()">Probar Ventas</button>
-                  <button class="btn btn-secondary btn-sm" onclick="window.testTriggerServiceWebhook()">Probar Servicios</button>
-                  <button class="btn btn-secondary btn-sm btn-clear-console" onclick="window.clearDiagnosticConsole()">Limpiar</button>
-                </div>
-
-                <div class="console-wrapper">
-                  <div class="console-header">
-                    <span>TELOCG Debug Console v1.0.0</span>
-                    <span class="console-pulse">● Ready</span>
-                  </div>
-                  <pre class="debug-console" id="debug-console-output">> Esperando interacción... Configura un webhook y haz clic en probar o realiza una acción en la app para registrar llamadas a la red.</pre>
-                </div>
-              </div>
+            <div class="card">
+              <h3 class="card__title">Mis Servicios</h3>
+              <div class="profile-services" id="profile-services"></div>
             </div>
           </div>
+        </section>
 
-          <!-- Consola de Datos Integrados -->
-          <div class="card panel-card database-console-card" style="margin-top: 25px; width: 100%;">
-            <div class="database-console-header">
-              <div class="database-title-wrapper">
-                <span class="database-icon">📊</span>
-                <h3>Consola de Datos Integrados (Base de Datos Local)</h3>
+        <!-- INTEGRACIONES -->
+        <section class="view" id="view-integrations">
+          <div class="view__header">
+            <h2>Integraciones</h2>
+            <p>Conecta la plataforma con Supabase, Stripe, n8n y Gemini para funcionalidad completa.</p>
+          </div>
+          <div class="integrations-layout">
+            <div class="integrations__settings">
+              <div class="card integration-card">
+                <div class="integration-card__header"><span>🗄️</span><h3>Supabase (Base de Datos)</h3><span class="status-pill" id="status-supabase">Desconectado</span></div>
+                <p class="text-muted">Persiste clientes, transacciones y progreso educativo en la nube.</p>
+                <div class="form-group"><label for="int-sb-url">URL</label><input type="url" id="int-sb-url" class="input-control" placeholder="https://xxx.supabase.co"></div>
+                <div class="form-group"><label for="int-sb-key">Anon Key</label><input type="password" id="int-sb-key" class="input-control" placeholder="eyJhbG..."></div>
+                <div class="btn-row"><button class="btn btn--ghost btn--sm" id="btn-test-sb">Probar</button><button class="btn btn--primary btn--sm" id="btn-save-sb">Guardar</button></div>
               </div>
-              <div class="database-actions">
-                <button class="btn btn-secondary btn-sm" onclick="window.refreshDatabaseConsole()">Actualizar</button>
-                <button class="btn btn-secondary btn-sm" onclick="window.clearDatabaseConsole()">Limpiar Registros</button>
+              <div class="card integration-card">
+                <div class="integration-card__header"><span>💳</span><h3>Stripe (Pagos)</h3><label class="toggle"><input type="checkbox" id="int-stripe-on"><span class="toggle__slider"></span></label></div>
+                <p class="text-muted">Procesa pagos con tarjeta para TeloSales.</p>
+                <div class="form-group"><label for="int-stripe-pk">Publishable Key</label><input type="text" id="int-stripe-pk" class="input-control" placeholder="pk_test_..."></div>
+                <div class="form-group"><label for="int-stripe-wh">Webhook URL</label><input type="url" id="int-stripe-wh" class="input-control" placeholder="https://n8n.../webhook/stripe"></div>
+                <div class="btn-row"><button class="btn btn--primary btn--sm" id="btn-save-stripe">Guardar</button></div>
               </div>
-            </div>
-            <p class="integration-desc" style="margin-bottom: 20px;">Monitorea en tiempo real los datos capturados y persistidos en las bases de datos de todos los servicios del clúster.</p>
-            
-            <div class="tabs-database">
-              <button class="tab-db-btn active" id="btn-db-sales" onclick="window.switchDbTab('tab-db-sales')">🛒 TeloSales (Ventas)</button>
-              <button class="tab-db-btn" id="btn-db-bookings" onclick="window.switchDbTab('tab-db-bookings')">🔧 TeloRepara / Instala (Reservas)</button>
-              <button class="tab-db-btn" id="btn-db-educa" onclick="window.switchDbTab('tab-db-educa')">🎓 TeloEduca (Progreso)</button>
-              <button class="tab-db-btn" id="btn-db-leads" onclick="window.switchDbTab('tab-db-leads')">🎧 Soporte (Leads)</button>
-            </div>
-
-            <div class="tab-db-content active" id="tab-db-sales">
-              <div class="table-responsive">
-                <table class="db-table">
-                  <thead>
-                    <tr>
-                      <th>ID Orden</th>
-                      <th>Cliente</th>
-                      <th>Productos</th>
-                      <th>Total</th>
-                      <th>Método</th>
-                      <th>Fecha/Hora</th>
-                      <th>Estado Webhook</th>
-                    </tr>
-                  </thead>
-                  <tbody id="db-sales-tbody">
-                    <tr>
-                      <td colspan="7" class="empty-db-row">No hay transacciones registradas.</td>
-                    </tr>
-                  </tbody>
-                </table>
+              <div class="card integration-card">
+                <div class="integration-card__header"><span>⚙️</span><h3>n8n / Odoo ERP</h3><span class="status-pill status-pill--active">Activo</span></div>
+                <p class="text-muted">Webhooks para CRM, ventas y reservas de servicios.</p>
+                <div class="form-group"><label for="int-n8n-leads">Webhook CRM Leads</label><input type="url" id="int-n8n-leads" class="input-control" placeholder="https://n8n.../webhook/leads"></div>
+                <div class="form-group"><label for="int-n8n-orders">Webhook Ventas</label><input type="url" id="int-n8n-orders" class="input-control" placeholder="https://n8n.../webhook/orders"></div>
+                <div class="form-group"><label for="int-n8n-services">Webhook Servicios</label><input type="url" id="int-n8n-services" class="input-control" placeholder="https://n8n.../webhook/bookings"></div>
+                <div class="btn-row"><button class="btn btn--primary btn--sm" id="btn-save-n8n">Guardar</button></div>
               </div>
-            </div>
-
-            <div class="tab-db-content" id="tab-db-bookings">
-              <div class="table-responsive">
-                <table class="db-table">
-                  <thead>
-                    <tr>
-                      <th>ID Reserva</th>
-                      <th>Servicio</th>
-                      <th>Cliente</th>
-                      <th>Fecha</th>
-                      <th>Hora</th>
-                      <th>Detalles</th>
-                      <th>Fecha/Hora</th>
-                      <th>Estado Webhook</th>
-                    </tr>
-                  </thead>
-                  <tbody id="db-bookings-tbody">
-                    <tr>
-                      <td colspan="8" class="empty-db-row">No hay servicios agendados.</td>
-                    </tr>
-                  </tbody>
-                </table>
+              <div class="card integration-card">
+                <div class="integration-card__header"><span>🤖</span><h3>Gemini IA</h3></div>
+                <p class="text-muted">API Key para TeloAsistente con Gemini 2.5 Flash.</p>
+                <div class="form-group"><label for="int-gemini">API Key</label><input type="password" id="int-gemini" class="input-control" placeholder="AIzaSy..."></div>
+                <div class="btn-row"><button class="btn btn--primary btn--sm" id="btn-save-gemini">Guardar</button></div>
+              </div>
+              <div class="card integration-card">
+                <div class="integration-card__header"><span>🔒</span><h3>HMAC (Seguridad)</h3><label class="toggle"><input type="checkbox" id="int-hmac-on"><span class="toggle__slider"></span></label></div>
+                <p class="text-muted">Firma SHA-256 para webhooks salientes.</p>
+                <div class="form-group"><label for="int-hmac-secret">Clave Secreta</label><input type="password" id="int-hmac-secret" class="input-control" placeholder="Secreto HMAC..."></div>
+                <div class="btn-row"><button class="btn btn--primary btn--sm" id="btn-save-hmac">Guardar</button></div>
               </div>
             </div>
-
-            <div class="tab-db-content" id="tab-db-educa">
-              <div class="table-responsive">
-                <table class="db-table">
-                  <thead>
-                    <tr>
-                      <th>ID Progreso</th>
-                      <th>Curso</th>
-                      <th>Estudiante</th>
-                      <th>Módulo</th>
-                      <th>Estado</th>
-                      <th>Fecha/Hora</th>
-                    </tr>
-                  </thead>
-                  <tbody id="db-educa-tbody">
-                    <tr>
-                      <td colspan="6" class="empty-db-row">No hay progresos registrados.</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <div class="tab-db-content" id="tab-db-leads">
-              <div class="table-responsive">
-                <table class="db-table">
-                  <thead>
-                    <tr>
-                      <th>ID Lead</th>
-                      <th>Nombre</th>
-                      <th>Email</th>
-                      <th>Asunto</th>
-                      <th>Mensaje</th>
-                      <th>Fecha/Hora</th>
-                      <th>Estado Webhook</th>
-                    </tr>
-                  </thead>
-                  <tbody id="db-leads-tbody">
-                    <tr>
-                      <td colspan="7" class="empty-db-row">No hay leads ingresados.</td>
-                    </tr>
-                  </tbody>
-                </table>
+            <div class="integrations__console">
+              <div class="card">
+                <h3 class="card__title">Consola de Diagnóstico</h3>
+                <div class="btn-row"><button class="btn btn--ghost btn--sm" id="btn-test-leads">Probar Leads</button><button class="btn btn--ghost btn--sm" id="btn-test-orders">Probar Ventas</button><button class="btn btn--ghost btn--sm" id="btn-test-services">Probar Servicios</button><button class="btn btn--ghost btn--sm" id="btn-clear-console">Limpiar</button></div>
+                <pre class="debug-console" id="debug-console">&gt; Esperando interacción...</pre>
               </div>
             </div>
           </div>
         </section>
 
-      </div>
+      </div><!-- /views -->
     </main>
 
-    <!-- Barra de Navegación Inferior (Mobile Only) -->
-    <nav class="bottom-nav">
-      <button class="nav-item active" data-target="home-view">
-        <span class="nav-icon">🏠</span>
-        <span class="nav-label">Inicio</span>
-      </button>
-      <button class="nav-item" data-target="sales-view">
-        <span class="nav-icon">🛒</span>
-        <span class="nav-label">Sales</span>
-      </button>
-      <button class="nav-item" data-target="lleva-view">
-        <span class="nav-icon">📦</span>
-        <span class="nav-label">Lleva</span>
-      </button>
-      <button class="nav-item" data-target="repara-view">
-        <span class="nav-icon">🔧</span>
-        <span class="nav-label">Repara</span>
-      </button>
-      <button class="nav-item" data-target="instala-view">
-        <span class="nav-icon">🛠️</span>
-        <span class="nav-label">Instala</span>
-      </button>
-      <button class="nav-item" id="bottom-nav-menu-btn" onclick="window.toggleMobileMenu(); return false;">
-        <span class="nav-icon">☰</span>
-        <span class="nav-label">Menú</span>
-      </button>
-      <button class="nav-item" id="nav-integrations-item-mobile" data-target="integrations-view" style="display: none;">
-        <span class="nav-icon">🔌</span>
-        <span class="nav-label">Integras.</span>
-      </button>
+    <!-- Bottom Navigation (Mobile) -->
+    <nav class="bottom-nav" id="bottom-nav" aria-label="Navegación móvil">
+      <button class="bottom-nav__item active" data-view="home" aria-label="Inicio"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg><span>Inicio</span></button>
+      <button class="bottom-nav__item" data-view="sales" aria-label="TeloSales"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg><span>Sales</span></button>
+      <button class="bottom-nav__item" data-view="lleva" aria-label="TeloLleva"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg><span>Lleva</span></button>
+      <button class="bottom-nav__item" data-view="educa" aria-label="TeloEduca"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg><span>Educa</span></button>
+      <button class="bottom-nav__item" id="bottom-nav-more" aria-label="Más opciones"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg><span>Más</span></button>
     </nav>
-  </div>
+  </div><!-- /app -->
 
-  <!-- Cajón del Carrito de Compras -->
-  <div class="cart-overlay" id="cart-overlay"></div>
-  <aside class="cart-drawer" id="cart-drawer">
-    <div class="cart-header">
-      <h3>Tu Carrito</h3>
-      <button class="close-cart" onclick="window.toggleCart()">×</button>
-    </div>
-    <div class="cart-items" id="cart-items-container">
-      <!-- Items por JS -->
-    </div>
-    <!-- Formulario de Tarjeta de Crédito (Stripe) -->
-    <div id="stripe-checkout-form-container" style="display: none; padding: 15px; border-top: 1px solid var(--border-color); background: rgba(255,255,255,0.02);">
-      <h4 style="margin-bottom: 10px; color: var(--color-sales); font-size: 0.95rem; display: flex; align-items: center; gap: 6px;">
-        <span>💳</span> Información de Pago (Stripe Elements)
-      </h4>
-      <div class="form-group" style="margin-bottom: 8px;">
-        <label style="font-size: 0.75rem; color: var(--text-muted);">Nombre en la Tarjeta</label>
-        <input type="text" id="stripe-card-name" placeholder="Ej. Juan Pérez" style="padding: 6px 10px; font-size: 0.85rem; width: 100%; box-sizing: border-box; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-color); border-radius: 4px;">
-      </div>
-      <div class="form-group" style="margin-bottom: 8px;">
-        <label style="font-size: 0.75rem; color: var(--text-muted);">Número de Tarjeta</label>
-        <div style="position: relative;">
-          <input type="text" id="stripe-card-number" placeholder="4242 4242 4242 4242" maxlength="19" style="padding: 6px 10px; font-size: 0.85rem; width: 100%; box-sizing: border-box; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-color); border-radius: 4px; padding-right: 30px;">
-          <span style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); font-size: 1rem; opacity: 0.7;">💳</span>
-        </div>
-      </div>
-      <div style="display: flex; gap: 10px;">
-        <div class="form-group" style="flex: 1; margin-bottom: 0;">
-          <label style="font-size: 0.75rem; color: var(--text-muted);">Vencimiento</label>
-          <input type="text" id="stripe-card-expiry" placeholder="MM/AA" maxlength="5" style="padding: 6px 10px; font-size: 0.85rem; width: 100%; box-sizing: border-box; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-color); border-radius: 4px;">
-        </div>
-        <div class="form-group" style="flex: 1; margin-bottom: 0;">
-          <label style="font-size: 0.75rem; color: var(--text-muted);">CVC</label>
-          <input type="text" id="stripe-card-cvc" placeholder="123" maxlength="4" style="padding: 6px 10px; font-size: 0.85rem; width: 100%; box-sizing: border-box; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-color); border-radius: 4px;">
-        </div>
-      </div>
-    </div>
-    <div class="cart-footer">
-      <!-- Fila de Cupón de Descuento -->
-      <div class="cart-coupon-row" style="margin-bottom: 12px; display: flex; gap: 8px; border-top: 1px solid var(--border-color); padding-top: 12px;">
-        <input type="text" id="cart-coupon-input" placeholder="Código de Cupón" style="flex: 1; padding: 6px 10px; font-size: 0.8rem; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-color); border-radius: 4px; outline: none; text-transform: uppercase;">
-        <button class="btn btn-secondary btn-sm" onclick="window.applyCartCoupon()" style="padding: 6px 12px; font-size: 0.8rem;">Aplicar</button>
-      </div>
-      <div id="cart-coupon-discount-row" style="display: none; justify-content: space-between; font-size: 0.85rem; color: var(--color-success); margin-bottom: 8px;">
-        <span>Descuento aplicado:</span>
-        <strong id="cart-coupon-discount-value">-RD$ 0.00</strong>
-      </div>
-      <div class="cart-total-row">
-        <span>Total:</span>
-        <strong id="cart-total-price">RD$ 0.00</strong>
-      </div>
-      <button class="btn btn-primary w-100" onclick="window.checkoutCart()">Procesar Pedido</button>
+  <!-- OVERLAYS -->
+  <!-- Cart Drawer -->
+  <div class="drawer-overlay" id="cart-overlay"></div>
+  <aside class="drawer drawer--right" id="cart-drawer" aria-label="Carrito de compras">
+    <div class="drawer__header"><h3>Carrito</h3><button class="drawer__close" id="cart-close" aria-label="Cerrar">×</button></div>
+    <div class="drawer__body" id="cart-items"></div>
+    <div class="drawer__footer">
+      <div class="coupon-row"><input type="text" id="coupon-input" class="input-control input-control--sm" placeholder="Código de cupón"><button class="btn btn--ghost btn--sm" id="btn-coupon">Aplicar</button></div>
+      <div class="cart-total"><span>Total:</span><strong id="cart-total">RD$ 0</strong></div>
+      <button class="btn btn--primary btn--full" id="btn-checkout">Procesar Pedido</button>
     </div>
   </aside>
 
-  <!-- Cajón de la Lista de Deseos (Wishlist) -->
-  <div class="wishlist-overlay" id="wishlist-overlay" onclick="window.toggleWishlist()"></div>
-  <aside class="wishlist-drawer" id="wishlist-drawer">
-    <div class="wishlist-header">
-      <h3>Mis Favoritos ❤️</h3>
-      <button class="close-wishlist" onclick="window.toggleWishlist()">×</button>
-    </div>
-    <div class="wishlist-items" id="wishlist-items-container">
-      <!-- Items de wishlist por JS -->
-    </div>
+  <!-- Wishlist Drawer -->
+  <div class="drawer-overlay" id="wishlist-overlay"></div>
+  <aside class="drawer drawer--right" id="wishlist-drawer" aria-label="Favoritos">
+    <div class="drawer__header"><h3>Favoritos ❤️</h3><button class="drawer__close" id="wishlist-close" aria-label="Cerrar">×</button></div>
+    <div class="drawer__body" id="wishlist-items"></div>
   </aside>
 
-  <!-- Contenedor de Notificaciones (Toasts) -->
-  <div class="toast-container" id="toast-container"></div>
-
-  <!-- Modal Detallado de Producto (TeloSales) -->
-  <div class="product-modal-overlay" id="product-modal-overlay" onclick="window.closeProductModal()"></div>
-  <div class="product-modal" id="product-modal">
-    <button class="close-modal" onclick="window.closeProductModal()">×</button>
-    <div class="product-modal-content">
-      <!-- Izquierda: Imágenes y Especificaciones -->
-      <div class="product-modal-left">
-        <div class="modal-gallery">
-          <div class="modal-main-image" id="modal-product-image-container">
-            <!-- Imagen Principal -->
-          </div>
-          <div class="modal-gallery-thumbs" id="modal-product-thumbs">
-            <!-- Miniaturas -->
-          </div>
-        </div>
-        <div class="modal-specs">
-          <h3>Ficha Técnica</h3>
-          <table class="specs-table" id="modal-product-specs">
-            <!-- Tabla de especificaciones -->
-          </table>
-        </div>
-      </div>
-      
-      <!-- Derecha: Compra, Info y Opiniones -->
-      <div class="product-modal-right">
-        <div class="modal-seller-badge">Vendido por TeloSales Central ✓</div>
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-top: 4px;">
-          <h2 id="modal-product-title" style="margin: 0; font-size: 1.35rem; line-height: 1.2;">Título del Producto</h2>
-          <button id="modal-wishlist-btn" onclick="window.toggleModalProductWishlist()" style="background: transparent; border: none; font-size: 1.8rem; cursor: pointer; padding: 0; transition: transform 0.2s; outline: none;" title="Añadir a favoritos">🤍</button>
-        </div>
-        <div class="modal-rating-row">
-          <span class="stars-display" id="modal-product-stars">★★★★★</span>
-          <span class="reviews-count" id="modal-product-reviews-count">(0 reseñas)</span>
-        </div>
-        <div class="modal-price" id="modal-product-price">RD$ 0.00</div>
-        
-        <p class="modal-description" id="modal-product-description">Descripción detallada del producto.</p>
-        
-        <div class="modal-purchase-actions">
-          <div class="quantity-selector">
-            <button onclick="window.adjustModalQuantity(-1)">-</button>
-            <span id="modal-quantity">1</span>
-            <button onclick="window.adjustModalQuantity(1)">+</button>
-          </div>
-          <button class="btn btn-primary flex-1" id="modal-add-btn" onclick="window.addModalProductToCart()">Añadir al Carrito</button>
-        </div>
-        
-        <div class="modal-reviews-section">
-          <h3>Opiniones de Compradores</h3>
-          <div class="reviews-list" id="modal-product-reviews-list">
-            <!-- Reseñas -->
-          </div>
-          <!-- Formulario de Reseña -->
-          <div class="add-review-form">
-            <h4>Escribe tu opinión</h4>
-            <div class="rating-input">
-              <span>Tu calificación:</span>
-              <div class="stars-rate">
-                <input type="radio" id="star5" name="rate" value="5" checked><label for="star5">★</label>
-                <input type="radio" id="star4" name="rate" value="4"><label for="star4">★</label>
-                <input type="radio" id="star3" name="rate" value="3"><label for="star3">★</label>
-                <input type="radio" id="star2" name="rate" value="2"><label for="star2">★</label>
-                <input type="radio" id="star1" name="rate" value="1"><label for="star1">★</label>
-              </div>
-            </div>
-            <textarea id="review-comment-input" rows="2" placeholder="Cuéntanos tu experiencia con este producto..."></textarea>
-            <button class="btn btn-secondary btn-sm" onclick="window.submitProductReview()">Enviar Reseña</button>
-          </div>
-        </div>
-      </div>
-    </div>
+  <!-- Product Modal -->
+  <div class="modal-overlay" id="product-modal-overlay"></div>
+  <div class="modal modal--lg" id="product-modal" role="dialog" aria-modal="true" aria-label="Detalle de producto">
+    <button class="modal__close" id="product-modal-close" aria-label="Cerrar">×</button>
+    <div class="modal__body" id="product-modal-body"></div>
   </div>
 
-  <!-- Modal de Quiz de TeloEduca -->
-  <div class="certificate-modal-overlay" id="quiz-modal-overlay" onclick="window.closeQuizModal()"></div>
-  <div class="certificate-modal" id="quiz-modal" style="max-width: 500px; padding: 30px; border: 1px solid var(--color-educa);">
-    <button class="close-modal" onclick="window.closeQuizModal()">×</button>
-    <h3 style="color: var(--color-educa); margin-top: 0; display: flex; align-items: center; gap: 8px; font-size: 1.25rem;">
-      <span>📝</span> Examen de Certificación
-    </h3>
-    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px; line-height: 1.4;">Responde correctamente las siguientes preguntas basadas en el temario del curso para desbloquear tu certificado oficial.</p>
-    
-    <div id="quiz-questions-container" style="display: flex; flex-direction: column; gap: 20px; text-align: left;">
-      <!-- Inyectado por JS -->
-    </div>
-    
-    <div style="margin-top: 24px; display: flex; gap: 10px; justify-content: flex-end;">
-      <button class="btn btn-secondary btn-sm" onclick="window.closeQuizModal()">Cancelar</button>
-      <button class="btn btn-primary btn-sm" onclick="window.submitCourseQuiz()">Enviar Respuestas</button>
-    </div>
+  <!-- Certificate Modal -->
+  <div class="modal-overlay" id="cert-modal-overlay"></div>
+  <div class="modal" id="cert-modal" role="dialog" aria-modal="true" aria-label="Certificado">
+    <button class="modal__close" id="cert-modal-close" aria-label="Cerrar">×</button>
+    <div class="modal__body" id="cert-modal-body"></div>
   </div>
 
-  <!-- Modal de Certificado de TeloEduca -->
-  <div class="certificate-modal-overlay" id="certificate-modal-overlay" onclick="window.closeCertificateModal()"></div>
-  <div class="certificate-modal" id="certificate-modal">
-    <button class="close-modal no-print" onclick="window.closeCertificateModal()">×</button>
-    <div class="certificate-container" id="certificate-print-area">
-      <div class="cert-border-outer">
-        <div class="cert-border-inner">
-          <div class="cert-header">
-            <span class="cert-brand">TeloEduca</span>
-            <div class="cert-logo-seal">🎓</div>
-          </div>
-          <h1 class="cert-title">CERTIFICADO DE FINALIZACIÓN</h1>
-          <p class="cert-subtitle">Otorgado con orgullo a</p>
-          
-          <h2 class="cert-recipient-name" id="cert-student-name">Nombre del Alumno</h2>
-          
-          <p class="cert-text">Por haber completado con éxito y de manera sobresaliente el taller de formación profesional de:</p>
-          <h3 class="cert-course-name" id="cert-course-name">Excel Avanzado para Negocios</h3>
-          
-          <p class="cert-duration">Con una duración total acreditada de <span id="cert-course-hours">40 horas académicas</span>.</p>
-          
-          <div class="cert-footer-details">
-            <div class="cert-signature-box">
-              <div class="signature-line"></div>
-              <span>Dirección Académica</span>
-              <small>TeloEduca Central</small>
-            </div>
-            <div class="cert-seal-box">
-              <div class="gold-seal">★ CERTIFIED ★</div>
-            </div>
-            <div class="cert-signature-box">
-              <div class="signature-line"></div>
-              <span>Dirección del Clúster</span>
-              <small>Telo’ Corp Group</small>
-            </div>
-          </div>
-          
-          <div class="cert-meta">
-            <span>ID de Credencial: <code id="cert-credential-id">TE-123456</code></span>
-            <span>Fecha de emisión: <strong id="cert-emission-date">31 de Mayo, 2026</strong></span>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="certificate-modal-actions no-print">
-      <button class="btn btn-primary" onclick="window.printCertificate()">🖨️ Imprimir / Guardar como PDF</button>
-      <button class="btn btn-secondary" onclick="window.closeCertificateModal()">Cerrar Ventana</button>
-    </div>
+  <!-- Toast Container -->
+  <div class="toast-container" id="toasts" aria-live="polite"></div>
+
+  <!-- Chat Widget -->
+  <div class="chat-widget" id="chat-widget" hidden>
+    <div class="chat-widget__header"><h4>TeloAsistente</h4><button class="chat-widget__close" id="chat-close">×</button></div>
+    <div class="chat-widget__messages" id="chat-messages"></div>
+    <div class="chat-widget__input"><input type="text" id="chat-input" placeholder="Escribe tu pregunta..."><button class="btn btn--primary btn--icon" id="chat-send">➤</button></div>
   </div>
-
-  <div class="sidebar-overlay" onclick="window.closeMobileMenu()"></div>
-
-  <!-- ====================================================
-       TELOASISTENTE IA - WIDGET FLOTANTE GLOBAL
-       Visible en TODA la app, toggle desde topbar
-  ===================================================== -->
-  <div id="telo-chat-widget" class="telo-chat-widget" aria-label="TeloAsistente IA" role="dialog" aria-hidden="true">
-    <!-- Header del Widget -->
-    <div class="telo-chat-widget-header">
-      <div class="telo-chat-widget-identity">
-        <div class="telo-chat-widget-avatar">
-          <img src="assets/telocorpgroup-mark.png" alt="TeloAsistente" onerror="this.style.display='none'; this.parentNode.innerHTML='🤖';">
-          <span class="telo-chat-online-dot"></span>
-        </div>
-        <div class="telo-chat-widget-info">
-          <h4>TeloAsistente IA</h4>
-          <small id="telo-chatbot-status">En línea · Responde al instante</small>
-        </div>
-      </div>
-      <div class="telo-chat-widget-controls">
-        <button class="telo-chat-ctrl-btn" onclick="window.clearChatWidget()" title="Limpiar chat" aria-label="Limpiar chat">
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 .49-3.88"></path></svg>
-        </button>
-        <button class="telo-chat-ctrl-btn telo-chat-close-btn" onclick="window.toggleChatWidget()" title="Cerrar" aria-label="Cerrar chat">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-        </button>
-      </div>
-    </div>
-
-    <!-- Área de Mensajes -->
-    <div class="telo-chat-widget-messages" id="telo-chatbot-messages">
-      <div class="chat-msg bot-msg">
-        <div class="msg-bubble">
-          ¡Hola! 👋 Soy <strong>TeloAsistente</strong>, el agente inteligente de <strong>Telo’ Corp Group</strong>.<br><br>
-          Puedo ayudarte con información de nuestros servicios, productos del catálogo, precios, cobertura y más. ¿En qué te asesoro hoy?
-        </div>
-      </div>
-    </div>
-
-    <!-- Quick Replies -->
-    <div class="telo-chat-quick-replies" id="telo-chat-quick-replies">
-      <button class="quick-reply-btn" onclick="window.sendQuickReply('¿Qué servicios ofrecen?')">¿Qué ofrecen?</button>
-      <button class="quick-reply-btn" onclick="window.sendQuickReply('¿Tienen productos en stock?')">Ver catálogo</button>
-      <button class="quick-reply-btn" onclick="window.sendQuickReply('¿Cuánto cuesta un envío?')">Tarifas envíos</button>
-      <button class="quick-reply-btn" onclick="window.sendQuickReply('¿Cómo contacto a soporte?')">Contacto</button>
-    </div>
-
-    <!-- Input de Mensaje -->
-    <div class="telo-chat-widget-input">
-      <input
-        type="text"
-        id="telo-chatbot-input"
-        placeholder="Escríbeme algo..."
-        onkeypress="window.handleChatbotKeyPress(event)"
-        autocomplete="off"
-      >
-      <button class="telo-chat-send-btn" onclick="window.sendChatbotMessage()" title="Enviar" aria-label="Enviar mensaje">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-      </button>
-    </div>
-  </div>
-
-  <!-- Backdrop semitransparente en móvil cuando el chat está abierto -->
-  <div id="telo-chat-backdrop" class="telo-chat-backdrop" onclick="window.toggleChatWidget()"></div>
 
   <script src="script.js"></script>
 </body>
