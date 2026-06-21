@@ -65,6 +65,7 @@ const BackendService = {
 const State = {
   cart: [],
   wishlist: [],
+  coupon: null,
   completedClasses: [],
   classNotes: {},
   userProfile: { name: '', email: '', phone: '', address: '', city: '' },
@@ -114,16 +115,53 @@ const products = [
   { id: 'ts-121', title: 'Ficha Técnica BH96 Sonido 3D', category: 'audio', price: 1200, image: 'TeloCorp/images/image22.png', description: 'Documentación del sistema de altavoz de doble cámara 13mm.', specs: { Altavoz: '13mm doble cámara', Tecnología: 'Estéreo 3D', Frecuencia: '20Hz-20kHz' }, rating: 5, reviews: [{ user: 'Pedro S.', rating: 5, date: '18 May 2026', text: 'Se adapta perfectamente a lo descrito.' }] },
 ];
 
+// Enriquecer catálogo con metadata de e-commerce (descuentos, stock, envío, ventas)
+(function enrichProducts() {
+  let seed = 7;
+  const rng = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff; };
+  products.forEach((p, i) => {
+    // ~40% de productos con descuento
+    if (rng() < 0.4) {
+      const pct = [10, 15, 20, 25, 30][Math.floor(rng() * 5)];
+      p.discount = pct;
+      p.compareAtPrice = Math.round(p.price / (1 - pct / 100) / 10) * 10;
+    }
+    p.stock = Math.floor(rng() * 40) + 3;          // 3 a 42 unidades
+    p.sold = Math.floor(rng() * 500) + 12;          // vendidos
+    p.freeShipping = p.price >= 1000;               // envío gratis sobre RD$1000
+    p.featured = i < 4;
+    p.badge = p.discount ? `-${p.discount}%` : (p.featured ? 'Destacado' : (p.sold > 300 ? 'Más vendido' : null));
+  });
+})();
+
+const FREE_SHIPPING_THRESHOLD = 1500;
+const SHIPPING_COST = 250;
+
 // ═══════════════════════════════════════════════════════════════
 // COURSES DATABASE
 // ═══════════════════════════════════════════════════════════════
 
 const courses = [
-  { id: 'excel-avanzado', title: 'Excel Avanzado para Negocios', icon: '📊', path: 'business', duration: '12h', lessons: ['Interfaz y Atajos', 'Fórmulas Básicas', 'Fórmulas Avanzadas', 'Tablas Dinámicas', 'Gráficos Profesionales', 'Macros Básicas'] },
-  { id: 'prompts-ia', title: 'Ingeniería de Prompts e IA', icon: '🤖', path: 'tech', duration: '8h', lessons: ['¿Qué es un LLM?', 'Anatomía del Prompt', 'Técnicas Avanzadas', 'Agentes y Automatización', 'Casos Prácticos'] },
-  { id: 'ingles-callcenter', title: 'Inglés Técnico para Call Center', icon: '🗣️', path: 'languages', duration: '20h', lessons: ['Greetings & Intro', 'Handling Complaints', 'Technical Vocabulary', 'Email Communication', 'Role Play Scenarios', 'Assessment Final'] },
-  { id: 'ecommerce-101', title: 'E-Commerce desde Cero', icon: '🛒', path: 'business', duration: '10h', lessons: ['Modelo de Negocio', 'Plataformas', 'Gestión de Inventario', 'Marketing Digital', 'Logística y Envíos'] },
-  { id: 'python-basico', title: 'Python para Automatización', icon: '🐍', path: 'tech', duration: '15h', lessons: ['Instalación y Entorno', 'Variables y Tipos', 'Estructuras de Control', 'Funciones', 'Archivos y APIs', 'Proyecto Final'] },
+  { id: 'excel-avanzado', title: 'Excel Avanzado para Negocios', icon: '📊', path: 'business', duration: '12h', level: 'Intermedio', instructor: 'Lic. María Tavárez', students: 1240, rating: 4.8, lessons: ['Interfaz y Atajos', 'Fórmulas Básicas', 'Fórmulas Avanzadas', 'Tablas Dinámicas', 'Gráficos Profesionales', 'Macros Básicas'], quiz: [
+    { q: '¿Con qué símbolo inicia toda fórmula en Excel?', options: ['+', '=', '@', '#'], correct: 1 },
+    { q: '¿Qué función suma un rango de celdas?', options: ['CONTAR', 'PROMEDIO', 'SUMA', 'SI'], correct: 2 },
+    { q: '¿Qué herramienta resume grandes volúmenes de datos?', options: ['Tabla Dinámica', 'Filtro', 'Formato', 'Macro'], correct: 0 } ] },
+  { id: 'prompts-ia', title: 'Ingeniería de Prompts e IA', icon: '🤖', path: 'tech', duration: '8h', level: 'Básico', instructor: 'Ing. Balmis Reynoso', students: 2105, rating: 4.9, lessons: ['¿Qué es un LLM?', 'Anatomía del Prompt', 'Técnicas Avanzadas', 'Agentes y Automatización', 'Casos Prácticos'], quiz: [
+    { q: '¿Qué significa LLM?', options: ['Large Language Model', 'Local Logic Machine', 'Linked List Memory', 'Low Latency Model'], correct: 0 },
+    { q: 'Un buen prompt debe ser:', options: ['Vago', 'Claro y específico', 'Muy corto siempre', 'En mayúsculas'], correct: 1 },
+    { q: '¿Qué da contexto al modelo?', options: ['El color', 'Los ejemplos (few-shot)', 'La fuente', 'El idioma'], correct: 1 } ] },
+  { id: 'ingles-callcenter', title: 'Inglés Técnico para Call Center', icon: '🗣️', path: 'languages', duration: '20h', level: 'Intermedio', instructor: 'Prof. John Smith', students: 980, rating: 4.7, lessons: ['Greetings & Intro', 'Handling Complaints', 'Technical Vocabulary', 'Email Communication', 'Role Play Scenarios', 'Assessment Final'], quiz: [
+    { q: 'Best greeting for a customer call?', options: ['What do you want?', 'Hello, how may I help you?', 'Yes?', 'Talk.'], correct: 1 },
+    { q: '"I apologize for the inconvenience" is used to:', options: ['Greet', 'Apologize', 'End call', 'Sell'], correct: 1 },
+    { q: 'A "ticket" in support refers to:', options: ['A movie pass', 'A service request record', 'A payment', 'A coupon'], correct: 1 } ] },
+  { id: 'ecommerce-101', title: 'E-Commerce desde Cero', icon: '🛒', path: 'business', duration: '10h', level: 'Básico', instructor: 'Lic. Luis M. Herrera', students: 1560, rating: 4.6, lessons: ['Modelo de Negocio', 'Plataformas', 'Gestión de Inventario', 'Marketing Digital', 'Logística y Envíos'], quiz: [
+    { q: '¿Qué es un "carrito abandonado"?', options: ['Un error técnico', 'Compra no finalizada', 'Producto agotado', 'Un descuento'], correct: 1 },
+    { q: 'KPI clave de conversión:', options: ['Likes', 'Tasa de conversión', 'Seguidores', 'Comentarios'], correct: 1 },
+    { q: 'El "fulfillment" se refiere a:', options: ['Marketing', 'Cumplimiento/entrega de pedidos', 'Diseño web', 'Pagos'], correct: 1 } ] },
+  { id: 'python-basico', title: 'Python para Automatización', icon: '🐍', path: 'tech', duration: '15h', level: 'Básico', instructor: 'Ing. Balmis Reynoso', students: 1820, rating: 4.8, lessons: ['Instalación y Entorno', 'Variables y Tipos', 'Estructuras de Control', 'Funciones', 'Archivos y APIs', 'Proyecto Final'], quiz: [
+    { q: '¿Cómo se define una función en Python?', options: ['function()', 'def nombre():', 'func nombre', 'define()'], correct: 1 },
+    { q: 'Tipo de dato para texto:', options: ['int', 'str', 'bool', 'list'], correct: 1 },
+    { q: '¿Qué estructura repite código?', options: ['if', 'for', 'def', 'import'], correct: 1 } ] },
 ];
 
 // ═══════════════════════════════════════════════════════════════
@@ -199,52 +237,110 @@ function renderProducts() {
   else if (currentSort === 'price-desc') filtered.sort((a, b) => b.price - a.price);
   else if (currentSort === 'rating-desc') filtered.sort((a, b) => b.rating - a.rating);
 
+  if (filtered.length === 0) {
+    grid.innerHTML = '<p class="empty-state">No se encontraron productos. Prueba con otra búsqueda o categoría.</p>';
+    return;
+  }
+
   grid.innerHTML = filtered.map(p => `
     <article class="product-card" data-id="${p.id}" tabindex="0" role="button" aria-label="${p.title}">
-      <div class="product-card__image"><img src="${p.image}" alt="${p.title}" loading="lazy"></div>
+      <div class="product-card__image">
+        ${p.badge ? `<span class="product-badge ${p.discount ? 'product-badge--sale' : ''}">${p.badge}</span>` : ''}
+        <button class="product-card__wish ${State.wishlist.includes(p.id) ? 'active' : ''}" data-wish="${p.id}" aria-label="Favorito" title="Añadir a favoritos">${State.wishlist.includes(p.id) ? '❤️' : '🤍'}</button>
+        <img src="${p.image}" alt="${p.title}" loading="lazy">
+        ${p.freeShipping ? '<span class="product-card__shipping">🚚 Envío gratis</span>' : ''}
+      </div>
       <div class="product-card__body">
         <h4 class="product-card__title">${p.title}</h4>
-        <div class="product-card__rating">★ ${p.rating} · ${p.reviews.length} reseña${p.reviews.length > 1 ? 's' : ''}</div>
-        <div class="product-card__price">RD$ ${p.price.toLocaleString()}</div>
+        <div class="product-card__rating">★ ${p.rating} · ${p.sold} vendidos</div>
+        <div class="product-card__pricing">
+          ${p.compareAtPrice ? `<span class="product-card__compare">RD$ ${p.compareAtPrice.toLocaleString()}</span>` : ''}
+          <span class="product-card__price">RD$ ${p.price.toLocaleString()}</span>
+        </div>
+        ${p.stock <= 8 ? `<div class="product-card__stock">¡Últimas ${p.stock} unidades!</div>` : ''}
+        <button class="btn btn--primary btn--sm product-card__add" data-add="${p.id}">Agregar al carrito</button>
       </div>
     </article>
   `).join('');
 
   grid.querySelectorAll('.product-card').forEach(card => {
-    card.addEventListener('click', () => openProductModal(card.dataset.id));
-    card.addEventListener('keydown', e => { if (e.key === 'Enter') openProductModal(card.dataset.id); });
+    card.addEventListener('click', e => {
+      if (e.target.closest('[data-add]') || e.target.closest('[data-wish]')) return;
+      openProductModal(card.dataset.id);
+    });
+    card.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target === card) openProductModal(card.dataset.id); });
   });
+  grid.querySelectorAll('[data-add]').forEach(btn => btn.addEventListener('click', e => { e.stopPropagation(); quickAddToCart(btn.dataset.add); }));
+  grid.querySelectorAll('[data-wish]').forEach(btn => btn.addEventListener('click', e => { e.stopPropagation(); toggleWishlist(btn.dataset.wish); renderProducts(); }));
+}
+
+function quickAddToCart(id) {
+  const existing = State.cart.find(i => i.id === id);
+  if (existing) existing.qty += 1;
+  else State.cart.push({ id, qty: 1 });
+  State.save();
+  updateCartBadge();
+  const p = products.find(x => x.id === id);
+  showToast(`${p.title.slice(0, 24)}… añadido`);
+  BackendService.sendWebhook(BackendService.config.n8nOrders, { event: 'cart_add', product: p.title, price: p.price, qty: 1, timestamp: new Date().toISOString() });
 }
 
 function openProductModal(id) {
   const p = products.find(x => x.id === id);
   if (!p) return;
+  modalQty = 1;
   const modal = document.getElementById('product-modal');
   const overlay = document.getElementById('product-modal-overlay');
   const body = document.getElementById('product-modal-body');
   const stars = '★'.repeat(Math.floor(p.rating)) + (p.rating % 1 ? '½' : '');
 
+  // Distribución de ratings (calculada de reseñas + ponderación)
+  const dist = [5, 4, 3, 2, 1].map(s => {
+    const count = p.reviews.filter(r => r.rating === s).length + (s === Math.round(p.rating) ? Math.floor(p.sold * 0.6) : s === 4 ? Math.floor(p.sold * 0.25) : Math.floor(p.sold * 0.04));
+    return { s, count };
+  });
+  const totalRatings = dist.reduce((sum, d) => sum + d.count, 0);
+
+  // Productos relacionados (misma categoría)
+  const related = products.filter(x => x.category === p.category && x.id !== p.id).slice(0, 4);
+
   body.innerHTML = `
     <div class="product-detail">
       <div class="product-detail__gallery">
         <div class="product-detail__main-img"><img src="${p.image}" alt="${p.title}"></div>
+        ${p.freeShipping ? '<div class="product-detail__ship-note">🚚 Envío gratis a todo el país · Entrega en 24-48h</div>' : ''}
       </div>
       <div class="product-detail__info">
         <span class="product-detail__badge">✓ TeloSales Verificado</span>
         <h2 class="product-detail__title">${p.title}</h2>
-        <div class="product-detail__rating"><span class="product-detail__stars">${stars}</span><span class="text-muted">(${p.reviews.length} reseñas)</span></div>
-        <div class="product-detail__price">RD$ ${p.price.toLocaleString()}</div>
+        <div class="product-detail__rating"><span class="product-detail__stars">${stars}</span><span class="text-muted">${p.rating} · ${p.sold} vendidos</span></div>
+        <div class="product-detail__price-row">
+          ${p.compareAtPrice ? `<span class="product-detail__compare">RD$ ${p.compareAtPrice.toLocaleString()}</span>` : ''}
+          <span class="product-detail__price">RD$ ${p.price.toLocaleString()}</span>
+          ${p.discount ? `<span class="product-detail__off">${p.discount}% OFF</span>` : ''}
+        </div>
+        <div class="product-detail__stock ${p.stock <= 8 ? 'product-detail__stock--low' : ''}">${p.stock <= 8 ? `⚠ ¡Solo quedan ${p.stock} unidades!` : `✓ ${p.stock} disponibles`}</div>
         <p class="product-detail__desc">${p.description}</p>
         <div class="product-detail__actions">
           <div class="quantity-control"><button onclick="adjustQty(-1)">−</button><span id="modal-qty">1</span><button onclick="adjustQty(1)">+</button></div>
           <button class="btn btn--primary" onclick="addToCart('${p.id}')">Añadir al Carrito</button>
-          <button class="btn btn--ghost" onclick="toggleWishlist('${p.id}')">${State.wishlist.includes(p.id) ? '❤️' : '🤍'}</button>
+          <button class="btn btn--ghost" id="modal-wish-btn" onclick="toggleWishlist('${p.id}'); document.getElementById('modal-wish-btn').textContent = State.wishlist.includes('${p.id}') ? '❤️' : '🤍'">${State.wishlist.includes(p.id) ? '❤️' : '🤍'}</button>
+        </div>
+        <div class="product-detail__guarantees">
+          <span>🔒 Compra protegida</span><span>↩ Devolución 7 días</span><span>✓ Garantía oficial</span>
         </div>
         <table class="specs-table">${Object.entries(p.specs).map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join('')}</table>
         <div class="reviews-section">
-          <h3>Opiniones</h3>
-          ${p.reviews.map(r => `<div class="review-item"><div class="review-item__header"><span class="review-item__user">${r.user}</span><span class="review-item__date">${r.date}</span></div><div class="review-item__stars">${'★'.repeat(r.rating)}</div><p class="review-item__text">${r.text}</p></div>`).join('')}
+          <h3>Opiniones de Compradores</h3>
+          <div class="rating-summary">
+            <div class="rating-summary__score"><span class="rating-summary__big">${p.rating}</span><div class="product-detail__stars">${stars}</div><small>${totalRatings.toLocaleString()} calificaciones</small></div>
+            <div class="rating-summary__bars">
+              ${dist.map(d => `<div class="rating-bar"><span>${d.s}★</span><div class="rating-bar__track"><div class="rating-bar__fill" style="width:${totalRatings ? (d.count / totalRatings * 100) : 0}%"></div></div></div>`).join('')}
+            </div>
+          </div>
+          ${p.reviews.map(r => `<div class="review-item"><div class="review-item__header"><span class="review-item__user">${r.user} <span class="review-item__verified">✓ Compra verificada</span></span><span class="review-item__date">${r.date}</span></div><div class="review-item__stars">${'★'.repeat(r.rating)}</div><p class="review-item__text">${r.text}</p></div>`).join('')}
         </div>
+        ${related.length ? `<div class="related-products"><h3>Productos relacionados</h3><div class="related-products__grid">${related.map(r => `<div class="related-card" onclick="openProductModal('${r.id}')"><img src="${r.image}" alt="${r.title}"><div class="related-card__title">${r.title}</div><div class="related-card__price">RD$ ${r.price.toLocaleString()}</div></div>`).join('')}</div></div>` : ''}
       </div>
     </div>`;
   modal.classList.add('active');
@@ -302,16 +398,51 @@ function updateCartBadge() {
 
 function renderCart() {
   const container = document.getElementById('cart-items');
-  if (State.cart.length === 0) { container.innerHTML = '<p class="text-muted" style="text-align:center;padding:40px 0;">Tu carrito está vacío</p>'; }
-  else {
-    container.innerHTML = State.cart.map(item => {
+  const subtotal = State.cart.reduce((s, i) => { const p = products.find(x => x.id === i.id); return s + (p ? p.price * i.qty : 0); }, 0);
+
+  if (State.cart.length === 0) {
+    container.innerHTML = '<p class="empty-state">🛒 Tu carrito está vacío<br><small>Explora TeloSales y encuentra ofertas</small></p>';
+  } else {
+    // Barra de progreso de envío gratis
+    const remaining = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
+    const shipProgress = `<div class="ship-progress">${remaining > 0
+      ? `Agrega <strong>RD$ ${remaining.toLocaleString()}</strong> más para <strong>envío gratis</strong> 🚚`
+      : '🎉 ¡Tienes envío gratis!'}<div class="ship-progress__track"><div class="ship-progress__fill" style="width:${Math.min(100, subtotal / FREE_SHIPPING_THRESHOLD * 100)}%"></div></div></div>`;
+
+    container.innerHTML = shipProgress + State.cart.map(item => {
       const p = products.find(x => x.id === item.id);
       if (!p) return '';
       return `<div class="cart-item"><div class="cart-item__img"><img src="${p.image}" alt="${p.title}"></div><div class="cart-item__info"><div class="cart-item__title">${p.title}</div><div class="cart-item__price">RD$ ${(p.price * item.qty).toLocaleString()}</div><div class="cart-item__actions"><button onclick="updateCartQty('${item.id}',-1)">−</button><span class="cart-item__qty">${item.qty}</span><button onclick="updateCartQty('${item.id}',1)">+</button><button onclick="removeFromCart('${item.id}')" style="margin-left:auto;color:var(--c-danger);">✕</button></div></div></div>`;
     }).join('');
   }
-  const total = State.cart.reduce((s, i) => { const p = products.find(x => x.id === i.id); return s + (p ? p.price * i.qty : 0); }, 0);
-  document.getElementById('cart-total').textContent = `RD$ ${total.toLocaleString()}`;
+
+  // Desglose de totales
+  const discount = State.coupon ? Math.round(subtotal * State.coupon.pct / 100) : 0;
+  const shipping = (subtotal - discount) >= FREE_SHIPPING_THRESHOLD || subtotal === 0 ? 0 : SHIPPING_COST;
+  const total = subtotal - discount + shipping;
+  const footer = document.getElementById('cart-total');
+  if (footer) {
+    const breakdown = document.getElementById('cart-breakdown');
+    const html = `
+      <div class="cart-line"><span>Subtotal</span><span>RD$ ${subtotal.toLocaleString()}</span></div>
+      ${discount ? `<div class="cart-line cart-line--discount"><span>Cupón ${State.coupon.code}</span><span>−RD$ ${discount.toLocaleString()}</span></div>` : ''}
+      <div class="cart-line"><span>Envío</span><span>${shipping === 0 ? 'Gratis' : 'RD$ ' + shipping}</span></div>`;
+    if (breakdown) breakdown.innerHTML = html;
+    footer.textContent = `RD$ ${total.toLocaleString()}`;
+  }
+}
+
+let couponCodes = { 'TELO10': 10, 'BIENVENIDO': 15, 'TELO20': 20 };
+function applyCoupon() {
+  const input = document.getElementById('coupon-input');
+  const code = input.value.trim().toUpperCase();
+  if (couponCodes[code]) {
+    State.coupon = { code, pct: couponCodes[code] };
+    showToast(`Cupón aplicado: ${couponCodes[code]}% de descuento`);
+    renderCart();
+  } else {
+    showToast('Cupón inválido', 'error');
+  }
 }
 
 function toggleCartDrawer(open) {
@@ -322,11 +453,15 @@ function toggleCartDrawer(open) {
 
 function checkout() {
   if (State.cart.length === 0) return showToast('Carrito vacío', 'error');
-  const total = State.cart.reduce((s, i) => { const p = products.find(x => x.id === i.id); return s + (p ? p.price * i.qty : 0); }, 0);
-  const orderPayload = { event: 'order_placed', items: State.cart.map(i => { const p = products.find(x => x.id === i.id); return { id: i.id, title: p?.title, qty: i.qty, price: p?.price }; }), total, customer: State.userProfile, timestamp: new Date().toISOString() };
+  const subtotal = State.cart.reduce((s, i) => { const p = products.find(x => x.id === i.id); return s + (p ? p.price * i.qty : 0); }, 0);
+  const discount = State.coupon ? Math.round(subtotal * State.coupon.pct / 100) : 0;
+  const shipping = (subtotal - discount) >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST;
+  const total = subtotal - discount + shipping;
+  const orderPayload = { event: 'order_placed', items: State.cart.map(i => { const p = products.find(x => x.id === i.id); return { id: i.id, title: p?.title, qty: i.qty, price: p?.price }; }), subtotal, discount, shipping, coupon: State.coupon?.code || null, total, customer: State.userProfile, timestamp: new Date().toISOString() };
   BackendService.sendWebhook(BackendService.config.n8nOrders, orderPayload);
   BackendService.supabaseQuery('orders', 'POST', orderPayload);
   State.cart = [];
+  State.coupon = null;
   State.save();
   updateCartBadge();
   toggleCartDrawer(false);
@@ -370,15 +505,21 @@ function toggleWishlistDrawer(open) {
 
 function renderCourses() {
   const grid = document.getElementById('courses-grid');
-  grid.innerHTML = courses.map(c => `
+  grid.innerHTML = courses.map(c => {
+    const done = c.lessons.filter((_, i) => State.completedClasses.includes(`${c.id}_${i}`)).length;
+    const pct = Math.round(done / c.lessons.length * 100);
+    return `
     <article class="course-card" data-course="${c.id}" tabindex="0" role="button">
-      <div class="course-card__icon">${c.icon}</div>
+      <div class="course-card__top"><span class="course-card__icon">${c.icon}</span><span class="course-card__level">${c.level}</span></div>
       <h4 class="course-card__title">${c.title}</h4>
-      <p class="course-card__meta">${c.lessons.length} clases · ${c.duration}</p>
-    </article>
-  `).join('');
+      <p class="course-card__instructor">👨‍🏫 ${c.instructor}</p>
+      <div class="course-card__stats"><span>★ ${c.rating}</span><span>👥 ${c.students.toLocaleString()}</span><span>${c.lessons.length} clases · ${c.duration}</span></div>
+      ${pct > 0 ? `<div class="course-card__progress"><div class="progress-bar progress-bar--sm"><div class="progress-bar__fill" style="width:${pct}%"></div></div><small>${pct}% completado</small></div>` : '<span class="course-card__cta">Comenzar curso →</span>'}
+    </article>`;
+  }).join('');
   grid.querySelectorAll('.course-card').forEach(card => {
     card.addEventListener('click', () => openClassroom(card.dataset.course));
+    card.addEventListener('keydown', e => { if (e.key === 'Enter') openClassroom(card.dataset.course); });
   });
 }
 
@@ -424,6 +565,9 @@ function loadLesson(idx) {
   // Load notes
   const notes = document.getElementById('classroom-notes');
   if (notes) notes.value = State.classNotes[key] || '';
+  // Reset video player
+  if (typeof videoState !== 'undefined') { clearInterval(videoState.timer); videoState.playing = false; videoState.progress = 0; updateVideoUI(); const ov = document.getElementById('video-overlay'); if (ov) ov.style.opacity = '1'; const tg = document.getElementById('video-toggle'); if (tg) tg.textContent = '▶'; }
+  renderClassroomResources();
   renderSyllabus();
 }
 
@@ -452,6 +596,192 @@ function updateEducaProgress() {
     document.getElementById('syllabus-fill').style.width = `${coursePct}%`;
     document.getElementById('syllabus-cert').hidden = coursePct < 100;
   }
+}
+
+function renderClassroomResources() {
+  const course = State.currentCourse;
+  const list = document.getElementById('resources-list');
+  if (!course || !list) return;
+  const resources = [
+    { icon: '📄', name: `Guía de la clase: ${course.lessons[State.currentLesson]}.pdf` },
+    { icon: '📊', name: 'Material práctico descargable' },
+    { icon: '🔗', name: 'Enlaces de referencia oficial' }
+  ];
+  list.innerHTML = resources.map(r => `<li><a href="#" onclick="event.preventDefault(); showToast('Descargando ${r.name.slice(0,30)}...')">${r.icon} ${r.name}</a></li>`).join('');
+  // Foro con comentarios simulados
+  const forum = document.getElementById('forum-messages');
+  if (forum && forum.children.length === 0) {
+    forum.innerHTML = `<div class="chat-msg chat-msg--bot"><strong>Ana M.:</strong> ¿Alguien puede explicar mejor este tema?</div><div class="chat-msg chat-msg--bot"><strong>Instructor:</strong> Claro, revisa el recurso PDF adjunto, ahí está detallado. 👍</div>`;
+  }
+}
+
+// ─── Quiz de Certificación ───
+let activeQuiz = { course: null, answers: {} };
+
+function startCertificateQuiz() {
+  const course = State.currentCourse;
+  if (!course || !course.quiz) return;
+  activeQuiz = { course, answers: {} };
+  const body = document.getElementById('cert-modal-body');
+  body.innerHTML = `
+    <h2 class="quiz__title">📝 Examen de Certificación</h2>
+    <p class="text-muted">Responde correctamente para obtener tu certificado de <strong>${course.title}</strong>.</p>
+    <div class="quiz__questions">
+      ${course.quiz.map((item, qi) => `
+        <div class="quiz__q">
+          <p class="quiz__q-text">${qi + 1}. ${item.q}</p>
+          <div class="quiz__options">
+            ${item.options.map((opt, oi) => `<label class="quiz__option"><input type="radio" name="q${qi}" value="${oi}" onchange="activeQuiz.answers[${qi}]=${oi}"><span>${opt}</span></label>`).join('')}
+          </div>
+        </div>`).join('')}
+    </div>
+    <button class="btn btn--primary btn--full" onclick="submitQuiz()">Enviar Respuestas</button>`;
+  openCertModal();
+}
+
+function submitQuiz() {
+  const { course, answers } = activeQuiz;
+  if (Object.keys(answers).length < course.quiz.length) return showToast('Responde todas las preguntas', 'error');
+  const correct = course.quiz.filter((item, i) => answers[i] === item.correct).length;
+  const score = Math.round(correct / course.quiz.length * 100);
+  if (score >= 70) {
+    showCertificate(course, score);
+  } else {
+    document.getElementById('cert-modal-body').innerHTML = `<div class="quiz__result"><div class="quiz__result-icon">😟</div><h2>Obtuviste ${score}%</h2><p class="text-muted">Necesitas al menos 70% para certificarte. Repasa el material e inténtalo de nuevo.</p><button class="btn btn--primary" onclick="startCertificateQuiz()">Reintentar Examen</button></div>`;
+  }
+}
+
+function showCertificate(course, score) {
+  const name = State.userProfile.name || 'Estudiante TeloEduca';
+  const date = new Date().toLocaleDateString('es-DO', { year: 'numeric', month: 'long', day: 'numeric' });
+  const certId = `TC-${course.id.toUpperCase().slice(0, 4)}-${Date.now().toString().slice(-6)}`;
+  document.getElementById('cert-modal-body').innerHTML = `
+    <div class="certificate" id="cert-print">
+      <div class="certificate__inner">
+        <div class="certificate__brand">TeloEduca Academy 🎓</div>
+        <h1 class="certificate__title">CERTIFICADO DE FINALIZACIÓN</h1>
+        <p class="certificate__sub">Otorgado a</p>
+        <p class="certificate__name">${name}</p>
+        <p class="certificate__desc">por completar exitosamente el curso<br><strong>${course.title}</strong><br>con una calificación de ${score}%</p>
+        <div class="certificate__footer">
+          <div><span class="certificate__sig">${course.instructor}</span><small>Instructor</small></div>
+          <div><span class="certificate__sig">${date}</span><small>Fecha</small></div>
+        </div>
+        <p class="certificate__id">ID: ${certId}</p>
+      </div>
+    </div>
+    <div class="btn-row" style="margin-top:16px;justify-content:center;">
+      <button class="btn btn--ghost" onclick="window.print()">🖨 Imprimir / PDF</button>
+      <button class="btn btn--primary" onclick="closeCertModal()">Finalizar</button>
+    </div>`;
+  openCertModal();
+  showToast('¡Felicidades! Certificado obtenido 🎉');
+  BackendService.supabaseQuery('certificates', 'POST', { course: course.id, student: name, score, cert_id: certId, timestamp: new Date().toISOString() });
+}
+
+function openCertModal() {
+  document.getElementById('cert-modal').classList.add('active');
+  document.getElementById('cert-modal-overlay').classList.add('active');
+}
+function closeCertModal() {
+  document.getElementById('cert-modal').classList.remove('active');
+  document.getElementById('cert-modal-overlay').classList.remove('active');
+}
+
+function postForumMessage() {
+  const input = document.getElementById('forum-input');
+  const text = input.value.trim();
+  if (!text) return;
+  const forum = document.getElementById('forum-messages');
+  const msg = document.createElement('div');
+  msg.className = 'chat-msg chat-msg--user';
+  msg.innerHTML = `<strong>Tú:</strong> ${text}`;
+  forum.appendChild(msg);
+  input.value = '';
+  forum.scrollTop = forum.scrollHeight;
+  setTimeout(() => {
+    const reply = document.createElement('div');
+    reply.className = 'chat-msg chat-msg--bot';
+    reply.innerHTML = `<strong>Instructor:</strong> ¡Buena pregunta! Lo revisaremos en la próxima sesión en vivo. 🙌`;
+    forum.appendChild(reply);
+    forum.scrollTop = forum.scrollHeight;
+  }, 1200);
+}
+
+function downloadNotes() {
+  const course = State.currentCourse;
+  if (!course) return;
+  const key = `${course.id}_${State.currentLesson}`;
+  const notes = State.classNotes[key] || '';
+  if (!notes.trim()) return showToast('No hay apuntes para descargar', 'error');
+  const blob = new Blob([`Apuntes — ${course.title}\nClase: ${course.lessons[State.currentLesson]}\n\n${notes}`], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `apuntes-${course.id}.txt`;
+  a.click();
+  showToast('Apuntes descargados');
+}
+
+// ─── Reproductor de Video (simulación) ───
+let videoState = { playing: false, progress: 0, timer: null, duration: 600 };
+
+function toggleVideoPlay() {
+  videoState.playing = !videoState.playing;
+  const toggle = document.getElementById('video-toggle');
+  const playBtn = document.getElementById('video-play-btn');
+  const overlay = document.getElementById('video-overlay');
+  if (videoState.playing) {
+    if (toggle) toggle.textContent = '⏸';
+    if (playBtn) playBtn.textContent = '⏸';
+    if (overlay) overlay.style.opacity = '0';
+    videoState.timer = setInterval(() => {
+      videoState.progress = Math.min(100, videoState.progress + 0.5);
+      updateVideoUI();
+      if (videoState.progress >= 100) {
+        clearInterval(videoState.timer);
+        videoState.playing = false;
+        if (toggle) toggle.textContent = '▶';
+        // Auto-marcar como completada
+        const course = State.currentCourse;
+        if (course) {
+          const k = `${course.id}_${State.currentLesson}`;
+          if (!State.completedClasses.includes(k)) { State.completedClasses.push(k); State.save(); loadLesson(State.currentLesson); showToast('Clase completada automáticamente ✓'); }
+        }
+      }
+    }, 100);
+  } else {
+    clearInterval(videoState.timer);
+    if (toggle) toggle.textContent = '▶';
+    if (playBtn) playBtn.textContent = '▶';
+    if (overlay) overlay.style.opacity = '1';
+  }
+}
+
+function seekVideo(e) {
+  const bar = document.getElementById('video-progress-bar');
+  const rect = bar.getBoundingClientRect();
+  videoState.progress = Math.max(0, Math.min(100, (e.clientX - rect.left) / rect.width * 100));
+  updateVideoUI();
+}
+
+function updateVideoUI() {
+  document.getElementById('video-progress-fill').style.width = `${videoState.progress}%`;
+  const cur = Math.floor(videoState.progress / 100 * videoState.duration);
+  const fmt = s => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
+  document.getElementById('video-time').textContent = `${fmt(cur)} / ${fmt(videoState.duration)}`;
+}
+
+function filterCoursesByPath(path) {
+  const grid = document.getElementById('courses-grid');
+  const filtered = courses.filter(c => c.path === path);
+  document.querySelectorAll('.path-card').forEach(c => c.classList.toggle('active', c.dataset.path === path));
+  grid.innerHTML = filtered.map(c => {
+    const done = c.lessons.filter((_, i) => State.completedClasses.includes(`${c.id}_${i}`)).length;
+    const pct = Math.round(done / c.lessons.length * 100);
+    return `<article class="course-card" data-course="${c.id}" tabindex="0" role="button"><div class="course-card__top"><span class="course-card__icon">${c.icon}</span><span class="course-card__level">${c.level}</span></div><h4 class="course-card__title">${c.title}</h4><p class="course-card__instructor">👨‍🏫 ${c.instructor}</p><div class="course-card__stats"><span>★ ${c.rating}</span><span>👥 ${c.students.toLocaleString()}</span><span>${c.lessons.length} clases · ${c.duration}</span></div>${pct > 0 ? `<div class="course-card__progress"><div class="progress-bar progress-bar--sm"><div class="progress-bar__fill" style="width:${pct}%"></div></div><small>${pct}% completado</small></div>` : '<span class="course-card__cta">Comenzar curso →</span>'}</article>`;
+  }).join('');
+  grid.querySelectorAll('.course-card').forEach(card => card.addEventListener('click', () => openClassroom(card.dataset.course)));
+  showToast(`Mostrando ruta: ${filtered.length} cursos`);
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -524,17 +854,84 @@ function simulateLlevaOffers(userFare) {
   }, 1500);
 }
 
+let llevaTrackingTimer = null;
 function acceptLlevaOffer(name, fare) {
   document.getElementById('lleva-offers-card').hidden = true;
   document.getElementById('lleva-status-card').hidden = false;
-  document.getElementById('lleva-trip-info').innerHTML = `<div class="offer-item"><div class="offer-item__driver"><div class="offer-item__avatar">🏍️</div><div><strong>${name}</strong><br><small>En camino · RD$ ${fare}</small></div></div><span class="status-pill status-pill--active">Activo</span></div>`;
+  const rating = (4.6 + Math.random() * 0.4).toFixed(1);
+  const plate = `${['A','B','C'][Math.floor(Math.random()*3)]}${Math.floor(Math.random()*900+100)}${['XYZ','ABC','TLC'][Math.floor(Math.random()*3)]}`;
+
+  document.getElementById('lleva-trip-info').innerHTML = `
+    <div class="trip-driver">
+      <div class="offer-item__avatar">🏍️</div>
+      <div class="trip-driver__info"><strong>${name}</strong><small>★ ${rating} · Placa ${plate}</small></div>
+      <div class="trip-eta"><span id="lleva-eta-num">8</span><small>min</small></div>
+    </div>
+    <div class="trip-timeline" id="lleva-timeline">
+      <div class="trip-step active" data-step="0"><span class="trip-step__dot"></span><div><strong>Conductor asignado</strong><small>${name} aceptó tu envío</small></div></div>
+      <div class="trip-step" data-step="1"><span class="trip-step__dot"></span><div><strong>En camino a recoger</strong><small>Dirigiéndose al origen</small></div></div>
+      <div class="trip-step" data-step="2"><span class="trip-step__dot"></span><div><strong>Paquete recogido</strong><small>En ruta al destino</small></div></div>
+      <div class="trip-step" data-step="3"><span class="trip-step__dot"></span><div><strong>Entregado</strong><small>Envío completado</small></div></div>
+    </div>`;
   showToast(`${name} aceptó tu envío`);
-  // Animate courier on map
+
+  // Animar mensajero a lo largo de la ruta
   const courier = document.getElementById('map-courier');
+  const route = document.getElementById('map-route');
   courier.setAttribute('opacity', '1');
-  const pinA = document.getElementById('map-pin-a');
-  const pos = pinA.getAttribute('transform').match(/translate\((\d+),(\d+)\)/);
-  if (pos) courier.setAttribute('transform', `translate(${pos[1]},${pos[2]})`);
+  let t = 0, step = 0, eta = 8;
+  const pathLen = route.getTotalLength ? route.getTotalLength() : 0;
+  clearInterval(llevaTrackingTimer);
+  llevaTrackingTimer = setInterval(() => {
+    t += 0.012;
+    if (pathLen && route.getPointAtLength) {
+      const pt = route.getPointAtLength(Math.min(1, t) * pathLen);
+      courier.setAttribute('transform', `translate(${pt.x},${pt.y})`);
+    }
+    // ETA countdown
+    const newEta = Math.max(0, Math.round(eta * (1 - t)));
+    const etaEl = document.getElementById('lleva-eta-num');
+    if (etaEl) etaEl.textContent = newEta;
+    // Avanzar timeline
+    const newStep = Math.min(3, Math.floor(t * 4));
+    if (newStep !== step) {
+      step = newStep;
+      document.querySelectorAll('#lleva-timeline .trip-step').forEach((el, i) => el.classList.toggle('active', i <= step));
+      if (step === 2) sendDriverMessage('Recogí tu paquete, voy en camino 🏍️');
+    }
+    if (t >= 1) {
+      clearInterval(llevaTrackingTimer);
+      sendDriverMessage('¡Entregado! Gracias por usar TeloLleva ✅');
+      showToast('Envío entregado exitosamente 🎉');
+    }
+  }, 100);
+
+  // Mensaje inicial del conductor
+  setTimeout(() => sendDriverMessage(`Hola, soy ${name}. Voy en camino a recoger tu paquete.`), 800);
+}
+
+function sendDriverMessage(text) {
+  const box = document.getElementById('lleva-chat-messages');
+  if (!box) return;
+  const msg = document.createElement('div');
+  msg.className = 'chat-msg chat-msg--bot';
+  msg.textContent = text;
+  box.appendChild(msg);
+  box.scrollTop = box.scrollHeight;
+}
+
+function sendLlevaChatMessage() {
+  const input = document.getElementById('lleva-chat-input');
+  const text = input.value.trim();
+  if (!text) return;
+  const box = document.getElementById('lleva-chat-messages');
+  const msg = document.createElement('div');
+  msg.className = 'chat-msg chat-msg--user';
+  msg.textContent = text;
+  box.appendChild(msg);
+  input.value = '';
+  box.scrollTop = box.scrollHeight;
+  setTimeout(() => sendDriverMessage('Entendido 👍'), 1000);
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -552,13 +949,32 @@ function updateReparaQuote() {
   document.getElementById('repara-time').textContent = reparaTimes[issue] || '24-48h';
 }
 
+let reparaTimer = null;
 function bookRepara() {
   const payload = { event: 'repara_booking', device: document.getElementById('repara-device').value, issue: document.getElementById('repara-issue').value, address: document.getElementById('repara-address').value, customer: State.userProfile, timestamp: new Date().toISOString() };
   BackendService.sendWebhook(BackendService.config.n8nServices, payload);
   BackendService.supabaseQuery('repara_bookings', 'POST', payload);
+  const ticket = `RP-${Date.now().toString().slice(-6)}`;
   document.getElementById('repara-tracker').hidden = false;
-  document.getElementById('repara-steps').innerHTML = ['Servicio Solicitado', 'Mensajero en Camino', 'En Diagnóstico', 'Reparación Finalizada'].map((step, i) => `<div class="tracker-step ${i === 0 ? 'active' : ''}"><div class="tracker-step__num">${i + 1}</div><div><strong>${step}</strong></div></div>`).join('');
-  showToast('Reparación reservada exitosamente');
+  const steps = [
+    { t: 'Servicio Solicitado', d: 'Ticket ' + ticket + ' generado' },
+    { t: 'Mensajero en Camino', d: 'Retiro del dispositivo a domicilio' },
+    { t: 'En Diagnóstico Técnico', d: 'Téc. Carlos Medina evaluando' },
+    { t: 'Reparación Finalizada', d: 'Pruebas de calidad superadas ✓' }
+  ];
+  const render = (active) => {
+    document.getElementById('repara-steps').innerHTML = steps.map((s, i) => `<div class="tracker-step ${i <= active ? 'active' : ''}"><div class="tracker-step__num">${i < active ? '✓' : i + 1}</div><div><strong>${s.t}</strong><small>${s.d}</small></div></div>`).join('') + `<div class="repara-warranty">🛡️ Garantía de 90 días incluida · 🔧 Téc. certificado</div>`;
+  };
+  render(0);
+  let step = 0;
+  clearInterval(reparaTimer);
+  reparaTimer = setInterval(() => {
+    step++;
+    render(step);
+    if (step === 2) showToast('Tu dispositivo está en diagnóstico');
+    if (step >= 3) { clearInterval(reparaTimer); showToast('¡Reparación finalizada! 🎉'); }
+  }, 3000);
+  showToast('Reparación reservada · Ticket ' + ticket);
 }
 
 const instalaPrices = { tv: 1200, ac: 4500, smart: 2800, network: 3500, lock: 2000 };
@@ -749,6 +1165,8 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('wishlist-close').addEventListener('click', () => toggleWishlistDrawer(false));
   document.getElementById('wishlist-overlay').addEventListener('click', () => toggleWishlistDrawer(false));
   document.getElementById('btn-checkout').addEventListener('click', checkout);
+  document.getElementById('btn-coupon')?.addEventListener('click', applyCoupon);
+  document.getElementById('coupon-input')?.addEventListener('keydown', e => { if (e.key === 'Enter') applyCoupon(); });
   document.getElementById('btn-chat').addEventListener('click', () => toggleChat());
   document.getElementById('btn-open-chat')?.addEventListener('click', () => { toggleChat(true); switchView('support'); });
   document.getElementById('chat-close').addEventListener('click', () => toggleChat(false));
@@ -775,6 +1193,16 @@ document.addEventListener('DOMContentLoaded', () => {
   // TeloEduca
   document.getElementById('btn-back-courses').addEventListener('click', () => switchView('educa'));
   document.getElementById('btn-complete-class').addEventListener('click', toggleCompleteClass);
+  document.getElementById('btn-certificate')?.addEventListener('click', startCertificateQuiz);
+  document.getElementById('cert-modal-close')?.addEventListener('click', closeCertModal);
+  document.getElementById('cert-modal-overlay')?.addEventListener('click', closeCertModal);
+  document.getElementById('btn-forum-post')?.addEventListener('click', postForumMessage);
+  document.getElementById('btn-download-notes')?.addEventListener('click', downloadNotes);
+  document.querySelectorAll('.path-card').forEach(card => card.addEventListener('click', () => filterCoursesByPath(card.dataset.path)));
+  // Reproductor de video (simulación)
+  document.getElementById('video-toggle')?.addEventListener('click', toggleVideoPlay);
+  document.getElementById('video-play-btn')?.addEventListener('click', toggleVideoPlay);
+  document.getElementById('video-progress-bar')?.addEventListener('click', seekVideo);
   document.getElementById('classroom-notes')?.addEventListener('input', e => {
     if (State.currentCourse) { State.classNotes[`${State.currentCourse.id}_${State.currentLesson}`] = e.target.value; State.save(); }
   });
@@ -803,11 +1231,14 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('lleva-submit').addEventListener('click', startLlevaRequest);
   document.getElementById('lleva-schedule').addEventListener('change', e => { document.getElementById('lleva-datetime-group').hidden = e.target.value !== 'scheduled'; });
   document.getElementById('lleva-cancel')?.addEventListener('click', () => {
+    clearInterval(llevaTrackingTimer);
     document.getElementById('lleva-status-card').hidden = true;
     document.getElementById('lleva-form-card').hidden = false;
     document.getElementById('map-courier').setAttribute('opacity', '0');
     showToast('Pedido cancelado');
   });
+  document.getElementById('lleva-chat-send')?.addEventListener('click', sendLlevaChatMessage);
+  document.getElementById('lleva-chat-input')?.addEventListener('keydown', e => { if (e.key === 'Enter') sendLlevaChatMessage(); });
 
   // TeloRepara
   document.getElementById('repara-device').addEventListener('change', updateReparaQuote);
