@@ -169,10 +169,13 @@ td img{width:36px;height:36px;border-radius:6px;object-fit:cover}
 
 <!-- TELOEDUCA -->
 <div class="page" id="pg-educa">
-<h2 class="page-title">🎓 TeloEduca — Cursos y Estudiantes</h2>
-<div class="stats"><div class="stat"><div class="label">Cursos Activos</div><div class="val" id="educaCourses">5</div></div><div class="stat"><div class="label">Estudiantes</div><div class="val" id="educaStudents">0</div></div><div class="stat"><div class="label">Certificados Emitidos</div><div class="val" id="educaCerts">0</div></div></div>
-<p style="color:var(--dim);font-size:.82rem">Los cursos se administran desde el código fuente (script.js). Aquí puedes ver el progreso y certificados emitidos.</p>
-<div class="tbl-wrap" style="margin-top:12px"><table><thead><tr><th>Curso</th><th>Estudiante</th><th>Certificado ID</th><th>Fecha</th></tr></thead><tbody id="educaBody"><tr><td colspan="4" style="text-align:center;color:var(--dim);padding:20px">Sin certificados emitidos</td></tr></tbody></table></div>
+<h2 class="page-title">🎓 TeloEduca — Cursos y Certificados</h2>
+<div class="stats"><div class="stat"><div class="label">Cursos Activos</div><div class="val" id="educaCourses">5</div></div><div class="stat"><div class="label">Clases Totales</div><div class="val" id="educaLessons">28</div></div><div class="stat"><div class="label">Certificados</div><div class="val" id="educaCerts">0</div></div></div>
+<p style="color:var(--dim);font-size:.82rem;margin-bottom:12px">Cursos configurados en la plataforma. Para agregar cursos o lecciones, edita <code>script.js</code> → array <code>courses</code>. Aquí se muestran certificados emitidos.</p>
+<h3 style="font-size:.9rem;margin-bottom:8px">Cursos Disponibles:</h3>
+<div class="tbl-wrap" style="margin-bottom:16px"><table><thead><tr><th>Curso</th><th>Instructor</th><th>Lecciones</th><th>Nivel</th><th>Estudiantes</th></tr></thead><tbody id="educaCoursesBody"></tbody></table></div>
+<h3 style="font-size:.9rem;margin-bottom:8px">Certificados Emitidos:</h3>
+<div class="tbl-wrap"><table><thead><tr><th>Curso</th><th>Estudiante</th><th>Certificado ID</th><th>Puntuación</th><th>Fecha</th></tr></thead><tbody id="educaBody"><tr><td colspan="5" style="text-align:center;color:var(--dim);padding:20px">Sin certificados emitidos</td></tr></tbody></table></div>
 </div>
 
 <!-- TELOLLEVA -->
@@ -363,6 +366,7 @@ function loadPage(p){
   if(p==='sales')renderSales();
   else if(p==='categories')renderCatsPage();
   else if(p==='dashboard')renderDashboard();
+  else if(p==='educa')renderEduca([]);
 }
 
 // ═══ DASHBOARD ═══
@@ -503,7 +507,16 @@ function renderMembers(data){
 // ═══ OTHER MODULES ═══
 function renderEduca(certs){
   document.getElementById('educaCerts').textContent=certs.length;
-  document.getElementById('educaBody').innerHTML=certs.map(c=>`<tr><td>${c.course||''}</td><td>${c.student||''}</td><td><span class="tag tag-b">${c.cert_id||''}</span></td><td>${c.created_at?new Date(c.created_at).toLocaleDateString():''}</td></tr>`).join('')||'<tr><td colspan="4" style="text-align:center;color:var(--dim)">Sin certificados</td></tr>';
+  document.getElementById('educaBody').innerHTML=certs.map(c=>`<tr><td>${c.course||''}</td><td>${c.student||''}</td><td><span class="tag tag-b">${c.cert_id||''}</span></td><td>${c.score||0}%</td><td>${c.created_at?new Date(c.created_at).toLocaleDateString():''}</td></tr>`).join('')||'<tr><td colspan="5" style="text-align:center;color:var(--dim)">Sin certificados</td></tr>';
+  // Render courses list (from frontend config)
+  const courses=[
+    {title:'Excel Avanzado para Negocios',instructor:'Lic. María Tavárez',lessons:6,level:'Intermedio',students:1240},
+    {title:'Ingeniería de Prompts e IA',instructor:'Ing. Balmis Reynoso',lessons:5,level:'Básico',students:2105},
+    {title:'Inglés Técnico para Call Center',instructor:'Prof. John Smith',lessons:6,level:'Intermedio',students:980},
+    {title:'E-Commerce desde Cero',instructor:'Lic. Luis M. Herrera',lessons:5,level:'Básico',students:1560},
+    {title:'Python para Automatización',instructor:'Ing. Balmis Reynoso',lessons:6,level:'Básico',students:1820}
+  ];
+  document.getElementById('educaCoursesBody').innerHTML=courses.map(c=>`<tr><td><b>${c.title}</b></td><td>${c.instructor}</td><td>${c.lessons}</td><td><span class="tag tag-b">${c.level}</span></td><td>${c.students.toLocaleString()}</td></tr>`).join('');
 }
 function renderLleva(data){
   document.getElementById('llevaTotal').textContent=data.length;
