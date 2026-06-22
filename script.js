@@ -10,7 +10,7 @@
 const BackendService = {
   // API keys configuradas (solo claves públicas/frontend-safe)
   config: {
-    supabaseUrl: 'https://your-project.supabase.co', // Reemplazar con tu URL real de Supabase
+    supabaseUrl: 'https://bhdictzvboiojyxorfiq.supabase.co',
     supabaseKey: 'sb_publishable_AgpNN0k_KfW0moe6f1CKXg_qP2GKJCm',
     stripeKey: 'pk_test_51TkuAq9ZSlwyfnkhjbXuSXVif4wSmAghZt9Ytp3ei3UX4wZJmNyQ0ByqYp39PNe7hB9xoraN6n668YZylpO1QVgQ00mavVqCgD',
     geminiKey: 'AIzaSyB6Fw9dciFlipwPONefQbbUB0tJBDWibF',
@@ -809,39 +809,88 @@ function filterCoursesByPath(path) {
 // ═══════════════════════════════════════════════════════════════
 
 const llevaZones = {};
-let gmapInstance = null, gmapDirectionsService = null, gmapDirectionsRenderer = null, gmapOriginMarker = null, gmapDestMarker = null;
+let gmapInstance = null, gmapDirectionsService = null, gmapDirectionsRenderer = null;
 
-// Google Maps Initialization (called by script callback)
+// Google Maps Initialization (called by Maps API callback)
 window.initGoogleMaps = function() {
   const mapDiv = document.getElementById('gmap');
-  if (!mapDiv) return;
-  gmapInstance = new google.maps.Map(mapDiv, { center: { lat: 18.486, lng: -69.931 }, zoom: 13, mapTypeControl: false, streetViewControl: false, styles: [{ elementType: 'geometry', stylers: [{ color: '#1a1a2e' }] }, { elementType: 'labels.text.fill', stylers: [{ color: '#94a3b8' }] }, { elementType: 'labels.text.stroke', stylers: [{ color: '#0a0f1a' }] }, { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#2d3748' }] }, { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#0c1929' }] }] });
-  gmapDirectionsService = new google.maps.DirectionsService();
-  gmapDirectionsRenderer = new google.maps.DirectionsRenderer({ map: gmapInstance, suppressMarkers: false, polylineOptions: { strokeColor: '#f59e0b', strokeWeight: 4, strokeOpacity: 0.8 } });
+  if (!mapDiv) {
+    // Si el DOM aún no está listo, reintenta
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => window.initGoogleMaps());
+      return;
+    }
+    return;
+  }
 
-  // Places Autocomplete for origin
+  gmapInstance = new google.maps.Map(mapDiv, {
+    center: { lat: 18.486, lng: -69.931 },
+    zoom: 12,
+    mapTypeControl: false,
+    streetViewControl: false,
+    fullscreenControl: true,
+    zoomControl: true,
+    styles: [
+      { elementType: 'geometry', stylers: [{ color: '#212121' }] },
+      { elementType: 'labels.text.fill', stylers: [{ color: '#94a3b8' }] },
+      { elementType: 'labels.text.stroke', stylers: [{ color: '#1a1a2e' }] },
+      { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#2c3e50' }] },
+      { featureType: 'road', elementType: 'geometry.stroke', stylers: [{ color: '#1a252f' }] },
+      { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#0c1929' }] },
+      { featureType: 'poi', elementType: 'labels', stylers: [{ visibility: 'off' }] }
+    ]
+  });
+
+  gmapDirectionsService = new google.maps.DirectionsService();
+  gmapDirectionsRenderer = new google.maps.DirectionsRenderer({
+    map: gmapInstance,
+    suppressMarkers: false,
+    polylineOptions: { strokeColor: '#f59e0b', strokeWeight: 5, strokeOpacity: 0.9 }
+  });
+
+  // Places Autocomplete
   const originInput = document.getElementById('lleva-origin-input');
   const destInput = document.getElementById('lleva-dest-input');
+
   if (originInput && google.maps.places) {
-    const originAC = new google.maps.places.Autocomplete(originInput, { componentRestrictions: { country: 'do' }, fields: ['geometry', 'formatted_address'] });
+    const bounds = new google.maps.LatLngBounds(
+      new google.maps.LatLng(17.5, -72.0),
+      new google.maps.LatLng(20.0, -68.0)
+    );
+
+    const originAC = new google.maps.places.Autocomplete(originInput, {
+      bounds: bounds,
+      componentRestrictions: { country: 'do' },
+      fields: ['geometry', 'formatted_address', 'name']
+    });
+
+    const destAC = new google.maps.places.Autocomplete(destInput, {
+      bounds: bounds,
+      componentRestrictions: { country: 'do' },
+      fields: ['geometry', 'formatted_address', 'name']
+    });
+
     originAC.addListener('place_changed', () => {
       const place = originAC.getPlace();
-      if (place.geometry) {
+      if (place && place.geometry) {
         document.getElementById('lleva-origin-lat').value = place.geometry.location.lat();
         document.getElementById('lleva-origin-lng').value = place.geometry.location.lng();
         calculateLlevaRoute();
       }
     });
-    const destAC = new google.maps.places.Autocomplete(destInput, { componentRestrictions: { country: 'do' }, fields: ['geometry', 'formatted_address'] });
+
     destAC.addListener('place_changed', () => {
       const place = destAC.getPlace();
-      if (place.geometry) {
+      if (place && place.geometry) {
         document.getElementById('lleva-dest-lat').value = place.geometry.location.lat();
         document.getElementById('lleva-dest-lng').value = place.geometry.location.lng();
         calculateLlevaRoute();
       }
     });
   }
+
+  console.log('[Maps] Google Maps initialized successfully');
+  if (window._mapsTimeout) clearTimeout(window._mapsTimeout);
 };
 
 function calculateLlevaRoute() {
@@ -849,18 +898,18 @@ function calculateLlevaRoute() {
   const oLng = parseFloat(document.getElementById('lleva-origin-lng').value);
   const dLat = parseFloat(document.getElementById('lleva-dest-lat').value);
   const dLng = parseFloat(document.getElementById('lleva-dest-lng').value);
-  if (!oLat || !dLat || !gmapDirectionsService) return;
+  if (!oLat || !oLng || !dLat || !dLng) return;
+  if (!gmapDirectionsService) { showToast('Mapa cargando, intenta de nuevo en un momento', 'error'); return; }
 
   gmapDirectionsService.route({
     origin: { lat: oLat, lng: oLng },
     destination: { lat: dLat, lng: dLng },
     travelMode: google.maps.TravelMode.DRIVING
   }, (result, status) => {
-    if (status === 'OK') {
+    if (status === 'OK' && result.routes[0]) {
       gmapDirectionsRenderer.setDirections(result);
       const leg = result.routes[0].legs[0];
       const distKm = leg.distance.value / 1000;
-      const etaMin = Math.ceil(leg.duration.value / 60);
       document.getElementById('lleva-distance').textContent = leg.distance.text;
       document.getElementById('lleva-eta-est').textContent = leg.duration.text;
       // Calculate price based on distance + vehicle
@@ -870,6 +919,9 @@ function calculateLlevaRoute() {
       const price = Math.round(basePrice[vehicle] + distKm * pricePerKm[vehicle]);
       document.getElementById('lleva-fare-label').textContent = `RD$ ${price}`;
       document.getElementById('lleva-fare').value = price;
+    } else {
+      console.warn('[Maps] Directions failed:', status);
+      showToast('No se pudo calcular la ruta. Verifica las direcciones.', 'error');
     }
   });
 }

@@ -703,9 +703,18 @@
   </div>
 
   <!-- Google Maps API -->
+  <script src="script.js"></script>
+  <script>
+    // Fallback: si Google Maps no carga en 8s, mostrar mensaje
+    window._mapsTimeout = setTimeout(function() {
+      var el = document.getElementById('gmap');
+      if (el && !window.google) {
+        el.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;gap:8px;color:#94a3b8;padding:20px;text-align:center;"><p style="font-size:0.9rem;">⚠️ Google Maps no pudo cargar.</p><p style="font-size:0.75rem;">Verifica la API Key y las restricciones de dominio en <a href="https://console.cloud.google.com/apis/credentials" target="_blank" style="color:#f59e0b;">Google Cloud Console</a>.</p><p style="font-size:0.7rem;margin-top:8px;">Referrer permitido: <code>telocg.com/*</code> y <code>localhost/*</code></p></div>';
+      }
+    }, 8000);
+  </script>
   <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB6Fw9dciFlipwPONefQbbUB0tJBDWibF&libraries=places&callback=initGoogleMaps"></script>
   <!-- Supabase JS Client -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" defer></script>
-  <script src="script.js"></script>
 </body>
 </html>
