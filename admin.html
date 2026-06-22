@@ -1,1111 +1,586 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>TeloSales Admin | Gestión de Inventario</title>
-  <meta name="robots" content="noindex, nofollow">
-  <link rel="icon" type="image/png" href="assets/telocorpgroup-mark.png">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <style>
-    :root {
-      --bg: #0f1219;
-      --surface: #1a1f2e;
-      --surface-2: #252b3b;
-      --surface-3: #2d3348;
-      --border: rgba(255,255,255,0.08);
-      --text: #f1f5f9;
-      --muted: #94a3b8;
-      --primary: #f97316;
-      --primary-hover: #ea580c;
-      --success: #10b981;
-      --danger: #ef4444;
-      --warning: #f59e0b;
-      --radius: 10px;
-    }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-
-    /* LOGIN */
-    .login-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
-    .login-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 40px; width: 100%; max-width: 400px; text-align: center; }
-    .login-card h1 { font-size: 1.5rem; font-weight: 800; margin-bottom: 8px; }
-    .login-card p { color: var(--muted); font-size: 0.85rem; margin-bottom: 24px; }
-    .login-card .login-logo { font-size: 3rem; margin-bottom: 16px; }
-    .login-error { color: var(--danger); font-size: 0.8rem; margin-top: 8px; display: none; }
-
-    /* ADMIN LAYOUT */
-    .admin { max-width: 1500px; margin: 0 auto; padding: 24px; display: none; }
-    .admin.active { display: block; }
-    .admin-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; flex-wrap: wrap; gap: 16px; }
-    .admin-header h1 { font-size: 1.5rem; font-weight: 800; display: flex; align-items: center; gap: 10px; }
-    .admin-header h1 span { font-size: 1.8rem; }
-    .admin-actions { display: flex; gap: 10px; flex-wrap: wrap; }
-
-    /* BUTTONS */
-    .btn { padding: 10px 18px; border: none; border-radius: var(--radius); font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all 0.15s; display: inline-flex; align-items: center; gap: 6px; text-decoration: none; }
-    .btn-primary { background: var(--primary); color: #fff; }
-    .btn-primary:hover { background: var(--primary-hover); transform: translateY(-1px); }
-    .btn-ghost { background: var(--surface-2); color: var(--text); border: 1px solid var(--border); }
-    .btn-ghost:hover { background: rgba(255,255,255,0.08); }
-    .btn-danger { background: rgba(239,68,68,0.1); color: var(--danger); border: 1px solid rgba(239,68,68,0.2); }
-    .btn-danger:hover { background: rgba(239,68,68,0.2); }
-    .btn-success { background: rgba(16,185,129,0.1); color: var(--success); border: 1px solid rgba(16,185,129,0.2); }
-    .btn-sm { padding: 6px 12px; font-size: 0.78rem; }
-    .btn-xs { padding: 4px 8px; font-size: 0.72rem; }
-
-    /* STATS */
-    .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 24px; }
-    .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 20px; }
-    .stat-card__label { font-size: 0.72rem; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
-    .stat-card__value { font-size: 1.4rem; font-weight: 800; }
-    .stat-card__value--orange { color: var(--primary); }
-    .stat-card__value--green { color: var(--success); }
-    .stat-card__value--red { color: var(--danger); }
-    .stat-card__value--yellow { color: var(--warning); }
-
-    /* INPUTS */
-    .toolbar { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
-    .search-wrap { flex: 1; min-width: 200px; }
-    .input { width: 100%; padding: 10px 14px; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-size: 0.88rem; font-family: inherit; transition: border-color 0.15s; }
-    .input:focus { outline: none; border-color: var(--primary); }
-    .select { appearance: none; padding-right: 32px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; }
-    .textarea { resize: vertical; min-height: 60px; }
-    .hint { font-size: 0.7rem; color: var(--muted); margin-top: 4px; display: block; }
-
-    /* TABLE */
-    .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow-x: auto; }
-    .table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-    .table th { text-align: left; padding: 12px 16px; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--surface); }
-    .table td { padding: 10px 16px; border-bottom: 1px solid var(--border); vertical-align: middle; }
-    .table tbody tr:hover { background: rgba(255,255,255,0.02); }
-    .table-img { width: 44px; height: 44px; border-radius: 8px; object-fit: cover; background: var(--surface-2); }
-    .table-title { font-weight: 600; max-width: 220px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-    .badge { font-size: 0.68rem; font-weight: 600; padding: 3px 8px; border-radius: 99px; }
-    .badge-active { background: rgba(16,185,129,0.1); color: var(--success); }
-    .badge-low { background: rgba(245,158,11,0.1); color: #f59e0b; }
-    .badge-out { background: rgba(239,68,68,0.1); color: var(--danger); }
-    .badge-cat { background: rgba(249,115,22,0.08); color: var(--primary); }
-    .actions-cell { display: flex; gap: 4px; }
-
-    /* MODAL */
-    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); opacity: 0; visibility: hidden; transition: all 0.2s; z-index: 100; }
-    .modal-overlay.open { opacity: 1; visibility: visible; }
-    .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -45%) scale(0.96); width: 95%; max-width: 1100px; max-height: 92vh; overflow-y: auto; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 28px; opacity: 0; visibility: hidden; transition: all 0.25s; z-index: 110; }
-    .modal.open { opacity: 1; visibility: visible; transform: translate(-50%, -50%) scale(1); }
-    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-    .modal-header h2 { font-size: 1.2rem; font-weight: 700; }
-    .btn-close { background: none; border: none; color: var(--muted); font-size: 1.5rem; cursor: pointer; padding: 4px 8px; border-radius: var(--radius); }
-    .btn-close:hover { background: rgba(255,255,255,0.05); color: var(--text); }
-    .modal-body { display: grid; grid-template-columns: 1fr 320px; gap: 24px; }
-    @media (max-width: 900px) { .modal-body { grid-template-columns: 1fr; } .preview-panel { display: none; } }
-
-    /* FORM */
-    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-    .form-group { display: flex; flex-direction: column; gap: 5px; }
-    .form-group.full { grid-column: 1 / -1; }
-    .form-group label { font-size: 0.78rem; font-weight: 600; color: var(--muted); }
-    .form-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border); }
-    @media (max-width: 640px) { .form-grid { grid-template-columns: 1fr; } .modal { padding: 20px; } }
-
-    /* IMAGE UPLOAD AREA */
-    .upload-area { border: 2px dashed var(--border); border-radius: var(--radius); padding: 20px; text-align: center; cursor: pointer; transition: all 0.2s; position: relative; }
-    .upload-area:hover, .upload-area.dragover { border-color: var(--primary); background: rgba(249,115,22,0.05); }
-    .upload-area input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
-    .upload-area p { color: var(--muted); font-size: 0.8rem; }
-    .upload-area .upload-icon { font-size: 2rem; margin-bottom: 8px; }
-    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 8px; margin-top: 10px; }
-    .gallery-item { position: relative; aspect-ratio: 1; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); cursor: pointer; }
-    .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
-    .gallery-item .remove-img { position: absolute; top: 2px; right: 2px; background: rgba(0,0,0,0.7); color: #fff; border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-    .gallery-item.primary { border-color: var(--primary); box-shadow: 0 0 0 2px var(--primary); }
-
-    /* SPECS BUILDER */
-    .specs-builder { display: flex; flex-direction: column; gap: 8px; }
-    .spec-row { display: flex; gap: 8px; align-items: center; }
-    .spec-row input { flex: 1; }
-    .spec-row .btn-remove-spec { background: none; border: none; color: var(--danger); cursor: pointer; font-size: 1.1rem; padding: 4px; }
-
-    /* PREVIEW PANEL */
-    .preview-panel { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; height: fit-content; position: sticky; top: 20px; }
-    .preview-panel h3 { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
-    .preview-card { background: var(--surface); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
-    .preview-card__img { width: 100%; aspect-ratio: 1; object-fit: cover; background: var(--surface-2); }
-    .preview-card__body { padding: 12px; }
-    .preview-card__title { font-size: 0.85rem; font-weight: 700; margin-bottom: 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-    .preview-card__price { font-size: 1rem; font-weight: 800; color: var(--primary); }
-    .preview-card__price .old-price { font-size: 0.75rem; color: var(--muted); text-decoration: line-through; margin-left: 6px; font-weight: 500; }
-    .preview-card__badge { display: inline-block; background: var(--primary); color: #fff; font-size: 0.65rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; margin-top: 6px; }
-    .preview-card__rating { color: var(--warning); font-size: 0.75rem; margin-top: 4px; }
-
-    /* LIGHTBOX */
-    .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 1000; display: none; align-items: center; justify-content: center; cursor: zoom-out; }
-    .lightbox.open { display: flex; }
-    .lightbox img { max-width: 90vw; max-height: 90vh; object-fit: contain; transition: transform 0.2s; transform-origin: center center; }
-    .lightbox-close { position: absolute; top: 20px; right: 20px; background: none; border: none; color: #fff; font-size: 2rem; cursor: pointer; z-index: 1001; }
-
-    /* COST SECTION */
-    .cost-section { background: var(--surface-2); border-radius: var(--radius); padding: 14px; margin-top: 10px; }
-    .cost-section h4 { font-size: 0.78rem; color: var(--muted); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
-    .cost-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .cost-calc { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
-    .cost-calc-item { text-align: center; }
-    .cost-calc-item .label { font-size: 0.7rem; color: var(--muted); }
-    .cost-calc-item .value { font-size: 1rem; font-weight: 700; }
-
-    /* SETTINGS PANEL */
-    .settings-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 24px; display: none; }
-    .settings-panel.open { display: block; }
-    .settings-panel h3 { font-size: 0.9rem; font-weight: 700; margin-bottom: 12px; }
-    .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    @media (max-width: 640px) { .settings-grid { grid-template-columns: 1fr; } }
-
-    /* TABS */
-    .tabs { display: flex; gap: 4px; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 0; }
-    .tab { padding: 8px 16px; font-size: 0.82rem; font-weight: 600; color: var(--muted); border: none; background: none; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; }
-    .tab.active { color: var(--primary); border-bottom-color: var(--primary); }
-    .tab:hover { color: var(--text); }
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
-
-    /* TOAST */
-    .toast-box { position: fixed; bottom: 20px; right: 20px; z-index: 200; display: flex; flex-direction: column; gap: 8px; }
-    .toast { background: var(--surface); border: 1px solid var(--border); padding: 12px 16px; border-radius: var(--radius); font-size: 0.85rem; animation: slideIn 0.25s; box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
-    @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-    /* VIDEO URL */
-    .video-url-group { margin-top: 8px; }
-    .video-url-group input { margin-top: 4px; }
-
-    /* PROFIT DASHBOARD */
-    .profit-dashboard { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 24px; display: none; }
-    .profit-dashboard.open { display: block; }
-    .profit-dashboard h3 { font-size: 0.9rem; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-    .profit-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
-
-    /* LOADING */
-    .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.6s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TeloCorp Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0f1219;--surface:#1a1f2e;--primary:#f97316;--text:#f1f5f9;--text-dim:#94a3b8;--border:#2d3548;--danger:#ef4444;--success:#22c55e;--radius:10px}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+input,select,textarea,button{font-family:inherit;font-size:.875rem}
+input,select,textarea{background:var(--bg);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:6px;width:100%}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--primary)}
+button{cursor:pointer;border:none;border-radius:6px;padding:8px 16px;font-weight:500;transition:.2s}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:#ea580c}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text)}
+.btn-ghost:hover{border-color:var(--primary);color:var(--primary)}
+</style>
 </head>
 <body>
+<style>
+/* Login */
+.login-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+.login-box{background:var(--surface);padding:40px;border-radius:var(--radius);width:100%;max-width:380px}
+.login-box h1{font-size:1.5rem;margin-bottom:8px;color:var(--primary)}
+.login-box p{color:var(--text-dim);margin-bottom:24px;font-size:.875rem}
+.login-box label{display:block;margin-bottom:4px;font-size:.75rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.5px}
+.login-box .field{margin-bottom:16px}
+.login-box .error{color:var(--danger);font-size:.8rem;margin-top:8px;display:none}
+/* Header */
+.header{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.header h1{font-size:1.1rem;color:var(--primary)}
+.header-actions{display:flex;gap:8px;flex-wrap:wrap}
+/* Layout */
+.main{padding:20px;max-width:1400px;margin:0 auto}
+.toolbar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.toolbar input[type="text"]{max-width:280px}
+.toolbar select{max-width:180px}
+/* Table */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.8rem}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--border)}
+th{background:var(--surface);color:var(--text-dim);font-weight:600;text-transform:uppercase;font-size:.7rem;letter-spacing:.5px;position:sticky;top:0}
+td img{width:40px;height:40px;object-fit:cover;border-radius:6px}
+.actions-cell{display:flex;gap:4px}
+.actions-cell button{padding:4px 8px;font-size:.75rem}
+/* Mobile cards */
+.card-list{display:none}
+.prod-card{background:var(--surface);border-radius:var(--radius);padding:12px;display:flex;gap:12px;align-items:center;margin-bottom:8px}
+.prod-card img{width:50px;height:50px;object-fit:cover;border-radius:8px;flex-shrink:0}
+.prod-card-info{flex:1;min-width:0}
+.prod-card-info h4{font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prod-card-info .meta{font-size:.75rem;color:var(--text-dim);margin-top:2px}
+.prod-card-actions{display:flex;flex-direction:column;gap:4px}
+.prod-card-actions button{padding:6px 10px;font-size:.7rem}
+@media(max-width:768px){
+  .tbl-wrap{display:none}
+  .card-list{display:block}
+  .toolbar{flex-direction:column;align-items:stretch}
+  .toolbar input[type="text"],.toolbar select{max-width:100%}
+  .header-actions{font-size:.75rem}
+  .header-actions button{padding:6px 10px;font-size:.7rem}
+}
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:flex-start;justify-content:center;z-index:200;overflow-y:auto;padding:20px}
+.modal-overlay.active{display:flex}
+.modal{background:var(--surface);border-radius:var(--radius);width:100%;max-width:900px;margin:20px auto;padding:24px;position:relative}
+.modal h2{margin-bottom:16px;font-size:1.2rem}
+.modal-grid{display:grid;grid-template-columns:1fr 300px;gap:20px}
+@media(max-width:900px){.modal-grid{grid-template-columns:1fr}}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:600px){.form-grid{grid-template-columns:1fr}}
+.form-grid .full{grid-column:1/-1}
+.form-group{display:flex;flex-direction:column;gap:4px}
+.form-group label{font-size:.75rem;color:var(--text-dim)}
+/* Preview card */
+.preview-card{background:var(--bg);border-radius:var(--radius);padding:16px;position:sticky;top:20px}
+.preview-card img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;margin-bottom:12px}
+.preview-card h3{font-size:1rem;margin-bottom:4px}
+.preview-card .price{color:var(--primary);font-size:1.2rem;font-weight:700}
+/* Cost calculator */
+.cost-section{background:var(--bg);border-radius:8px;padding:16px;margin-top:12px}
+.cost-section h4{font-size:.85rem;color:var(--primary);margin-bottom:10px}
+.cost-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:.8rem}
+.cost-row.result{color:var(--success);font-weight:600}
+.cost-row.negative{color:var(--danger)}
+/* Image zoom */
+.zoom-container{position:relative;overflow:hidden;border-radius:8px;cursor:crosshair}
+.zoom-container img{width:100%;display:block;transition:transform .3s}
+.zoom-container.zoomed img{transform:scale(2.5)}
+/* Gallery */
+.gallery-thumbs{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.gallery-thumbs .thumb{width:50px;height:50px;border-radius:6px;object-fit:cover;border:2px solid transparent;cursor:pointer}
+.gallery-thumbs .thumb.active{border-color:var(--primary)}
+.gallery-thumbs .thumb-add{width:50px;height:50px;border-radius:6px;border:2px dashed var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-dim);font-size:1.2rem}
+/* Specs builder */
+.specs-list{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.spec-row{display:flex;gap:6px;align-items:center}
+.spec-row input{flex:1}
+.spec-row button{flex-shrink:0;padding:6px 10px}
+/* Report */
+.report-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:20px}
+.report-card{background:var(--bg);border-radius:8px;padding:16px;text-align:center}
+.report-card .value{font-size:1.5rem;font-weight:700;color:var(--primary)}
+.report-card .label{font-size:.75rem;color:var(--text-dim);margin-top:4px}
+.report-table{width:100%;font-size:.8rem;margin-top:12px}
+.report-table th,.report-table td{padding:6px 8px;border-bottom:1px solid var(--border)}
+/* Tags */
+.tag{display:inline-block;background:var(--primary);color:#fff;padding:2px 8px;border-radius:12px;font-size:.7rem;font-weight:500}
+.stock-low{color:var(--danger)}
+.stock-ok{color:var(--success)}
+</style>
+<!-- LOGIN -->
+<div id="loginScreen" class="login-wrap">
+<div class="login-box">
+<h1>🔐 TeloCorp Admin</h1>
+<p>Panel de administración de inventario</p>
+<div class="field"><label>Email</label><input type="email" id="loginEmail" placeholder="admin@telocg.com"></div>
+<div class="field"><label>Contraseña</label><input type="password" id="loginPass" placeholder="••••••••"></div>
+<button class="btn-primary" style="width:100%;margin-top:8px" onclick="doLogin()">Ingresar</button>
+<div class="error" id="loginError">❌ Credenciales incorrectas</div>
+</div>
+</div>
 
-  <!-- LOGIN SCREEN -->
-  <div class="login-screen" id="login-screen">
-    <div class="login-card">
-      <div class="login-logo">🔐</div>
-      <h1>TeloSales Admin</h1>
-      <p>Ingresa la contraseña para acceder al panel de administración</p>
-      <form onsubmit="handleLogin(event)">
-        <input type="password" id="login-password" class="input" placeholder="Contraseña" autofocus>
-        <div class="login-error" id="login-error">Contraseña incorrecta</div>
-        <button type="submit" class="btn btn-primary" style="width:100%;margin-top:16px;justify-content:center;">Ingresar</button>
-      </form>
-    </div>
-  </div>
+<!-- APP -->
+<div id="appScreen" style="display:none">
+<div class="header">
+<h1>📦 TeloCorp Inventario</h1>
+<div class="header-actions">
+<button class="btn-ghost" onclick="openReport()">📊 Reporte</button>
+<button class="btn-ghost" onclick="exportCSV()">📥 CSV</button>
+<button class="btn-primary" onclick="openModal()">+ Producto</button>
+<button class="btn-ghost" onclick="logout()">Salir</button>
+</div>
+</div>
+<div class="main">
+<div class="toolbar">
+<input type="text" id="searchInput" placeholder="🔍 Buscar producto..." oninput="renderProducts()">
+<select id="catFilter" onchange="renderProducts()"><option value="">Todas las categorías</option></select>
+</div>
+<div class="tbl-wrap">
+<table><thead><tr><th></th><th>Producto</th><th>Categoría</th><th>Precio</th><th>Costo</th><th>Stock</th><th>Vendidos</th><th>Acciones</th></tr></thead><tbody id="tableBody"></tbody></table>
+</div>
+<div class="card-list" id="cardList"></div>
+</div>
+</div>
+<!-- PRODUCT MODAL -->
+<div class="modal-overlay" id="productModal">
+<div class="modal">
+<h2 id="modalTitle">Nuevo Producto</h2>
+<div class="modal-grid">
+<div>
+<div class="form-grid">
+<div class="form-group"><label>Nombre</label><input id="fName" oninput="updatePreview()"></div>
+<div class="form-group"><label>Categoría</label><input id="fCat" oninput="updatePreview()"></div>
+<div class="form-group"><label>Precio de venta (RD$)</label><input type="number" id="fPrice" oninput="updatePreview();calcCost()"></div>
+<div class="form-group"><label>Stock</label><input type="number" id="fStock" value="0"></div>
+<div class="form-group"><label>Vendidos</label><input type="number" id="fSold" value="0"></div>
+<div class="form-group"><label>Descuento %</label><input type="number" id="fDiscount" value="0" oninput="calcCost()"></div>
+<div class="form-group full"><label>Descripción</label><textarea id="fDesc" rows="2" oninput="updatePreview()"></textarea></div>
+<div class="form-group full"><label>Video URL (YouTube o directa)</label><input id="fVideo" placeholder="https://youtube.com/..."></div>
+</div>
+<!-- Images -->
+<div style="margin-top:12px">
+<label style="font-size:.75rem;color:var(--text-dim)">Imágenes</label>
+<div class="gallery-thumbs" id="galleryThumbs"></div>
+<div style="display:flex;gap:6px;margin-top:8px">
+<input id="imgUrlInput" placeholder="URL de imagen o subir archivo">
+<button class="btn-ghost" onclick="addImageUrl()">URL</button>
+<label class="btn-ghost" style="display:inline-flex;align-items:center;cursor:pointer">📁<input type="file" accept="image/*" style="display:none" onchange="uploadImgBB(this)"></label>
+</div>
+</div>
+<!-- Cost Calculator -->
+<div class="cost-section">
+<h4>💰 Calculadora de Costos</h4>
+<div class="form-grid" style="margin-bottom:10px">
+<div class="form-group"><label>Costo de adquisición</label><input type="number" id="fCost" value="0" oninput="calcCost()"></div>
+<div class="form-group"><label>Gastos adicionales</label><input type="number" id="fExtra" value="0" oninput="calcCost()"></div>
+<div class="form-group"><label>Margen deseado %</label><input type="number" id="fMargin" value="50" oninput="calcCost()"></div>
+</div>
+<div class="cost-row"><span>Precio sugerido:</span><span id="calcSuggested">RD$ 0</span></div>
+<div class="cost-row"><span>Precio con descuento:</span><span id="calcDiscounted">RD$ 0</span></div>
+<div class="cost-row result"><span>Ganancia real:</span><span id="calcProfit">RD$ 0</span></div>
+<div class="cost-row"><span>Margen real:</span><span id="calcRealMargin">0%</span></div>
+</div>
+<!-- Specs -->
+<div style="margin-top:12px">
+<div style="display:flex;align-items:center;gap:8px">
+<label style="font-size:.75rem;color:var(--text-dim)">Especificaciones</label>
+<button class="btn-ghost" style="font-size:.7rem;padding:4px 8px" onclick="aiGenerateSpecs()">🤖 AI</button>
+</div>
+<div class="specs-list" id="specsList"></div>
+<button class="btn-ghost" style="margin-top:6px;font-size:.75rem" onclick="addSpecRow()">+ Agregar spec</button>
+</div>
+<div style="margin-top:16px;display:flex;gap:8px;justify-content:flex-end">
+<button class="btn-ghost" onclick="closeModal()">Cancelar</button>
+<button class="btn-primary" onclick="saveProduct()">Guardar</button>
+</div>
+</div>
+<!-- Preview -->
+<div class="preview-card" id="previewPanel">
+<div class="zoom-container" id="previewZoom" onmousemove="handleZoom(event)" onmouseleave="resetZoom()" ontouchstart="startTouchZoom(event)" ontouchend="resetZoom()">
+<img id="previewImg" src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><rect fill='%231a1f2e' width='200' height='200'/><text x='50%25' y='50%25' fill='%2394a3b8' text-anchor='middle' dy='.3em' font-size='14'>Sin imagen</text></svg>" alt="preview">
+</div>
+<h3 id="previewName" style="margin-top:12px">Nombre del producto</h3>
+<p style="font-size:.8rem;color:var(--text-dim)" id="previewDesc">Descripción...</p>
+<p class="price" id="previewPrice">RD$ 0</p>
+</div>
+</div>
+</div>
+</div>
 
-  <!-- ADMIN PANEL -->
-  <div class="admin" id="admin-panel">
-    <header class="admin-header">
-      <h1><span>🛒</span> TeloSales Admin</h1>
-      <div class="admin-actions">
-        <button class="btn btn-primary" onclick="openProductForm()">+ Nuevo Producto</button>
-        <button class="btn btn-ghost" onclick="toggleProfitDashboard()">💰 Ganancias</button>
-        <button class="btn btn-ghost" onclick="exportCSV()">📥 Exportar CSV</button>
-        <button class="btn btn-ghost" onclick="toggleSettings()">⚙️ Ajustes</button>
-        <a href="index.html" class="btn btn-ghost">← Tienda</a>
-        <button class="btn btn-danger btn-sm" onclick="logout()">Salir</button>
+<!-- REPORT MODAL -->
+<div class="modal-overlay" id="reportModal">
+<div class="modal" style="max-width:800px">
+<h2>📊 Reporte Financiero</h2>
+<div id="reportContent"></div>
+<div style="margin-top:16px;text-align:right"><button class="btn-ghost" onclick="document.getElementById('reportModal').classList.remove('active')">Cerrar</button></div>
+</div>
+</div>
+<script>
+const SUPABASE_URL='https://bhdictzvboiojyxorfiq.supabase.co';
+const SUPABASE_KEY='sb_publishable_AgpNN0k_KfW0moe6f1CKXg_qP2GKJCm';
+const IMGBB_KEY='8199e433dfe9c12d1f452ce857dbce9d';
+const GEMINI_KEY='AIzaSyB6Fw9dciFlipwPONefQbbUB0tJBDWibFc';
+const AUTH_EMAIL='admin@telocg.com';
+const AUTH_PASS='telocorp2026';
+
+let products=JSON.parse(localStorage.getItem('tcProducts')||'null');
+let editingId=null;
+let currentImages=[];
+let primaryImageIdx=0;
+
+// Auth
+function doLogin(){
+  const e=document.getElementById('loginEmail').value.trim();
+  const p=document.getElementById('loginPass').value;
+  if(e===AUTH_EMAIL&&p===AUTH_PASS){
+    localStorage.setItem('tcAuth','1');
+    showApp();
+  } else {
+    document.getElementById('loginError').style.display='block';
+  }
+}
+function logout(){localStorage.removeItem('tcAuth');location.reload()}
+function showApp(){
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('appScreen').style.display='block';
+}
+if(localStorage.getItem('tcAuth')==='1') showApp();
+// Seed data
+function seedProducts(){
+return [
+{id:1,name:'iPhone 15 Pro Max',category:'Smartphones',price:72000,cost:38000,stock:5,sold:12,discount:0,desc:'256GB, Titanio Natural',images:['https://i.ibb.co/4g1DBJG/iphone15promax.jpg'],video:'',specs:{Almacenamiento:'256GB',Chip:'A17 Pro',Pantalla:'6.7" OLED'}},
+{id:2,name:'Samsung Galaxy S24 Ultra',category:'Smartphones',price:68000,cost:35000,stock:4,sold:8,discount:5,desc:'512GB, Titanium Gray',images:['https://i.ibb.co/kGZq1Ld/s24ultra.jpg'],video:'',specs:{RAM:'12GB',Almacenamiento:'512GB',Cámara:'200MP'}},
+{id:3,name:'MacBook Air M3',category:'Laptops',price:85000,cost:52000,stock:3,sold:6,discount:0,desc:'15", 8GB RAM, 256GB SSD',images:['https://i.ibb.co/vXSMpFB/macbookair.jpg'],video:'',specs:{Chip:'M3',RAM:'8GB',SSD:'256GB'}},
+{id:4,name:'iPad Pro 12.9"',category:'Tablets',price:78000,cost:45000,stock:2,sold:4,discount:0,desc:'M2 Chip, 256GB, WiFi+Cell',images:['https://i.ibb.co/5F5LHWL/ipadpro.jpg'],video:'',specs:{Chip:'M2',Pantalla:'12.9" Liquid Retina XDR'}},
+{id:5,name:'AirPods Pro 2',category:'Audio',price:18500,cost:9800,stock:15,sold:25,discount:0,desc:'USB-C, Cancelación de ruido',images:['https://i.ibb.co/b5Z2gBK/airpodspro2.jpg'],video:'',specs:{Chip:'H2',ANC:'Sí',Batería:'6h'}},
+{id:6,name:'Sony WH-1000XM5',category:'Audio',price:24000,cost:13500,stock:7,sold:10,discount:10,desc:'Over-ear, noise cancelling',images:['https://i.ibb.co/7p0dFKV/sonyxm5.jpg'],video:'',specs:{Driver:'30mm',ANC:'Sí',Batería:'30h'}},
+{id:7,name:'Apple Watch Ultra 2',category:'Wearables',price:52000,cost:31000,stock:3,sold:5,discount:0,desc:'49mm, GPS+Cellular, Titanio',images:['https://i.ibb.co/6XnN5sv/applewatchultra.jpg'],video:'',specs:{Pantalla:'49mm',Chip:'S9',WR:'100m'}},
+{id:8,name:'Samsung Galaxy Watch 6',category:'Wearables',price:19500,cost:10500,stock:6,sold:9,discount:0,desc:'44mm, BioActive Sensor',images:['https://i.ibb.co/0JqPQm8/galaxywatch6.jpg'],video:'',specs:{Pantalla:'1.5"',OS:'Wear OS',Batería:'40h'}},
+{id:9,name:'Nintendo Switch OLED',category:'Gaming',price:22000,cost:13000,stock:8,sold:18,discount:0,desc:'Pantalla OLED 7", 64GB',images:['https://i.ibb.co/H7Jnb8d/switcholed.jpg'],video:'',specs:{Pantalla:'7" OLED',Almacenamiento:'64GB'}},
+{id:10,name:'PS5 DualSense Edge',category:'Gaming',price:12500,cost:7200,stock:10,sold:14,discount:0,desc:'Control pro, gatillos adaptativos',images:['https://i.ibb.co/5x8QWFZ/dualsense.jpg'],video:'',specs:{Conexión:'USB-C/BT',Batería:'12h'}},
+{id:11,name:'Meta Quest 3',category:'Gaming',price:35000,cost:21000,stock:4,sold:7,discount:5,desc:'128GB, Mixed Reality',images:['https://i.ibb.co/60Rm0wQ/quest3.jpg'],video:'',specs:{Chip:'Snapdragon XR2 Gen 2',RAM:'8GB'}},
+{id:12,name:'Bose SoundLink Flex',category:'Audio',price:8900,cost:4800,stock:12,sold:20,discount:0,desc:'Bluetooth, IP67, 12h batería',images:['https://i.ibb.co/qNhXQfL/boseflex.jpg'],video:'',specs:{Batería:'12h',IP:'IP67'}},
+{id:13,name:'Canon EOS R50',category:'Cámaras',price:55000,cost:33000,stock:2,sold:3,discount:0,desc:'24.2MP, 4K, Mirrorless',images:['https://i.ibb.co/HpFzgP0/canonr50.jpg'],video:'',specs:{Sensor:'24.2MP APS-C',Video:'4K 30fps'}},
+{id:14,name:'DJI Mini 4 Pro',category:'Drones',price:52000,cost:31000,stock:2,sold:4,discount:0,desc:'4K HDR, <249g, ActiveTrack',images:['https://i.ibb.co/9pVw0X9/djimini4.jpg'],video:'',specs:{Peso:'<249g',Video:'4K HDR',Alcance:'20km'}},
+{id:15,name:'Kindle Paperwhite 2024',category:'Tablets',price:9500,cost:5200,stock:10,sold:15,discount:0,desc:'6.8", 16GB, luz cálida',images:['https://i.ibb.co/ZfLHm6p/kindle.jpg'],video:'',specs:{Pantalla:'6.8" E-Ink',Almacenamiento:'16GB'}},
+{id:16,name:'Logitech MX Master 3S',category:'Accesorios',price:6500,cost:3400,stock:20,sold:30,discount:0,desc:'8000 DPI, USB-C, silencioso',images:['https://i.ibb.co/VTXdN0q/mxmaster.jpg'],video:'',specs:{DPI:'8000',Batería:'70 días',Conexión:'BT/USB'}},
+{id:17,name:'Keychron K2 Pro',category:'Accesorios',price:5800,cost:3100,stock:8,sold:12,discount:0,desc:'75%, Hot-swap, RGB, Gateron',images:['https://i.ibb.co/jzBQfxP/keychron.jpg'],video:'',specs:{Layout:'75%',Switch:'Gateron',Backlight:'RGB'}},
+{id:18,name:'Samsung T7 Shield 2TB',category:'Almacenamiento',price:9800,cost:5500,stock:14,sold:22,discount:0,desc:'SSD externo, 1050MB/s, IP65',images:['https://i.ibb.co/cLZGwzB/t7shield.jpg'],video:'',specs:{Capacidad:'2TB',Velocidad:'1050MB/s',IP:'IP65'}},
+{id:19,name:'Anker 737 Power Bank',category:'Accesorios',price:5200,cost:2800,stock:18,sold:28,discount:0,desc:'24000mAh, 140W, USB-C',images:['https://i.ibb.co/fXSCLjK/anker737.jpg'],video:'',specs:{Capacidad:'24000mAh',Potencia:'140W'}},
+{id:20,name:'Google Pixel 8 Pro',category:'Smartphones',price:58000,cost:32000,stock:3,sold:5,discount:0,desc:'256GB, Obsidian, Tensor G3',images:['https://i.ibb.co/nCsmVr7/pixel8pro.jpg'],video:'',specs:{Chip:'Tensor G3',Cámara:'50MP',RAM:'12GB'}},
+{id:21,name:'LG C3 OLED 55"',category:'TV & Pantallas',price:62000,cost:37000,stock:2,sold:3,discount:8,desc:'4K 120Hz, Dolby Vision, webOS',images:['https://i.ibb.co/kqwRVNq/lgc3.jpg'],video:'',specs:{Resolución:'4K',Hz:'120',HDR:'Dolby Vision'}},
+{id:22,name:'Xiaomi Robot Vacuum X10+',category:'Smart Home',price:28000,cost:15000,stock:5,sold:8,discount:0,desc:'LiDAR, autovaciado, fregado',images:['https://i.ibb.co/1MdDr3y/xiaomivac.jpg'],video:'',specs:{Succión:'4000Pa',Navegación:'LiDAR',Batería:'5200mAh'}}
+]}
+// Init
+if(!products){products=seedProducts();saveLocal()}
+populateCategories();
+renderProducts();
+syncFromSupabase();
+
+function saveLocal(){localStorage.setItem('tcProducts',JSON.stringify(products))}
+function populateCategories(){
+  const cats=[...new Set(products.map(p=>p.category))].sort();
+  const sel=document.getElementById('catFilter');
+  sel.innerHTML='<option value="">Todas las categorías</option>'+cats.map(c=>`<option>${c}</option>`).join('');
+}
+
+function getFiltered(){
+  const q=document.getElementById('searchInput').value.toLowerCase();
+  const cat=document.getElementById('catFilter').value;
+  return products.filter(p=>{
+    const matchQ=!q||p.name.toLowerCase().includes(q)||p.category.toLowerCase().includes(q);
+    const matchC=!cat||p.category===cat;
+    return matchQ&&matchC;
+  });
+}
+
+function renderProducts(){
+  const list=getFiltered();
+  // Table
+  document.getElementById('tableBody').innerHTML=list.map(p=>{
+    const img=p.images&&p.images.length?p.images[0]:'';
+    const finalPrice=p.discount?p.price*(1-p.discount/100):p.price;
+    return `<tr>
+      <td><img src="${img}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2240%22><rect fill=%22%231a1f2e%22 width=%2240%22 height=%2240%22/></svg>'"></td>
+      <td><b>${p.name}</b></td>
+      <td><span class="tag">${p.category}</span></td>
+      <td>RD$ ${finalPrice.toLocaleString()}</td>
+      <td>RD$ ${(p.cost||0).toLocaleString()}</td>
+      <td class="${p.stock<=3?'stock-low':'stock-ok'}">${p.stock}</td>
+      <td>${p.sold||0}</td>
+      <td class="actions-cell"><button class="btn-ghost" onclick="editProduct(${p.id})">✏️</button><button class="btn-danger" onclick="deleteProduct(${p.id})">🗑️</button></td>
+    </tr>`}).join('');
+  // Cards (mobile)
+  document.getElementById('cardList').innerHTML=list.map(p=>{
+    const img=p.images&&p.images.length?p.images[0]:'';
+    const finalPrice=p.discount?p.price*(1-p.discount/100):p.price;
+    return `<div class="prod-card">
+      <img src="${img}" onerror="this.style.background='var(--surface)'">
+      <div class="prod-card-info">
+        <h4>${p.name}</h4>
+        <div class="meta">RD$ ${finalPrice.toLocaleString()} · Stock: ${p.stock}</div>
       </div>
-    </header>
-
-    <!-- SETTINGS -->
-    <div class="settings-panel" id="settings-panel">
-      <h3>⚙️ Configuración de APIs</h3>
-      <div class="settings-grid">
-        <div class="form-group">
-          <label>ImgBB API Key</label>
-          <input type="text" id="setting-imgbb" class="input" placeholder="Tu API key de ImgBB">
-          <small class="hint">Obtén una en api.imgbb.com (gratis)</small>
-        </div>
-        <div class="form-group">
-          <label>Gemini API Key</label>
-          <input type="text" id="setting-gemini" class="input" placeholder="API key de Google Gemini">
-          <small class="hint">Para generar especificaciones con IA</small>
-        </div>
+      <div class="prod-card-actions">
+        <button class="btn-ghost" onclick="editProduct(${p.id})">✏️</button>
+        <button class="btn-danger" onclick="deleteProduct(${p.id})">🗑️</button>
       </div>
-      <button class="btn btn-primary btn-sm" style="margin-top:12px" onclick="saveSettings()">Guardar Ajustes</button>
-    </div>
-
-    <!-- PROFIT DASHBOARD -->
-    <div class="profit-dashboard" id="profit-dashboard">
-      <h3>💰 Resumen de Costos y Ganancias</h3>
-      <div class="profit-stats">
-        <div class="stat-card"><div class="stat-card__label">Costo Total Inventario</div><div class="stat-card__value stat-card__value--red" id="profit-cost">RD$ 0</div></div>
-        <div class="stat-card"><div class="stat-card__label">Ingresos Potenciales</div><div class="stat-card__value stat-card__value--orange" id="profit-revenue">RD$ 0</div></div>
-        <div class="stat-card"><div class="stat-card__label">Ganancia Potencial</div><div class="stat-card__value stat-card__value--green" id="profit-profit">RD$ 0</div></div>
-        <div class="stat-card"><div class="stat-card__label">Margen Promedio</div><div class="stat-card__value stat-card__value--yellow" id="profit-margin">0%</div></div>
-      </div>
-    </div>
-
-    <!-- STATS -->
-    <div class="stats-row">
-      <div class="stat-card"><div class="stat-card__label">Total Productos</div><div class="stat-card__value" id="stat-total">0</div></div>
-      <div class="stat-card"><div class="stat-card__label">Valor Inventario</div><div class="stat-card__value stat-card__value--orange" id="stat-value">RD$ 0</div></div>
-      <div class="stat-card"><div class="stat-card__label">Stock Bajo (&lt;5)</div><div class="stat-card__value stat-card__value--red" id="stat-low">0</div></div>
-      <div class="stat-card"><div class="stat-card__label">Ventas Totales</div><div class="stat-card__value stat-card__value--green" id="stat-sold">0</div></div>
-    </div>
-
-    <!-- SEARCH & FILTERS -->
-    <div class="toolbar">
-      <div class="search-wrap">
-        <input type="text" id="admin-search" placeholder="Buscar producto..." class="input">
-      </div>
-      <select id="admin-filter" class="input select" style="max-width:200px" onchange="renderTable()">
-        <option value="all">Todas las categorías</option>
-        <option value="cases">Covers</option>
-        <option value="tech">Cables y Carga</option>
-        <option value="audio">Audio</option>
-        <option value="equipos">Equipamiento</option>
-      </select>
-    </div>
-
-    <!-- PRODUCTS TABLE -->
-    <div class="table-wrap">
-      <table class="table" id="products-table">
-        <thead>
-          <tr>
-            <th>Imagen</th>
-            <th>Producto</th>
-            <th>Categoría</th>
-            <th>Precio</th>
-            <th>Costo</th>
-            <th>Ganancia</th>
-            <th>Stock</th>
-            <th>Vendidos</th>
-            <th>Estado</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody id="table-body"></tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- PRODUCT FORM MODAL -->
-  <div class="modal-overlay" id="modal-overlay" onclick="closeProductForm()"></div>
-  <div class="modal" id="product-modal">
-    <div class="modal-header">
-      <h2 id="modal-title">Nuevo Producto</h2>
-      <button class="btn-close" onclick="closeProductForm()">×</button>
-    </div>
-    <div class="modal-body">
-      <div class="form-section">
-        <form id="product-form" onsubmit="saveProduct(event)">
-          <div class="form-grid">
-            <div class="form-group full">
-              <label>Nombre del Producto *</label>
-              <input type="text" id="f-title" class="input" required placeholder="Ej. Cover MagSafe Premium" oninput="updatePreview()">
-            </div>
-            <div class="form-group">
-              <label>Categoría *</label>
-              <select id="f-category" class="input select" required onchange="updatePreview()">
-                <option value="cases">Covers & Fundas</option>
-                <option value="tech">Cables y Carga</option>
-                <option value="audio">Audio / Altavoces</option>
-                <option value="equipos">Equipamiento</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Precio de Venta (RD$) *</label>
-              <input type="number" id="f-price" class="input" required min="1" placeholder="600" oninput="updateCostCalc();updatePreview()">
-            </div>
-            <div class="form-group">
-              <label>Stock Disponible *</label>
-              <input type="number" id="f-stock" class="input" required min="0" placeholder="25">
-            </div>
-            <div class="form-group">
-              <label>Unidades Vendidas</label>
-              <input type="number" id="f-sold" class="input" min="0" value="0" placeholder="0">
-            </div>
-            <div class="form-group">
-              <label>Descuento (%)</label>
-              <input type="number" id="f-discount" class="input" min="0" max="90" value="0" placeholder="0" oninput="updatePreview()">
-            </div>
-            <div class="form-group">
-              <label>Rating (1-5)</label>
-              <input type="number" id="f-rating" class="input" min="1" max="5" step="0.5" value="5" oninput="updatePreview()">
-            </div>
-            <div class="form-group full">
-              <label>Descripción *</label>
-              <textarea id="f-description" class="input textarea" required rows="3" placeholder="Descripción detallada del producto..." oninput="updatePreview()"></textarea>
-            </div>
-
-            <!-- IMAGE UPLOAD -->
-            <div class="form-group full">
-              <label>Imágenes del Producto</label>
-              <div class="upload-area" id="upload-area">
-                <input type="file" accept="image/*" multiple id="file-input" onchange="handleFileUpload(event)">
-                <div class="upload-icon">📸</div>
-                <p>Arrastra imágenes aquí o haz clic para seleccionar</p>
-                <small class="hint">Se subirán a ImgBB automáticamente</small>
-              </div>
-              <div style="margin-top:8px;display:flex;gap:8px;align-items:center;">
-                <input type="text" id="f-image-url" class="input" placeholder="O pega una URL de imagen..." style="flex:1">
-                <button type="button" class="btn btn-ghost btn-sm" onclick="addImageUrl()">+ Agregar</button>
-              </div>
-              <div class="gallery-grid" id="image-gallery"></div>
-            </div>
-
-            <!-- VIDEO URL -->
-            <div class="form-group full video-url-group">
-              <label>URL de Video (YouTube o enlace directo)</label>
-              <input type="text" id="f-video" class="input" placeholder="https://youtube.com/watch?v=... o URL directa">
-            </div>
-
-            <!-- COST / PROFIT -->
-            <div class="form-group full">
-              <div class="cost-section">
-                <h4>💰 Costos y Ganancia</h4>
-                <div class="cost-row">
-                  <div class="form-group">
-                    <label>Costo (RD$)</label>
-                    <input type="number" id="f-cost" class="input" min="0" placeholder="Precio de compra" oninput="updateCostCalc()">
-                  </div>
-                  <div class="form-group">
-                    <label>Precio de Venta (RD$)</label>
-                    <input type="number" id="f-price-display" class="input" disabled>
-                  </div>
-                </div>
-                <div class="cost-calc">
-                  <div class="cost-calc-item">
-                    <div class="label">Ganancia</div>
-                    <div class="value" id="calc-profit" style="color:var(--success)">RD$ 0</div>
-                  </div>
-                  <div class="cost-calc-item">
-                    <div class="label">Margen %</div>
-                    <div class="value" id="calc-margin" style="color:var(--warning)">0%</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- SPECS BUILDER -->
-            <div class="form-group full">
-              <label style="display:flex;align-items:center;justify-content:space-between;">
-                Especificaciones
-                <button type="button" class="btn btn-ghost btn-xs" onclick="generateSpecsAI()" id="btn-ai-specs">✨ Generar con IA</button>
-              </label>
-              <div class="specs-builder" id="specs-builder"></div>
-              <button type="button" class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="addSpecRow()">+ Agregar especificación</button>
-            </div>
-          </div>
-
-          <input type="hidden" id="f-id" value="">
-          <input type="hidden" id="f-images-data" value="[]">
-          <div class="form-actions">
-            <button type="button" class="btn btn-ghost" onclick="closeProductForm()">Cancelar</button>
-            <button type="submit" class="btn btn-primary" id="btn-save">Guardar Producto</button>
-          </div>
-        </form>
-      </div>
-
-      <!-- LIVE PREVIEW -->
-      <div class="preview-panel">
-        <h3>Vista Previa</h3>
-        <div class="preview-card">
-          <img class="preview-card__img" id="preview-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Crect fill='%231a1f2e' width='300' height='300'/%3E%3Ctext x='50%25' y='50%25' fill='%2394a3b8' text-anchor='middle' dy='.3em' font-family='sans-serif'%3ESin imagen%3C/text%3E%3C/svg%3E" alt="Preview">
-          <div class="preview-card__body">
-            <div class="preview-card__title" id="preview-title">Nombre del producto</div>
-            <div class="preview-card__rating" id="preview-rating">★★★★★</div>
-            <div class="preview-card__price" id="preview-price">RD$ 0</div>
-            <div class="preview-card__badge" id="preview-badge" style="display:none"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- LIGHTBOX -->
-  <div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
-    <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
-    <img id="lightbox-img" src="" alt="Zoom">
-  </div>
-
-  <!-- TOASTS -->
-  <div class="toast-box" id="toasts"></div>
-
-  <script>
-    // ═══════════════════════════════════════════
-    // SUPABASE CONFIG
-    // ═══════════════════════════════════════════
-    const SUPABASE_URL = 'https://bhdictzvboiojyxorfiq.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_AgpNN0k_KfW0moe6f1CKXg_qP2GKJCm';
-    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-    const LOCAL_PRODUCTS_KEY = 'telosales_admin_products';
-    const SETTINGS_KEY = 'telosales_admin_settings';
-    const ADMIN_PASSWORD = 'telocorp2026';
-
-    let allProducts = [];
-    let currentImages = [];
-    let lightboxZoom = 1;
-
-    // ═══════════════════════════════════════════
-    // LOGIN
-    // ═══════════════════════════════════════════
-    function checkAuth() {
-      if (sessionStorage.getItem('telosales_auth') === 'true') {
-        showAdmin();
-      }
-    }
-
-    function handleLogin(e) {
-      e.preventDefault();
-      const pwd = document.getElementById('login-password').value;
-      if (pwd === ADMIN_PASSWORD) {
-        sessionStorage.setItem('telosales_auth', 'true');
-        showAdmin();
-      } else {
-        const err = document.getElementById('login-error');
-        err.style.display = 'block';
-        setTimeout(() => err.style.display = 'none', 3000);
-      }
-    }
-
-    function showAdmin() {
-      document.getElementById('login-screen').style.display = 'none';
-      document.getElementById('admin-panel').classList.add('active');
-      init();
-    }
-
-    function logout() {
-      sessionStorage.removeItem('telosales_auth');
-      location.reload();
-    }
-
-    // ═══════════════════════════════════════════
-    // SETTINGS
-    // ═══════════════════════════════════════════
-    function loadSettings() {
-      const s = JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}');
-      document.getElementById('setting-imgbb').value = s.imgbbKey || '';
-      document.getElementById('setting-gemini').value = s.geminiKey || 'AIzaSyB6Fw9dciFlipwPONefQbbUB0tJBDWibFc';
-      return s;
-    }
-
-    function saveSettings() {
-      const settings = {
-        imgbbKey: document.getElementById('setting-imgbb').value.trim(),
-        geminiKey: document.getElementById('setting-gemini').value.trim()
-      };
-      localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-      toast('Ajustes guardados ✓');
-    }
-
-    function getSettings() {
-      return JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}');
-    }
-
-    function toggleSettings() {
-      document.getElementById('settings-panel').classList.toggle('open');
-    }
-
-    function toggleProfitDashboard() {
-      const d = document.getElementById('profit-dashboard');
-      d.classList.toggle('open');
-      if (d.classList.contains('open')) updateProfitDashboard();
-    }
-
-    // ═══════════════════════════════════════════
-    // INIT
-    // ═══════════════════════════════════════════
-    async function init() {
-      loadSettings();
-      allProducts = await loadProducts();
-      renderTable();
-      updateStats();
-      document.getElementById('admin-search').addEventListener('input', renderTable);
-      setupDragDrop();
-    }
-
-    // ═══════════════════════════════════════════
-    // DATA LAYER
-    // ═══════════════════════════════════════════
-    async function loadProducts() {
-      try {
-        const { data, error } = await sb.from('products').select('*').order('created_at', { ascending: false });
-        if (data && data.length > 0) return data;
-      } catch (e) { console.log('[Admin] Supabase not available, using localStorage'); }
-      const saved = localStorage.getItem(LOCAL_PRODUCTS_KEY);
-      if (saved) return JSON.parse(saved);
-      const seeded = getSeededProducts();
-      localStorage.setItem(LOCAL_PRODUCTS_KEY, JSON.stringify(seeded));
-      return seeded;
-    }
-
-    async function saveProductToDB(product) {
-      const idx = allProducts.findIndex(p => p.id === product.id);
-      if (idx > -1) allProducts[idx] = product;
-      else allProducts.unshift(product);
-      localStorage.setItem(LOCAL_PRODUCTS_KEY, JSON.stringify(allProducts));
-      try { await sb.from('products').upsert(product, { onConflict: 'id' }); } catch (e) { }
-    }
-
-    async function deleteProductFromDB(id) {
-      allProducts = allProducts.filter(p => p.id !== id);
-      localStorage.setItem(LOCAL_PRODUCTS_KEY, JSON.stringify(allProducts));
-      try { await sb.from('products').delete().eq('id', id); } catch (e) { }
-    }
-
-    // ═══════════════════════════════════════════
-    // SEED DATA
-    // ═══════════════════════════════════════════
-    function getSeededProducts() {
-      return [
-        { id: 'ts-100', title: 'Diagrama Núcleo de Cobre: Cables D09', category: 'tech', price: 450, cost: 200, stock: 30, sold: 85, discount: 0, rating: 5, description: 'Diagrama técnico del cable D09.', image: 'TeloCorp/images/image1.png', images: [], video: '', specs: '{"Material":"Cobre estañado y TPE"}' },
-        { id: 'ts-101', title: 'Cover Magnético Transparente MagSafe', category: 'cases', price: 600, cost: 280, stock: 22, sold: 340, discount: 0, rating: 5, description: 'Funda transparente con MagSafe.', image: 'TeloCorp/images/image2.png', images: [], video: '', specs: '{"Material":"TPU + Policarbonato","Compatibilidad":"iPhone 7+ a 17 Pro Max"}' },
-        { id: 'ts-102', title: 'Cover Silicona Stitch Azul', category: 'cases', price: 550, cost: 250, stock: 15, sold: 210, discount: 15, rating: 4.5, description: 'Silicona líquida con diseño 3D de Stitch.', image: 'TeloCorp/images/image3.png', images: [], video: '', specs: '{"Material":"Silicona líquida","Diseño":"Relieve 3D"}' },
-        { id: 'ts-103', title: 'Nevera Exhibidora Traulsen', category: 'equipos', price: 45000, cost: 32000, stock: 3, sold: 12, discount: 0, rating: 4.5, description: 'Refrigerador comercial con vidrio templado.', image: 'TeloCorp/images/image4.png', images: [], video: '', specs: '{"Marca":"Traulsen","Material":"Acero inoxidable"}' },
-        { id: 'ts-104', title: 'Audífonos Deportivos Miccell BH96', category: 'audio', price: 1200, cost: 550, stock: 40, sold: 428, discount: 10, rating: 5, description: 'Auriculares BT 5.4 con pantalla LED.', image: 'TeloCorp/images/image5.png', images: [], video: '', specs: '{"Bluetooth":"5.4","Batería":"40mAh (5.5h)"}' },
-        { id: 'ts-105', title: 'Altavoz Miccell VQ-SP63', category: 'audio', price: 1500, cost: 700, stock: 18, sold: 195, discount: 0, rating: 5, description: 'Bluetooth portátil con estéreo 3D.', image: 'TeloCorp/images/image6.png', images: [], video: '', specs: '{"Batería":"1200mAh","Carga":"USB-C"}' },
-        { id: 'ts-106', title: 'Cargador T13 C-Lightning 20W', category: 'tech', price: 850, cost: 380, stock: 35, sold: 520, discount: 20, rating: 5, description: 'Cargador 20W con cable incluido.', image: 'TeloCorp/images/image7.png', images: [], video: '', specs: '{"Potencia":"20W","Cable":"1.0m"}' },
-        { id: 'ts-107', title: 'Freidora Industrial Vevor', category: 'equipos', price: 8500, cost: 5500, stock: 5, sold: 38, discount: 0, rating: 5, description: 'Doble tina con control independiente.', image: 'TeloCorp/images/image8.png', images: [], video: '', specs: '{"Capacidad":"6L + 6L","Potencia":"3000W"}' },
-        { id: 'ts-108', title: 'Batería Portátil 10000mAh', category: 'tech', price: 1450, cost: 650, stock: 28, sold: 312, discount: 0, rating: 4.5, description: 'Power bank ultra delgada con display LED.', image: 'TeloCorp/images/image9.png', images: [], video: '', specs: '{"Capacidad":"10000mAh","Salidas":"2x USB-A"}' },
-        { id: 'ts-109', title: 'Altavoz Miccell VQ-SP64', category: 'audio', price: 2200, cost: 1000, stock: 12, sold: 156, discount: 15, rating: 5, description: 'Altavoz mediano con radiadores pasivos.', image: 'TeloCorp/images/image10.png', images: [], video: '', specs: '{"Batería":"2400mAh","Potencia":"10W RMS"}' },
-        { id: 'ts-110', title: 'Cover Cristal MagSafe Transparente', category: 'cases', price: 800, cost: 350, stock: 20, sold: 275, discount: 0, rating: 4.5, description: 'Cristal templado con MagSafe N52.', image: 'TeloCorp/images/image11.png', images: [], video: '', specs: '{"Material":"Vidrio 9H + Aluminio"}' },
-        { id: 'ts-111', title: 'Cover Cristal MagSafe Grafito', category: 'cases', price: 800, cost: 350, stock: 17, sold: 248, discount: 0, rating: 5, description: 'Cristal templado bordes grafito.', image: 'TeloCorp/images/image12.png', images: [], video: '', specs: '{"Material":"Vidrio 9H","Color":"Grafito"}' },
-        { id: 'ts-112', title: 'Boombox Miccell SP56 30000mAh', category: 'audio', price: 4500, cost: 2200, stock: 7, sold: 62, discount: 10, rating: 4.5, description: 'Altavoz gigante con chip DSP.', image: 'TeloCorp/images/image13.png', images: [], video: '', specs: '{"Batería":"30000mAh","Autonomía":"6-10h"}' },
-        { id: 'ts-113', title: 'Cable D06 Lightning Blanco', category: 'tech', price: 350, cost: 120, stock: 50, sold: 680, discount: 0, rating: 5, description: 'Cable USB-A a Lightning.', image: 'TeloCorp/images/image14.png', images: [], video: '', specs: '{"Longitud":"1.0m","Material":"PVC reforzado"}' },
-        { id: 'ts-114', title: 'Cover 360 Blindado Rojo', category: 'cases', price: 700, cost: 300, stock: 25, sold: 183, discount: 20, rating: 5, description: 'Protección total 360° blindada.', image: 'TeloCorp/images/image15.png', images: [], video: '', specs: '{"Protección":"360° blindada"}' },
-        { id: 'ts-115', title: 'Altavoz IPX7 Impermeable', category: 'audio', price: 1800, cost: 850, stock: 14, sold: 134, discount: 0, rating: 4.5, description: 'Resistente al agua certificado IPX7.', image: 'TeloCorp/images/image16.png', images: [], video: '', specs: '{"IPX":"7","Bluetooth":"5.3"}' },
-        { id: 'ts-116', title: 'Cover Chupón Succión', category: 'cases', price: 450, cost: 180, stock: 32, sold: 95, discount: 0, rating: 5, description: 'Ventosas para superficies planas.', image: 'TeloCorp/images/image17.png', images: [], video: '', specs: '{"Material":"Silicona + ventosas"}' },
-        { id: 'ts-117', title: 'Cargador T13 C-C 20W', category: 'tech', price: 850, cost: 380, stock: 30, sold: 445, discount: 0, rating: 4.5, description: 'Cargador 20W USB-C a USB-C.', image: 'TeloCorp/images/image18.png', images: [], video: '', specs: '{"Potencia":"20W","Cable":"1.0m C-C"}' },
-        { id: 'ts-118', title: 'Comparativa Altavoces SP63/64/65', category: 'audio', price: 2500, cost: 1200, stock: 9, sold: 48, discount: 0, rating: 5, description: 'Ficha comparativa de la serie.', image: 'TeloCorp/images/image19.png', images: [], video: '', specs: '{"Modelos":"SP63/SP64/SP65"}' },
-        { id: 'ts-119', title: 'Audífonos TWS VQ-BH105', category: 'audio', price: 1100, cost: 480, stock: 22, sold: 367, discount: 25, rating: 4.5, description: 'TWS BT 5.3 con control táctil.', image: 'TeloCorp/images/image20.png', images: [], video: '', specs: '{"Bluetooth":"5.3","Control":"Táctil"}' },
-        { id: 'ts-120', title: 'Cable D02 Tipo C 2M', category: 'tech', price: 500, cost: 180, stock: 42, sold: 290, discount: 0, rating: 4.5, description: 'Cable 2m con Power Delivery.', image: 'TeloCorp/images/image21.png', images: [], video: '', specs: '{"Longitud":"2.0m","Carga":"PD"}' },
-        { id: 'ts-121', title: 'Ficha Técnica BH96 3D', category: 'audio', price: 1200, cost: 550, stock: 11, sold: 78, discount: 0, rating: 5, description: 'Altavoz doble cámara 13mm.', image: 'TeloCorp/images/image22.png', images: [], video: '', specs: '{"Altavoz":"13mm doble cámara"}' },
-      ];
-    }
-
-    // ═══════════════════════════════════════════
-    // RENDER TABLE
-    // ═══════════════════════════════════════════
-    function renderTable() {
-      const search = document.getElementById('admin-search').value.toLowerCase();
-      const filter = document.getElementById('admin-filter').value;
-      const tbody = document.getElementById('table-body');
-
-      let filtered = allProducts.filter(p => {
-        const matchSearch = !search || p.title.toLowerCase().includes(search) || (p.description || '').toLowerCase().includes(search);
-        const matchCat = filter === 'all' || p.category === filter;
-        return matchSearch && matchCat;
-      });
-
-      const catLabels = { cases: 'Covers', tech: 'Tech', audio: 'Audio', equipos: 'Equipos' };
-      const getImgUrl = (img) => {
-        if (!img) return 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="44" height="44"%3E%3Crect fill="%231a1f2e" width="44" height="44"/%3E%3C/svg%3E';
-        if (img.startsWith('http')) return img;
-        return `https://wsrv.nl/?url=https://telocg.com/${encodeURIComponent(img)}&w=88&output=webp&q=70`;
-      };
-
-      tbody.innerHTML = filtered.map(p => {
-        const cost = p.cost || 0;
-        const profit = p.price - cost;
-        const status = p.stock === 0 ? 'out' : p.stock <= 5 ? 'low' : 'active';
-        const statusLabel = status === 'out' ? 'Agotado' : status === 'low' ? 'Bajo' : 'Activo';
-        return `<tr>
-          <td><img src="${getImgUrl(p.image)}" class="table-img" alt="" loading="lazy" onclick="openLightbox('${getImgUrl(p.image)}')"></td>
-          <td><div class="table-title">${p.title}</div>${p.discount ? `<small style="color:var(--primary)">-${p.discount}% OFF</small>` : ''}</td>
-          <td><span class="badge badge-cat">${catLabels[p.category] || p.category}</span></td>
-          <td><strong>RD$ ${p.price.toLocaleString()}</strong></td>
-          <td style="color:var(--muted)">${cost ? 'RD$ ' + cost.toLocaleString() : '—'}</td>
-          <td style="color:${profit > 0 ? 'var(--success)' : 'var(--danger)'}">RD$ ${profit.toLocaleString()}</td>
-          <td>${p.stock}</td>
-          <td>${p.sold}</td>
-          <td><span class="badge badge-${status}">${statusLabel}</span></td>
-          <td><div class="actions-cell">
-            <button class="btn btn-ghost btn-sm" onclick="editProduct('${p.id}')">✏️</button>
-            <button class="btn btn-danger btn-sm" onclick="confirmDelete('${p.id}')">🗑️</button>
-          </div></td>
-        </tr>`;
-      }).join('');
-
-      if (filtered.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:32px;color:var(--muted);">No se encontraron productos</td></tr>';
-      }
-    }
-
-    // ═══════════════════════════════════════════
-    // STATS
-    // ═══════════════════════════════════════════
-    function updateStats() {
-      document.getElementById('stat-total').textContent = allProducts.length;
-      const totalValue = allProducts.reduce((s, p) => s + (p.price * p.stock), 0);
-      document.getElementById('stat-value').textContent = `RD$ ${totalValue.toLocaleString()}`;
-      document.getElementById('stat-low').textContent = allProducts.filter(p => p.stock < 5).length;
-      document.getElementById('stat-sold').textContent = allProducts.reduce((s, p) => s + (p.sold || 0), 0).toLocaleString();
-    }
-
-    function updateProfitDashboard() {
-      let totalCost = 0, totalRevenue = 0;
-      allProducts.forEach(p => {
-        const cost = p.cost || 0;
-        totalCost += cost * p.stock;
-        totalRevenue += p.price * p.stock;
-      });
-      const totalProfit = totalRevenue - totalCost;
-      const avgMargin = totalRevenue > 0 ? ((totalProfit / totalRevenue) * 100).toFixed(1) : 0;
-
-      document.getElementById('profit-cost').textContent = `RD$ ${totalCost.toLocaleString()}`;
-      document.getElementById('profit-revenue').textContent = `RD$ ${totalRevenue.toLocaleString()}`;
-      document.getElementById('profit-profit').textContent = `RD$ ${totalProfit.toLocaleString()}`;
-      document.getElementById('profit-margin').textContent = `${avgMargin}%`;
-    }
-
-    // ═══════════════════════════════════════════
-    // FORM MODAL
-    // ═══════════════════════════════════════════
-    function openProductForm(product = null) {
-      document.getElementById('modal-overlay').classList.add('open');
-      document.getElementById('product-modal').classList.add('open');
-      document.getElementById('modal-title').textContent = product ? 'Editar Producto' : 'Nuevo Producto';
-
-      // Reset specs builder
-      document.getElementById('specs-builder').innerHTML = '';
-      currentImages = [];
-
-      if (product) {
-        document.getElementById('f-id').value = product.id;
-        document.getElementById('f-title').value = product.title;
-        document.getElementById('f-category').value = product.category;
-        document.getElementById('f-price').value = product.price;
-        document.getElementById('f-stock').value = product.stock;
-        document.getElementById('f-sold').value = product.sold || 0;
-        document.getElementById('f-discount').value = product.discount || 0;
-        document.getElementById('f-rating').value = product.rating || 5;
-        document.getElementById('f-description').value = product.description || '';
-        document.getElementById('f-cost').value = product.cost || '';
-        document.getElementById('f-video').value = product.video || '';
-
-        // Load images
-        currentImages = product.images || [];
-        if (product.image && !currentImages.includes(product.image)) {
-          currentImages.unshift(product.image);
-        }
-        renderGallery();
-
-        // Load specs
-        let specs = {};
-        try { specs = typeof product.specs === 'string' ? JSON.parse(product.specs) : (product.specs || {}); } catch(e) {}
-        Object.entries(specs).forEach(([k, v]) => addSpecRow(k, v));
-      } else {
-        document.getElementById('product-form').reset();
-        document.getElementById('f-id').value = '';
-        document.getElementById('f-rating').value = '5';
-        document.getElementById('f-cost').value = '';
-        document.getElementById('f-video').value = '';
-        addSpecRow();
-      }
-
-      updateCostCalc();
-      updatePreview();
-    }
-
-    function closeProductForm() {
-      document.getElementById('modal-overlay').classList.remove('open');
-      document.getElementById('product-modal').classList.remove('open');
-    }
-
-    function editProduct(id) {
-      const product = allProducts.find(p => p.id === id);
-      if (product) openProductForm(product);
-    }
-
-    async function saveProduct(e) {
-      e.preventDefault();
-      const id = document.getElementById('f-id').value || `ts-${Date.now()}`;
-
-      // Collect specs from builder
-      const specRows = document.querySelectorAll('#specs-builder .spec-row');
-      const specs = {};
-      specRows.forEach(row => {
-        const key = row.querySelector('.spec-key').value.trim();
-        const val = row.querySelector('.spec-val').value.trim();
-        if (key && val) specs[key] = val;
-      });
-
-      const product = {
-        id,
-        title: document.getElementById('f-title').value.trim(),
-        category: document.getElementById('f-category').value,
-        price: parseFloat(document.getElementById('f-price').value),
-        cost: parseFloat(document.getElementById('f-cost').value) || 0,
-        stock: parseInt(document.getElementById('f-stock').value),
-        sold: parseInt(document.getElementById('f-sold').value) || 0,
-        discount: parseInt(document.getElementById('f-discount').value) || 0,
-        rating: parseFloat(document.getElementById('f-rating').value) || 5,
-        description: document.getElementById('f-description').value.trim(),
-        image: currentImages[0] || 'TeloCorp/images/image1.png',
-        images: currentImages,
-        video: document.getElementById('f-video').value.trim(),
-        specs: JSON.stringify(specs),
-        updated_at: new Date().toISOString()
-      };
-
-      await saveProductToDB(product);
-      closeProductForm();
-      renderTable();
-      updateStats();
-      toast('Producto guardado exitosamente ✓');
-    }
-
-    function confirmDelete(id) {
-      const product = allProducts.find(p => p.id === id);
-      if (confirm(`¿Eliminar "${product?.title}"?\nEsta acción no se puede deshacer.`)) {
-        deleteProductFromDB(id);
-        renderTable();
-        updateStats();
-        toast('Producto eliminado');
-      }
-    }
-
-    // ═══════════════════════════════════════════
-    // COST CALCULATOR
-    // ═══════════════════════════════════════════
-    function updateCostCalc() {
-      const price = parseFloat(document.getElementById('f-price').value) || 0;
-      const cost = parseFloat(document.getElementById('f-cost').value) || 0;
-      const profit = price - cost;
-      const margin = price > 0 ? ((profit / price) * 100).toFixed(1) : 0;
-
-      document.getElementById('f-price-display').value = price;
-      document.getElementById('calc-profit').textContent = `RD$ ${profit.toLocaleString()}`;
-      document.getElementById('calc-profit').style.color = profit >= 0 ? 'var(--success)' : 'var(--danger)';
-      document.getElementById('calc-margin').textContent = `${margin}%`;
-    }
-
-    // ═══════════════════════════════════════════
-    // IMAGE UPLOAD & GALLERY
-    // ═══════════════════════════════════════════
-    function setupDragDrop() {
-      const area = document.getElementById('upload-area');
-      if (!area) return;
-      ['dragenter', 'dragover'].forEach(ev => {
-        area.addEventListener(ev, (e) => { e.preventDefault(); area.classList.add('dragover'); });
-      });
-      ['dragleave', 'drop'].forEach(ev => {
-        area.addEventListener(ev, (e) => { e.preventDefault(); area.classList.remove('dragover'); });
-      });
-      area.addEventListener('drop', (e) => {
-        const files = e.dataTransfer.files;
-        if (files.length) uploadFiles(files);
-      });
-    }
-
-    function handleFileUpload(e) {
-      const files = e.target.files;
-      if (files.length) uploadFiles(files);
-      e.target.value = '';
-    }
-
-    async function uploadFiles(files) {
-      const settings = getSettings();
-      const apiKey = settings.imgbbKey;
-
-      for (const file of files) {
-        if (!file.type.startsWith('image/')) continue;
-
-        if (!apiKey) {
-          // No API key: use local data URL as fallback
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            currentImages.push(e.target.result);
-            renderGallery();
-            updatePreview();
-          };
-          reader.readAsDataURL(file);
-          toast('⚠️ Sin API key de ImgBB. Imagen guardada localmente.');
-          continue;
-        }
-
-        // Upload to ImgBB
-        const formData = new FormData();
-        formData.append('image', file);
-        formData.append('key', apiKey);
-
-        try {
-          toast('Subiendo imagen...');
-          const res = await fetch('https://api.imgbb.com/1/upload', { method: 'POST', body: formData });
-          const data = await res.json();
-          if (data.success) {
-            currentImages.push(data.data.url);
-            renderGallery();
-            updatePreview();
-            toast('Imagen subida ✓');
-          } else {
-            toast('Error al subir: ' + (data.error?.message || 'Error desconocido'));
-          }
-        } catch (err) {
-          toast('Error de red al subir imagen');
-          // Fallback to data URL
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            currentImages.push(e.target.result);
-            renderGallery();
-            updatePreview();
-          };
-          reader.readAsDataURL(file);
-        }
-      }
-    }
-
-    function addImageUrl() {
-      const url = document.getElementById('f-image-url').value.trim();
-      if (!url) return;
-      currentImages.push(url);
-      document.getElementById('f-image-url').value = '';
-      renderGallery();
-      updatePreview();
-    }
-
-    function removeImage(idx) {
-      currentImages.splice(idx, 1);
-      renderGallery();
-      updatePreview();
-    }
-
-    function setPrimaryImage(idx) {
-      const img = currentImages.splice(idx, 1)[0];
-      currentImages.unshift(img);
-      renderGallery();
-      updatePreview();
-    }
-
-    function renderGallery() {
-      const gallery = document.getElementById('image-gallery');
-      const getImgUrl = (img) => {
-        if (!img) return '';
-        if (img.startsWith('http') || img.startsWith('data:')) return img;
-        return `https://wsrv.nl/?url=https://telocg.com/${encodeURIComponent(img)}&w=160&output=webp&q=70`;
-      };
-      gallery.innerHTML = currentImages.map((img, i) => `
-        <div class="gallery-item ${i === 0 ? 'primary' : ''}" onclick="openLightbox('${getImgUrl(img).replace(/'/g, "\\'")}')" title="${i === 0 ? 'Imagen principal' : 'Clic para hacer principal'}">
-          <img src="${getImgUrl(img)}" alt="Img ${i+1}">
-          <button class="remove-img" onclick="event.stopPropagation();removeImage(${i})">×</button>
-          ${i !== 0 ? `<button class="remove-img" style="left:2px;right:auto;background:var(--primary)" onclick="event.stopPropagation();setPrimaryImage(${i})">★</button>` : ''}
-        </div>
-      `).join('');
-    }
-
-    // ═══════════════════════════════════════════
-    // SPECS BUILDER
-    // ═══════════════════════════════════════════
-    function addSpecRow(key = '', value = '') {
-      const container = document.getElementById('specs-builder');
-      const row = document.createElement('div');
-      row.className = 'spec-row';
-      row.innerHTML = `
-        <input type="text" class="input spec-key" placeholder="Clave (ej. Material)" value="${key}">
-        <input type="text" class="input spec-val" placeholder="Valor (ej. TPU)" value="${value}">
-        <button type="button" class="btn-remove-spec" onclick="this.parentElement.remove()">✕</button>
-      `;
-      container.appendChild(row);
-    }
-
-    async function generateSpecsAI() {
-      const title = document.getElementById('f-title').value.trim();
-      const description = document.getElementById('f-description').value.trim();
-      const category = document.getElementById('f-category').value;
-
-      if (!title) { toast('Ingresa un nombre de producto primero'); return; }
-
-      const settings = getSettings();
-      const geminiKey = settings.geminiKey || 'AIzaSyB6Fw9dciFlipwPONefQbbUB0tJBDWibFc';
-
-      const btn = document.getElementById('btn-ai-specs');
-      btn.innerHTML = '<span class="spinner"></span> Generando...';
-      btn.disabled = true;
-
-      const prompt = `Genera especificaciones técnicas para este producto de tienda. Devuelve SOLO un JSON con pares clave-valor (máximo 6 especificaciones relevantes). No incluyas explicaciones.
-
-Producto: ${title}
-Categoría: ${category}
-Descripción: ${description || 'No disponible'}
-
-Responde solo con el JSON, ejemplo: {"Material":"TPU","Color":"Negro"}`;
-
-      try {
-        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiKey}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }]
-          })
-        });
-
-        const data = await res.json();
-        const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-
-        // Extract JSON from response
-        const jsonMatch = text.match(/\{[\s\S]*\}/);
-        if (jsonMatch) {
-          const specs = JSON.parse(jsonMatch[0]);
-          document.getElementById('specs-builder').innerHTML = '';
-          Object.entries(specs).forEach(([k, v]) => addSpecRow(k, String(v)));
-          toast('Especificaciones generadas con IA ✓');
-        } else {
-          toast('No se pudo interpretar la respuesta de IA');
-        }
-      } catch (err) {
-        console.error(err);
-        toast('Error al conectar con Gemini AI');
-      }
-
-      btn.innerHTML = '✨ Generar con IA';
-      btn.disabled = false;
-    }
-
-    // ═══════════════════════════════════════════
-    // LIVE PREVIEW
-    // ═══════════════════════════════════════════
-    function updatePreview() {
-      const title = document.getElementById('f-title').value || 'Nombre del producto';
-      const price = parseFloat(document.getElementById('f-price').value) || 0;
-      const discount = parseInt(document.getElementById('f-discount').value) || 0;
-      const rating = parseFloat(document.getElementById('f-rating').value) || 5;
-
-      document.getElementById('preview-title').textContent = title;
-
-      // Stars
-      const fullStars = Math.floor(rating);
-      const halfStar = rating % 1 >= 0.5;
-      let stars = '★'.repeat(fullStars) + (halfStar ? '½' : '') + '☆'.repeat(5 - fullStars - (halfStar ? 1 : 0));
-      document.getElementById('preview-rating').textContent = stars + ` (${rating})`;
-
-      // Price
-      if (discount > 0) {
-        const discountedPrice = Math.round(price * (1 - discount / 100));
-        document.getElementById('preview-price').innerHTML = `RD$ ${discountedPrice.toLocaleString()} <span class="old-price">RD$ ${price.toLocaleString()}</span>`;
-      } else {
-        document.getElementById('preview-price').innerHTML = `RD$ ${price.toLocaleString()}`;
-      }
-
-      // Badge
-      const badge = document.getElementById('preview-badge');
-      if (discount > 0) {
-        badge.style.display = 'inline-block';
-        badge.textContent = `-${discount}% OFF`;
-      } else {
-        badge.style.display = 'none';
-      }
-
-      // Image
-      const getImgUrl = (img) => {
-        if (!img) return '';
-        if (img.startsWith('http') || img.startsWith('data:')) return img;
-        return `https://wsrv.nl/?url=https://telocg.com/${encodeURIComponent(img)}&w=320&output=webp&q=80`;
-      };
-      if (currentImages.length > 0) {
-        document.getElementById('preview-img').src = getImgUrl(currentImages[0]);
-      }
-    }
-
-    // ═══════════════════════════════════════════
-    // LIGHTBOX WITH ZOOM
-    // ═══════════════════════════════════════════
-    function openLightbox(src) {
-      if (!src) return;
-      const lb = document.getElementById('lightbox');
-      const img = document.getElementById('lightbox-img');
-      img.src = src;
-      lightboxZoom = 1;
-      img.style.transform = `scale(${lightboxZoom})`;
-      lb.classList.add('open');
-      document.body.style.overflow = 'hidden';
-    }
-
-    function closeLightbox(e) {
-      if (e && e.target !== e.currentTarget && e.target.tagName !== 'BUTTON') return;
-      document.getElementById('lightbox').classList.remove('open');
-      document.body.style.overflow = '';
-    }
-
-    // Scroll to zoom
-    document.addEventListener('wheel', (e) => {
-      const lb = document.getElementById('lightbox');
-      if (!lb.classList.contains('open')) return;
-      e.preventDefault();
-      const delta = e.deltaY > 0 ? -0.15 : 0.15;
-      lightboxZoom = Math.max(0.5, Math.min(5, lightboxZoom + delta));
-      document.getElementById('lightbox-img').style.transform = `scale(${lightboxZoom})`;
-    }, { passive: false });
-
-    // Pinch to zoom (touch)
-    let lastPinchDist = 0;
-    document.getElementById('lightbox')?.addEventListener('touchstart', (e) => {
-      if (e.touches.length === 2) {
-        lastPinchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-      }
+    </div>`}).join('');
+}
+
+// CRUD
+function openModal(p=null){
+  editingId=p?p.id:null;
+  document.getElementById('modalTitle').textContent=p?'Editar Producto':'Nuevo Producto';
+  document.getElementById('fName').value=p?p.name:'';
+  document.getElementById('fCat').value=p?p.category:'';
+  document.getElementById('fPrice').value=p?p.price:'';
+  document.getElementById('fStock').value=p?p.stock:0;
+  document.getElementById('fSold').value=p?p.sold||0:0;
+  document.getElementById('fDiscount').value=p?p.discount||0:0;
+  document.getElementById('fDesc').value=p?p.desc:'';
+  document.getElementById('fVideo').value=p?p.video||'':'';
+  document.getElementById('fCost').value=p?p.cost||0:0;
+  document.getElementById('fExtra').value=0;
+  document.getElementById('fMargin').value=50;
+  currentImages=p&&p.images?[...p.images]:[];
+  primaryImageIdx=0;
+  renderGallery();
+  renderSpecs(p?p.specs:{});
+  calcCost();
+  updatePreview();
+  document.getElementById('productModal').classList.add('active');
+}
+function closeModal(){document.getElementById('productModal').classList.remove('active');editingId=null}
+function editProduct(id){const p=products.find(x=>x.id===id);if(p)openModal(p)}
+function deleteProduct(id){
+  if(!confirm('¿Eliminar este producto?'))return;
+  products=products.filter(x=>x.id!==id);
+  saveLocal();renderProducts();populateCategories();syncToSupabase(products.find(x=>x.id===id),'DELETE');
+}
+
+function saveProduct(){
+  const specs={};
+  document.querySelectorAll('.spec-row').forEach(r=>{
+    const k=r.querySelector('.spec-key').value.trim();
+    const v=r.querySelector('.spec-val').value.trim();
+    if(k&&v)specs[k]=v;
+  });
+  const data={
+    name:document.getElementById('fName').value.trim(),
+    category:document.getElementById('fCat').value.trim(),
+    price:parseFloat(document.getElementById('fPrice').value)||0,
+    stock:parseInt(document.getElementById('fStock').value)||0,
+    sold:parseInt(document.getElementById('fSold').value)||0,
+    discount:parseFloat(document.getElementById('fDiscount').value)||0,
+    desc:document.getElementById('fDesc').value.trim(),
+    video:document.getElementById('fVideo').value.trim(),
+    cost:parseFloat(document.getElementById('fCost').value)||0,
+    images:currentImages,
+    specs
+  };
+  if(!data.name){alert('Nombre requerido');return}
+  if(editingId){
+    const idx=products.findIndex(x=>x.id===editingId);
+    products[idx]={...products[idx],...data};
+    syncToSupabase(products[idx],'UPDATE');
+  } else {
+    data.id=Date.now();
+    products.push(data);
+    syncToSupabase(data,'INSERT');
+  }
+  saveLocal();renderProducts();populateCategories();closeModal();
+}
+// Gallery
+function renderGallery(){
+  const c=document.getElementById('galleryThumbs');
+  c.innerHTML=currentImages.map((url,i)=>`<img class="thumb ${i===primaryImageIdx?'active':''}" src="${url}" onclick="setPrimary(${i})" ondblclick="removeImage(${i})">`).join('')+
+    '<div class="thumb-add" onclick="document.getElementById(\'imgUrlInput\').focus()">+</div>';
+  updatePreview();
+}
+function setPrimary(i){primaryImageIdx=i;renderGallery()}
+function removeImage(i){currentImages.splice(i,1);if(primaryImageIdx>=currentImages.length)primaryImageIdx=0;renderGallery()}
+function addImageUrl(){
+  const url=document.getElementById('imgUrlInput').value.trim();
+  if(url){currentImages.push(url);document.getElementById('imgUrlInput').value='';renderGallery()}
+}
+async function uploadImgBB(input){
+  const file=input.files[0];if(!file)return;
+  const fd=new FormData();fd.append('image',file);
+  try{
+    const res=await fetch('https://api.imgbb.com/1/upload?key='+IMGBB_KEY,{method:'POST',body:fd});
+    const json=await res.json();
+    if(json.success){currentImages.push(json.data.url);renderGallery()}
+    else alert('Error subiendo imagen');
+  }catch(e){alert('Error: '+e.message)}
+  input.value='';
+}
+
+// Cost Calculator
+function calcCost(){
+  const cost=parseFloat(document.getElementById('fCost').value)||0;
+  const extra=parseFloat(document.getElementById('fExtra').value)||0;
+  const margin=parseFloat(document.getElementById('fMargin').value)||0;
+  const price=parseFloat(document.getElementById('fPrice').value)||0;
+  const discount=parseFloat(document.getElementById('fDiscount').value)||0;
+  const base=cost+extra;
+  const suggested=base*(1+margin/100);
+  const finalPrice=price*(1-discount/100);
+  const profit=finalPrice-base;
+  const realMargin=base>0?((profit/base)*100):0;
+  document.getElementById('calcSuggested').textContent='RD$ '+suggested.toLocaleString(undefined,{maximumFractionDigits:0});
+  document.getElementById('calcDiscounted').textContent='RD$ '+finalPrice.toLocaleString(undefined,{maximumFractionDigits:0});
+  document.getElementById('calcProfit').textContent='RD$ '+profit.toLocaleString(undefined,{maximumFractionDigits:0});
+  document.getElementById('calcProfit').parentElement.className='cost-row '+(profit>=0?'result':'negative');
+  document.getElementById('calcRealMargin').textContent=realMargin.toFixed(1)+'%';
+}
+// Specs
+function renderSpecs(specs={}){
+  const c=document.getElementById('specsList');
+  const entries=Object.entries(specs);
+  if(entries.length===0){c.innerHTML='';addSpecRow();return}
+  c.innerHTML=entries.map(([k,v])=>`<div class="spec-row"><input class="spec-key" value="${k}" placeholder="Clave"><input class="spec-val" value="${v}" placeholder="Valor"><button class="btn-danger" onclick="this.parentElement.remove()">×</button></div>`).join('');
+}
+function addSpecRow(){
+  const c=document.getElementById('specsList');
+  c.insertAdjacentHTML('beforeend','<div class="spec-row"><input class="spec-key" placeholder="Clave"><input class="spec-val" placeholder="Valor"><button class="btn-danger" onclick="this.parentElement.remove()">×</button></div>');
+}
+async function aiGenerateSpecs(){
+  const name=document.getElementById('fName').value.trim();
+  const cat=document.getElementById('fCat').value.trim();
+  if(!name){alert('Ingresa el nombre del producto primero');return}
+  try{
+    const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({contents:[{parts:[{text:`Generate 5-7 technical specifications for "${name}" (category: ${cat}). Return ONLY a JSON object with key-value pairs in Spanish. Example: {"RAM":"8GB","Pantalla":"6.1 OLED"}. No markdown, no explanation.`}]}]})
     });
-    document.getElementById('lightbox')?.addEventListener('touchmove', (e) => {
-      if (e.touches.length === 2) {
-        e.preventDefault();
-        const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-        const scale = dist / lastPinchDist;
-        lightboxZoom = Math.max(0.5, Math.min(5, lightboxZoom * scale));
-        document.getElementById('lightbox-img').style.transform = `scale(${lightboxZoom})`;
-        lastPinchDist = dist;
-      }
-    }, { passive: false });
+    const json=await res.json();
+    const text=json.candidates[0].content.parts[0].text.replace(/```json?|```/g,'').trim();
+    const specs=JSON.parse(text);
+    renderSpecs(specs);
+  }catch(e){alert('Error AI: '+e.message)}
+}
 
-    // ═══════════════════════════════════════════
-    // CSV EXPORT
-    // ═══════════════════════════════════════════
-    function exportCSV() {
-      const headers = ['ID', 'Título', 'Categoría', 'Precio', 'Costo', 'Ganancia', 'Margen%', 'Stock', 'Vendidos', 'Descuento', 'Rating', 'Descripción', 'Imagen', 'Video'];
-      const rows = allProducts.map(p => {
-        const cost = p.cost || 0;
-        const profit = p.price - cost;
-        const margin = p.price > 0 ? ((profit / p.price) * 100).toFixed(1) : 0;
-        return [p.id, `"${p.title}"`, p.category, p.price, cost, profit, margin, p.stock, p.sold, p.discount || 0, p.rating, `"${(p.description || '').replace(/"/g, '""')}"`, p.image, p.video || ''];
-      });
-      const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
-      const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = `telosales-inventario-${new Date().toISOString().slice(0,10)}.csv`;
-      a.click();
-      toast('CSV descargado 📥');
-    }
+// Preview
+function updatePreview(){
+  const img=currentImages.length?currentImages[primaryImageIdx]:'';
+  document.getElementById('previewImg').src=img||"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><rect fill='%231a1f2e' width='200' height='200'/><text x='50%25' y='50%25' fill='%2394a3b8' text-anchor='middle' dy='.3em'>Sin imagen</text></svg>";
+  document.getElementById('previewName').textContent=document.getElementById('fName').value||'Nombre';
+  document.getElementById('previewDesc').textContent=document.getElementById('fDesc').value||'Descripción...';
+  const price=parseFloat(document.getElementById('fPrice').value)||0;
+  document.getElementById('previewPrice').textContent='RD$ '+price.toLocaleString();
+}
+// Image Zoom
+function handleZoom(e){
+  const container=document.getElementById('previewZoom');
+  const rect=container.getBoundingClientRect();
+  const x=((e.clientX-rect.left)/rect.width)*100;
+  const y=((e.clientY-rect.top)/rect.height)*100;
+  container.classList.add('zoomed');
+  container.querySelector('img').style.transformOrigin=`${x}% ${y}%`;
+}
+function resetZoom(){document.getElementById('previewZoom').classList.remove('zoomed')}
+function startTouchZoom(e){
+  e.preventDefault();
+  const touch=e.touches[0];
+  const container=document.getElementById('previewZoom');
+  const rect=container.getBoundingClientRect();
+  const x=((touch.clientX-rect.left)/rect.width)*100;
+  const y=((touch.clientY-rect.top)/rect.height)*100;
+  container.classList.add('zoomed');
+  container.querySelector('img').style.transformOrigin=`${x}% ${y}%`;
+}
 
-    // ═══════════════════════════════════════════
-    // TOAST
-    // ═══════════════════════════════════════════
-    function toast(msg) {
-      const box = document.getElementById('toasts');
-      const el = document.createElement('div');
-      el.className = 'toast';
-      el.textContent = msg;
-      box.appendChild(el);
-      setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity 0.3s'; setTimeout(() => el.remove(), 300); }, 3500);
-    }
+// Report
+function openReport(){
+  const modal=document.getElementById('reportModal');
+  let totalInvested=0,totalRevenue=0,totalCostSold=0;
+  products.forEach(p=>{
+    const cost=p.cost||0;
+    totalInvested+=cost*p.stock;
+    const finalPrice=p.discount?p.price*(1-p.discount/100):p.price;
+    totalRevenue+=finalPrice*(p.sold||0);
+    totalCostSold+=cost*(p.sold||0);
+  });
+  const grossProfit=totalRevenue-totalCostSold;
+  const avgMargin=totalCostSold>0?((grossProfit/totalCostSold)*100):0;
+  // Top profitable
+  const profitList=products.map(p=>{
+    const cost=p.cost||0;
+    const fp=p.discount?p.price*(1-p.discount/100):p.price;
+    return{name:p.name,profit:fp-cost,sold:p.sold||0}
+  }).sort((a,b)=>(b.profit*b.sold)-(a.profit*a.sold)).slice(0,5);
+  // Top sold
+  const soldList=[...products].sort((a,b)=>(b.sold||0)-(a.sold||0)).slice(0,5);
+  // Low stock
+  const lowStock=products.filter(p=>p.stock<=3);
 
-    // ═══════════════════════════════════════════
-    // KEYBOARD SHORTCUTS
-    // ═══════════════════════════════════════════
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        const lb = document.getElementById('lightbox');
-        if (lb.classList.contains('open')) { closeLightbox(); return; }
-        closeProductForm();
-      }
+  document.getElementById('reportContent').innerHTML=`
+    <div class="report-grid">
+      <div class="report-card"><div class="value">RD$ ${totalInvested.toLocaleString()}</div><div class="label">Total Invertido (inventario)</div></div>
+      <div class="report-card"><div class="value">RD$ ${totalRevenue.toLocaleString()}</div><div class="label">Ingresos por Ventas</div></div>
+      <div class="report-card"><div class="value">RD$ ${grossProfit.toLocaleString()}</div><div class="label">Ganancia Bruta</div></div>
+      <div class="report-card"><div class="value">${avgMargin.toFixed(1)}%</div><div class="label">Margen Promedio</div></div>
+    </div>
+    <h3 style="margin:16px 0 8px;font-size:.9rem">🏆 Top 5 Más Rentables</h3>
+    <table class="report-table"><tr><th>Producto</th><th>Ganancia/u</th><th>Vendidos</th></tr>
+    ${profitList.map(p=>`<tr><td>${p.name}</td><td>RD$ ${p.profit.toLocaleString()}</td><td>${p.sold}</td></tr>`).join('')}</table>
+    <h3 style="margin:16px 0 8px;font-size:.9rem">📈 Top 5 Más Vendidos</h3>
+    <table class="report-table"><tr><th>Producto</th><th>Vendidos</th></tr>
+    ${soldList.map(p=>`<tr><td>${p.name}</td><td>${p.sold||0}</td></tr>`).join('')}</table>
+    ${lowStock.length?`<h3 style="margin:16px 0 8px;font-size:.9rem;color:var(--danger)">⚠️ Alertas Stock Bajo (≤3)</h3>
+    <table class="report-table"><tr><th>Producto</th><th>Stock</th></tr>
+    ${lowStock.map(p=>`<tr><td>${p.name}</td><td class="stock-low">${p.stock}</td></tr>`).join('')}</table>`:''}
+  `;
+  modal.classList.add('active');
+}
+// CSV Export
+function exportCSV(){
+  const headers=['ID','Nombre','Categoría','Precio','Costo','Stock','Vendidos','Descuento%','Ganancia','Margen%'];
+  const rows=products.map(p=>{
+    const fp=p.discount?p.price*(1-p.discount/100):p.price;
+    const profit=fp-(p.cost||0);
+    const margin=p.cost?((profit/p.cost)*100).toFixed(1):'0';
+    return [p.id,`"${p.name}"`,`"${p.category}"`,p.price,p.cost||0,p.stock,p.sold||0,p.discount||0,profit.toFixed(0),margin];
+  });
+  const csv=[headers.join(','),...rows.map(r=>r.join(','))].join('\n');
+  const blob=new Blob([csv],{type:'text/csv'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='telocorp_inventario.csv';a.click();
+}
+
+// Supabase sync
+async function sbFetch(path,opts={}){
+  try{
+    const res=await fetch(SUPABASE_URL+'/rest/v1/'+path,{
+      ...opts,
+      headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=minimal',...(opts.headers||{})}
     });
-
-    // ═══════════════════════════════════════════
-    // START
-    // ═══════════════════════════════════════════
-    checkAuth();
-  </script>
+    return res.ok?res:null;
+  }catch(e){return null}
+}
+async function syncFromSupabase(){
+  try{
+    const res=await fetch(SUPABASE_URL+'/rest/v1/products?select=*',{
+      headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}
+    });
+    if(res.ok){
+      const data=await res.json();
+      if(data&&data.length>0){products=data;saveLocal();renderProducts();populateCategories()}
+    }
+  }catch(e){}
+}
+async function syncToSupabase(product,action){
+  if(!product)return;
+  if(action==='INSERT')sbFetch('products',{method:'POST',body:JSON.stringify(product)});
+  else if(action==='UPDATE')sbFetch(`products?id=eq.${product.id}`,{method:'PATCH',body:JSON.stringify(product)});
+  else if(action==='DELETE')sbFetch(`products?id=eq.${product.id}`,{method:'DELETE'});
+}
+</script>
 </body>
 </html>

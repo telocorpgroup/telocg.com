@@ -327,7 +327,7 @@ function openProductModal(id) {
   body.innerHTML = `
     <div class="product-detail">
       <div class="product-detail__gallery">
-        <div class="product-detail__main-img" onclick="openImageZoom('${cdnImageFull(p.image)}')"><img src="${cdnImageFull(p.image)}" alt="${p.title}"><span class="zoom-hint">🔍 Click para ampliar</span></div>
+        <div class="product-detail__main-img"><img src="${cdnImageFull(p.image)}" alt="${p.title}"></div>
         ${p.freeShipping ? '<div class="product-detail__ship-note">🚚 Envío gratis a todo el país · Entrega en 24-48h</div>' : ''}
       </div>
       <div class="product-detail__info">
@@ -365,6 +365,8 @@ function openProductModal(id) {
     </div>`;
   modal.classList.add('active');
   overlay.classList.add('active');
+  // Initialize hover-zoom after DOM update
+  setTimeout(initProductImageZoom, 50);
 }
 
 function closeProductModal() {
@@ -1203,32 +1205,45 @@ async function submitContactForm(e) {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// IMAGE ZOOM (Lightbox for product images)
+// IMAGE ZOOM (Hover-based zoom like Amazon)
 // ═══════════════════════════════════════════════════════════════
 
-let imgZoomLevel = 1;
 function openImageZoom(src) {
-  let lb = document.getElementById('img-lightbox');
-  if (!lb) {
-    lb = document.createElement('div');
-    lb.id = 'img-lightbox';
-    lb.className = 'img-lightbox';
-    lb.innerHTML = '<button class="img-lightbox__close" aria-label="Cerrar">×</button><img class="img-lightbox__img" alt="Zoom">';
-    lb.addEventListener('click', e => { if (e.target === lb || e.target.classList.contains('img-lightbox__close')) closeImageZoom(); });
-    lb.addEventListener('wheel', e => { e.preventDefault(); imgZoomLevel = Math.max(0.5, Math.min(5, imgZoomLevel + (e.deltaY > 0 ? -0.2 : 0.2))); lb.querySelector('img').style.transform = `scale(${imgZoomLevel})`; }, { passive: false });
-    document.body.appendChild(lb);
-  }
-  imgZoomLevel = 1;
-  const img = lb.querySelector('img');
-  img.src = src;
-  img.style.transform = 'scale(1)';
-  lb.classList.add('active');
-  document.body.style.overflow = 'hidden';
+  // No-op: zoom is now handled via CSS hover on the container
 }
-function closeImageZoom() {
-  const lb = document.getElementById('img-lightbox');
-  if (lb) lb.classList.remove('active');
-  document.body.style.overflow = '';
+
+// Add hover-zoom behavior to product modal images when they load
+function initProductImageZoom() {
+  const container = document.querySelector('.product-detail__main-img');
+  if (!container) return;
+  container.addEventListener('mousemove', (e) => {
+    const img = container.querySelector('img');
+    if (!img) return;
+    const rect = container.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    img.style.transformOrigin = `${x}% ${y}%`;
+    img.style.transform = 'scale(2.5)';
+  });
+  container.addEventListener('mouseleave', () => {
+    const img = container.querySelector('img');
+    if (img) { img.style.transform = 'scale(1)'; img.style.transformOrigin = 'center'; }
+  });
+  // Touch support
+  container.addEventListener('touchstart', (e) => {
+    const touch = e.touches[0];
+    const img = container.querySelector('img');
+    if (!img) return;
+    const rect = container.getBoundingClientRect();
+    const x = ((touch.clientX - rect.left) / rect.width) * 100;
+    const y = ((touch.clientY - rect.top) / rect.height) * 100;
+    img.style.transformOrigin = `${x}% ${y}%`;
+    img.style.transform = 'scale(2.5)';
+  }, { passive: true });
+  container.addEventListener('touchend', () => {
+    const img = container.querySelector('img');
+    if (img) { img.style.transform = 'scale(1)'; }
+  });
 }
 
 // ═══════════════════════════════════════════════════════════════
