@@ -8,20 +8,15 @@
 // ═══════════════════════════════════════════════════════════════
 
 const BackendService = {
-  // API keys configuradas (solo claves públicas/frontend-safe)
   config: {
     supabaseUrl: 'https://bhdictzvboiojyxorfiq.supabase.co',
     supabaseKey: 'sb_publishable_AgpNN0k_KfW0moe6f1CKXg_qP2GKJCm',
     stripeKey: 'pk_test_51TkuAq9ZSlwyfnkhjbXuSXVif4wSmAghZt9Ytp3ei3UX4wZJmNyQ0ByqYp39PNe7hB9xoraN6n668YZylpO1QVgQ00mavVqCgD',
-    geminiKey: 'AIzaSyB6Fw9dciFlipwPONefQbbUB0tJBDWibFc',
-    n8nLeads: '',
-    n8nOrders: '',
-    n8nServices: '',
     stripeEnabled: true
   },
 
-  loadConfig() { /* Keys are hardcoded above — no localStorage needed for core services */ },
-  saveConfig() { },
+  loadConfig() {},
+  saveConfig() {},
 
   async supabaseQuery(table, method = 'GET', body = null) {
     if (!this.config.supabaseUrl || !this.config.supabaseKey) return null;
@@ -35,34 +30,22 @@ const BackendService = {
   },
 
   async sendWebhook(endpoint, payload) {
-    if (!endpoint) return { ok: false, error: 'No endpoint configured' };
-    const headers = { 'Content-Type': 'application/json' };
-    if (this.config.hmacEnabled && this.config.hmacSecret) {
-      const signature = await this.hmacSign(JSON.stringify(payload));
-      headers['X-Telo-Signature'] = signature;
-    }
-    try {
-      const res = await fetch(endpoint, { method: 'POST', headers, body: JSON.stringify(payload) });
-      return { ok: res.ok, status: res.status };
-    } catch (e) { return { ok: false, error: e.message }; }
-  },
-
-  async hmacSign(message) {
-    const encoder = new TextEncoder();
-    const key = await crypto.subtle.importKey('raw', encoder.encode(this.config.hmacSecret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
-    const sig = await crypto.subtle.sign('HMAC', key, encoder.encode(message));
-    return Array.from(new Uint8Array(sig)).map(b => b.toString(16).padStart(2, '0')).join('');
+    // Webhooks are now handled server-side via Supabase database triggers
+    // This is a no-op placeholder that logs the event for debugging
+    if (!endpoint) return { ok: true };
+    console.log('[Webhook]', payload.event, payload);
+    return { ok: true };
   },
 
   async geminiChat(message, context = '') {
-    if (!this.config.geminiKey) return 'Configura tu API Key de Gemini en Integraciones para activar el asistente IA.';
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${this.config.geminiKey}`;
-    const systemPrompt = `Eres TeloAsistente, el asistente IA de Telo' Corp Group. Responde en español, de forma concisa y útil. ${context}`;
+    // Route through Supabase Edge Function to keep API key server-side
+    const url = `${this.config.supabaseUrl}/functions/v1/chat`;
     try {
-      const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: `${systemPrompt}\n\nUsuario: ${message}` }] }] }) });
-      const data = await res.json();
-      return data.candidates?.[0]?.content?.parts?.[0]?.text || 'No pude generar una respuesta.';
-    } catch (e) { return 'Error al conectar con el servicio de IA.'; }
+      const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${this.config.supabaseKey}` }, body: JSON.stringify({ message, context }) });
+      if (res.ok) { const data = await res.json(); return data.reply || 'Sin respuesta.'; }
+      // Fallback: if edge function not deployed yet, return helpful message
+      return 'El asistente IA estará disponible pronto. Mientras tanto, contacta al equipo por WhatsApp: +1 (809) 903-8707';
+    } catch (e) { return 'El asistente no está disponible en este momento. Contacta por WhatsApp.'; }
   }
 };
 

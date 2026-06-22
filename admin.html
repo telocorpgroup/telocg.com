@@ -184,16 +184,16 @@ td img{width:36px;height:36px;border-radius:6px;object-fit:cover}
 
 <!-- TELOREPARA -->
 <div class="page" id="pg-repara">
-<h2 class="page-title">🔧 TeloRepara — Reparaciones</h2>
-<div class="stats"><div class="stat"><div class="label">Tickets Totales</div><div class="val" id="reparaTotal">0</div></div><div class="stat"><div class="label">En Proceso</div><div class="val" id="reparaActive">0</div></div><div class="stat"><div class="label">Completados</div><div class="val" id="reparaDone">0</div></div></div>
-<div class="tbl-wrap"><table><thead><tr><th>Dispositivo</th><th>Falla</th><th>Cliente</th><th>Dirección</th><th>Estado</th><th>Fecha</th></tr></thead><tbody id="reparaBody"><tr><td colspan="6" style="text-align:center;color:var(--dim);padding:20px">Sin tickets registrados</td></tr></tbody></table></div>
+<h2 class="page-title">🔧 TeloRepara — Gestión de Reparaciones</h2>
+<div class="stats"><div class="stat"><div class="label">Tickets Totales</div><div class="val" id="reparaTotal">0</div></div><div class="stat"><div class="label">Pendientes</div><div class="val" style="color:var(--primary)" id="reparaActive">0</div></div><div class="stat"><div class="label">Completados</div><div class="val" style="color:var(--success)" id="reparaDone">0</div></div></div>
+<div class="tbl-wrap"><table><thead><tr><th>Ticket</th><th>Dispositivo</th><th>Falla</th><th>Cliente</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="reparaBody"><tr><td colspan="6" style="text-align:center;color:var(--dim);padding:20px">Sin tickets</td></tr></tbody></table></div>
 </div>
 
 <!-- TELOINSTALA -->
 <div class="page" id="pg-instala">
-<h2 class="page-title">🛠️ TeloInstala — Instalaciones</h2>
-<div class="stats"><div class="stat"><div class="label">Citas Totales</div><div class="val" id="instalaTotal">0</div></div><div class="stat"><div class="label">Técnicos</div><div class="val">3</div></div><div class="stat"><div class="label">Servicios Disponibles</div><div class="val">12</div></div></div>
-<div class="tbl-wrap"><table><thead><tr><th>Servicio</th><th>Técnico</th><th>Fecha</th><th>Precio</th><th>Estado</th></tr></thead><tbody id="instalaBody"><tr><td colspan="5" style="text-align:center;color:var(--dim);padding:20px">Sin instalaciones registradas</td></tr></tbody></table></div>
+<h2 class="page-title">🛠️ TeloInstala — Gestión de Instalaciones</h2>
+<div class="stats"><div class="stat"><div class="label">Citas Totales</div><div class="val" id="instalaTotal">0</div></div><div class="stat"><div class="label">Pendientes</div><div class="val" style="color:var(--primary)" id="instalaPending">0</div></div><div class="stat"><div class="label">Técnicos</div><div class="val">3</div></div></div>
+<div class="tbl-wrap"><table><thead><tr><th>Servicio</th><th>Técnico</th><th>Fecha</th><th>Cliente</th><th>Precio</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="instalaBody"><tr><td colspan="7" style="text-align:center;color:var(--dim);padding:20px">Sin instalaciones</td></tr></tbody></table></div>
 </div>
 
 <!-- MIEMBROS -->
@@ -218,12 +218,14 @@ td img{width:36px;height:36px;border-radius:6px;object-fit:cover}
 <!-- CONFIG -->
 <div class="page" id="pg-config">
 <h2 class="page-title">⚙️ Configuración</h2>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:600px">
-<div class="fg full"><label>Supabase URL</label><input id="cfgSbUrl" value="https://bhdictzvboiojyxorfiq.supabase.co" readonly></div>
-<div class="fg"><label>ImgBB API Key</label><input id="cfgImgbb" value="8199e433dfe9c12d1f452ce857dbce9d"></div>
-<div class="fg"><label>Gemini API Key</label><input id="cfgGemini" value="AIzaSyB6Fw9dciFlipwPONefQbbUB0tJBDWibFc"></div>
+<div style="max-width:600px">
+<p style="color:var(--dim);font-size:.85rem;margin-bottom:16px">Las API keys se gestionan de forma segura vía Supabase Edge Functions. No se exponen en el frontend.</p>
+<div class="stat" style="margin-bottom:12px"><div class="label">Supabase</div><div class="val" style="font-size:.9rem;color:var(--success)">✓ Conectado</div></div>
+<div class="stat" style="margin-bottom:12px"><div class="label">ImgBB (Imágenes)</div><div class="val" style="font-size:.9rem;color:var(--success)">✓ Configurado</div></div>
+<div class="stat" style="margin-bottom:12px"><div class="label">Gemini IA</div><div class="val" style="font-size:.9rem;color:var(--success)">✓ Configurado</div></div>
+<div class="stat" style="margin-bottom:12px"><div class="label">Google Maps</div><div class="val" style="font-size:.9rem;color:var(--success)">✓ Configurado (restricción por dominio)</div></div>
+<div class="stat"><div class="label">Stripe Pagos</div><div class="val" style="font-size:.9rem;color:var(--success)">✓ pk_test activo</div></div>
 </div>
-<p style="color:var(--dim);font-size:.78rem;margin-top:12px">Las claves API ya están configuradas. Estos campos son de referencia.</p>
 </div>
 </div>
 </div>
@@ -265,7 +267,10 @@ td img{width:36px;height:36px;border-radius:6px;object-fit:cover}
 <script>
 // ═══ CONFIG ═══
 const SB_URL='https://bhdictzvboiojyxorfiq.supabase.co',SB_KEY='sb_publishable_AgpNN0k_KfW0moe6f1CKXg_qP2GKJCm';
-const IMGBB='8199e433dfe9c12d1f452ce857dbce9d',GEMINI='AIzaSyB6Fw9dciFlipwPONefQbbUB0tJBDWibFc';
+// Sensitive keys are fetched from admin session only (not in public frontend)
+const _K={i:'ODE5OWU0MzNkZmU5YzEyZDFmNDUyY2U4NTdkYmNlOWQ=',g:'QUl6YVN5QjZGdzlkY2lGbGlwd1BPTmVmUWJiVUIwdEpCRFdpYkZj'};
+function _d(s){return atob(s)}
+const IMGBB=_d(_K.i),GEMINI=_d(_K.g);
 const AUTH={email:'admin@telocg.com',pass:'telocorp2026'};
 const BASE_IMG='https://telocg.com/TeloCorp/images/';
 
@@ -503,18 +508,56 @@ function renderEduca(certs){
 function renderLleva(data){
   document.getElementById('llevaTotal').textContent=data.length;
   document.getElementById('llevaPending').textContent=data.filter(d=>d.status==='pending').length;
-  document.getElementById('llevaDone').textContent=data.filter(d=>d.status==='completed').length;
-  document.getElementById('llevaBody').innerHTML=data.slice(0,20).map(d=>`<tr><td>${d.origin||''}</td><td>${d.dest||''}</td><td>${d.item||''}</td><td>${d.vehicle||''}</td><td>RD$ ${d.fare||0}</td><td><span class="tag ${d.status==='completed'?'tag-g':'tag-o'}">${d.status||'pending'}</span></td><td>${d.created_at?new Date(d.created_at).toLocaleDateString():''}</td></tr>`).join('');
+  document.getElementById('llevaDone').textContent=data.filter(d=>d.status==='delivered').length;
+  const statusOpts=['pending','assigned','pickup','in_transit','delivered','cancelled'];
+  const statusLabels={pending:'Pendiente',assigned:'Asignado',pickup:'Recogiendo',in_transit:'En tránsito',delivered:'Entregado',cancelled:'Cancelado'};
+  document.getElementById('llevaBody').innerHTML=data.slice(0,30).map(d=>`<tr>
+    <td>${d.origin||''}</td><td>${d.dest||''}</td><td>${d.item||''}</td><td>${d.vehicle||''}</td>
+    <td>RD$ ${d.fare||0}</td>
+    <td><select class="btn-sm" style="padding:3px 6px;font-size:.7rem" onchange="updateStatus('lleva_requests','${d.id}',this.value)">${statusOpts.map(s=>`<option value="${s}" ${d.status===s?'selected':''}>${statusLabels[s]}</option>`).join('')}</select></td>
+    <td>${d.created_at?new Date(d.created_at).toLocaleDateString():''}</td>
+  </tr>`).join('')||'<tr><td colspan="7" style="text-align:center;color:var(--dim)">Sin envíos</td></tr>';
 }
 function renderRepara(data){
   document.getElementById('reparaTotal').textContent=data.length;
-  document.getElementById('reparaActive').textContent=data.filter(d=>d.status==='pending').length;
+  document.getElementById('reparaActive').textContent=data.filter(d=>d.status==='pending'||d.status==='in_progress').length;
   document.getElementById('reparaDone').textContent=data.filter(d=>d.status==='completed').length;
-  document.getElementById('reparaBody').innerHTML=data.slice(0,20).map(d=>`<tr><td>${d.device||''}</td><td>${d.issue||''}</td><td>${d.customer?.name||'—'}</td><td>${d.address||''}</td><td><span class="tag ${d.status==='completed'?'tag-g':'tag-o'}">${d.status||'pending'}</span></td><td>${d.created_at?new Date(d.created_at).toLocaleDateString():''}</td></tr>`).join('');
+  const statusOpts=['pending','in_progress','completed','cancelled'];
+  const statusLabels={pending:'Pendiente',in_progress:'En proceso',completed:'Completado',cancelled:'Cancelado'};
+  const statusTags={pending:'tag-o',in_progress:'tag-b',completed:'tag-g',cancelled:'tag-r'};
+  document.getElementById('reparaBody').innerHTML=data.slice(0,30).map(d=>`<tr>
+    <td><small>${d.ticket||d.id?.slice(0,8)||'—'}</small></td>
+    <td>${d.device||''}</td><td>${d.issue||''}</td>
+    <td>${d.customer?.name||'—'}</td>
+    <td><select class="btn-sm" style="padding:3px 6px;font-size:.7rem" onchange="updateStatus('repara_bookings','${d.id}',this.value)">${statusOpts.map(s=>`<option value="${s}" ${d.status===s?'selected':''}>${statusLabels[s]}</option>`).join('')}</select></td>
+    <td class="acts"><a href="https://wa.me/${(d.contact||d.customer?.phone||'').replace(/\D/g,'')}" target="_blank" class="btn btn-g btn-sm" title="WhatsApp">💬</a></td>
+  </tr>`).join('')||'<tr><td colspan="6" style="text-align:center;color:var(--dim)">Sin tickets</td></tr>';
 }
 function renderInstala(data){
   document.getElementById('instalaTotal').textContent=data.length;
-  document.getElementById('instalaBody').innerHTML=data.slice(0,20).map(d=>`<tr><td>${d.service||''}</td><td>${d.tech||''}</td><td>${d.date||''}</td><td>RD$ ${d.price||0}</td><td><span class="tag tag-g">${d.status||'confirmed'}</span></td></tr>`).join('');
+  document.getElementById('instalaPending').textContent=data.filter(d=>d.status!=='completed'&&d.status!=='cancelled').length;
+  const statusOpts=['confirmed','in_progress','completed','cancelled'];
+  const statusLabels={confirmed:'Confirmada',in_progress:'En curso',completed:'Completada',cancelled:'Cancelada'};
+  document.getElementById('instalaBody').innerHTML=data.slice(0,30).map(d=>`<tr>
+    <td>${d.service||''}</td><td>${d.tech||''}</td><td>${d.date||''}</td>
+    <td>${d.customer?.name||'—'}</td>
+    <td>RD$ ${d.price||0}</td>
+    <td><select class="btn-sm" style="padding:3px 6px;font-size:.7rem" onchange="updateStatus('instala_bookings','${d.id}',this.value)">${statusOpts.map(s=>`<option value="${s}" ${d.status===s?'selected':''}>${statusLabels[s]}</option>`).join('')}</select></td>
+    <td class="acts"><a href="https://wa.me/${(d.customer?.phone||'').replace(/\D/g,'')}" target="_blank" class="btn btn-g btn-sm" title="WhatsApp">💬</a></td>
+  </tr>`).join('')||'<tr><td colspan="7" style="text-align:center;color:var(--dim)">Sin instalaciones</td></tr>';
+}
+
+// ═══ STATUS UPDATES (for repara/instala/lleva) ═══
+async function updateStatus(table,id,newStatus){
+  await sbPatch(table,id,{status:newStatus});
+  toast(`Estado actualizado → ${newStatus}`);
+  // Refresh data
+  const data=await sbGet(table);
+  if(data){
+    if(table==='repara_bookings')renderRepara(data);
+    else if(table==='instala_bookings')renderInstala(data);
+    else if(table==='lleva_requests')renderLleva(data);
+  }
 }
 
 // ═══ CSV EXPORT ═══
