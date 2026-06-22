@@ -3,685 +3,530 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>TeloCorp Admin</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<title>TeloCorp Admin — Panel de Gestión</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="assets/telocorpgroup-mark.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#0f1219;--surface:#1a1f2e;--primary:#f97316;--text:#f1f5f9;--text-dim:#94a3b8;--border:#2d3548;--danger:#ef4444;--success:#22c55e;--radius:10px}
+:root{--bg:#0b0f19;--surface:#141a2a;--surface2:#1c2436;--border:#2a3347;--text:#f1f5f9;--dim:#8896ab;--primary:#f97316;--success:#22c55e;--danger:#ef4444;--blue:#3b82f6;--purple:#a855f7;--r:8px}
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-input,select,textarea,button{font-family:inherit;font-size:.875rem}
-input,select,textarea{background:var(--bg);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:6px;width:100%}
+input,select,textarea,button{font-family:inherit;font-size:.85rem}
+input,select,textarea{background:var(--bg);border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:var(--r);width:100%}
 input:focus,select:focus,textarea:focus{outline:none;border-color:var(--primary)}
-button{cursor:pointer;border:none;border-radius:6px;padding:8px 16px;font-weight:500;transition:.2s}
-.btn-primary{background:var(--primary);color:#fff}
-.btn-primary:hover{background:#ea580c}
-.btn-danger{background:var(--danger);color:#fff}
-.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text)}
-.btn-ghost:hover{border-color:var(--primary);color:var(--primary)}
+button{cursor:pointer;border:none;border-radius:var(--r);padding:8px 16px;font-weight:600;transition:.15s}
+.btn{display:inline-flex;align-items:center;gap:5px}
+.btn-p{background:var(--primary);color:#fff}.btn-p:hover{opacity:.9}
+.btn-g{background:var(--surface2);color:var(--text);border:1px solid var(--border)}.btn-g:hover{border-color:var(--primary)}
+.btn-d{background:rgba(239,68,68,.1);color:var(--danger)}.btn-d:hover{background:rgba(239,68,68,.2)}
+.btn-sm{padding:5px 10px;font-size:.75rem}
 </style>
 </head>
 <body>
 <style>
 /* Login */
-.login-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
-.login-box{background:var(--surface);padding:40px;border-radius:var(--radius);width:100%;max-width:380px}
-.login-box h1{font-size:1.5rem;margin-bottom:8px;color:var(--primary)}
-.login-box p{color:var(--text-dim);margin-bottom:24px;font-size:.875rem}
-.login-box label{display:block;margin-bottom:4px;font-size:.75rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.5px}
-.login-box .field{margin-bottom:16px}
-.login-box .error{color:var(--danger);font-size:.8rem;margin-top:8px;display:none}
-/* Header */
-.header{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
-.header h1{font-size:1.1rem;color:var(--primary)}
-.header-actions{display:flex;gap:8px;flex-wrap:wrap}
-/* Layout */
-.main{padding:20px;max-width:1400px;margin:0 auto}
-.toolbar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
-.toolbar input[type="text"]{max-width:280px}
-.toolbar select{max-width:180px}
+.login{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+.login-box{background:var(--surface);padding:36px;border-radius:12px;width:100%;max-width:360px;text-align:center}
+.login-box h1{color:var(--primary);margin-bottom:6px;font-size:1.4rem}
+.login-box p{color:var(--dim);font-size:.8rem;margin-bottom:20px}
+.login-box .field{margin-bottom:12px;text-align:left}
+.login-box label{font-size:.72rem;color:var(--dim);display:block;margin-bottom:4px}
+.login-err{color:var(--danger);font-size:.78rem;margin-top:8px;display:none}
+/* App shell */
+.app{display:none;height:100vh;grid-template-columns:220px 1fr;grid-template-rows:56px 1fr}
+.app.on{display:grid}
+@media(max-width:768px){.app.on{grid-template-columns:1fr;grid-template-rows:56px 1fr}.sidebar{display:none}.sidebar.open{display:flex;position:fixed;inset:0;z-index:500;width:240px}}
+/* Topbar */
+.topbar{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:0 20px;background:var(--surface);border-bottom:1px solid var(--border)}
+.topbar h1{font-size:1rem;display:flex;align-items:center;gap:8px}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.menu-btn{display:none;background:none;color:var(--text);font-size:1.3rem;padding:4px}
+@media(max-width:768px){.menu-btn{display:block}}
+/* Sidebar */
+.sidebar{background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:12px 8px;gap:2px;overflow-y:auto}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--r);color:var(--dim);font-size:.82rem;font-weight:500;cursor:pointer;transition:.15s;border:none;background:none;width:100%;text-align:left}
+.nav-item:hover{background:rgba(255,255,255,.04);color:var(--text)}
+.nav-item.active{background:rgba(249,115,22,.1);color:var(--primary)}
+.nav-item span{font-size:1.1rem}
+.nav-sep{height:1px;background:var(--border);margin:8px 4px}
+/* Content */
+.content{padding:20px;overflow-y:auto}
+@media(max-width:768px){.content{padding:14px}}
+.page{display:none}.page.on{display:block}
+.page-title{font-size:1.2rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+/* Cards/Grid */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:20px}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px}
+.stat .label{font-size:.7rem;color:var(--dim);text-transform:uppercase;letter-spacing:.4px}
+.stat .val{font-size:1.3rem;font-weight:800;margin-top:4px}
 /* Table */
-.tbl-wrap{overflow-x:auto}
+.tbl-wrap{overflow-x:auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--r)}
 table{width:100%;border-collapse:collapse;font-size:.8rem}
-th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--border)}
-th{background:var(--surface);color:var(--text-dim);font-weight:600;text-transform:uppercase;font-size:.7rem;letter-spacing:.5px;position:sticky;top:0}
-td img{width:40px;height:40px;object-fit:cover;border-radius:6px}
-.actions-cell{display:flex;gap:4px}
-.actions-cell button{padding:4px 8px;font-size:.75rem}
-/* Mobile cards */
-.card-list{display:none}
-.prod-card{background:var(--surface);border-radius:var(--radius);padding:12px;display:flex;gap:12px;align-items:center;margin-bottom:8px}
-.prod-card img{width:50px;height:50px;object-fit:cover;border-radius:8px;flex-shrink:0}
-.prod-card-info{flex:1;min-width:0}
-.prod-card-info h4{font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.prod-card-info .meta{font-size:.75rem;color:var(--text-dim);margin-top:2px}
-.prod-card-actions{display:flex;flex-direction:column;gap:4px}
-.prod-card-actions button{padding:6px 10px;font-size:.7rem}
-@media(max-width:768px){
-  .tbl-wrap{display:none}
-  .card-list{display:block}
-  .toolbar{flex-direction:column;align-items:stretch}
-  .toolbar input[type="text"],.toolbar select{max-width:100%}
-  .header-actions{font-size:.75rem}
-  .header-actions button{padding:6px 10px;font-size:.7rem}
-}
+th{padding:10px 12px;text-align:left;font-size:.7rem;color:var(--dim);text-transform:uppercase;border-bottom:1px solid var(--border);background:var(--surface)}
+td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+td img{width:36px;height:36px;border-radius:6px;object-fit:cover}
+.acts{display:flex;gap:4px}
+/* Mobile list */
+.m-list{display:none}
+@media(max-width:768px){.tbl-wrap{display:none}.m-list{display:flex;flex-direction:column;gap:8px}}
+.m-card{display:flex;gap:10px;align-items:center;background:var(--surface);padding:10px;border-radius:var(--r);border:1px solid var(--border)}
+.m-card img{width:40px;height:40px;border-radius:6px;object-fit:cover;flex-shrink:0}
+.m-card-info{flex:1;min-width:0}
+.m-card-info h4{font-size:.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.m-card-info small{color:var(--dim);font-size:.72rem}
 /* Modal */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:flex-start;justify-content:center;z-index:200;overflow-y:auto;padding:20px}
-.modal-overlay.active{display:flex}
-.modal{background:var(--surface);border-radius:var(--radius);width:100%;max-width:900px;margin:20px auto;padding:24px;position:relative}
-.modal h2{margin-bottom:16px;font-size:1.2rem}
-.modal-grid{display:grid;grid-template-columns:1fr 300px;gap:20px}
-@media(max-width:900px){.modal-grid{grid-template-columns:1fr}}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;z-index:600;overflow-y:auto;padding:16px}
+.modal-bg.on{display:flex;align-items:flex-start;justify-content:center}
+.modal-box{background:var(--surface);border-radius:12px;width:100%;max-width:800px;padding:24px;margin:auto;position:relative}
+.modal-box h2{font-size:1.1rem;margin-bottom:16px}
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-@media(max-width:600px){.form-grid{grid-template-columns:1fr}}
 .form-grid .full{grid-column:1/-1}
-.form-group{display:flex;flex-direction:column;gap:4px}
-.form-group label{font-size:.75rem;color:var(--text-dim)}
-/* Preview card */
-.preview-card{background:var(--bg);border-radius:var(--radius);padding:16px;position:sticky;top:20px}
-.preview-card img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;margin-bottom:12px}
-.preview-card h3{font-size:1rem;margin-bottom:4px}
-.preview-card .price{color:var(--primary);font-size:1.2rem;font-weight:700}
-/* Cost calculator */
-.cost-section{background:var(--bg);border-radius:8px;padding:16px;margin-top:12px}
-.cost-section h4{font-size:.85rem;color:var(--primary);margin-bottom:10px}
-.cost-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:.8rem}
-.cost-row.result{color:var(--success);font-weight:600}
-.cost-row.negative{color:var(--danger)}
-/* Image zoom */
-.zoom-container{position:relative;overflow:hidden;border-radius:8px;cursor:crosshair}
-.zoom-container img{width:100%;display:block;transition:transform .3s}
-.zoom-container.zoomed img{transform:scale(2.5)}
+.fg{display:flex;flex-direction:column;gap:4px}
+.fg label{font-size:.72rem;color:var(--dim)}
+@media(max-width:600px){.form-grid{grid-template-columns:1fr}}
 /* Gallery */
-.gallery-thumbs{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
-.thumb-wrap{position:relative;cursor:grab}
-.thumb-wrap:active{cursor:grabbing;opacity:.7}
-.thumb-wrap[draggable]:hover{outline:2px solid var(--primary);border-radius:6px}
-.gallery-thumbs .thumb{width:56px;height:56px;border-radius:6px;object-fit:cover;border:2px solid transparent;display:block}
-.gallery-thumbs .thumb.active{border-color:var(--primary)}
-.thumb-remove{position:absolute;top:-4px;right:-4px;width:18px;height:18px;border-radius:50%;background:var(--danger);color:#fff;border:none;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:.15s}
-.thumb-wrap:hover .thumb-remove{opacity:1}
-.thumb-badge{position:absolute;bottom:2px;left:2px;background:var(--primary);color:#fff;font-size:8px;padding:1px 4px;border-radius:3px;font-weight:700}
-.gallery-thumbs .thumb-add{width:56px;height:56px;border-radius:6px;border:2px dashed var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-dim);font-size:1.4rem;transition:.15s}
-.gallery-thumbs .thumb-add:hover{border-color:var(--primary);color:var(--primary);background:rgba(249,115,22,.05)}
-/* Specs builder */
-.specs-list{display:flex;flex-direction:column;gap:6px;margin-top:8px}
-.spec-row{display:flex;gap:6px;align-items:center}
+.gallery{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.gal-item{position:relative;cursor:grab}
+.gal-item img{width:52px;height:52px;border-radius:6px;object-fit:cover;border:2px solid transparent}
+.gal-item:first-child img{border-color:var(--primary)}
+.gal-item .rm{position:absolute;top:-3px;right:-3px;width:16px;height:16px;background:var(--danger);color:#fff;border:none;border-radius:50%;font-size:9px;display:none;align-items:center;justify-content:center;cursor:pointer}
+.gal-item:hover .rm{display:flex}
+.gal-add{width:52px;height:52px;border-radius:6px;border:2px dashed var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--dim);font-size:1.3rem}
+.gal-add:hover{border-color:var(--primary);color:var(--primary)}
+/* Specs */
+.spec-row{display:flex;gap:6px;margin-bottom:6px}
 .spec-row input{flex:1}
-.spec-row button{flex-shrink:0;padding:6px 10px}
-/* Report */
-.report-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:20px}
-.report-card{background:var(--bg);border-radius:8px;padding:16px;text-align:center}
-.report-card .value{font-size:1.5rem;font-weight:700;color:var(--primary)}
-.report-card .label{font-size:.75rem;color:var(--text-dim);margin-top:4px}
-.report-table{width:100%;font-size:.8rem;margin-top:12px}
-.report-table th,.report-table td{padding:6px 8px;border-bottom:1px solid var(--border)}
-/* Tags */
-.tag{display:inline-block;background:var(--primary);color:#fff;padding:2px 8px;border-radius:12px;font-size:.7rem;font-weight:500}
-.stock-low{color:var(--danger)}
-.stock-ok{color:var(--success)}
+/* Tag */
+.tag{display:inline-block;padding:2px 8px;border-radius:12px;font-size:.68rem;font-weight:600}
+.tag-o{background:rgba(249,115,22,.1);color:var(--primary)}
+.tag-g{background:rgba(34,197,94,.1);color:var(--success)}
+.tag-r{background:rgba(239,68,68,.1);color:var(--danger)}
+.tag-b{background:rgba(59,130,246,.1);color:var(--blue)}
+.tag-p{background:rgba(168,85,247,.1);color:var(--purple)}
+/* Toast */
+.toast-c{position:fixed;bottom:16px;right:16px;z-index:999;display:flex;flex-direction:column;gap:6px}
+.toast{background:var(--surface);border:1px solid var(--border);padding:10px 14px;border-radius:var(--r);font-size:.82rem;box-shadow:0 4px 20px rgba(0,0,0,.4);animation:slideUp .2s}
+@keyframes slideUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 </style>
+
 <!-- LOGIN -->
-<div id="loginScreen" class="login-wrap">
+<div class="login" id="loginView">
 <div class="login-box">
 <h1>🔐 TeloCorp Admin</h1>
-<p>Panel de administración de inventario</p>
-<div class="field"><label>Email</label><input type="email" id="loginEmail" placeholder="admin@telocg.com"></div>
-<div class="field"><label>Contraseña</label><input type="password" id="loginPass" placeholder="••••••••"></div>
-<button class="btn-primary" style="width:100%;margin-top:8px" onclick="doLogin()">Ingresar</button>
-<div class="error" id="loginError">❌ Credenciales incorrectas</div>
+<p>Panel de gestión del ecosistema</p>
+<div class="field"><label>Email</label><input type="email" id="lEmail" placeholder="admin@telocg.com"></div>
+<div class="field"><label>Contraseña</label><input type="password" id="lPass" placeholder="••••••••"></div>
+<button class="btn btn-p" style="width:100%;justify-content:center;margin-top:8px" onclick="login()">Ingresar</button>
+<div class="login-err" id="lErr">Email o contraseña incorrectos</div>
 </div>
 </div>
 
 <!-- APP -->
-<div id="appScreen" style="display:none">
-<div class="header">
-<h1>📦 TeloCorp Inventario</h1>
-<div class="header-actions">
-<button class="btn-ghost" onclick="openCatManager()">🏷️ Categorías</button>
-<button class="btn-ghost" onclick="openReport()">📊 Reporte</button>
-<button class="btn-ghost" onclick="exportCSV()">📥 CSV</button>
-<button class="btn-primary" onclick="openModal()">+ Producto</button>
-<button class="btn-ghost" onclick="logout()">Salir</button>
+<div class="app" id="appView">
+<header class="topbar">
+<div style="display:flex;align-items:center;gap:10px">
+<button class="menu-btn" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
+<h1>📦 TeloCorp</h1>
+</div>
+<div class="topbar-right">
+<a href="index.html" class="btn btn-g btn-sm">← Tienda</a>
+<button class="btn btn-g btn-sm" onclick="logout()">Salir</button>
+</div>
+</header>
+
+<nav class="sidebar" id="sidebar">
+<button class="nav-item active" data-page="dashboard"><span>📊</span>Dashboard</button>
+<div class="nav-sep"></div>
+<button class="nav-item" data-page="sales"><span>🛒</span>TeloSales</button>
+<button class="nav-item" data-page="educa"><span>🎓</span>TeloEduca</button>
+<button class="nav-item" data-page="lleva"><span>📦</span>TeloLleva</button>
+<button class="nav-item" data-page="repara"><span>🔧</span>TeloRepara</button>
+<button class="nav-item" data-page="instala"><span>🛠️</span>TeloInstala</button>
+<div class="nav-sep"></div>
+<button class="nav-item" data-page="members"><span>👥</span>Miembros</button>
+<button class="nav-item" data-page="categories"><span>🏷️</span>Categorías</button>
+<button class="nav-item" data-page="config"><span>⚙️</span>Configuración</button>
+</nav>
+
+<div class="content" id="content">
+<!-- DASHBOARD -->
+<div class="page on" id="pg-dashboard">
+<h2 class="page-title">📊 Dashboard General</h2>
+<div class="stats" id="dashStats"></div>
+<div class="tbl-wrap"><table><thead><tr><th>Últimas Órdenes</th><th>Total</th><th>Método</th><th>Fecha</th></tr></thead><tbody id="dashOrders"><tr><td colspan="4" style="text-align:center;color:var(--dim);padding:20px">Sin órdenes registradas</td></tr></tbody></table></div>
+</div>
+
+<!-- TELOSALES -->
+<div class="page" id="pg-sales">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+<h2 class="page-title" style="margin:0">🛒 Inventario TeloSales</h2>
+<div style="display:flex;gap:6px"><button class="btn btn-p btn-sm" onclick="openProductModal()">+ Producto</button><button class="btn btn-g btn-sm" onclick="exportCSV()">📥 CSV</button></div>
+</div>
+<div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap"><input type="text" id="salesSearch" placeholder="Buscar..." style="max-width:240px" oninput="renderSales()"><select id="salesCat" style="max-width:180px" onchange="renderSales()"></select></div>
+<div class="tbl-wrap"><table><thead><tr><th></th><th>Producto</th><th>Cat.</th><th>Precio</th><th>Costo</th><th>Stock</th><th>Vendidos</th><th></th></tr></thead><tbody id="salesBody"></tbody></table></div>
+<div class="m-list" id="salesMList"></div>
+</div>
+
+<!-- TELOEDUCA -->
+<div class="page" id="pg-educa">
+<h2 class="page-title">🎓 TeloEduca — Cursos y Estudiantes</h2>
+<div class="stats"><div class="stat"><div class="label">Cursos Activos</div><div class="val" id="educaCourses">5</div></div><div class="stat"><div class="label">Estudiantes</div><div class="val" id="educaStudents">0</div></div><div class="stat"><div class="label">Certificados Emitidos</div><div class="val" id="educaCerts">0</div></div></div>
+<p style="color:var(--dim);font-size:.82rem">Los cursos se administran desde el código fuente (script.js). Aquí puedes ver el progreso y certificados emitidos.</p>
+<div class="tbl-wrap" style="margin-top:12px"><table><thead><tr><th>Curso</th><th>Estudiante</th><th>Certificado ID</th><th>Fecha</th></tr></thead><tbody id="educaBody"><tr><td colspan="4" style="text-align:center;color:var(--dim);padding:20px">Sin certificados emitidos</td></tr></tbody></table></div>
+</div>
+
+<!-- TELOLLEVA -->
+<div class="page" id="pg-lleva">
+<h2 class="page-title">📦 TeloLleva — Envíos</h2>
+<div class="stats"><div class="stat"><div class="label">Envíos Totales</div><div class="val" id="llevaTotal">0</div></div><div class="stat"><div class="label">Pendientes</div><div class="val" id="llevaPending">0</div></div><div class="stat"><div class="label">Completados</div><div class="val" id="llevaDone">0</div></div></div>
+<div class="tbl-wrap"><table><thead><tr><th>Origen</th><th>Destino</th><th>Artículo</th><th>Vehículo</th><th>Tarifa</th><th>Estado</th><th>Fecha</th></tr></thead><tbody id="llevaBody"><tr><td colspan="7" style="text-align:center;color:var(--dim);padding:20px">Sin envíos registrados</td></tr></tbody></table></div>
+</div>
+
+<!-- TELOREPARA -->
+<div class="page" id="pg-repara">
+<h2 class="page-title">🔧 TeloRepara — Reparaciones</h2>
+<div class="stats"><div class="stat"><div class="label">Tickets Totales</div><div class="val" id="reparaTotal">0</div></div><div class="stat"><div class="label">En Proceso</div><div class="val" id="reparaActive">0</div></div><div class="stat"><div class="label">Completados</div><div class="val" id="reparaDone">0</div></div></div>
+<div class="tbl-wrap"><table><thead><tr><th>Dispositivo</th><th>Falla</th><th>Cliente</th><th>Dirección</th><th>Estado</th><th>Fecha</th></tr></thead><tbody id="reparaBody"><tr><td colspan="6" style="text-align:center;color:var(--dim);padding:20px">Sin tickets registrados</td></tr></tbody></table></div>
+</div>
+
+<!-- TELOINSTALA -->
+<div class="page" id="pg-instala">
+<h2 class="page-title">🛠️ TeloInstala — Instalaciones</h2>
+<div class="stats"><div class="stat"><div class="label">Citas Totales</div><div class="val" id="instalaTotal">0</div></div><div class="stat"><div class="label">Técnicos</div><div class="val">3</div></div><div class="stat"><div class="label">Servicios Disponibles</div><div class="val">12</div></div></div>
+<div class="tbl-wrap"><table><thead><tr><th>Servicio</th><th>Técnico</th><th>Fecha</th><th>Precio</th><th>Estado</th></tr></thead><tbody id="instalaBody"><tr><td colspan="5" style="text-align:center;color:var(--dim);padding:20px">Sin instalaciones registradas</td></tr></tbody></table></div>
+</div>
+
+<!-- MIEMBROS -->
+<div class="page" id="pg-members">
+<h2 class="page-title">👥 Miembros Registrados</h2>
+<div class="stats"><div class="stat"><div class="label">Total Miembros</div><div class="val" id="membersTotal">0</div></div><div class="stat"><div class="label">Activos (30d)</div><div class="val" id="membersActive">0</div></div></div>
+<div class="tbl-wrap"><table><thead><tr><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Ciudad</th><th>Registrado</th></tr></thead><tbody id="membersBody"><tr><td colspan="5" style="text-align:center;color:var(--dim);padding:20px">Sin miembros registrados</td></tr></tbody></table></div>
+</div>
+
+<!-- CATEGORÍAS -->
+<div class="page" id="pg-categories">
+<h2 class="page-title">🏷️ Categorías de Productos</h2>
+<p style="color:var(--dim);font-size:.82rem;margin-bottom:16px">El margen sugerido se aplica automáticamente al crear productos de esa categoría.</p>
+<div class="tbl-wrap"><table><thead><tr><th>Categoría</th><th>Margen Sugerido</th><th>Productos</th><th></th></tr></thead><tbody id="catsBody"></tbody></table></div>
+<div style="margin-top:16px;display:flex;gap:8px;align-items:flex-end">
+<div class="fg" style="flex:2"><label>Nueva categoría</label><input id="newCatName" placeholder="Nombre"></div>
+<div class="fg" style="flex:1"><label>Margen %</label><input type="number" id="newCatMargin" value="50"></div>
+<button class="btn btn-p btn-sm" onclick="addCategory()">Agregar</button>
 </div>
 </div>
-<div class="main">
-<div class="toolbar">
-<input type="text" id="searchInput" placeholder="🔍 Buscar producto..." oninput="renderProducts()">
-<select id="catFilter" onchange="renderProducts()"><option value="">Todas las categorías</option></select>
+
+<!-- CONFIG -->
+<div class="page" id="pg-config">
+<h2 class="page-title">⚙️ Configuración</h2>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:600px">
+<div class="fg full"><label>Supabase URL</label><input id="cfgSbUrl" value="https://bhdictzvboiojyxorfiq.supabase.co" readonly></div>
+<div class="fg"><label>ImgBB API Key</label><input id="cfgImgbb" value="8199e433dfe9c12d1f452ce857dbce9d"></div>
+<div class="fg"><label>Gemini API Key</label><input id="cfgGemini" value="AIzaSyB6Fw9dciFlipwPONefQbbUB0tJBDWibFc"></div>
 </div>
-<div class="tbl-wrap">
-<table><thead><tr><th></th><th>Producto</th><th>Categoría</th><th>Precio</th><th>Costo</th><th>Stock</th><th>Vendidos</th><th>Acciones</th></tr></thead><tbody id="tableBody"></tbody></table>
-</div>
-<div class="card-list" id="cardList"></div>
+<p style="color:var(--dim);font-size:.78rem;margin-top:12px">Las claves API ya están configuradas. Estos campos son de referencia.</p>
 </div>
 </div>
+</div>
+
 <!-- PRODUCT MODAL -->
-<div class="modal-overlay" id="productModal">
-<div class="modal">
-<h2 id="modalTitle">Nuevo Producto</h2>
-<div class="modal-grid">
-<div>
+<div class="modal-bg" id="prodModal">
+<div class="modal-box">
+<h2 id="prodModalTitle">Nuevo Producto</h2>
 <div class="form-grid">
-<div class="form-group"><label>Nombre</label><input id="fName" oninput="updatePreview()"></div>
-<div class="form-group"><label>Categoría</label><select id="fCat" class="select" onchange="updatePreview()"><option value="Covers & Fundas">Covers & Fundas</option><option value="Cables y Carga">Cables y Carga</option><option value="Audio">Audio</option><option value="Equipamiento">Equipamiento</option></select></div>
-<div class="form-group"><label>Precio de venta (RD$)</label><input type="number" id="fPrice" oninput="updatePreview();calcCost()"></div>
-<div class="form-group"><label>Stock</label><input type="number" id="fStock" value="0"></div>
-<div class="form-group"><label>Vendidos</label><input type="number" id="fSold" value="0"></div>
-<div class="form-group"><label>Descuento %</label><input type="number" id="fDiscount" value="0" oninput="calcCost()"></div>
-<div class="form-group full"><label>Descripción</label><textarea id="fDesc" rows="2" oninput="updatePreview()"></textarea></div>
-<div class="form-group full"><label>Video URL (YouTube o directa)</label><input id="fVideo" placeholder="https://youtube.com/..."></div>
+<div class="fg"><label>Nombre *</label><input id="fName"></div>
+<div class="fg"><label>Categoría</label><select id="fCat"></select></div>
+<div class="fg"><label>Precio venta (RD$)</label><input type="number" id="fPrice" oninput="calcPrice()"></div>
+<div class="fg"><label>Stock</label><input type="number" id="fStock" value="0"></div>
+<div class="fg"><label>Costo adquisición</label><input type="number" id="fCost" value="0" oninput="calcPrice()"></div>
+<div class="fg"><label>Margen deseado %</label><input type="number" id="fMargin" value="50" oninput="calcPrice()"></div>
+<div class="fg"><label>Descuento %</label><input type="number" id="fDiscount" value="0" oninput="calcPrice()"></div>
+<div class="fg"><label>Precio sugerido</label><input id="fSuggested" readonly style="color:var(--primary)"></div>
+<div class="fg full"><label>Descripción</label><textarea id="fDesc" rows="2"></textarea></div>
+<div class="fg full"><label>Video URL</label><input id="fVideo" placeholder="YouTube o enlace directo"></div>
+<div class="fg full">
+<label>Imágenes <button class="btn btn-g btn-sm" style="margin-left:8px" onclick="toggleUrlAdd()">🔗 URL</button></label>
+<div class="gallery" id="fGallery"></div>
+<div id="urlAddRow" style="display:none;margin-top:8px;display:flex;gap:6px"><input id="fImgUrl" placeholder="URL de imagen"><button class="btn btn-p btn-sm" onclick="addImgUrl()">+</button></div>
 </div>
-<!-- Images -->
-<div style="margin-top:12px">
-<label style="font-size:.75rem;color:var(--text-dim)">Imágenes del producto</label>
-<div class="gallery-thumbs" id="galleryThumbs"></div>
-<div id="urlInputWrap" style="display:none;margin-top:8px">
-<div style="display:flex;gap:6px"><input id="imgUrlInput" placeholder="Pegar URL de imagen..."><button class="btn-primary" style="padding:6px 12px" onclick="addImageUrl()">Agregar</button><button class="btn-ghost" style="padding:6px 8px" onclick="toggleUrlInput(false)">×</button></div>
+<div class="fg full">
+<label>Especificaciones <button class="btn btn-g btn-sm" style="margin-left:8px" onclick="aiSpecs()">🤖 AI</button></label>
+<div id="fSpecs"></div>
+<button class="btn btn-g btn-sm" style="margin-top:6px" onclick="addSpec()">+ Spec</button>
 </div>
-<div style="display:flex;gap:6px;margin-top:8px">
-<button class="btn-ghost" style="font-size:.75rem" onclick="toggleUrlInput(true)">🔗 URL</button>
-</div>
-</div>
-<!-- Cost Calculator -->
-<div class="cost-section">
-<h4>💰 Calculadora de Costos</h4>
-<div class="form-grid" style="margin-bottom:10px">
-<div class="form-group"><label>Costo de adquisición</label><input type="number" id="fCost" value="0" oninput="calcCost()"></div>
-<div class="form-group"><label>Gastos adicionales</label><input type="number" id="fExtra" value="0" oninput="calcCost()"></div>
-<div class="form-group"><label>Margen deseado %</label><input type="number" id="fMargin" value="50" oninput="calcCost()"></div>
-</div>
-<div class="cost-row"><span>Precio sugerido:</span><span id="calcSuggested">RD$ 0</span></div>
-<div class="cost-row"><span>Precio con descuento:</span><span id="calcDiscounted">RD$ 0</span></div>
-<div class="cost-row result"><span>Ganancia real:</span><span id="calcProfit">RD$ 0</span></div>
-<div class="cost-row"><span>Margen real:</span><span id="calcRealMargin">0%</span></div>
-</div>
-<!-- Specs -->
-<div style="margin-top:12px">
-<div style="display:flex;align-items:center;gap:8px">
-<label style="font-size:.75rem;color:var(--text-dim)">Especificaciones</label>
-<button class="btn-ghost" style="font-size:.7rem;padding:4px 8px" onclick="aiGenerateSpecs()">🤖 AI</button>
-</div>
-<div class="specs-list" id="specsList"></div>
-<button class="btn-ghost" style="margin-top:6px;font-size:.75rem" onclick="addSpecRow()">+ Agregar spec</button>
 </div>
 <div style="margin-top:16px;display:flex;gap:8px;justify-content:flex-end">
-<button class="btn-ghost" onclick="closeModal()">Cancelar</button>
-<button class="btn-primary" onclick="saveProduct()">Guardar</button>
-</div>
-</div>
-<!-- Preview -->
-<div class="preview-card" id="previewPanel">
-<div class="zoom-container" id="previewZoom" onmousemove="handleZoom(event)" onmouseleave="resetZoom()" ontouchstart="startTouchZoom(event)" ontouchend="resetZoom()">
-<img id="previewImg" src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><rect fill='%231a1f2e' width='200' height='200'/><text x='50%25' y='50%25' fill='%2394a3b8' text-anchor='middle' dy='.3em' font-size='14'>Sin imagen</text></svg>" alt="preview">
-</div>
-<h3 id="previewName" style="margin-top:12px">Nombre del producto</h3>
-<p style="font-size:.8rem;color:var(--text-dim)" id="previewDesc">Descripción...</p>
-<p class="price" id="previewPrice">RD$ 0</p>
+<button class="btn btn-g" onclick="closeProdModal()">Cancelar</button>
+<button class="btn btn-p" onclick="saveProd()">Guardar</button>
 </div>
 </div>
 </div>
-</div>
+<div class="toast-c" id="toasts"></div>
 
-<!-- REPORT MODAL -->
-<div class="modal-overlay" id="reportModal">
-<div class="modal" style="max-width:800px">
-<h2>📊 Reporte Financiero</h2>
-<div id="reportContent"></div>
-<div style="margin-top:16px;text-align:right"><button class="btn-ghost" onclick="document.getElementById('reportModal').classList.remove('active')">Cerrar</button></div>
-</div>
-</div>
 <script>
-const SUPABASE_URL='https://bhdictzvboiojyxorfiq.supabase.co';
-const SUPABASE_KEY='sb_publishable_AgpNN0k_KfW0moe6f1CKXg_qP2GKJCm';
-const IMGBB_KEY='8199e433dfe9c12d1f452ce857dbce9d';
-const GEMINI_KEY='AIzaSyB6Fw9dciFlipwPONefQbbUB0tJBDWibFc';
-const AUTH_EMAIL='admin@telocg.com';
-const AUTH_PASS='telocorp2026';
+// ═══ CONFIG ═══
+const SB_URL='https://bhdictzvboiojyxorfiq.supabase.co',SB_KEY='sb_publishable_AgpNN0k_KfW0moe6f1CKXg_qP2GKJCm';
+const IMGBB='8199e433dfe9c12d1f452ce857dbce9d',GEMINI='AIzaSyB6Fw9dciFlipwPONefQbbUB0tJBDWibFc';
+const AUTH={email:'admin@telocg.com',pass:'telocorp2026'};
+const BASE_IMG='https://telocg.com/TeloCorp/images/';
 
-let products=JSON.parse(localStorage.getItem('tcProducts')||'null');
-let editingId=null;
-let currentImages=[];
-let primaryImageIdx=0;
+// ═══ AUTH ═══
+function login(){
+  if(document.getElementById('lEmail').value.trim()===AUTH.email&&document.getElementById('lPass').value===AUTH.pass){
+    sessionStorage.setItem('tcAdmin','1');showApp();
+  } else document.getElementById('lErr').style.display='block';
+}
+function logout(){sessionStorage.removeItem('tcAdmin');location.reload()}
+function showApp(){document.getElementById('loginView').style.display='none';document.getElementById('appView').classList.add('on');init()}
+if(sessionStorage.getItem('tcAdmin')==='1')showApp();
 
-// Auth
-function doLogin(){
-  const e=document.getElementById('loginEmail').value.trim();
-  const p=document.getElementById('loginPass').value;
-  if(e===AUTH_EMAIL&&p===AUTH_PASS){
-    localStorage.setItem('tcAuth','1');
-    showApp();
-  } else {
-    document.getElementById('loginError').style.display='block';
-  }
-}
-function logout(){localStorage.removeItem('tcAuth');location.reload()}
-function showApp(){
-  document.getElementById('loginScreen').style.display='none';
-  document.getElementById('appScreen').style.display='block';
-}
-if(localStorage.getItem('tcAuth')==='1') showApp();
-// Seed data
-function seedProducts(){
-const BASE='https://telocg.com/TeloCorp/images/';
-return [
-{id:'ts-100',name:'Diagrama Núcleo de Cobre: Cables D09',category:'Cables y Carga',price:450,cost:180,stock:30,sold:85,discount:0,desc:'Diagrama técnico del cable D09 con núcleo de cobre estañado y cubierta TPE.',images:[BASE+'image1.png'],video:'',specs:{Material:'Cobre estañado y TPE',Función:'Visualización técnica'}},
-{id:'ts-101',name:'Cover Magnético Transparente MagSafe',category:'Covers & Fundas',price:600,cost:280,stock:22,sold:340,discount:0,desc:'Funda transparente con tecnología magnética MagSafe. Policarbonato anti-amarilleo.',images:[BASE+'image2.png'],video:'',specs:{Material:'TPU + Policarbonato',Compatibilidad:'iPhone 7+ a 17 Pro Max',Características:'MagSafe, anti-amarilleo'}},
-{id:'ts-102',name:'Cover Silicona Stitch Azul Premium',category:'Covers & Fundas',price:550,cost:250,stock:15,sold:210,discount:15,desc:'Silicona líquida con diseño 3D de Stitch. Tacto soft-touch.',images:[BASE+'image3.png'],video:'',specs:{Material:'Silicona líquida',Diseño:'Relieve 3D',Interior:'Microfibra'}},
-{id:'ts-103',name:'Nevera Exhibidora Comercial Traulsen',category:'Equipamiento',price:45000,cost:32000,stock:3,sold:12,discount:0,desc:'Refrigerador comercial con puerta de vidrio templado. Acero inoxidable.',images:[BASE+'image4.png'],video:'',specs:{Marca:'Traulsen',Material:'Acero inoxidable + vidrio templado',Control:'Termostato digital'}},
-{id:'ts-104',name:'Audífonos Deportivos Miccell BH96',category:'Audio',price:1200,cost:550,stock:40,sold:428,discount:10,desc:'Auriculares inalámbricos deportivos con BT 5.4 y pantalla LED.',images:[BASE+'image5.png'],video:'',specs:{Bluetooth:'5.4',Batería:'40mAh (5.5h)',Estuche:'400mAh (24h total)'}},
-{id:'ts-105',name:'Altavoz Miccell VQ-SP63 (1200mAh)',category:'Audio',price:1500,cost:700,stock:18,sold:195,discount:0,desc:'Bluetooth portátil con sonido estéreo 3D y luces LED.',images:[BASE+'image6.png'],video:'',specs:{Batería:'1200mAh (5h)',Entradas:'BT, USB, TF, Aux',Carga:'USB-C'}},
-{id:'ts-106',name:'Cargador Rápido T13 (C a Lightning 20W)',category:'Cables y Carga',price:850,cost:380,stock:35,sold:520,discount:20,desc:'Cargador 20W con cable USB-C a Lightning incluido.',images:[BASE+'image7.png'],video:'',specs:{Potencia:'20W',Cable:'1.0m C-Lightning',Voltaje:'100-240V'}},
-{id:'ts-107',name:'Freidora Industrial Vevor Doble Tanque',category:'Equipamiento',price:8500,cost:5500,stock:5,sold:38,discount:0,desc:'Freidora comercial de doble tina con control independiente.',images:[BASE+'image8.png'],video:'',specs:{Capacidad:'6L + 6L',Potencia:'1500W + 1500W',Material:'Acero inoxidable 304'}},
-{id:'ts-108',name:'Batería Portátil Slim 10,000 mAh',category:'Cables y Carga',price:1450,cost:650,stock:28,sold:312,discount:0,desc:'Power bank ultra delgada con display LED.',images:[BASE+'image9.png'],video:'',specs:{Capacidad:'10,000mAh',Salidas:'2x USB-A (5V/2.4A)',Indicador:'LED digital'}},
-{id:'ts-109',name:'Altavoz Miccell VQ-SP64 (2400mAh)',category:'Audio',price:2200,cost:1000,stock:12,sold:156,discount:15,desc:'Altavoz mediano para exteriores con radiadores pasivos.',images:[BASE+'image10.png'],video:'',specs:{Batería:'2400mAh (8h)',Potencia:'10W RMS',Conectividad:'BT 5.3'}},
-{id:'ts-110',name:'Cover Cristal MagSafe Transparente',category:'Covers & Fundas',price:800,cost:350,stock:20,sold:275,discount:0,desc:'Cristal templado trasero con bordes de aluminio y MagSafe.',images:[BASE+'image11.png'],video:'',specs:{Material:'Vidrio 9H + Aluminio',MagSafe:'Imanes N52',Resistencia:'Antirayaduras'}},
-{id:'ts-111',name:'Cover Cristal MagSafe Grafito',category:'Covers & Fundas',price:800,cost:350,stock:17,sold:248,discount:0,desc:'Cristal templado trasero con bordes grafito y MagSafe.',images:[BASE+'image12.png'],video:'',specs:{Material:'Vidrio 9H + Aluminio',MagSafe:'N52',Color:'Grafito'}},
-{id:'ts-112',name:'Boombox Miccell SP56 (30000mAh)',category:'Audio',price:4500,cost:2200,stock:7,sold:62,discount:10,desc:'Altavoz gigante con chip DSP y funciona como powerbank.',images:[BASE+'image13.png'],video:'',specs:{Batería:'30000mAh',Autonomía:'6-10h',Tecnología:'DSP + KTV'}},
-{id:'ts-113',name:'Cable D06 Lightning Blanco',category:'Cables y Carga',price:350,cost:120,stock:50,sold:680,discount:0,desc:'Cable económico y duradero USB-A a Lightning.',images:[BASE+'image14.png'],video:'',specs:{Conectores:'USB-A a Lightning',Longitud:'1.0m',Material:'PVC reforzado'}},
-{id:'ts-114',name:'Cover 360 Blindado Rojo Fuego',category:'Covers & Fundas',price:700,cost:300,stock:25,sold:183,discount:20,desc:'Protección total 360° con diseño blindado.',images:[BASE+'image15.png'],video:'',specs:{Material:'TPU + Policarbonato',Protección:'360° blindada',Diseño:'Mate antideslizante'}},
-{id:'ts-115',name:'Altavoz Impermeable IPX7 Miccell',category:'Audio',price:1800,cost:850,stock:14,sold:134,discount:0,desc:'Totalmente resistente al agua, ideal para ducha y playa.',images:[BASE+'image16.png'],video:'',specs:{Certificación:'IPX7 sumergible',Bluetooth:'5.3 (15m)',Autonomía:'6h'}},
-{id:'ts-116',name:'Cover Chupón Succión Especial',category:'Covers & Fundas',price:450,cost:180,stock:32,sold:95,discount:0,desc:'Ventosas para adherir a superficies planas. Ideal para videollamadas.',images:[BASE+'image17.png'],video:'',specs:{Material:'Silicona + ventosas',Compatibilidad:'iPhone 7+ a 17 Pro Max'}},
-{id:'ts-117',name:'Cargador T13 (C a C 20W)',category:'Cables y Carga',price:850,cost:380,stock:30,sold:445,discount:0,desc:'Cargador 20W con cable USB-C a USB-C para Android.',images:[BASE+'image18.png'],video:'',specs:{Potencia:'20W',Cable:'1.0m C-C',Protección:'Chip inteligente'}},
-{id:'ts-118',name:'Comparativa Altavoces SP63/64/65',category:'Audio',price:2500,cost:1200,stock:9,sold:48,discount:0,desc:'Ficha comparativa de la serie VQ-SP.',images:[BASE+'image19.png'],video:'',specs:{Modelos:'SP63/SP64/SP65',Baterías:'1200/2400/4000 mAh'}},
-{id:'ts-119',name:'Audífonos TWS Miccell VQ-BH105',category:'Audio',price:1100,cost:480,stock:22,sold:367,discount:25,desc:'TWS con BT 5.3, control táctil y ajuste ergonómico.',images:[BASE+'image20.png'],video:'',specs:{Bluetooth:'5.3',Operación:'Control táctil',Diseño:'Ergonómico ultraligero'}},
-{id:'ts-120',name:'Cable D02 Tipo C 2M Extra Largo',category:'Cables y Carga',price:500,cost:180,stock:42,sold:290,discount:0,desc:'Cable 2 metros con Power Delivery.',images:[BASE+'image21.png'],video:'',specs:{Conectores:'C a C/Lightning',Longitud:'2.0m',Carga:'PD'}},
-{id:'ts-121',name:'Ficha Técnica BH96 Sonido 3D',category:'Audio',price:1200,cost:550,stock:11,sold:78,discount:0,desc:'Altavoz doble cámara 13mm.',images:[BASE+'image22.png'],video:'',specs:{Altavoz:'13mm doble cámara',Tecnología:'Estéreo 3D',Frecuencia:'20Hz-20kHz'}}
+// ═══ NAVIGATION ═══
+document.querySelectorAll('.nav-item').forEach(btn=>{
+  btn.onclick=()=>{
+    document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+    document.getElementById('pg-'+btn.dataset.page).classList.add('on');
+    document.querySelector('.sidebar').classList.remove('open');
+    loadPage(btn.dataset.page);
+  };
+});
+
+// ═══ DATA ═══
+let products=[];let categories=[];let editId=null;let imgs=[];
+
+function getDefaultCats(){return [{name:'Covers & Fundas',margin:50},{name:'Cables y Carga',margin:55},{name:'Audio',margin:45},{name:'Equipamiento',margin:35}]}
+function loadCats(){const c=JSON.parse(localStorage.getItem('tcCats2')||'null');categories=c||getDefaultCats();saveCats()}
+function saveCats(){localStorage.setItem('tcCats2',JSON.stringify(categories))}
+
+function seedProducts(){return[
+{id:'ts-100',name:'Diagrama Núcleo de Cobre: Cables D09',category:'Cables y Carga',price:450,cost:180,stock:30,sold:85,discount:0,desc:'Diagrama técnico del cable D09.',images:[BASE_IMG+'image1.png'],video:'',specs:{Material:'Cobre estañado',Función:'Visualización técnica'}},
+{id:'ts-101',name:'Cover Magnético MagSafe',category:'Covers & Fundas',price:600,cost:280,stock:22,sold:340,discount:0,desc:'Funda transparente con MagSafe.',images:[BASE_IMG+'image2.png'],video:'',specs:{Material:'TPU + Policarbonato',Compatibilidad:'iPhone 7+ a 17 Pro Max'}},
+{id:'ts-102',name:'Cover Silicona Stitch Azul',category:'Covers & Fundas',price:550,cost:250,stock:15,sold:210,discount:15,desc:'Silicona líquida con diseño 3D.',images:[BASE_IMG+'image3.png'],video:'',specs:{Material:'Silicona líquida',Diseño:'3D'}},
+{id:'ts-103',name:'Nevera Exhibidora Traulsen',category:'Equipamiento',price:45000,cost:32000,stock:3,sold:12,discount:0,desc:'Refrigerador comercial.',images:[BASE_IMG+'image4.png'],video:'',specs:{Marca:'Traulsen',Material:'Acero inoxidable'}},
+{id:'ts-104',name:'Audífonos Miccell BH96',category:'Audio',price:1200,cost:550,stock:40,sold:428,discount:10,desc:'Auriculares BT 5.4.',images:[BASE_IMG+'image5.png'],video:'',specs:{Bluetooth:'5.4',Batería:'5.5h'}},
+{id:'ts-105',name:'Altavoz Miccell SP63',category:'Audio',price:1500,cost:700,stock:18,sold:195,discount:0,desc:'Bluetooth portátil.',images:[BASE_IMG+'image6.png'],video:'',specs:{Batería:'1200mAh',Carga:'USB-C'}},
+{id:'ts-106',name:'Cargador T13 C-Lightning 20W',category:'Cables y Carga',price:850,cost:380,stock:35,sold:520,discount:20,desc:'Cargador 20W completo.',images:[BASE_IMG+'image7.png'],video:'',specs:{Potencia:'20W',Cable:'1.0m'}},
+{id:'ts-107',name:'Freidora Vevor Doble',category:'Equipamiento',price:8500,cost:5500,stock:5,sold:38,discount:0,desc:'Freidora doble tina.',images:[BASE_IMG+'image8.png'],video:'',specs:{Capacidad:'12L',Potencia:'3000W'}},
+{id:'ts-108',name:'Power Bank 10000mAh',category:'Cables y Carga',price:1450,cost:650,stock:28,sold:312,discount:0,desc:'Batería portátil slim.',images:[BASE_IMG+'image9.png'],video:'',specs:{Capacidad:'10000mAh'}},
+{id:'ts-109',name:'Altavoz Miccell SP64',category:'Audio',price:2200,cost:1000,stock:12,sold:156,discount:15,desc:'Altavoz exterior.',images:[BASE_IMG+'image10.png'],video:'',specs:{Batería:'2400mAh',Potencia:'10W'}},
+{id:'ts-110',name:'Cover Cristal MagSafe',category:'Covers & Fundas',price:800,cost:350,stock:20,sold:275,discount:0,desc:'Cristal templado MagSafe.',images:[BASE_IMG+'image11.png'],video:'',specs:{Material:'Vidrio 9H'}},
+{id:'ts-111',name:'Cover MagSafe Grafito',category:'Covers & Fundas',price:800,cost:350,stock:17,sold:248,discount:0,desc:'Cristal bordes grafito.',images:[BASE_IMG+'image12.png'],video:'',specs:{MagSafe:'N52',Color:'Grafito'}},
+{id:'ts-112',name:'Boombox SP56 30000mAh',category:'Audio',price:4500,cost:2200,stock:7,sold:62,discount:10,desc:'Altavoz gigante DSP.',images:[BASE_IMG+'image13.png'],video:'',specs:{Batería:'30000mAh'}},
+{id:'ts-113',name:'Cable Lightning Blanco',category:'Cables y Carga',price:350,cost:120,stock:50,sold:680,discount:0,desc:'Cable USB-A a Lightning.',images:[BASE_IMG+'image14.png'],video:'',specs:{Longitud:'1.0m'}},
+{id:'ts-114',name:'Cover 360 Blindado Rojo',category:'Covers & Fundas',price:700,cost:300,stock:25,sold:183,discount:20,desc:'Protección 360°.',images:[BASE_IMG+'image15.png'],video:'',specs:{Protección:'360°'}},
+{id:'ts-115',name:'Altavoz IPX7 Impermeable',category:'Audio',price:1800,cost:850,stock:14,sold:134,discount:0,desc:'Resistente al agua.',images:[BASE_IMG+'image16.png'],video:'',specs:{IPX:'7',BT:'5.3'}},
+{id:'ts-116',name:'Cover Chupón Succión',category:'Covers & Fundas',price:450,cost:180,stock:32,sold:95,discount:0,desc:'Ventosas para superficies.',images:[BASE_IMG+'image17.png'],video:'',specs:{Material:'Silicona'}},
+{id:'ts-117',name:'Cargador T13 C-C 20W',category:'Cables y Carga',price:850,cost:380,stock:30,sold:445,discount:0,desc:'Cargador USB-C a C.',images:[BASE_IMG+'image18.png'],video:'',specs:{Potencia:'20W'}},
+{id:'ts-118',name:'Comparativa Altavoces SP',category:'Audio',price:2500,cost:1200,stock:9,sold:48,discount:0,desc:'Ficha comparativa.',images:[BASE_IMG+'image19.png'],video:'',specs:{Modelos:'SP63/64/65'}},
+{id:'ts-119',name:'TWS Miccell BH105',category:'Audio',price:1100,cost:480,stock:22,sold:367,discount:25,desc:'TWS BT 5.3.',images:[BASE_IMG+'image20.png'],video:'',specs:{BT:'5.3',Control:'Táctil'}},
+{id:'ts-120',name:'Cable Tipo C 2M',category:'Cables y Carga',price:500,cost:180,stock:42,sold:290,discount:0,desc:'Cable 2m PD.',images:[BASE_IMG+'image21.png'],video:'',specs:{Longitud:'2.0m'}},
+{id:'ts-121',name:'Ficha BH96 Sonido 3D',category:'Audio',price:1200,cost:550,stock:11,sold:78,discount:0,desc:'Altavoz 13mm.',images:[BASE_IMG+'image22.png'],video:'',specs:{Altavoz:'13mm'}}
 ]}
-// Init
-const DATA_VERSION='v3';
-if(localStorage.getItem('tcDataVersion')!==DATA_VERSION){products=seedProducts();saveLocal();localStorage.setItem('tcDataVersion',DATA_VERSION)}
-if(!products){products=seedProducts();saveLocal()}
-populateCategories();
-renderProducts();
-syncFromSupabase();
 
-function saveLocal(){localStorage.setItem('tcProducts',JSON.stringify(products))}
-function populateCategories(){
-  const defaultCats=['Covers & Fundas','Cables y Carga','Audio','Equipamiento'];
-  const customCats=JSON.parse(localStorage.getItem('tcCategories')||'[]');
-  const allCats=[...new Set([...defaultCats,...customCats,...products.map(p=>p.category)])].sort();
-  const sel=document.getElementById('catFilter');
-  sel.innerHTML='<option value="">Todas las categorías</option>'+allCats.map(c=>`<option>${c}</option>`).join('');
+function loadProducts(){
+  const v=localStorage.getItem('tcProdVer');
+  if(v!=='5'){products=seedProducts();localStorage.setItem('tcProdVer','5');saveProducts();return}
+  products=JSON.parse(localStorage.getItem('tcProds2')||'null')||seedProducts();
+}
+function saveProducts(){localStorage.setItem('tcProds2',JSON.stringify(products))}
+
+// ═══ SUPABASE ═══
+async function sbGet(table){try{const r=await fetch(`${SB_URL}/rest/v1/${table}?select=*`,{headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY}});return r.ok?await r.json():null}catch(e){return null}}
+async function sbPost(table,data){try{await fetch(`${SB_URL}/rest/v1/${table}`,{method:'POST',headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(data)})}catch(e){}}
+async function sbPatch(table,id,data){try{await fetch(`${SB_URL}/rest/v1/${table}?id=eq.${id}`,{method:'PATCH',headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(data)})}catch(e){}}
+async function sbDel(table,id){try{await fetch(`${SB_URL}/rest/v1/${table}?id=eq.${id}`,{method:'DELETE',headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY}})}catch(e){}}
+
+// ═══ INIT ═══
+function init(){loadCats();loadProducts();renderDashboard();renderSales();renderCatsPage();syncAll()}
+async function syncAll(){
+  const data=await sbGet('products');
+  if(data&&data.length>0){products=data;saveProducts();renderSales()}
+  const members=await sbGet('customers');
+  if(members)renderMembers(members);
+  const orders=await sbGet('orders');
+  if(orders)renderDashOrders(orders);
+  const certs=await sbGet('certificates');
+  if(certs)renderEduca(certs);
+  const lleva=await sbGet('lleva_requests');
+  if(lleva)renderLleva(lleva);
+  const repara=await sbGet('repara_bookings');
+  if(repara)renderRepara(repara);
+  const instala=await sbGet('instala_bookings');
+  if(instala)renderInstala(instala);
+}
+function loadPage(p){
+  if(p==='sales')renderSales();
+  else if(p==='categories')renderCatsPage();
+  else if(p==='dashboard')renderDashboard();
 }
 
-function getFiltered(){
-  const q=document.getElementById('searchInput').value.toLowerCase();
-  const cat=document.getElementById('catFilter').value;
-  return products.filter(p=>{
-    const matchQ=!q||p.name.toLowerCase().includes(q)||p.category.toLowerCase().includes(q);
-    const matchC=!cat||p.category===cat;
-    return matchQ&&matchC;
-  });
+// ═══ DASHBOARD ═══
+function renderDashboard(){
+  const totalProds=products.length;
+  const totalVal=products.reduce((s,p)=>s+p.price*p.stock,0);
+  const totalSold=products.reduce((s,p)=>s+(p.sold||0),0);
+  const totalProfit=products.reduce((s,p)=>s+((p.price-(p.cost||0))*(p.sold||0)),0);
+  document.getElementById('dashStats').innerHTML=`
+    <div class="stat"><div class="label">Productos</div><div class="val">${totalProds}</div></div>
+    <div class="stat"><div class="label">Valor Inventario</div><div class="val" style="color:var(--primary)">RD$ ${totalVal.toLocaleString()}</div></div>
+    <div class="stat"><div class="label">Ventas Totales</div><div class="val" style="color:var(--success)">${totalSold.toLocaleString()}</div></div>
+    <div class="stat"><div class="label">Ganancia Acumulada</div><div class="val" style="color:var(--success)">RD$ ${totalProfit.toLocaleString()}</div></div>
+    <div class="stat"><div class="label">Stock Bajo (≤3)</div><div class="val" style="color:var(--danger)">${products.filter(p=>p.stock<=3).length}</div></div>`;
+}
+function renderDashOrders(orders){
+  document.getElementById('dashOrders').innerHTML=orders.slice(0,10).map(o=>`<tr><td>${o.items?.length||0} items</td><td>RD$ ${(o.total||0).toLocaleString()}</td><td><span class="tag tag-b">${o.payment_method||'card'}</span></td><td>${new Date(o.created_at).toLocaleDateString()}</td></tr>`).join('')||'<tr><td colspan="4" style="text-align:center;color:var(--dim);padding:20px">Sin órdenes</td></tr>';
 }
 
-function renderProducts(){
-  const list=getFiltered();
-  // Table
-  document.getElementById('tableBody').innerHTML=list.map(p=>{
-    const img=p.images&&p.images.length?p.images[0]:'';
-    const finalPrice=p.discount?p.price*(1-p.discount/100):p.price;
-    return `<tr>
-      <td><img src="${img}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2240%22><rect fill=%22%231a1f2e%22 width=%2240%22 height=%2240%22/></svg>'"></td>
-      <td><b>${p.name}</b></td>
-      <td><span class="tag">${p.category}</span></td>
-      <td>RD$ ${finalPrice.toLocaleString()}</td>
-      <td>RD$ ${(p.cost||0).toLocaleString()}</td>
-      <td class="${p.stock<=3?'stock-low':'stock-ok'}">${p.stock}</td>
-      <td>${p.sold||0}</td>
-      <td class="actions-cell"><button class="btn-ghost" onclick="editProduct('${p.id}')">✏️</button><button class="btn-danger" onclick="deleteProduct('${p.id}')">🗑️</button></td>
-    </tr>`}).join('');
-  // Cards (mobile)
-  document.getElementById('cardList').innerHTML=list.map(p=>{
-    const img=p.images&&p.images.length?p.images[0]:'';
-    const finalPrice=p.discount?p.price*(1-p.discount/100):p.price;
-    return `<div class="prod-card">
-      <img src="${img}" onerror="this.style.background='var(--surface)'">
-      <div class="prod-card-info">
-        <h4>${p.name}</h4>
-        <div class="meta">RD$ ${finalPrice.toLocaleString()} · Stock: ${p.stock}</div>
-      </div>
-      <div class="prod-card-actions">
-        <button class="btn-ghost" onclick="editProduct('${p.id}')">✏️</button>
-        <button class="btn-danger" onclick="deleteProduct('${p.id}')">🗑️</button>
-      </div>
-    </div>`}).join('');
+// ═══ TELOSALES ═══
+function renderSales(){
+  const q=(document.getElementById('salesSearch')?.value||'').toLowerCase();
+  const cat=document.getElementById('salesCat')?.value||'';
+  // Populate cat select
+  const sel=document.getElementById('salesCat');
+  const allCats=[...new Set(products.map(p=>p.category))].sort();
+  sel.innerHTML='<option value="">Todas</option>'+allCats.map(c=>`<option ${c===cat?'selected':''}>${c}</option>`).join('');
+  // Filter
+  let list=products.filter(p=>(!q||p.name.toLowerCase().includes(q))&&(!cat||p.category===cat));
+  const getImg=p=>(p.images&&p.images[0])||p.image||'';
+  document.getElementById('salesBody').innerHTML=list.map(p=>`<tr>
+    <td><img src="${getImg(p)}" onerror="this.style.visibility='hidden'"></td>
+    <td><b>${p.name}</b>${p.discount?` <span class="tag tag-r">-${p.discount}%</span>`:''}</td>
+    <td><span class="tag tag-o">${p.category}</span></td>
+    <td>RD$ ${p.price.toLocaleString()}</td>
+    <td style="color:var(--dim)">RD$ ${(p.cost||0).toLocaleString()}</td>
+    <td class="${p.stock<=3?'stock-low':''}">${p.stock}</td>
+    <td>${p.sold||0}</td>
+    <td class="acts"><button class="btn btn-g btn-sm" onclick="editProd('${p.id}')">✏️</button><button class="btn btn-d btn-sm" onclick="delProd('${p.id}')">🗑️</button></td>
+  </tr>`).join('')||'<tr><td colspan="8" style="text-align:center;color:var(--dim)">Sin productos</td></tr>';
+  // Mobile
+  document.getElementById('salesMList').innerHTML=list.map(p=>`<div class="m-card">
+    <img src="${getImg(p)}" onerror="this.style.visibility='hidden'">
+    <div class="m-card-info"><h4>${p.name}</h4><small>RD$ ${p.price.toLocaleString()} · Stock: ${p.stock}</small></div>
+    <div class="acts"><button class="btn btn-g btn-sm" onclick="editProd('${p.id}')">✏️</button><button class="btn btn-d btn-sm" onclick="delProd('${p.id}')">🗑️</button></div>
+  </div>`).join('');
 }
 
-// CRUD
-function openModal(p=null){
-  editingId=p?p.id:null;
-  document.getElementById('modalTitle').textContent=p?'Editar Producto':'Nuevo Producto';
+// ═══ PRODUCT MODAL ═══
+function openProductModal(p=null){
+  editId=p?p.id:null;
+  document.getElementById('prodModalTitle').textContent=p?'Editar Producto':'Nuevo Producto';
   document.getElementById('fName').value=p?p.name:'';
-  document.getElementById('fCat').value=p?p.category:'';
   document.getElementById('fPrice').value=p?p.price:'';
   document.getElementById('fStock').value=p?p.stock:0;
-  document.getElementById('fSold').value=p?p.sold||0:0;
-  document.getElementById('fDiscount').value=p?p.discount||0:0;
-  document.getElementById('fDesc').value=p?p.desc:'';
-  document.getElementById('fVideo').value=p?p.video||'':'';
   document.getElementById('fCost').value=p?p.cost||0:0;
-  document.getElementById('fExtra').value=0;
   document.getElementById('fMargin').value=50;
-  currentImages=p&&p.images?[...p.images]:[];
-  primaryImageIdx=0;
-  renderGallery();
-  renderSpecs(p?p.specs:{});
-  calcCost();
-  updatePreview();
-  document.getElementById('productModal').classList.add('active');
+  document.getElementById('fDiscount').value=p?p.discount||0:0;
+  document.getElementById('fDesc').value=p?p.desc||p.description||'':'';
+  document.getElementById('fVideo').value=p?p.video||'':'';
+  // Category select
+  const catSel=document.getElementById('fCat');
+  catSel.innerHTML=categories.map(c=>`<option ${p&&p.category===c.name?'selected':''}>${c.name}</option>`).join('');
+  if(p){const c=categories.find(x=>x.name===p.category);if(c)document.getElementById('fMargin').value=c.margin}
+  // Images
+  imgs=p&&p.images?[...p.images]:[];renderGallery();
+  // Specs
+  let specs=p?p.specs:{};if(typeof specs==='string')try{specs=JSON.parse(specs)}catch(e){specs={}}
+  document.getElementById('fSpecs').innerHTML='';
+  if(Object.keys(specs).length)Object.entries(specs).forEach(([k,v])=>addSpec(k,v));else addSpec();
+  calcPrice();
+  document.getElementById('prodModal').classList.add('on');
 }
-function closeModal(){document.getElementById('productModal').classList.remove('active');editingId=null}
-function editProduct(id){const p=products.find(x=>x.id===id);if(p)openModal(p)}
-function deleteProduct(id){
-  if(!confirm('¿Eliminar este producto?'))return;
-  products=products.filter(x=>x.id!==id);
-  saveLocal();renderProducts();populateCategories();syncToSupabase(products.find(x=>x.id===id),'DELETE');
+function closeProdModal(){document.getElementById('prodModal').classList.remove('on');editId=null}
+function editProd(id){const p=products.find(x=>x.id===id);if(p)openProductModal(p)}
+function delProd(id){if(!confirm('¿Eliminar producto?'))return;products=products.filter(x=>x.id!==id);saveProducts();renderSales();renderDashboard();sbDel('products',id)}
+function saveProd(){
+  const specs={};document.querySelectorAll('#fSpecs .spec-row').forEach(r=>{const k=r.querySelector('.sk').value.trim(),v=r.querySelector('.sv').value.trim();if(k&&v)specs[k]=v});
+  const data={name:document.getElementById('fName').value.trim(),category:document.getElementById('fCat').value,price:+document.getElementById('fPrice').value||0,cost:+document.getElementById('fCost').value||0,stock:+document.getElementById('fStock').value||0,sold:0,discount:+document.getElementById('fDiscount').value||0,desc:document.getElementById('fDesc').value.trim(),video:document.getElementById('fVideo').value.trim(),images:imgs,image:imgs[0]||'',specs,updated_at:new Date().toISOString()};
+  if(!data.name)return toast('Nombre requerido');
+  if(editId){const i=products.findIndex(x=>x.id===editId);data.id=editId;data.sold=products[i].sold||0;products[i]={...products[i],...data};sbPatch('products',editId,data)}
+  else{data.id='ts-'+Date.now();products.push(data);sbPost('products',data)}
+  saveProducts();closeProdModal();renderSales();renderDashboard();toast('Producto guardado ✓');
 }
 
-function saveProduct(){
-  const specs={};
-  document.querySelectorAll('.spec-row').forEach(r=>{
-    const k=r.querySelector('.spec-key').value.trim();
-    const v=r.querySelector('.spec-val').value.trim();
-    if(k&&v)specs[k]=v;
-  });
-  const data={
-    name:document.getElementById('fName').value.trim(),
-    category:document.getElementById('fCat').value.trim(),
-    price:parseFloat(document.getElementById('fPrice').value)||0,
-    stock:parseInt(document.getElementById('fStock').value)||0,
-    sold:parseInt(document.getElementById('fSold').value)||0,
-    discount:parseFloat(document.getElementById('fDiscount').value)||0,
-    desc:document.getElementById('fDesc').value.trim(),
-    video:document.getElementById('fVideo').value.trim(),
-    cost:parseFloat(document.getElementById('fCost').value)||0,
-    images:currentImages,
-    specs
-  };
-  if(!data.name){alert('Nombre requerido');return}
-  if(editingId){
-    const idx=products.findIndex(x=>x.id===editingId);
-    products[idx]={...products[idx],...data};
-    syncToSupabase(products[idx],'UPDATE');
-  } else {
-    data.id=Date.now();
-    products.push(data);
-    syncToSupabase(data,'INSERT');
-  }
-  saveLocal();renderProducts();populateCategories();closeModal();
+// ═══ PRICE CALC ═══
+function calcPrice(){
+  const cost=+document.getElementById('fCost').value||0;
+  const margin=+document.getElementById('fMargin').value||0;
+  const disc=+document.getElementById('fDiscount').value||0;
+  const suggested=Math.round(cost*(1+margin/100));
+  const final=Math.round(suggested*(1-disc/100));
+  document.getElementById('fSuggested').value=`RD$ ${suggested.toLocaleString()} → con desc: RD$ ${final.toLocaleString()} (ganancia: RD$ ${(final-cost).toLocaleString()})`;
 }
-// Gallery — drag to reorder, click thumb-add to upload
+
+// ═══ GALLERY ═══
 function renderGallery(){
-  const c=document.getElementById('galleryThumbs');
-  c.innerHTML=currentImages.map((url,i)=>`<div class="thumb-wrap" draggable="true" data-idx="${i}" ondragstart="dragStart(event,${i})" ondragover="event.preventDefault()" ondrop="dropImage(event,${i})">
-    <img class="thumb ${i===0?'active':''}" src="${url}" title="Arrastrar para reordenar">
-    <button class="thumb-remove" onclick="event.stopPropagation();removeImage(${i})">×</button>
-    ${i===0?'<span class="thumb-badge">1ra</span>':''}
-  </div>`).join('')+
-    `<label class="thumb-add" title="Subir imagen"><input type="file" accept="image/*" style="display:none" onchange="uploadImgBB(this)">+</label>`;
-  updatePreview();
+  document.getElementById('fGallery').innerHTML=imgs.map((url,i)=>`<div class="gal-item" draggable="true" ondragstart="gDrag(event,${i})" ondragover="event.preventDefault()" ondrop="gDrop(event,${i})"><img src="${url}"><button class="rm" onclick="imgs.splice(${i},1);renderGallery()">×</button></div>`).join('')+`<label class="gal-add"><input type="file" accept="image/*" style="display:none" onchange="uploadImg(this)">+</label>`;
 }
-let dragIdx=null;
-function dragStart(e,i){dragIdx=i;e.dataTransfer.effectAllowed='move'}
-function dropImage(e,targetIdx){
-  e.preventDefault();
-  if(dragIdx===null||dragIdx===targetIdx)return;
-  const item=currentImages.splice(dragIdx,1)[0];
-  currentImages.splice(targetIdx,0,item);
-  dragIdx=null;
-  renderGallery();
-}
-function removeImage(i){currentImages.splice(i,1);renderGallery()}
-function toggleUrlInput(show){document.getElementById('urlInputWrap').style.display=show?'block':'none';if(show)document.getElementById('imgUrlInput').focus()}
-function addImageUrl(){
-  const url=document.getElementById('imgUrlInput').value.trim();
-  if(url){currentImages.push(url);document.getElementById('imgUrlInput').value='';toggleUrlInput(false);renderGallery()}
-}
-async function uploadImgBB(input){
-  const file=input.files[0];if(!file)return;
-  const fd=new FormData();fd.append('image',file);
-  try{
-    const res=await fetch('https://api.imgbb.com/1/upload?key='+IMGBB_KEY,{method:'POST',body:fd});
-    const json=await res.json();
-    if(json.success){currentImages.push(json.data.url);renderGallery()}
-    else alert('Error: '+(json.error?.message||'Fallo en subida'));
-  }catch(e){alert('Error de red: '+e.message)}
-  input.value='';
-}
+let gIdx=null;
+function gDrag(e,i){gIdx=i}
+function gDrop(e,i){e.preventDefault();if(gIdx===null)return;const item=imgs.splice(gIdx,1)[0];imgs.splice(i,0,item);gIdx=null;renderGallery()}
+function toggleUrlAdd(){const r=document.getElementById('urlAddRow');r.style.display=r.style.display==='none'?'flex':'none'}
+function addImgUrl(){const u=document.getElementById('fImgUrl').value.trim();if(u){imgs.push(u);document.getElementById('fImgUrl').value='';renderGallery()}}
+async function uploadImg(input){const f=input.files[0];if(!f)return;const fd=new FormData();fd.append('image',f);try{const r=await fetch('https://api.imgbb.com/1/upload?key='+IMGBB,{method:'POST',body:fd});const j=await r.json();if(j.success){imgs.push(j.data.url);renderGallery();toast('Imagen subida ✓')}else toast('Error al subir')}catch(e){toast('Error de red')}input.value=''}
 
-// Cost Calculator
-function calcCost(){
-  const cost=parseFloat(document.getElementById('fCost').value)||0;
-  const extra=parseFloat(document.getElementById('fExtra').value)||0;
-  const margin=parseFloat(document.getElementById('fMargin').value)||0;
-  const price=parseFloat(document.getElementById('fPrice').value)||0;
-  const discount=parseFloat(document.getElementById('fDiscount').value)||0;
-  const base=cost+extra;
-  const suggested=base*(1+margin/100);
-  const finalPrice=price*(1-discount/100);
-  const profit=finalPrice-base;
-  const realMargin=base>0?((profit/base)*100):0;
-  document.getElementById('calcSuggested').textContent='RD$ '+suggested.toLocaleString(undefined,{maximumFractionDigits:0});
-  document.getElementById('calcDiscounted').textContent='RD$ '+finalPrice.toLocaleString(undefined,{maximumFractionDigits:0});
-  document.getElementById('calcProfit').textContent='RD$ '+profit.toLocaleString(undefined,{maximumFractionDigits:0});
-  document.getElementById('calcProfit').parentElement.className='cost-row '+(profit>=0?'result':'negative');
-  document.getElementById('calcRealMargin').textContent=realMargin.toFixed(1)+'%';
-}
-// Specs
-function renderSpecs(specs={}){
-  const c=document.getElementById('specsList');
-  const entries=Object.entries(specs);
-  if(entries.length===0){c.innerHTML='';addSpecRow();return}
-  c.innerHTML=entries.map(([k,v])=>`<div class="spec-row"><input class="spec-key" value="${k}" placeholder="Clave"><input class="spec-val" value="${v}" placeholder="Valor"><button class="btn-danger" onclick="this.parentElement.remove()">×</button></div>`).join('');
-}
-function addSpecRow(){
-  const c=document.getElementById('specsList');
-  c.insertAdjacentHTML('beforeend','<div class="spec-row"><input class="spec-key" placeholder="Clave"><input class="spec-val" placeholder="Valor"><button class="btn-danger" onclick="this.parentElement.remove()">×</button></div>');
-}
-async function aiGenerateSpecs(){
-  const name=document.getElementById('fName').value.trim();
-  const cat=document.getElementById('fCat').value.trim();
-  if(!name){alert('Ingresa el nombre del producto primero');return}
-  try{
-    const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({contents:[{parts:[{text:`Generate 5-7 technical specifications for "${name}" (category: ${cat}). Return ONLY a JSON object with key-value pairs in Spanish. Example: {"RAM":"8GB","Pantalla":"6.1 OLED"}. No markdown, no explanation.`}]}]})
-    });
-    const json=await res.json();
-    const text=json.candidates[0].content.parts[0].text.replace(/```json?|```/g,'').trim();
-    const specs=JSON.parse(text);
-    renderSpecs(specs);
-  }catch(e){alert('Error AI: '+e.message)}
-}
+// ═══ SPECS ═══
+function addSpec(k='',v=''){document.getElementById('fSpecs').insertAdjacentHTML('beforeend',`<div class="spec-row"><input class="sk" value="${k}" placeholder="Clave"><input class="sv" value="${v}" placeholder="Valor"><button class="btn btn-d btn-sm" onclick="this.parentElement.remove()">×</button></div>`)}
+async function aiSpecs(){const name=document.getElementById('fName').value;if(!name)return toast('Ingresa nombre primero');try{const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:`Genera 5 especificaciones técnicas para "${name}". Solo JSON: {"clave":"valor"}`}]}]})});const j=await r.json();const t=j.candidates[0].content.parts[0].text.match(/\{[\s\S]*\}/);if(t){const s=JSON.parse(t[0]);document.getElementById('fSpecs').innerHTML='';Object.entries(s).forEach(([k,v])=>addSpec(k,String(v)));toast('Specs generados ✓')}}catch(e){toast('Error AI')}}
 
-// Preview
-function updatePreview(){
-  const img=currentImages.length?currentImages[0]:'';
-  document.getElementById('previewImg').src=img||"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><rect fill='%231a1f2e' width='200' height='200'/><text x='50%25' y='50%25' fill='%2394a3b8' text-anchor='middle' dy='.3em'>Sin imagen</text></svg>";
-  document.getElementById('previewName').textContent=document.getElementById('fName').value||'Nombre';
-  document.getElementById('previewDesc').textContent=document.getElementById('fDesc').value||'Descripción...';
-  const price=parseFloat(document.getElementById('fPrice').value)||0;
-  document.getElementById('previewPrice').textContent='RD$ '+price.toLocaleString();
+// ═══ CATEGORIES ═══
+function renderCatsPage(){
+  const counts={};products.forEach(p=>{counts[p.category]=(counts[p.category]||0)+1});
+  document.getElementById('catsBody').innerHTML=categories.map((c,i)=>`<tr>
+    <td><b>${c.name}</b></td>
+    <td><span class="tag tag-o">${c.margin}%</span></td>
+    <td>${counts[c.name]||0} productos</td>
+    <td>${i>=4?`<button class="btn btn-d btn-sm" onclick="delCat(${i})">×</button>`:''}</td>
+  </tr>`).join('');
 }
-// Image Zoom
-function handleZoom(e){
-  const container=document.getElementById('previewZoom');
-  const rect=container.getBoundingClientRect();
-  const x=((e.clientX-rect.left)/rect.width)*100;
-  const y=((e.clientY-rect.top)/rect.height)*100;
-  container.classList.add('zoomed');
-  container.querySelector('img').style.transformOrigin=`${x}% ${y}%`;
-}
-function resetZoom(){document.getElementById('previewZoom').classList.remove('zoomed')}
-function startTouchZoom(e){
-  e.preventDefault();
-  const touch=e.touches[0];
-  const container=document.getElementById('previewZoom');
-  const rect=container.getBoundingClientRect();
-  const x=((touch.clientX-rect.left)/rect.width)*100;
-  const y=((touch.clientY-rect.top)/rect.height)*100;
-  container.classList.add('zoomed');
-  container.querySelector('img').style.transformOrigin=`${x}% ${y}%`;
-}
-
-// Report
-function openReport(){
-  const modal=document.getElementById('reportModal');
-  let totalInvested=0,totalRevenue=0,totalCostSold=0;
-  products.forEach(p=>{
-    const cost=p.cost||0;
-    totalInvested+=cost*p.stock;
-    const finalPrice=p.discount?p.price*(1-p.discount/100):p.price;
-    totalRevenue+=finalPrice*(p.sold||0);
-    totalCostSold+=cost*(p.sold||0);
-  });
-  const grossProfit=totalRevenue-totalCostSold;
-  const avgMargin=totalCostSold>0?((grossProfit/totalCostSold)*100):0;
-  // Top profitable
-  const profitList=products.map(p=>{
-    const cost=p.cost||0;
-    const fp=p.discount?p.price*(1-p.discount/100):p.price;
-    return{name:p.name,profit:fp-cost,sold:p.sold||0}
-  }).sort((a,b)=>(b.profit*b.sold)-(a.profit*a.sold)).slice(0,5);
-  // Top sold
-  const soldList=[...products].sort((a,b)=>(b.sold||0)-(a.sold||0)).slice(0,5);
-  // Low stock
-  const lowStock=products.filter(p=>p.stock<=3);
-
-  document.getElementById('reportContent').innerHTML=`
-    <div class="report-grid">
-      <div class="report-card"><div class="value">RD$ ${totalInvested.toLocaleString()}</div><div class="label">Total Invertido (inventario)</div></div>
-      <div class="report-card"><div class="value">RD$ ${totalRevenue.toLocaleString()}</div><div class="label">Ingresos por Ventas</div></div>
-      <div class="report-card"><div class="value">RD$ ${grossProfit.toLocaleString()}</div><div class="label">Ganancia Bruta</div></div>
-      <div class="report-card"><div class="value">${avgMargin.toFixed(1)}%</div><div class="label">Margen Promedio</div></div>
-    </div>
-    <h3 style="margin:16px 0 8px;font-size:.9rem">🏆 Top 5 Más Rentables</h3>
-    <table class="report-table"><tr><th>Producto</th><th>Ganancia/u</th><th>Vendidos</th></tr>
-    ${profitList.map(p=>`<tr><td>${p.name}</td><td>RD$ ${p.profit.toLocaleString()}</td><td>${p.sold}</td></tr>`).join('')}</table>
-    <h3 style="margin:16px 0 8px;font-size:.9rem">📈 Top 5 Más Vendidos</h3>
-    <table class="report-table"><tr><th>Producto</th><th>Vendidos</th></tr>
-    ${soldList.map(p=>`<tr><td>${p.name}</td><td>${p.sold||0}</td></tr>`).join('')}</table>
-    ${lowStock.length?`<h3 style="margin:16px 0 8px;font-size:.9rem;color:var(--danger)">⚠️ Alertas Stock Bajo (≤3)</h3>
-    <table class="report-table"><tr><th>Producto</th><th>Stock</th></tr>
-    ${lowStock.map(p=>`<tr><td>${p.name}</td><td class="stock-low">${p.stock}</td></tr>`).join('')}</table>`:''}
-  `;
-  modal.classList.add('active');
-}
-// CSV Export
-function exportCSV(){
-  const headers=['ID','Nombre','Categoría','Precio','Costo','Stock','Vendidos','Descuento%','Ganancia','Margen%'];
-  const rows=products.map(p=>{
-    const fp=p.discount?p.price*(1-p.discount/100):p.price;
-    const profit=fp-(p.cost||0);
-    const margin=p.cost?((profit/p.cost)*100).toFixed(1):'0';
-    return [p.id,`"${p.name}"`,`"${p.category}"`,p.price,p.cost||0,p.stock,p.sold||0,p.discount||0,profit.toFixed(0),margin];
-  });
-  const csv=[headers.join(','),...rows.map(r=>r.join(','))].join('\n');
-  const blob=new Blob([csv],{type:'text/csv'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
-  a.download='telocorp_inventario.csv';a.click();
-}
-
-// Supabase sync
-async function sbFetch(path,opts={}){
-  try{
-    const res=await fetch(SUPABASE_URL+'/rest/v1/'+path,{
-      ...opts,
-      headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=minimal',...(opts.headers||{})}
-    });
-    return res.ok?res:null;
-  }catch(e){return null}
-}
-async function syncFromSupabase(){
-  try{
-    const res=await fetch(SUPABASE_URL+'/rest/v1/products?select=*',{
-      headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}
-    });
-    if(res.ok){
-      const data=await res.json();
-      if(data&&data.length>0){products=data;saveLocal();renderProducts();populateCategories()}
-    }
-  }catch(e){}
-}
-async function syncToSupabase(product,action){
-  if(!product)return;
-  if(action==='INSERT')sbFetch('products',{method:'POST',body:JSON.stringify(product)});
-  else if(action==='UPDATE')sbFetch(`products?id=eq.${product.id}`,{method:'PATCH',body:JSON.stringify(product)});
-  else if(action==='DELETE')sbFetch(`products?id=eq.${product.id}`,{method:'DELETE'});
-}
-
-// ═══ CATEGORY MANAGER ═══
-function getCategories(){
-  const defaults=[
-    {name:'Covers & Fundas',margin:50},
-    {name:'Cables y Carga',margin:55},
-    {name:'Audio',margin:45},
-    {name:'Equipamiento',margin:35}
-  ];
-  const custom=JSON.parse(localStorage.getItem('tcCategories')||'[]');
-  return [...defaults,...custom];
-}
-
-function openCatManager(){
-  const cats=getCategories();
-  const html=`<div style="max-width:500px;margin:0 auto">
-    <h3 style="margin-bottom:12px">🏷️ Gestionar Categorías</h3>
-    <p style="font-size:.8rem;color:var(--text-dim);margin-bottom:16px">Las categorías predefinidas incluyen un margen sugerido que se aplica al crear nuevos productos.</p>
-    <div id="catList">${cats.map((c,i)=>`<div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;padding:8px;background:var(--bg);border-radius:6px">
-      <span style="flex:1;font-size:.85rem;font-weight:500">${c.name}</span>
-      <span style="font-size:.75rem;color:var(--primary)">${c.margin}% margen</span>
-      ${i>=4?`<button class="btn-danger" style="padding:4px 8px;font-size:.7rem" onclick="removeCat(${i-4})">×</button>`:''}
-    </div>`).join('')}</div>
-    <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border)">
-      <p style="font-size:.8rem;color:var(--text-dim);margin-bottom:8px">Agregar nueva categoría:</p>
-      <div style="display:flex;gap:8px">
-        <input id="newCatName" placeholder="Nombre" style="flex:2">
-        <input id="newCatMargin" type="number" placeholder="Margen %" value="45" style="flex:1">
-        <button class="btn-primary" onclick="addCategory()">+</button>
-      </div>
-    </div>
-    <div style="margin-top:16px;text-align:right"><button class="btn-ghost" onclick="document.getElementById('reportModal').classList.remove('active')">Cerrar</button></div>
-  </div>`;
-  document.getElementById('reportContent').innerHTML=html;
-  document.getElementById('reportModal').classList.add('active');
-}
-
 function addCategory(){
   const name=document.getElementById('newCatName').value.trim();
-  const margin=parseInt(document.getElementById('newCatMargin').value)||45;
+  const margin=+document.getElementById('newCatMargin').value||50;
   if(!name)return;
-  const custom=JSON.parse(localStorage.getItem('tcCategories')||'[]');
-  if(custom.find(c=>c.name===name)||getCategories().find(c=>c.name===name)){alert('Categoría ya existe');return}
-  custom.push({name,margin});
-  localStorage.setItem('tcCategories',JSON.stringify(custom));
-  populateCategories();
-  updateCatSelect();
-  openCatManager();
+  if(categories.find(c=>c.name===name))return toast('Ya existe');
+  categories.push({name,margin});saveCats();renderCatsPage();document.getElementById('newCatName').value='';toast('Categoría agregada');
+}
+function delCat(i){categories.splice(i,1);saveCats();renderCatsPage()}
+
+// ═══ MEMBERS ═══
+function renderMembers(data){
+  document.getElementById('membersTotal').textContent=data.length;
+  const recent=data.filter(m=>new Date(m.created_at)>new Date(Date.now()-30*86400000));
+  document.getElementById('membersActive').textContent=recent.length;
+  document.getElementById('membersBody').innerHTML=data.map(m=>`<tr><td>${m.name||'—'}</td><td>${m.email||'—'}</td><td>${m.phone||'—'}</td><td>${m.city||'—'}</td><td>${m.created_at?new Date(m.created_at).toLocaleDateString():''}</td></tr>`).join('')||'<tr><td colspan="5" style="text-align:center;color:var(--dim)">Sin miembros</td></tr>';
 }
 
-function removeCat(idx){
-  const custom=JSON.parse(localStorage.getItem('tcCategories')||'[]');
-  custom.splice(idx,1);
-  localStorage.setItem('tcCategories',JSON.stringify(custom));
-  populateCategories();
-  updateCatSelect();
-  openCatManager();
+// ═══ OTHER MODULES ═══
+function renderEduca(certs){
+  document.getElementById('educaCerts').textContent=certs.length;
+  document.getElementById('educaBody').innerHTML=certs.map(c=>`<tr><td>${c.course||''}</td><td>${c.student||''}</td><td><span class="tag tag-b">${c.cert_id||''}</span></td><td>${c.created_at?new Date(c.created_at).toLocaleDateString():''}</td></tr>`).join('')||'<tr><td colspan="4" style="text-align:center;color:var(--dim)">Sin certificados</td></tr>';
+}
+function renderLleva(data){
+  document.getElementById('llevaTotal').textContent=data.length;
+  document.getElementById('llevaPending').textContent=data.filter(d=>d.status==='pending').length;
+  document.getElementById('llevaDone').textContent=data.filter(d=>d.status==='completed').length;
+  document.getElementById('llevaBody').innerHTML=data.slice(0,20).map(d=>`<tr><td>${d.origin||''}</td><td>${d.dest||''}</td><td>${d.item||''}</td><td>${d.vehicle||''}</td><td>RD$ ${d.fare||0}</td><td><span class="tag ${d.status==='completed'?'tag-g':'tag-o'}">${d.status||'pending'}</span></td><td>${d.created_at?new Date(d.created_at).toLocaleDateString():''}</td></tr>`).join('');
+}
+function renderRepara(data){
+  document.getElementById('reparaTotal').textContent=data.length;
+  document.getElementById('reparaActive').textContent=data.filter(d=>d.status==='pending').length;
+  document.getElementById('reparaDone').textContent=data.filter(d=>d.status==='completed').length;
+  document.getElementById('reparaBody').innerHTML=data.slice(0,20).map(d=>`<tr><td>${d.device||''}</td><td>${d.issue||''}</td><td>${d.customer?.name||'—'}</td><td>${d.address||''}</td><td><span class="tag ${d.status==='completed'?'tag-g':'tag-o'}">${d.status||'pending'}</span></td><td>${d.created_at?new Date(d.created_at).toLocaleDateString():''}</td></tr>`).join('');
+}
+function renderInstala(data){
+  document.getElementById('instalaTotal').textContent=data.length;
+  document.getElementById('instalaBody').innerHTML=data.slice(0,20).map(d=>`<tr><td>${d.service||''}</td><td>${d.tech||''}</td><td>${d.date||''}</td><td>RD$ ${d.price||0}</td><td><span class="tag tag-g">${d.status||'confirmed'}</span></td></tr>`).join('');
 }
 
-function updateCatSelect(){
-  const cats=getCategories();
-  const sel=document.getElementById('fCat');
-  if(sel) sel.innerHTML=cats.map(c=>`<option value="${c.name}">${c.name}</option>`).join('');
+// ═══ CSV EXPORT ═══
+function exportCSV(){
+  const h=['ID','Nombre','Categoría','Precio','Costo','Ganancia','Stock','Vendidos','Descuento'];
+  const rows=products.map(p=>[p.id,`"${p.name}"`,`"${p.category}"`,p.price,p.cost||0,p.price-(p.cost||0),p.stock,p.sold||0,p.discount||0]);
+  const csv=[h.join(','),...rows.map(r=>r.join(','))].join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='telosales_inventario.csv';a.click();toast('CSV descargado');
 }
-updateCatSelect();
 
-// Update margin when category changes in form
-document.getElementById('fCat').addEventListener('change',function(){
-  const cats=getCategories();
-  const cat=cats.find(c=>c.name===this.value);
-  if(cat&&document.getElementById('fMargin'))document.getElementById('fMargin').value=cat.margin;
-  calcCost();
-});
+// ═══ TOAST ═══
+function toast(msg){const t=document.createElement('div');t.className='toast';t.textContent=msg;document.getElementById('toasts').appendChild(t);setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.remove(),300)},3000)}
 </script>
 </body>
 </html>
