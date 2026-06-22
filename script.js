@@ -485,7 +485,7 @@ function toggleCartDrawer(open) {
   if (open) renderCart();
 }
 
-function checkout() {
+async function checkout() {
   if (State.cart.length === 0) return showToast('Carrito vacío', 'error');
   const subtotal = State.cart.reduce((s, i) => { const p = products.find(x => x.id === i.id); return s + (p ? p.price * i.qty : 0); }, 0);
   const discount = State.coupon ? Math.round(subtotal * State.coupon.pct / 100) : 0;
@@ -501,6 +501,40 @@ function checkout() {
     showToast('Redirigido a WhatsApp para completar el pago');
     State.cart = []; State.coupon = null; State.save(); updateCartBadge(); toggleCartDrawer(false);
     return;
+  }
+
+  // Handle Stripe card payment via Edge Function
+  if (paymentMethod === 'card') {
+    showToast('Redirigiendo a Stripe para pago seguro...');
+    try {
+      const stripeItems = State.cart.map(i => { const p = products.find(x => x.id === i.id); return { title: p?.title, price: p?.price, qty: i.qty, image: p?.image ? (p.image.startsWith('http') ? p.image : `https://telocg.com/${p.image}`) : '' }; });
+      const res = await fetch(`${BackendService.config.supabaseUrl}/functions/v1/create-checkout`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${BackendService.config.supabaseKey}` },
+        body: JSON.stringify({ items: stripeItems, customer_email: State.userProfile.email || '' })
+      });
+      const data = await res.json();
+      if (data.url) { window.location.href = data.url; return; }
+      else showToast('Error al crear sesión de pago. Intenta otro método.', 'error');
+    } catch (e) {
+      showToast('No se pudo conectar con Stripe. Prueba con WhatsApp.', 'error');
+    }
+    return;
+  }
+
+  // Handle transfer — show instructions
+  if (paymentMethod === 'transfer') {
+    const items = State.cart.map(i => { const p = products.find(x => x.id === i.id); return `• ${p?.title} x${i.qty}`; }).join('\n');
+    const msg = `🏦 *Pedido TeloSales - Transferencia*\n\n${items}\n\n💰 Total: RD$ ${total.toLocaleString()}\n\n📋 Datos de transferencia:\nBanco: Banco Popular\nCuenta: 123-456-789\nTitular: TeloCorpGroup SRL\n\n✅ Envía el comprobante aquí para confirmar`;
+    window.open(`https://wa.me/18099038707?text=${encodeURIComponent(msg)}`, '_blank');
+    showToast('Envía el comprobante de transferencia por WhatsApp');
+  }
+
+  // Handle PayPal — redirect
+  if (paymentMethod === 'paypal') {
+    showToast('Para pagos PayPal, contacta por WhatsApp con tu recibo.');
+    const msg = `🅿️ *Pago PayPal TeloSales*\n\nTotal: RD$ ${total.toLocaleString()} (≈ USD ${Math.ceil(total/58)})\nPayPal: telocorpgroup@gmail.com`;
+    window.open(`https://wa.me/18099038707?text=${encodeURIComponent(msg)}`, '_blank');
   }
 
   // Reduce stock locally
@@ -1169,8 +1203,9 @@ function saveProfile(e) {
   State.userProfile = { name: document.getElementById('profile-name').value, email: document.getElementById('profile-email').value, phone: document.getElementById('profile-phone').value, address: document.getElementById('profile-address').value, city: document.getElementById('profile-city').value };
   State.save();
   loadProfile();
+  // Upsert to customers table (creates member record)
   BackendService.supabaseQuery('customers', 'POST', { ...State.userProfile, updated_at: new Date().toISOString() });
-  showToast('Perfil guardado');
+  showToast('Perfil guardado — Eres miembro de TeloCorp ✓');
 }
 
 function renderProfileServices() {
