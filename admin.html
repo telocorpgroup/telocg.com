@@ -155,7 +155,7 @@ td img{width:40px;height:40px;object-fit:cover;border-radius:6px}
 <div>
 <div class="form-grid">
 <div class="form-group"><label>Nombre</label><input id="fName" oninput="updatePreview()"></div>
-<div class="form-group"><label>Categoría</label><input id="fCat" oninput="updatePreview()"></div>
+<div class="form-group"><label>Categoría</label><select id="fCat" class="select" onchange="updatePreview()"><option value="Covers & Fundas">Covers & Fundas</option><option value="Cables y Carga">Cables y Carga</option><option value="Audio">Audio</option><option value="Equipamiento">Equipamiento</option></select></div>
 <div class="form-group"><label>Precio de venta (RD$)</label><input type="number" id="fPrice" oninput="updatePreview();calcCost()"></div>
 <div class="form-group"><label>Stock</label><input type="number" id="fStock" value="0"></div>
 <div class="form-group"><label>Vendidos</label><input type="number" id="fSold" value="0"></div>
@@ -253,31 +253,34 @@ function showApp(){
 if(localStorage.getItem('tcAuth')==='1') showApp();
 // Seed data
 function seedProducts(){
+const BASE='https://telocg.com/TeloCorp/images/';
 return [
-{id:1,name:'iPhone 15 Pro Max',category:'Smartphones',price:72000,cost:38000,stock:5,sold:12,discount:0,desc:'256GB, Titanio Natural',images:['https://i.ibb.co/4g1DBJG/iphone15promax.jpg'],video:'',specs:{Almacenamiento:'256GB',Chip:'A17 Pro',Pantalla:'6.7" OLED'}},
-{id:2,name:'Samsung Galaxy S24 Ultra',category:'Smartphones',price:68000,cost:35000,stock:4,sold:8,discount:5,desc:'512GB, Titanium Gray',images:['https://i.ibb.co/kGZq1Ld/s24ultra.jpg'],video:'',specs:{RAM:'12GB',Almacenamiento:'512GB',Cámara:'200MP'}},
-{id:3,name:'MacBook Air M3',category:'Laptops',price:85000,cost:52000,stock:3,sold:6,discount:0,desc:'15", 8GB RAM, 256GB SSD',images:['https://i.ibb.co/vXSMpFB/macbookair.jpg'],video:'',specs:{Chip:'M3',RAM:'8GB',SSD:'256GB'}},
-{id:4,name:'iPad Pro 12.9"',category:'Tablets',price:78000,cost:45000,stock:2,sold:4,discount:0,desc:'M2 Chip, 256GB, WiFi+Cell',images:['https://i.ibb.co/5F5LHWL/ipadpro.jpg'],video:'',specs:{Chip:'M2',Pantalla:'12.9" Liquid Retina XDR'}},
-{id:5,name:'AirPods Pro 2',category:'Audio',price:18500,cost:9800,stock:15,sold:25,discount:0,desc:'USB-C, Cancelación de ruido',images:['https://i.ibb.co/b5Z2gBK/airpodspro2.jpg'],video:'',specs:{Chip:'H2',ANC:'Sí',Batería:'6h'}},
-{id:6,name:'Sony WH-1000XM5',category:'Audio',price:24000,cost:13500,stock:7,sold:10,discount:10,desc:'Over-ear, noise cancelling',images:['https://i.ibb.co/7p0dFKV/sonyxm5.jpg'],video:'',specs:{Driver:'30mm',ANC:'Sí',Batería:'30h'}},
-{id:7,name:'Apple Watch Ultra 2',category:'Wearables',price:52000,cost:31000,stock:3,sold:5,discount:0,desc:'49mm, GPS+Cellular, Titanio',images:['https://i.ibb.co/6XnN5sv/applewatchultra.jpg'],video:'',specs:{Pantalla:'49mm',Chip:'S9',WR:'100m'}},
-{id:8,name:'Samsung Galaxy Watch 6',category:'Wearables',price:19500,cost:10500,stock:6,sold:9,discount:0,desc:'44mm, BioActive Sensor',images:['https://i.ibb.co/0JqPQm8/galaxywatch6.jpg'],video:'',specs:{Pantalla:'1.5"',OS:'Wear OS',Batería:'40h'}},
-{id:9,name:'Nintendo Switch OLED',category:'Gaming',price:22000,cost:13000,stock:8,sold:18,discount:0,desc:'Pantalla OLED 7", 64GB',images:['https://i.ibb.co/H7Jnb8d/switcholed.jpg'],video:'',specs:{Pantalla:'7" OLED',Almacenamiento:'64GB'}},
-{id:10,name:'PS5 DualSense Edge',category:'Gaming',price:12500,cost:7200,stock:10,sold:14,discount:0,desc:'Control pro, gatillos adaptativos',images:['https://i.ibb.co/5x8QWFZ/dualsense.jpg'],video:'',specs:{Conexión:'USB-C/BT',Batería:'12h'}},
-{id:11,name:'Meta Quest 3',category:'Gaming',price:35000,cost:21000,stock:4,sold:7,discount:5,desc:'128GB, Mixed Reality',images:['https://i.ibb.co/60Rm0wQ/quest3.jpg'],video:'',specs:{Chip:'Snapdragon XR2 Gen 2',RAM:'8GB'}},
-{id:12,name:'Bose SoundLink Flex',category:'Audio',price:8900,cost:4800,stock:12,sold:20,discount:0,desc:'Bluetooth, IP67, 12h batería',images:['https://i.ibb.co/qNhXQfL/boseflex.jpg'],video:'',specs:{Batería:'12h',IP:'IP67'}},
-{id:13,name:'Canon EOS R50',category:'Cámaras',price:55000,cost:33000,stock:2,sold:3,discount:0,desc:'24.2MP, 4K, Mirrorless',images:['https://i.ibb.co/HpFzgP0/canonr50.jpg'],video:'',specs:{Sensor:'24.2MP APS-C',Video:'4K 30fps'}},
-{id:14,name:'DJI Mini 4 Pro',category:'Drones',price:52000,cost:31000,stock:2,sold:4,discount:0,desc:'4K HDR, <249g, ActiveTrack',images:['https://i.ibb.co/9pVw0X9/djimini4.jpg'],video:'',specs:{Peso:'<249g',Video:'4K HDR',Alcance:'20km'}},
-{id:15,name:'Kindle Paperwhite 2024',category:'Tablets',price:9500,cost:5200,stock:10,sold:15,discount:0,desc:'6.8", 16GB, luz cálida',images:['https://i.ibb.co/ZfLHm6p/kindle.jpg'],video:'',specs:{Pantalla:'6.8" E-Ink',Almacenamiento:'16GB'}},
-{id:16,name:'Logitech MX Master 3S',category:'Accesorios',price:6500,cost:3400,stock:20,sold:30,discount:0,desc:'8000 DPI, USB-C, silencioso',images:['https://i.ibb.co/VTXdN0q/mxmaster.jpg'],video:'',specs:{DPI:'8000',Batería:'70 días',Conexión:'BT/USB'}},
-{id:17,name:'Keychron K2 Pro',category:'Accesorios',price:5800,cost:3100,stock:8,sold:12,discount:0,desc:'75%, Hot-swap, RGB, Gateron',images:['https://i.ibb.co/jzBQfxP/keychron.jpg'],video:'',specs:{Layout:'75%',Switch:'Gateron',Backlight:'RGB'}},
-{id:18,name:'Samsung T7 Shield 2TB',category:'Almacenamiento',price:9800,cost:5500,stock:14,sold:22,discount:0,desc:'SSD externo, 1050MB/s, IP65',images:['https://i.ibb.co/cLZGwzB/t7shield.jpg'],video:'',specs:{Capacidad:'2TB',Velocidad:'1050MB/s',IP:'IP65'}},
-{id:19,name:'Anker 737 Power Bank',category:'Accesorios',price:5200,cost:2800,stock:18,sold:28,discount:0,desc:'24000mAh, 140W, USB-C',images:['https://i.ibb.co/fXSCLjK/anker737.jpg'],video:'',specs:{Capacidad:'24000mAh',Potencia:'140W'}},
-{id:20,name:'Google Pixel 8 Pro',category:'Smartphones',price:58000,cost:32000,stock:3,sold:5,discount:0,desc:'256GB, Obsidian, Tensor G3',images:['https://i.ibb.co/nCsmVr7/pixel8pro.jpg'],video:'',specs:{Chip:'Tensor G3',Cámara:'50MP',RAM:'12GB'}},
-{id:21,name:'LG C3 OLED 55"',category:'TV & Pantallas',price:62000,cost:37000,stock:2,sold:3,discount:8,desc:'4K 120Hz, Dolby Vision, webOS',images:['https://i.ibb.co/kqwRVNq/lgc3.jpg'],video:'',specs:{Resolución:'4K',Hz:'120',HDR:'Dolby Vision'}},
-{id:22,name:'Xiaomi Robot Vacuum X10+',category:'Smart Home',price:28000,cost:15000,stock:5,sold:8,discount:0,desc:'LiDAR, autovaciado, fregado',images:['https://i.ibb.co/1MdDr3y/xiaomivac.jpg'],video:'',specs:{Succión:'4000Pa',Navegación:'LiDAR',Batería:'5200mAh'}}
+{id:'ts-100',name:'Diagrama Núcleo de Cobre: Cables D09',category:'Cables y Carga',price:450,cost:180,stock:30,sold:85,discount:0,desc:'Diagrama técnico del cable D09 con núcleo de cobre estañado y cubierta TPE.',images:[BASE+'image1.png'],video:'',specs:{Material:'Cobre estañado y TPE',Función:'Visualización técnica'}},
+{id:'ts-101',name:'Cover Magnético Transparente MagSafe',category:'Covers & Fundas',price:600,cost:280,stock:22,sold:340,discount:0,desc:'Funda transparente con tecnología magnética MagSafe. Policarbonato anti-amarilleo.',images:[BASE+'image2.png'],video:'',specs:{Material:'TPU + Policarbonato',Compatibilidad:'iPhone 7+ a 17 Pro Max',Características:'MagSafe, anti-amarilleo'}},
+{id:'ts-102',name:'Cover Silicona Stitch Azul Premium',category:'Covers & Fundas',price:550,cost:250,stock:15,sold:210,discount:15,desc:'Silicona líquida con diseño 3D de Stitch. Tacto soft-touch.',images:[BASE+'image3.png'],video:'',specs:{Material:'Silicona líquida',Diseño:'Relieve 3D',Interior:'Microfibra'}},
+{id:'ts-103',name:'Nevera Exhibidora Comercial Traulsen',category:'Equipamiento',price:45000,cost:32000,stock:3,sold:12,discount:0,desc:'Refrigerador comercial con puerta de vidrio templado. Acero inoxidable.',images:[BASE+'image4.png'],video:'',specs:{Marca:'Traulsen',Material:'Acero inoxidable + vidrio templado',Control:'Termostato digital'}},
+{id:'ts-104',name:'Audífonos Deportivos Miccell BH96',category:'Audio',price:1200,cost:550,stock:40,sold:428,discount:10,desc:'Auriculares inalámbricos deportivos con BT 5.4 y pantalla LED.',images:[BASE+'image5.png'],video:'',specs:{Bluetooth:'5.4',Batería:'40mAh (5.5h)',Estuche:'400mAh (24h total)'}},
+{id:'ts-105',name:'Altavoz Miccell VQ-SP63 (1200mAh)',category:'Audio',price:1500,cost:700,stock:18,sold:195,discount:0,desc:'Bluetooth portátil con sonido estéreo 3D y luces LED.',images:[BASE+'image6.png'],video:'',specs:{Batería:'1200mAh (5h)',Entradas:'BT, USB, TF, Aux',Carga:'USB-C'}},
+{id:'ts-106',name:'Cargador Rápido T13 (C a Lightning 20W)',category:'Cables y Carga',price:850,cost:380,stock:35,sold:520,discount:20,desc:'Cargador 20W con cable USB-C a Lightning incluido.',images:[BASE+'image7.png'],video:'',specs:{Potencia:'20W',Cable:'1.0m C-Lightning',Voltaje:'100-240V'}},
+{id:'ts-107',name:'Freidora Industrial Vevor Doble Tanque',category:'Equipamiento',price:8500,cost:5500,stock:5,sold:38,discount:0,desc:'Freidora comercial de doble tina con control independiente.',images:[BASE+'image8.png'],video:'',specs:{Capacidad:'6L + 6L',Potencia:'1500W + 1500W',Material:'Acero inoxidable 304'}},
+{id:'ts-108',name:'Batería Portátil Slim 10,000 mAh',category:'Cables y Carga',price:1450,cost:650,stock:28,sold:312,discount:0,desc:'Power bank ultra delgada con display LED.',images:[BASE+'image9.png'],video:'',specs:{Capacidad:'10,000mAh',Salidas:'2x USB-A (5V/2.4A)',Indicador:'LED digital'}},
+{id:'ts-109',name:'Altavoz Miccell VQ-SP64 (2400mAh)',category:'Audio',price:2200,cost:1000,stock:12,sold:156,discount:15,desc:'Altavoz mediano para exteriores con radiadores pasivos.',images:[BASE+'image10.png'],video:'',specs:{Batería:'2400mAh (8h)',Potencia:'10W RMS',Conectividad:'BT 5.3'}},
+{id:'ts-110',name:'Cover Cristal MagSafe Transparente',category:'Covers & Fundas',price:800,cost:350,stock:20,sold:275,discount:0,desc:'Cristal templado trasero con bordes de aluminio y MagSafe.',images:[BASE+'image11.png'],video:'',specs:{Material:'Vidrio 9H + Aluminio',MagSafe:'Imanes N52',Resistencia:'Antirayaduras'}},
+{id:'ts-111',name:'Cover Cristal MagSafe Grafito',category:'Covers & Fundas',price:800,cost:350,stock:17,sold:248,discount:0,desc:'Cristal templado trasero con bordes grafito y MagSafe.',images:[BASE+'image12.png'],video:'',specs:{Material:'Vidrio 9H + Aluminio',MagSafe:'N52',Color:'Grafito'}},
+{id:'ts-112',name:'Boombox Miccell SP56 (30000mAh)',category:'Audio',price:4500,cost:2200,stock:7,sold:62,discount:10,desc:'Altavoz gigante con chip DSP y funciona como powerbank.',images:[BASE+'image13.png'],video:'',specs:{Batería:'30000mAh',Autonomía:'6-10h',Tecnología:'DSP + KTV'}},
+{id:'ts-113',name:'Cable D06 Lightning Blanco',category:'Cables y Carga',price:350,cost:120,stock:50,sold:680,discount:0,desc:'Cable económico y duradero USB-A a Lightning.',images:[BASE+'image14.png'],video:'',specs:{Conectores:'USB-A a Lightning',Longitud:'1.0m',Material:'PVC reforzado'}},
+{id:'ts-114',name:'Cover 360 Blindado Rojo Fuego',category:'Covers & Fundas',price:700,cost:300,stock:25,sold:183,discount:20,desc:'Protección total 360° con diseño blindado.',images:[BASE+'image15.png'],video:'',specs:{Material:'TPU + Policarbonato',Protección:'360° blindada',Diseño:'Mate antideslizante'}},
+{id:'ts-115',name:'Altavoz Impermeable IPX7 Miccell',category:'Audio',price:1800,cost:850,stock:14,sold:134,discount:0,desc:'Totalmente resistente al agua, ideal para ducha y playa.',images:[BASE+'image16.png'],video:'',specs:{Certificación:'IPX7 sumergible',Bluetooth:'5.3 (15m)',Autonomía:'6h'}},
+{id:'ts-116',name:'Cover Chupón Succión Especial',category:'Covers & Fundas',price:450,cost:180,stock:32,sold:95,discount:0,desc:'Ventosas para adherir a superficies planas. Ideal para videollamadas.',images:[BASE+'image17.png'],video:'',specs:{Material:'Silicona + ventosas',Compatibilidad:'iPhone 7+ a 17 Pro Max'}},
+{id:'ts-117',name:'Cargador T13 (C a C 20W)',category:'Cables y Carga',price:850,cost:380,stock:30,sold:445,discount:0,desc:'Cargador 20W con cable USB-C a USB-C para Android.',images:[BASE+'image18.png'],video:'',specs:{Potencia:'20W',Cable:'1.0m C-C',Protección:'Chip inteligente'}},
+{id:'ts-118',name:'Comparativa Altavoces SP63/64/65',category:'Audio',price:2500,cost:1200,stock:9,sold:48,discount:0,desc:'Ficha comparativa de la serie VQ-SP.',images:[BASE+'image19.png'],video:'',specs:{Modelos:'SP63/SP64/SP65',Baterías:'1200/2400/4000 mAh'}},
+{id:'ts-119',name:'Audífonos TWS Miccell VQ-BH105',category:'Audio',price:1100,cost:480,stock:22,sold:367,discount:25,desc:'TWS con BT 5.3, control táctil y ajuste ergonómico.',images:[BASE+'image20.png'],video:'',specs:{Bluetooth:'5.3',Operación:'Control táctil',Diseño:'Ergonómico ultraligero'}},
+{id:'ts-120',name:'Cable D02 Tipo C 2M Extra Largo',category:'Cables y Carga',price:500,cost:180,stock:42,sold:290,discount:0,desc:'Cable 2 metros con Power Delivery.',images:[BASE+'image21.png'],video:'',specs:{Conectores:'C a C/Lightning',Longitud:'2.0m',Carga:'PD'}},
+{id:'ts-121',name:'Ficha Técnica BH96 Sonido 3D',category:'Audio',price:1200,cost:550,stock:11,sold:78,discount:0,desc:'Altavoz doble cámara 13mm.',images:[BASE+'image22.png'],video:'',specs:{Altavoz:'13mm doble cámara',Tecnología:'Estéreo 3D',Frecuencia:'20Hz-20kHz'}}
 ]}
 // Init
+const DATA_VERSION='v3';
+if(localStorage.getItem('tcDataVersion')!==DATA_VERSION){products=seedProducts();saveLocal();localStorage.setItem('tcDataVersion',DATA_VERSION)}
 if(!products){products=seedProducts();saveLocal()}
 populateCategories();
 renderProducts();
@@ -285,9 +288,11 @@ syncFromSupabase();
 
 function saveLocal(){localStorage.setItem('tcProducts',JSON.stringify(products))}
 function populateCategories(){
-  const cats=[...new Set(products.map(p=>p.category))].sort();
+  const defaultCats=['Covers & Fundas','Cables y Carga','Audio','Equipamiento'];
+  const customCats=JSON.parse(localStorage.getItem('tcCategories')||'[]');
+  const allCats=[...new Set([...defaultCats,...customCats,...products.map(p=>p.category)])].sort();
   const sel=document.getElementById('catFilter');
-  sel.innerHTML='<option value="">Todas las categorías</option>'+cats.map(c=>`<option>${c}</option>`).join('');
+  sel.innerHTML='<option value="">Todas las categorías</option>'+allCats.map(c=>`<option>${c}</option>`).join('');
 }
 
 function getFiltered(){
