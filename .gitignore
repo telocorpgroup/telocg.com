@@ -13,3 +13,4 @@ CLAUDE.md
 *.bat
 *.mp4
 vault/
+supabase/.temp/
