@@ -13,7 +13,7 @@ const BackendService = {
     supabaseUrl: 'https://bhdictzvboiojyxorfiq.supabase.co',
     supabaseKey: 'sb_publishable_AgpNN0k_KfW0moe6f1CKXg_qP2GKJCm',
     stripeKey: 'pk_test_51TkuAq9ZSlwyfnkhjbXuSXVif4wSmAghZt9Ytp3ei3UX4wZJmNyQ0ByqYp39PNe7hB9xoraN6n668YZylpO1QVgQ00mavVqCgD',
-    geminiKey: 'AIzaSyB6Fw9dciFlipwPONefQbbUB0tJBDWibF',
+    geminiKey: 'AIzaSyB6Fw9dciFlipwPONefQbbUB0tJBDWibFc',
     n8nLeads: '',
     n8nOrders: '',
     n8nServices: '',
