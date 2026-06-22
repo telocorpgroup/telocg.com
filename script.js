@@ -10,9 +10,7 @@
 const BackendService = {
   config: {
     supabaseUrl: 'https://bhdictzvboiojyxorfiq.supabase.co',
-    supabaseKey: 'sb_publishable_AgpNN0k_KfW0moe6f1CKXg_qP2GKJCm',
-    stripeKey: 'pk_test_51TkuAq9ZSlwyfnkhjbXuSXVif4wSmAghZt9Ytp3ei3UX4wZJmNyQ0ByqYp39PNe7hB9xoraN6n668YZylpO1QVgQ00mavVqCgD',
-    stripeEnabled: true
+    supabaseKey: 'sb_publishable_AgpNN0k_KfW0moe6f1CKXg_qP2GKJCm'
   },
 
   loadConfig() {},
@@ -491,61 +489,30 @@ async function checkout() {
   const discount = State.coupon ? Math.round(subtotal * State.coupon.pct / 100) : 0;
   const shipping = (subtotal - discount) >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST;
   const total = subtotal - discount + shipping;
-  const paymentMethod = document.querySelector('input[name="payment"]:checked')?.value || 'card';
+  const paymentMethod = document.querySelector('input[name="payment"]:checked')?.value || 'whatsapp';
 
-  // ═══ TARJETA (Stripe Checkout — real payment) ═══
-  if (paymentMethod === 'card') {
-    showToast('Redirigiendo al pago seguro...');
-    try {
-      const stripeItems = State.cart.map(i => { const p = products.find(x => x.id === i.id); return { title: p?.title, price: p?.price, qty: i.qty, image: p?.image ? (p.image.startsWith('http') ? p.image : `https://telocg.com/${p.image}`) : '' }; });
-      const res = await fetch(`${BackendService.config.supabaseUrl}/functions/v1/create-checkout`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${BackendService.config.supabaseKey}` },
-        body: JSON.stringify({ items: stripeItems, customer_email: State.userProfile.email || '', success_url: `${window.location.origin}/?order=success`, cancel_url: `${window.location.origin}/?order=cancelled` })
-      });
-      const data = await res.json();
-      if (data.url) {
-        // Save order locally before redirect (Stripe webhook will confirm)
-        registerOrder(total, paymentMethod);
-        window.location.href = data.url;
-        return;
-      }
-      showToast('Error con Stripe. Intenta WhatsApp/Transferencia.', 'error');
-    } catch (e) { showToast('Error de conexión. Prueba otro método.', 'error'); }
-    return;
-  }
+  const items = State.cart.map(i => { const p = products.find(x => x.id === i.id); return `• ${p?.title} x${i.qty} — RD$${(p.price * i.qty).toLocaleString()}`; }).join('\n');
+  const customer = State.userProfile.name ? `\n👤 ${State.userProfile.name}${State.userProfile.phone ? ' | ' + State.userProfile.phone : ''}` : '';
 
-  // ═══ PAYPAL (redirect to PayPal.me with amount) ═══
   if (paymentMethod === 'paypal') {
-    const usd = Math.ceil(total / 59); // RD$ to USD approximate rate
-    registerOrder(total, paymentMethod);
-    window.open(`https://paypal.me/telocorpgroup/${usd}USD`, '_blank');
-    showToast(`Paga USD $${usd} en PayPal y envía captura por WhatsApp`);
-    // Also send to WhatsApp for confirmation
-    setTimeout(() => {
-      const items = State.cart.map(i => { const p = products.find(x => x.id === i.id); return `• ${p?.title} x${i.qty}`; }).join('\n');
-      const msg = `🅿️ *Pago PayPal TeloSales*\n\n${items}\n\n💰 Total: RD$ ${total.toLocaleString()} (USD $${usd})\n✅ Ya realicé el pago en PayPal`;
-      window.open(`https://wa.me/18099038707?text=${encodeURIComponent(msg)}`, '_blank');
-    }, 2000);
+    const usd = Math.ceil(total / 59);
+    const msg = `🌐 *Pedido TeloSales — PayPal*\n\n${items}\n\n💰 Total: RD$ ${total.toLocaleString()} (≈ USD $${usd})\n🅿️ PayPal: telocorpgroup@gmail.com${customer}\n\n✅ Enviaré captura del pago`;
+    registerOrder(total, 'paypal');
+    window.open(`https://wa.me/18099038707?text=${encodeURIComponent(msg)}`, '_blank');
+    showToast('Envía tu pago PayPal a telocorpgroup@gmail.com y confirma por WhatsApp');
     return;
   }
 
-  // ═══ TRANSFERENCIA / WHATSAPP (mismo flujo) ═══
-  const items = State.cart.map(i => { const p = products.find(x => x.id === i.id); return `• ${p?.title} x${i.qty} = RD$${(p.price * i.qty).toLocaleString()}`; }).join('\n');
-  const msg = paymentMethod === 'transfer'
-    ? `🏦 *Pedido TeloSales — Transferencia*\n\n${items}\n\n💰 Total: RD$ ${total.toLocaleString()}\n\nNecesito los datos bancarios para hacer la transferencia.`
-    : `🛒 *Nuevo Pedido TeloSales*\n\n${items}\n\n💰 Total: RD$ ${total.toLocaleString()}\n📍 Método: Coordinación por WhatsApp`;
-  registerOrder(total, paymentMethod);
+  // Default: WhatsApp (transferencia, depósito, efectivo)
+  const msg = `🛒 *Nuevo Pedido TeloSales*\n\n${items}\n\n💰 Total: RD$ ${total.toLocaleString()}${shipping ? '\n🚚 Envío: RD$ ' + shipping : '\n🚚 Envío: Gratis'}${discount ? '\n🎟️ Descuento: -RD$ ' + discount.toLocaleString() : ''}${customer}\n\n💳 Método: Transferencia / Efectivo\n¿Me pueden indicar los datos bancarios para transferir?`;
+  registerOrder(total, 'whatsapp');
   window.open(`https://wa.me/18099038707?text=${encodeURIComponent(msg)}`, '_blank');
-  showToast('Pedido enviado — coordina el pago por WhatsApp');
+  showToast('Pedido enviado por WhatsApp — coordina tu pago ahí');
 }
 
-// Register order in Supabase and reduce stock
 function registerOrder(total, paymentMethod) {
-  const subtotal = State.cart.reduce((s, i) => { const p = products.find(x => x.id === i.id); return s + (p ? p.price * i.qty : 0); }, 0);
-  const orderPayload = { items: State.cart.map(i => { const p = products.find(x => x.id === i.id); return { id: i.id, title: p?.title, qty: i.qty, price: p?.price }; }), subtotal, total, payment_method: paymentMethod, customer: State.userProfile, status: paymentMethod === 'card' ? 'paid' : 'pending', created_at: new Date().toISOString() };
+  const orderPayload = { items: State.cart.map(i => { const p = products.find(x => x.id === i.id); return { id: i.id, title: p?.title, qty: i.qty, price: p?.price }; }), total, payment_method: paymentMethod, customer: State.userProfile, status: 'pending', created_at: new Date().toISOString() };
   BackendService.supabaseQuery('orders', 'POST', orderPayload);
-  // Reduce stock
   State.cart.forEach(item => {
     const p = products.find(x => x.id === item.id);
     if (p) { p.stock = Math.max(0, (p.stock || 0) - item.qty); p.sold = (p.sold || 0) + item.qty; BackendService.supabaseQuery(`products?id=eq.${item.id}`, 'PATCH', { stock: p.stock, sold: p.sold }); }
