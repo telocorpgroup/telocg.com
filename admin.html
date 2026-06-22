@@ -93,9 +93,16 @@ td img{width:40px;height:40px;object-fit:cover;border-radius:6px}
 .zoom-container.zoomed img{transform:scale(2.5)}
 /* Gallery */
 .gallery-thumbs{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
-.gallery-thumbs .thumb{width:50px;height:50px;border-radius:6px;object-fit:cover;border:2px solid transparent;cursor:pointer}
+.thumb-wrap{position:relative;cursor:grab}
+.thumb-wrap:active{cursor:grabbing;opacity:.7}
+.thumb-wrap[draggable]:hover{outline:2px solid var(--primary);border-radius:6px}
+.gallery-thumbs .thumb{width:56px;height:56px;border-radius:6px;object-fit:cover;border:2px solid transparent;display:block}
 .gallery-thumbs .thumb.active{border-color:var(--primary)}
-.gallery-thumbs .thumb-add{width:50px;height:50px;border-radius:6px;border:2px dashed var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-dim);font-size:1.2rem}
+.thumb-remove{position:absolute;top:-4px;right:-4px;width:18px;height:18px;border-radius:50%;background:var(--danger);color:#fff;border:none;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:.15s}
+.thumb-wrap:hover .thumb-remove{opacity:1}
+.thumb-badge{position:absolute;bottom:2px;left:2px;background:var(--primary);color:#fff;font-size:8px;padding:1px 4px;border-radius:3px;font-weight:700}
+.gallery-thumbs .thumb-add{width:56px;height:56px;border-radius:6px;border:2px dashed var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-dim);font-size:1.4rem;transition:.15s}
+.gallery-thumbs .thumb-add:hover{border-color:var(--primary);color:var(--primary);background:rgba(249,115,22,.05)}
 /* Specs builder */
 .specs-list{display:flex;flex-direction:column;gap:6px;margin-top:8px}
 .spec-row{display:flex;gap:6px;align-items:center}
@@ -166,12 +173,13 @@ td img{width:40px;height:40px;object-fit:cover;border-radius:6px}
 </div>
 <!-- Images -->
 <div style="margin-top:12px">
-<label style="font-size:.75rem;color:var(--text-dim)">Imágenes</label>
+<label style="font-size:.75rem;color:var(--text-dim)">Imágenes del producto</label>
 <div class="gallery-thumbs" id="galleryThumbs"></div>
+<div id="urlInputWrap" style="display:none;margin-top:8px">
+<div style="display:flex;gap:6px"><input id="imgUrlInput" placeholder="Pegar URL de imagen..."><button class="btn-primary" style="padding:6px 12px" onclick="addImageUrl()">Agregar</button><button class="btn-ghost" style="padding:6px 8px" onclick="toggleUrlInput(false)">×</button></div>
+</div>
 <div style="display:flex;gap:6px;margin-top:8px">
-<input id="imgUrlInput" placeholder="URL de imagen o subir archivo">
-<button class="btn-ghost" onclick="addImageUrl()">URL</button>
-<label class="btn-ghost" style="display:inline-flex;align-items:center;cursor:pointer">📁<input type="file" accept="image/*" style="display:none" onchange="uploadImgBB(this)"></label>
+<button class="btn-ghost" style="font-size:.75rem" onclick="toggleUrlInput(true)">🔗 URL</button>
 </div>
 </div>
 <!-- Cost Calculator -->
@@ -402,18 +410,32 @@ function saveProduct(){
   }
   saveLocal();renderProducts();populateCategories();closeModal();
 }
-// Gallery
+// Gallery — drag to reorder, click thumb-add to upload
 function renderGallery(){
   const c=document.getElementById('galleryThumbs');
-  c.innerHTML=currentImages.map((url,i)=>`<img class="thumb ${i===primaryImageIdx?'active':''}" src="${url}" onclick="setPrimary(${i})" ondblclick="removeImage(${i})">`).join('')+
-    '<div class="thumb-add" onclick="document.getElementById(\'imgUrlInput\').focus()">+</div>';
+  c.innerHTML=currentImages.map((url,i)=>`<div class="thumb-wrap" draggable="true" data-idx="${i}" ondragstart="dragStart(event,${i})" ondragover="event.preventDefault()" ondrop="dropImage(event,${i})">
+    <img class="thumb ${i===0?'active':''}" src="${url}" title="Arrastrar para reordenar">
+    <button class="thumb-remove" onclick="event.stopPropagation();removeImage(${i})">×</button>
+    ${i===0?'<span class="thumb-badge">1ra</span>':''}
+  </div>`).join('')+
+    `<label class="thumb-add" title="Subir imagen"><input type="file" accept="image/*" style="display:none" onchange="uploadImgBB(this)">+</label>`;
   updatePreview();
 }
-function setPrimary(i){primaryImageIdx=i;renderGallery()}
-function removeImage(i){currentImages.splice(i,1);if(primaryImageIdx>=currentImages.length)primaryImageIdx=0;renderGallery()}
+let dragIdx=null;
+function dragStart(e,i){dragIdx=i;e.dataTransfer.effectAllowed='move'}
+function dropImage(e,targetIdx){
+  e.preventDefault();
+  if(dragIdx===null||dragIdx===targetIdx)return;
+  const item=currentImages.splice(dragIdx,1)[0];
+  currentImages.splice(targetIdx,0,item);
+  dragIdx=null;
+  renderGallery();
+}
+function removeImage(i){currentImages.splice(i,1);renderGallery()}
+function toggleUrlInput(show){document.getElementById('urlInputWrap').style.display=show?'block':'none';if(show)document.getElementById('imgUrlInput').focus()}
 function addImageUrl(){
   const url=document.getElementById('imgUrlInput').value.trim();
-  if(url){currentImages.push(url);document.getElementById('imgUrlInput').value='';renderGallery()}
+  if(url){currentImages.push(url);document.getElementById('imgUrlInput').value='';toggleUrlInput(false);renderGallery()}
 }
 async function uploadImgBB(input){
   const file=input.files[0];if(!file)return;
@@ -422,8 +444,8 @@ async function uploadImgBB(input){
     const res=await fetch('https://api.imgbb.com/1/upload?key='+IMGBB_KEY,{method:'POST',body:fd});
     const json=await res.json();
     if(json.success){currentImages.push(json.data.url);renderGallery()}
-    else alert('Error subiendo imagen');
-  }catch(e){alert('Error: '+e.message)}
+    else alert('Error: '+(json.error?.message||'Fallo en subida'));
+  }catch(e){alert('Error de red: '+e.message)}
   input.value='';
 }
 
@@ -474,7 +496,7 @@ async function aiGenerateSpecs(){
 
 // Preview
 function updatePreview(){
-  const img=currentImages.length?currentImages[primaryImageIdx]:'';
+  const img=currentImages.length?currentImages[0]:'';
   document.getElementById('previewImg').src=img||"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><rect fill='%231a1f2e' width='200' height='200'/><text x='50%25' y='50%25' fill='%2394a3b8' text-anchor='middle' dy='.3em'>Sin imagen</text></svg>";
   document.getElementById('previewName').textContent=document.getElementById('fName').value||'Nombre';
   document.getElementById('previewDesc').textContent=document.getElementById('fDesc').value||'Descripción...';
