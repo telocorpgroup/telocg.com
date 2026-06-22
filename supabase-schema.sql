@@ -1,8 +1,16 @@
 -- ═══════════════════════════════════════════════════════════
--- TeloSales — Schema para Supabase (v2 - sin conflictos)
+-- TeloSales — Schema para Supabase (v3 - con migraciones)
 -- Ejecutar en: Supabase Dashboard → SQL Editor → New Query
--- NOTA: Usa CREATE IF NOT EXISTS y DROP POLICY IF EXISTS
 -- ═══════════════════════════════════════════════════════════
+
+-- ═══ MIGRACIÓN: Agregar columnas faltantes a tabla products ═══
+-- (Ejecuta esto PRIMERO si ya tenías la tabla creada)
+ALTER TABLE products ADD COLUMN IF NOT EXISTS cost NUMERIC DEFAULT 0;
+ALTER TABLE products ADD COLUMN IF NOT EXISTS images JSONB DEFAULT '[]';
+ALTER TABLE products ADD COLUMN IF NOT EXISTS video TEXT DEFAULT '';
+ALTER TABLE products ADD COLUMN IF NOT EXISTS active BOOLEAN DEFAULT true;
+
+-- ═══ TABLAS (CREATE IF NOT EXISTS — seguro ejecutar múltiples veces) ═══
 
 -- Tabla de productos
 CREATE TABLE IF NOT EXISTS products (
