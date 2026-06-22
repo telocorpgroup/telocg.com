@@ -26,10 +26,11 @@ const BackendService = {
   async supabaseQuery(table, method = 'GET', body = null) {
     if (!this.config.supabaseUrl || !this.config.supabaseKey) return null;
     const url = `${this.config.supabaseUrl}/rest/v1/${table}`;
-    const headers = { 'apikey': this.config.supabaseKey, 'Authorization': `Bearer ${this.config.supabaseKey}`, 'Content-Type': 'application/json', 'Prefer': method === 'POST' ? 'return=representation' : '' };
+    const headers = { 'apikey': this.config.supabaseKey, 'Authorization': `Bearer ${this.config.supabaseKey}`, 'Content-Type': 'application/json', 'Prefer': method === 'POST' ? 'return=representation' : 'return=minimal' };
     try {
       const res = await fetch(url, { method, headers, body: body ? JSON.stringify(body) : undefined });
-      return res.ok ? await res.json() : null;
+      if (method === 'GET') return res.ok ? await res.json() : null;
+      return res.ok;
     } catch (e) { console.error('[Supabase]', e); return null; }
   },
 
@@ -507,15 +508,40 @@ function checkout() {
   const discount = State.coupon ? Math.round(subtotal * State.coupon.pct / 100) : 0;
   const shipping = (subtotal - discount) >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST;
   const total = subtotal - discount + shipping;
-  const orderPayload = { event: 'order_placed', items: State.cart.map(i => { const p = products.find(x => x.id === i.id); return { id: i.id, title: p?.title, qty: i.qty, price: p?.price }; }), subtotal, discount, shipping, coupon: State.coupon?.code || null, total, customer: State.userProfile, timestamp: new Date().toISOString() };
+  const paymentMethod = document.querySelector('input[name="payment"]:checked')?.value || 'card';
+
+  // Handle WhatsApp payment — redirect to WhatsApp with order summary
+  if (paymentMethod === 'whatsapp') {
+    const items = State.cart.map(i => { const p = products.find(x => x.id === i.id); return `• ${p?.title} x${i.qty} = RD$${(p.price * i.qty).toLocaleString()}`; }).join('\n');
+    const msg = `🛒 *Nuevo Pedido TeloSales*\n\n${items}\n\n💰 Total: RD$ ${total.toLocaleString()}\n📍 Método: WhatsApp/Transferencia`;
+    window.open(`https://wa.me/18099038707?text=${encodeURIComponent(msg)}`, '_blank');
+    showToast('Redirigido a WhatsApp para completar el pago');
+    State.cart = []; State.coupon = null; State.save(); updateCartBadge(); toggleCartDrawer(false);
+    return;
+  }
+
+  // Reduce stock locally
+  State.cart.forEach(item => {
+    const p = products.find(x => x.id === item.id);
+    if (p && p.stock !== undefined) p.stock = Math.max(0, p.stock - item.qty);
+  });
+
+  const orderPayload = { event: 'order_placed', items: State.cart.map(i => { const p = products.find(x => x.id === i.id); return { id: i.id, title: p?.title, qty: i.qty, price: p?.price }; }), subtotal, discount, shipping, coupon: State.coupon?.code || null, total, payment_method: paymentMethod, customer: State.userProfile, timestamp: new Date().toISOString() };
   BackendService.sendWebhook(BackendService.config.n8nOrders, orderPayload);
   BackendService.supabaseQuery('orders', 'POST', orderPayload);
+  
+  // Update stock in Supabase for each product
+  State.cart.forEach(item => {
+    const p = products.find(x => x.id === item.id);
+    if (p) BackendService.supabaseQuery(`products?id=eq.${item.id}`, 'PATCH', { stock: p.stock, sold: (p.sold || 0) + item.qty });
+  });
+
   State.cart = [];
   State.coupon = null;
   State.save();
   updateCartBadge();
   toggleCartDrawer(false);
-  showToast('¡Pedido procesado exitosamente!');
+  showToast(paymentMethod === 'transfer' ? '¡Pedido registrado! Realiza la transferencia y envía comprobante por WhatsApp.' : '¡Pedido procesado exitosamente!');
 }
 
 function toggleWishlist(id) {

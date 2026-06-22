@@ -859,3 +859,11 @@ textarea.input-control { resize: vertical; min-height: 80px; }
 /* ─── Image Hover-Zoom (Amazon style) ─── */
 .product-detail__main-img { cursor: crosshair; position: relative; overflow: hidden; border-radius: var(--radius-md); }
 .product-detail__main-img img { transition: transform 0.2s ease-out; transform-origin: center; }
+
+/* ─── Payment Methods ─── */
+.payment-methods { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 12px 0; }
+.payment-option { display: flex; align-items: center; gap: 6px; padding: 8px 10px; border: 1px solid var(--c-border); border-radius: var(--radius-sm); cursor: pointer; transition: all var(--duration); font-size: 0.78rem; }
+.payment-option:hover { border-color: var(--c-border-strong); }
+.payment-option:has(input:checked) { border-color: var(--c-primary); background: var(--c-primary-soft); }
+.payment-option input { accent-color: var(--c-primary); }
+.payment-option__label { font-weight: 500; }

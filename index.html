@@ -666,6 +666,12 @@
       <div class="coupon-row"><input type="text" id="coupon-input" class="input-control input-control--sm" placeholder="Código de cupón"><button class="btn btn--ghost btn--sm" id="btn-coupon">Aplicar</button></div>
       <div class="cart-breakdown" id="cart-breakdown"></div>
       <div class="cart-total"><span>Total:</span><strong id="cart-total">RD$ 0</strong></div>
+      <div class="payment-methods">
+        <label class="payment-option"><input type="radio" name="payment" value="card" checked><span class="payment-option__label">💳 Tarjeta</span></label>
+        <label class="payment-option"><input type="radio" name="payment" value="transfer"><span class="payment-option__label">🏦 Transferencia</span></label>
+        <label class="payment-option"><input type="radio" name="payment" value="paypal"><span class="payment-option__label">🅿️ PayPal</span></label>
+        <label class="payment-option"><input type="radio" name="payment" value="whatsapp"><span class="payment-option__label">💬 WhatsApp</span></label>
+      </div>
       <button class="btn btn--primary btn--full" id="btn-checkout">Procesar Pedido</button>
     </div>
   </aside>

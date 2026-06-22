@@ -130,6 +130,7 @@ td img{width:40px;height:40px;object-fit:cover;border-radius:6px}
 <div class="header">
 <h1>📦 TeloCorp Inventario</h1>
 <div class="header-actions">
+<button class="btn-ghost" onclick="openCatManager()">🏷️ Categorías</button>
 <button class="btn-ghost" onclick="openReport()">📊 Reporte</button>
 <button class="btn-ghost" onclick="exportCSV()">📥 CSV</button>
 <button class="btn-primary" onclick="openModal()">+ Producto</button>
@@ -319,7 +320,7 @@ function renderProducts(){
       <td>RD$ ${(p.cost||0).toLocaleString()}</td>
       <td class="${p.stock<=3?'stock-low':'stock-ok'}">${p.stock}</td>
       <td>${p.sold||0}</td>
-      <td class="actions-cell"><button class="btn-ghost" onclick="editProduct(${p.id})">✏️</button><button class="btn-danger" onclick="deleteProduct(${p.id})">🗑️</button></td>
+      <td class="actions-cell"><button class="btn-ghost" onclick="editProduct('${p.id}')">✏️</button><button class="btn-danger" onclick="deleteProduct('${p.id}')">🗑️</button></td>
     </tr>`}).join('');
   // Cards (mobile)
   document.getElementById('cardList').innerHTML=list.map(p=>{
@@ -332,8 +333,8 @@ function renderProducts(){
         <div class="meta">RD$ ${finalPrice.toLocaleString()} · Stock: ${p.stock}</div>
       </div>
       <div class="prod-card-actions">
-        <button class="btn-ghost" onclick="editProduct(${p.id})">✏️</button>
-        <button class="btn-danger" onclick="deleteProduct(${p.id})">🗑️</button>
+        <button class="btn-ghost" onclick="editProduct('${p.id}')">✏️</button>
+        <button class="btn-danger" onclick="deleteProduct('${p.id}')">🗑️</button>
       </div>
     </div>`}).join('');
 }
@@ -586,6 +587,79 @@ async function syncToSupabase(product,action){
   else if(action==='UPDATE')sbFetch(`products?id=eq.${product.id}`,{method:'PATCH',body:JSON.stringify(product)});
   else if(action==='DELETE')sbFetch(`products?id=eq.${product.id}`,{method:'DELETE'});
 }
+
+// ═══ CATEGORY MANAGER ═══
+function getCategories(){
+  const defaults=[
+    {name:'Covers & Fundas',margin:50},
+    {name:'Cables y Carga',margin:55},
+    {name:'Audio',margin:45},
+    {name:'Equipamiento',margin:35}
+  ];
+  const custom=JSON.parse(localStorage.getItem('tcCategories')||'[]');
+  return [...defaults,...custom];
+}
+
+function openCatManager(){
+  const cats=getCategories();
+  const html=`<div style="max-width:500px;margin:0 auto">
+    <h3 style="margin-bottom:12px">🏷️ Gestionar Categorías</h3>
+    <p style="font-size:.8rem;color:var(--text-dim);margin-bottom:16px">Las categorías predefinidas incluyen un margen sugerido que se aplica al crear nuevos productos.</p>
+    <div id="catList">${cats.map((c,i)=>`<div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;padding:8px;background:var(--bg);border-radius:6px">
+      <span style="flex:1;font-size:.85rem;font-weight:500">${c.name}</span>
+      <span style="font-size:.75rem;color:var(--primary)">${c.margin}% margen</span>
+      ${i>=4?`<button class="btn-danger" style="padding:4px 8px;font-size:.7rem" onclick="removeCat(${i-4})">×</button>`:''}
+    </div>`).join('')}</div>
+    <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border)">
+      <p style="font-size:.8rem;color:var(--text-dim);margin-bottom:8px">Agregar nueva categoría:</p>
+      <div style="display:flex;gap:8px">
+        <input id="newCatName" placeholder="Nombre" style="flex:2">
+        <input id="newCatMargin" type="number" placeholder="Margen %" value="45" style="flex:1">
+        <button class="btn-primary" onclick="addCategory()">+</button>
+      </div>
+    </div>
+    <div style="margin-top:16px;text-align:right"><button class="btn-ghost" onclick="document.getElementById('reportModal').classList.remove('active')">Cerrar</button></div>
+  </div>`;
+  document.getElementById('reportContent').innerHTML=html;
+  document.getElementById('reportModal').classList.add('active');
+}
+
+function addCategory(){
+  const name=document.getElementById('newCatName').value.trim();
+  const margin=parseInt(document.getElementById('newCatMargin').value)||45;
+  if(!name)return;
+  const custom=JSON.parse(localStorage.getItem('tcCategories')||'[]');
+  if(custom.find(c=>c.name===name)||getCategories().find(c=>c.name===name)){alert('Categoría ya existe');return}
+  custom.push({name,margin});
+  localStorage.setItem('tcCategories',JSON.stringify(custom));
+  populateCategories();
+  updateCatSelect();
+  openCatManager();
+}
+
+function removeCat(idx){
+  const custom=JSON.parse(localStorage.getItem('tcCategories')||'[]');
+  custom.splice(idx,1);
+  localStorage.setItem('tcCategories',JSON.stringify(custom));
+  populateCategories();
+  updateCatSelect();
+  openCatManager();
+}
+
+function updateCatSelect(){
+  const cats=getCategories();
+  const sel=document.getElementById('fCat');
+  if(sel) sel.innerHTML=cats.map(c=>`<option value="${c.name}">${c.name}</option>`).join('');
+}
+updateCatSelect();
+
+// Update margin when category changes in form
+document.getElementById('fCat').addEventListener('change',function(){
+  const cats=getCategories();
+  const cat=cats.find(c=>c.name===this.value);
+  if(cat&&document.getElementById('fMargin'))document.getElementById('fMargin').value=cat.margin;
+  calcCost();
+});
 </script>
 </body>
 </html>
