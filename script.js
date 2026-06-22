@@ -493,72 +493,64 @@ async function checkout() {
   const total = subtotal - discount + shipping;
   const paymentMethod = document.querySelector('input[name="payment"]:checked')?.value || 'card';
 
-  // Handle WhatsApp payment — redirect to WhatsApp with order summary
-  if (paymentMethod === 'whatsapp') {
-    const items = State.cart.map(i => { const p = products.find(x => x.id === i.id); return `• ${p?.title} x${i.qty} = RD$${(p.price * i.qty).toLocaleString()}`; }).join('\n');
-    const msg = `🛒 *Nuevo Pedido TeloSales*\n\n${items}\n\n💰 Total: RD$ ${total.toLocaleString()}\n📍 Método: WhatsApp/Transferencia`;
-    window.open(`https://wa.me/18099038707?text=${encodeURIComponent(msg)}`, '_blank');
-    showToast('Redirigido a WhatsApp para completar el pago');
-    State.cart = []; State.coupon = null; State.save(); updateCartBadge(); toggleCartDrawer(false);
-    return;
-  }
-
-  // Handle Stripe card payment via Edge Function
+  // ═══ TARJETA (Stripe Checkout — real payment) ═══
   if (paymentMethod === 'card') {
-    showToast('Redirigiendo a Stripe para pago seguro...');
+    showToast('Redirigiendo al pago seguro...');
     try {
       const stripeItems = State.cart.map(i => { const p = products.find(x => x.id === i.id); return { title: p?.title, price: p?.price, qty: i.qty, image: p?.image ? (p.image.startsWith('http') ? p.image : `https://telocg.com/${p.image}`) : '' }; });
       const res = await fetch(`${BackendService.config.supabaseUrl}/functions/v1/create-checkout`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${BackendService.config.supabaseKey}` },
-        body: JSON.stringify({ items: stripeItems, customer_email: State.userProfile.email || '' })
+        body: JSON.stringify({ items: stripeItems, customer_email: State.userProfile.email || '', success_url: `${window.location.origin}/?order=success`, cancel_url: `${window.location.origin}/?order=cancelled` })
       });
       const data = await res.json();
-      if (data.url) { window.location.href = data.url; return; }
-      else showToast('Error al crear sesión de pago. Intenta otro método.', 'error');
-    } catch (e) {
-      showToast('No se pudo conectar con Stripe. Prueba con WhatsApp.', 'error');
-    }
+      if (data.url) {
+        // Save order locally before redirect (Stripe webhook will confirm)
+        registerOrder(total, paymentMethod);
+        window.location.href = data.url;
+        return;
+      }
+      showToast('Error con Stripe. Intenta WhatsApp/Transferencia.', 'error');
+    } catch (e) { showToast('Error de conexión. Prueba otro método.', 'error'); }
     return;
   }
 
-  // Handle transfer — show instructions
-  if (paymentMethod === 'transfer') {
-    const items = State.cart.map(i => { const p = products.find(x => x.id === i.id); return `• ${p?.title} x${i.qty}`; }).join('\n');
-    const msg = `🏦 *Pedido TeloSales - Transferencia*\n\n${items}\n\n💰 Total: RD$ ${total.toLocaleString()}\n\n📋 Datos de transferencia:\nBanco: Banco Popular\nCuenta: 123-456-789\nTitular: TeloCorpGroup SRL\n\n✅ Envía el comprobante aquí para confirmar`;
-    window.open(`https://wa.me/18099038707?text=${encodeURIComponent(msg)}`, '_blank');
-    showToast('Envía el comprobante de transferencia por WhatsApp');
-  }
-
-  // Handle PayPal — redirect
+  // ═══ PAYPAL (redirect to PayPal.me with amount) ═══
   if (paymentMethod === 'paypal') {
-    showToast('Para pagos PayPal, contacta por WhatsApp con tu recibo.');
-    const msg = `🅿️ *Pago PayPal TeloSales*\n\nTotal: RD$ ${total.toLocaleString()} (≈ USD ${Math.ceil(total/58)})\nPayPal: telocorpgroup@gmail.com`;
-    window.open(`https://wa.me/18099038707?text=${encodeURIComponent(msg)}`, '_blank');
+    const usd = Math.ceil(total / 59); // RD$ to USD approximate rate
+    registerOrder(total, paymentMethod);
+    window.open(`https://paypal.me/telocorpgroup/${usd}USD`, '_blank');
+    showToast(`Paga USD $${usd} en PayPal y envía captura por WhatsApp`);
+    // Also send to WhatsApp for confirmation
+    setTimeout(() => {
+      const items = State.cart.map(i => { const p = products.find(x => x.id === i.id); return `• ${p?.title} x${i.qty}`; }).join('\n');
+      const msg = `🅿️ *Pago PayPal TeloSales*\n\n${items}\n\n💰 Total: RD$ ${total.toLocaleString()} (USD $${usd})\n✅ Ya realicé el pago en PayPal`;
+      window.open(`https://wa.me/18099038707?text=${encodeURIComponent(msg)}`, '_blank');
+    }, 2000);
+    return;
   }
 
-  // Reduce stock locally
-  State.cart.forEach(item => {
-    const p = products.find(x => x.id === item.id);
-    if (p && p.stock !== undefined) p.stock = Math.max(0, p.stock - item.qty);
-  });
+  // ═══ TRANSFERENCIA / WHATSAPP (mismo flujo) ═══
+  const items = State.cart.map(i => { const p = products.find(x => x.id === i.id); return `• ${p?.title} x${i.qty} = RD$${(p.price * i.qty).toLocaleString()}`; }).join('\n');
+  const msg = paymentMethod === 'transfer'
+    ? `🏦 *Pedido TeloSales — Transferencia*\n\n${items}\n\n💰 Total: RD$ ${total.toLocaleString()}\n\nNecesito los datos bancarios para hacer la transferencia.`
+    : `🛒 *Nuevo Pedido TeloSales*\n\n${items}\n\n💰 Total: RD$ ${total.toLocaleString()}\n📍 Método: Coordinación por WhatsApp`;
+  registerOrder(total, paymentMethod);
+  window.open(`https://wa.me/18099038707?text=${encodeURIComponent(msg)}`, '_blank');
+  showToast('Pedido enviado — coordina el pago por WhatsApp');
+}
 
-  const orderPayload = { event: 'order_placed', items: State.cart.map(i => { const p = products.find(x => x.id === i.id); return { id: i.id, title: p?.title, qty: i.qty, price: p?.price }; }), subtotal, discount, shipping, coupon: State.coupon?.code || null, total, payment_method: paymentMethod, customer: State.userProfile, timestamp: new Date().toISOString() };
-  BackendService.sendWebhook(BackendService.config.n8nOrders, orderPayload);
+// Register order in Supabase and reduce stock
+function registerOrder(total, paymentMethod) {
+  const subtotal = State.cart.reduce((s, i) => { const p = products.find(x => x.id === i.id); return s + (p ? p.price * i.qty : 0); }, 0);
+  const orderPayload = { items: State.cart.map(i => { const p = products.find(x => x.id === i.id); return { id: i.id, title: p?.title, qty: i.qty, price: p?.price }; }), subtotal, total, payment_method: paymentMethod, customer: State.userProfile, status: paymentMethod === 'card' ? 'paid' : 'pending', created_at: new Date().toISOString() };
   BackendService.supabaseQuery('orders', 'POST', orderPayload);
-  
-  // Update stock in Supabase for each product
+  // Reduce stock
   State.cart.forEach(item => {
     const p = products.find(x => x.id === item.id);
-    if (p) BackendService.supabaseQuery(`products?id=eq.${item.id}`, 'PATCH', { stock: p.stock, sold: (p.sold || 0) + item.qty });
+    if (p) { p.stock = Math.max(0, (p.stock || 0) - item.qty); p.sold = (p.sold || 0) + item.qty; BackendService.supabaseQuery(`products?id=eq.${item.id}`, 'PATCH', { stock: p.stock, sold: p.sold }); }
   });
-
-  State.cart = [];
-  State.coupon = null;
-  State.save();
-  updateCartBadge();
-  toggleCartDrawer(false);
-  showToast(paymentMethod === 'transfer' ? '¡Pedido registrado! Realiza la transferencia y envía comprobante por WhatsApp.' : '¡Pedido procesado exitosamente!');
+  State.cart = []; State.coupon = null; State.save(); updateCartBadge(); toggleCartDrawer(false);
 }
 
 function toggleWishlist(id) {
