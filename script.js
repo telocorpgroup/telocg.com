@@ -97,20 +97,24 @@ const State = {
 // IMAGE CDN — Optimiza imágenes via proxy (wsrv.nl convierte a WebP automáticamente)
 // ═══════════════════════════════════════════════════════════════
 
-const IMG_CDN_BASE = 'https://wsrv.nl/?url=https://telocg.com/';
-function cdnImage(localPath, width = 400) {
-  // wsrv.nl es un CDN gratuito que redimensiona y convierte a WebP automáticamente
-  return `${IMG_CDN_BASE}${encodeURIComponent(localPath)}&w=${width}&output=webp&q=75`;
+const IMG_CDN_BASE = 'https://wsrv.nl/?url=';
+function cdnImage(path, width = 400) {
+  if (!path) return 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400"%3E%3Crect fill="%23111827" width="400" height="400"/%3E%3C/svg%3E';
+  const fullUrl = path.startsWith('http') ? path : `https://telocg.com/${path}`;
+  return `${IMG_CDN_BASE}${encodeURIComponent(fullUrl)}&w=${width}&output=webp&q=75`;
 }
-function cdnImageFull(localPath) {
-  return `${IMG_CDN_BASE}${encodeURIComponent(localPath)}&w=800&output=webp&q=80`;
+function cdnImageFull(path) {
+  if (!path) return '';
+  const fullUrl = path.startsWith('http') ? path : `https://telocg.com/${path}`;
+  return `${IMG_CDN_BASE}${encodeURIComponent(fullUrl)}&w=800&output=webp&q=80`;
 }
 
 // ═══════════════════════════════════════════════════════════════
 // PRODUCT DATABASE
 // ═══════════════════════════════════════════════════════════════
 
-const products = [
+// Mutable product list — can be updated from Supabase
+let products = [
   { id: 'ts-100', title: 'Diagrama Núcleo de Cobre: Cables D09', category: 'tech', price: 450, image: 'TeloCorp/images/image1.png', description: 'Diagrama técnico del cable D09 con núcleo de cobre estañado y cubierta TPE.', specs: { Material: 'Cobre estañado y TPE', Función: 'Visualización técnica' }, rating: 5, reviews: [{ user: 'Miguel B.', rating: 5, date: '05 Jun 2026', text: 'Excelente producto, se siente muy premium.' }] },
   { id: 'ts-101', title: 'Cover Magnético Transparente MagSafe', category: 'cases', price: 600, image: 'TeloCorp/images/image2.png', description: 'Funda transparente con tecnología magnética MagSafe. Policarbonato anti-amarilleo.', specs: { Material: 'TPU + Policarbonato', Compatibilidad: 'iPhone 7+ a 17 Pro Max', Características: 'MagSafe, anti-amarilleo' }, rating: 5, reviews: [{ user: 'Laura R.', rating: 5, date: '29 May 2026', text: 'Premium al tacto. Recomendado 100%.' }] },
   { id: 'ts-102', title: 'Cover Silicona Stitch Azul Premium', category: 'cases', price: 550, image: 'TeloCorp/images/image3.png', description: 'Silicona líquida con diseño 3D de Stitch. Tacto soft-touch.', specs: { Material: 'Silicona líquida', Diseño: 'Relieve 3D', Interior: 'Microfibra' }, rating: 4.5, reviews: [{ user: 'Pedro S.', rating: 5, date: '10 May 2026', text: 'Muy satisfecho, material excelente.' }] },
@@ -135,24 +139,48 @@ const products = [
   { id: 'ts-121', title: 'Ficha Técnica BH96 Sonido 3D', category: 'audio', price: 1200, image: 'TeloCorp/images/image22.png', description: 'Documentación del sistema de altavoz de doble cámara 13mm.', specs: { Altavoz: '13mm doble cámara', Tecnología: 'Estéreo 3D', Frecuencia: '20Hz-20kHz' }, rating: 5, reviews: [{ user: 'Pedro S.', rating: 5, date: '18 May 2026', text: 'Se adapta perfectamente a lo descrito.' }] },
 ];
 
-// Enriquecer catálogo con metadata de e-commerce (descuentos, stock, envío, ventas)
-(function enrichProducts() {
+// Enrich catalog with e-commerce metadata
+function enrichProductsData() {
   let seed = 7;
   const rng = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff; };
   products.forEach((p, i) => {
-    // ~40% de productos con descuento
-    if (rng() < 0.4) {
-      const pct = [10, 15, 20, 25, 30][Math.floor(rng() * 5)];
-      p.discount = pct;
-      p.compareAtPrice = Math.round(p.price / (1 - pct / 100) / 10) * 10;
-    }
-    p.stock = Math.floor(rng() * 40) + 3;          // 3 a 42 unidades
-    p.sold = Math.floor(rng() * 500) + 12;          // vendidos
-    p.freeShipping = p.price >= 1000;               // envío gratis sobre RD$1000
+    if (!p.discount && rng() < 0.4) { p.discount = [10, 15, 20, 25, 30][Math.floor(rng() * 5)]; }
+    if (p.discount) p.compareAtPrice = Math.round(p.price / (1 - p.discount / 100) / 10) * 10;
+    if (!p.stock) p.stock = Math.floor(rng() * 40) + 3;
+    if (!p.sold) p.sold = Math.floor(rng() * 500) + 12;
+    p.freeShipping = p.price >= 1000;
     p.featured = i < 4;
     p.badge = p.discount ? `-${p.discount}%` : (p.featured ? 'Destacado' : (p.sold > 300 ? 'Más vendido' : null));
   });
-})();
+}
+enrichProductsData();
+
+// Load products from Supabase (replaces hardcoded catalog if available)
+async function syncProductsFromSupabase() {
+  try {
+    const res = await fetch(`${BackendService.config.supabaseUrl}/rest/v1/products?select=*&order=created_at.desc`, {
+      headers: { 'apikey': BackendService.config.supabaseKey, 'Authorization': `Bearer ${BackendService.config.supabaseKey}` }
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.length > 0) {
+        const catMap = { 'Covers & Fundas': 'cases', 'Cables y Carga': 'tech', 'Audio': 'audio', 'Equipamiento': 'equipos' };
+        products = data.map(p => ({
+          id: p.id, title: p.title || p.name || '', category: catMap[p.category] || p.category || 'tech',
+          price: p.price || 0, image: (p.images && p.images[0]) || p.image || '',
+          description: p.description || p.desc || '',
+          specs: typeof p.specs === 'string' ? JSON.parse(p.specs || '{}') : (p.specs || {}),
+          rating: p.rating || 5, stock: p.stock || 0, sold: p.sold || 0, discount: p.discount || 0,
+          freeShipping: (p.price || 0) >= 1000,
+          reviews: [{ user: 'Cliente', rating: p.rating || 5, date: 'Reciente', text: 'Excelente producto.' }]
+        }));
+        enrichProductsData();
+        renderProducts();
+        console.log(`[Store] Synced ${products.length} products from Supabase`);
+      }
+    }
+  } catch (e) { /* Supabase unavailable — keep local catalog */ }
+}
 
 const FREE_SHIPPING_THRESHOLD = 1500;
 const SHIPPING_COST = 250;
@@ -1390,6 +1418,9 @@ document.addEventListener('DOMContentLoaded', () => {
   updateReparaQuote();
   updateInstalaPrice();
   updateEducaProgress();
+
+  // Sync products from Supabase (updates store in background)
+  syncProductsFromSupabase();
 
   // Set default install date
   const dateInput = document.getElementById('instala-date');
