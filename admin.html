@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TeloSales Admin | Gestión de Inventario</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/png" href="assets/telocorpgroup-mark.png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <style>
+    :root { --bg: #0f1219; --surface: #1a1f2e; --surface-2: #252b3b; --border: rgba(255,255,255,0.08); --text: #f1f5f9; --muted: #94a3b8; --primary: #f97316; --primary-hover: #ea580c; --success: #10b981; --danger: #ef4444; --radius: 10px; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+    .admin { max-width: 1400px; margin: 0 auto; padding: 24px; }
+    .admin-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; flex-wrap: wrap; gap: 16px; }
+    .admin-header h1 { font-size: 1.5rem; font-weight: 800; display: flex; align-items: center; gap: 10px; }
+    .admin-header h1 span { font-size: 1.8rem; }
+    .admin-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .btn { padding: 10px 18px; border: none; border-radius: var(--radius); font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all 0.15s; display: inline-flex; align-items: center; gap: 6px; }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-hover); transform: translateY(-1px); }
+    .btn-ghost { background: var(--surface-2); color: var(--text); border: 1px solid var(--border); }
+    .btn-ghost:hover { background: rgba(255,255,255,0.08); }
+    .btn-danger { background: rgba(239,68,68,0.1); color: var(--danger); border: 1px solid rgba(239,68,68,0.2); }
+    .btn-danger:hover { background: rgba(239,68,68,0.2); }
+    .btn-sm { padding: 6px 12px; font-size: 0.78rem; }
+    .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 24px; }
+    .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 20px; }
+    .stat-card__label { font-size: 0.75rem; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .stat-card__value { font-size: 1.6rem; font-weight: 800; }
+    .stat-card__value--orange { color: var(--primary); }
+    .stat-card__value--green { color: var(--success); }
+</style>
+</head>
+<body>
+  <div class="admin">
+    <header class="admin-header">
+      <h1><span>🛒</span> TeloSales Admin</h1>
+      <div class="admin-actions">
+        <button class="btn btn-primary" onclick="openProductForm()">+ Nuevo Producto</button>
+        <button class="btn btn-ghost" onclick="exportCSV()">📥 Exportar CSV</button>
+        <a href="index.html" class="btn btn-ghost">← Volver a la Tienda</a>
+      </div>
+    </header>
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-card__label">Total Productos</div><div class="stat-card__value" id="stat-total">0</div></div>
+      <div class="stat-card"><div class="stat-card__label">Valor Inventario</div><div class="stat-card__value stat-card__value--orange" id="stat-value">RD$ 0</div></div>
+      <div class="stat-card"><div class="stat-card__label">Stock Bajo (&lt;5)</div><div class="stat-card__value" style="color:var(--danger)" id="stat-low">0</div></div>
+      <div class="stat-card"><div class="stat-card__label">Ventas Totales</div><div class="stat-card__value stat-card__value--green" id="stat-sold">0</div></div>
+    </div>
+
+    <!-- Search & Filters -->
+    <div class="toolbar">
+      <div class="search-wrap">
+        <input type="text" id="admin-search" placeholder="Buscar producto..." class="input">
+      </div>
+      <select id="admin-filter" class="input select" onchange="renderTable()">
+        <option value="all">Todas las categorías</option>
+        <option value="cases">Covers</option>
+        <option value="tech">Cables y Carga</option>
+        <option value="audio">Audio</option>
+        <option value="equipos">Equipamiento</option>
+      </select>
+    </div>
+
+    <!-- Products Table -->
+    <div class="table-wrap">
+      <table class="table" id="products-table">
+        <thead>
+          <tr>
+            <th>Imagen</th>
+            <th>Producto</th>
+            <th>Categoría</th>
+            <th>Precio</th>
+            <th>Stock</th>
+            <th>Vendidos</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+      </table>
+    </div>
+
+    <!-- Product Form Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="closeProductForm()"></div>
+    <div class="modal" id="product-modal">
+      <div class="modal-header">
+        <h2 id="modal-title">Nuevo Producto</h2>
+        <button class="btn-close" onclick="closeProductForm()">×</button>
+      </div>
+      <form id="product-form" onsubmit="saveProduct(event)">
+        <div class="form-grid">
+          <div class="form-group full">
+            <label>Nombre del Producto *</label>
+            <input type="text" id="f-title" class="input" required placeholder="Ej. Cover MagSafe Premium">
+          </div>
+          <div class="form-group">
+            <label>Categoría *</label>
+            <select id="f-category" class="input select" required>
+              <option value="cases">Covers & Fundas</option>
+              <option value="tech">Cables y Carga</option>
+              <option value="audio">Audio / Altavoces</option>
+              <option value="equipos">Equipamiento</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Precio (RD$) *</label>
+            <input type="number" id="f-price" class="input" required min="1" placeholder="600">
+          </div>
+          <div class="form-group">
+            <label>Stock Disponible *</label>
+            <input type="number" id="f-stock" class="input" required min="0" placeholder="25">
+          </div>
+          <div class="form-group">
+            <label>Unidades Vendidas</label>
+            <input type="number" id="f-sold" class="input" min="0" value="0" placeholder="0">
+          </div>
+          <div class="form-group">
+            <label>Descuento (%)</label>
+            <input type="number" id="f-discount" class="input" min="0" max="90" value="0" placeholder="0">
+          </div>
+          <div class="form-group">
+            <label>Rating (1-5)</label>
+            <input type="number" id="f-rating" class="input" min="1" max="5" step="0.5" value="5">
+          </div>
+          <div class="form-group full">
+            <label>Descripción *</label>
+            <textarea id="f-description" class="input textarea" required rows="3" placeholder="Descripción detallada del producto..."></textarea>
+          </div>
+          <div class="form-group full">
+            <label>URL de Imagen</label>
+            <input type="text" id="f-image" class="input" placeholder="TeloCorp/images/image1.png o URL externa">
+            <small class="hint">Ruta local o URL completa. La imagen se optimizará automáticamente.</small>
+          </div>
+          <div class="form-group full">
+            <label>Especificaciones (JSON)</label>
+            <textarea id="f-specs" class="input textarea" rows="3" placeholder='{"Material": "TPU", "Compatibilidad": "iPhone 15"}'></textarea>
+            <small class="hint">Formato: {"clave": "valor", ...}</small>
+          </div>
+        </div>
+        <input type="hidden" id="f-id" value="">
+        <div class="form-actions">
+          <button type="button" class="btn btn-ghost" onclick="closeProductForm()">Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="btn-save">Guardar Producto</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <style>
+    .toolbar { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+    .search-wrap { flex: 1; min-width: 200px; }
+    .input { width: 100%; padding: 10px 14px; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-size: 0.88rem; transition: border-color 0.15s; }
+    .input:focus { outline: none; border-color: var(--primary); }
+    .select { appearance: none; padding-right: 32px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; }
+    .textarea { resize: vertical; min-height: 60px; }
+    .hint { font-size: 0.7rem; color: var(--muted); margin-top: 4px; display: block; }
+    .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow-x: auto; }
+    .table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .table th { text-align: left; padding: 12px 16px; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--surface); }
+    .table td { padding: 10px 16px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    .table tbody tr:hover { background: rgba(255,255,255,0.02); }
+    .table-img { width: 44px; height: 44px; border-radius: 8px; object-fit: cover; background: var(--surface-2); }
+    .table-title { font-weight: 600; max-width: 220px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .badge { font-size: 0.68rem; font-weight: 600; padding: 3px 8px; border-radius: 99px; }
+    .badge-active { background: rgba(16,185,129,0.1); color: var(--success); }
+    .badge-low { background: rgba(245,158,11,0.1); color: #f59e0b; }
+    .badge-out { background: rgba(239,68,68,0.1); color: var(--danger); }
+    .badge-cat { background: rgba(249,115,22,0.08); color: var(--primary); }
+    .actions-cell { display: flex; gap: 4px; }
+    /* Modal */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); opacity: 0; visibility: hidden; transition: all 0.2s; z-index: 100; }
+    .modal-overlay.open { opacity: 1; visibility: visible; }
+    .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -45%) scale(0.96); width: 90%; max-width: 640px; max-height: 90vh; overflow-y: auto; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 28px; opacity: 0; visibility: hidden; transition: all 0.25s; z-index: 110; }
+    .modal.open { opacity: 1; visibility: visible; transform: translate(-50%, -50%) scale(1); }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .modal-header h2 { font-size: 1.2rem; font-weight: 700; }
+    .btn-close { background: none; border: none; color: var(--muted); font-size: 1.5rem; cursor: pointer; padding: 4px 8px; border-radius: var(--radius); }
+    .btn-close:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .form-group { display: flex; flex-direction: column; gap: 5px; }
+    .form-group.full { grid-column: 1 / -1; }
+    .form-group label { font-size: 0.78rem; font-weight: 600; color: var(--muted); }
+    .form-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border); }
+    @media (max-width: 640px) { .form-grid { grid-template-columns: 1fr; } .modal { padding: 20px; } }
+    /* Toast */
+    .toast-box { position: fixed; bottom: 20px; right: 20px; z-index: 200; display: flex; flex-direction: column; gap: 8px; }
+    .toast { background: var(--surface); border: 1px solid var(--border); padding: 12px 16px; border-radius: var(--radius); font-size: 0.85rem; animation: slideIn 0.25s; box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+    @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+
+  <div class="toast-box" id="toasts"></div>
+
+  <script>
+    // ═══ SUPABASE CONFIG ═══
+    const SUPABASE_URL = 'https://bhdictzvboiojyxorfiq.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_AgpNN0k_KfW0moe6f1CKXg_qP2GKJCm';
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // ═══ LOCAL PRODUCT DATABASE (fallback when Supabase tables don't exist yet) ═══
+    const LOCAL_PRODUCTS_KEY = 'telosales_admin_products';
+
+    let allProducts = [];
+
+    // ═══ INIT ═══
+    async function init() {
+      allProducts = await loadProducts();
+      renderTable();
+      updateStats();
+      document.getElementById('admin-search').addEventListener('input', renderTable);
+    }
+
+    // ═══ DATA LAYER ═══
+    async function loadProducts() {
+      // Try Supabase first
+      try {
+        const { data, error } = await sb.from('products').select('*').order('created_at', { ascending: false });
+        if (data && data.length > 0) return data;
+      } catch (e) { console.log('[Admin] Supabase not available, using localStorage'); }
+      // Fallback: localStorage
+      const saved = localStorage.getItem(LOCAL_PRODUCTS_KEY);
+      if (saved) return JSON.parse(saved);
+      // Seed from existing hardcoded catalog
+      const seeded = getSeededProducts();
+      localStorage.setItem(LOCAL_PRODUCTS_KEY, JSON.stringify(seeded));
+      return seeded;
+    }
+
+    async function saveProductToDB(product) {
+      // Save to localStorage always
+      const idx = allProducts.findIndex(p => p.id === product.id);
+      if (idx > -1) allProducts[idx] = product;
+      else allProducts.unshift(product);
+      localStorage.setItem(LOCAL_PRODUCTS_KEY, JSON.stringify(allProducts));
+      // Try Supabase upsert
+      try { await sb.from('products').upsert(product, { onConflict: 'id' }); } catch (e) { }
+    }
+
+    async function deleteProductFromDB(id) {
+      allProducts = allProducts.filter(p => p.id !== id);
+      localStorage.setItem(LOCAL_PRODUCTS_KEY, JSON.stringify(allProducts));
+      try { await sb.from('products').delete().eq('id', id); } catch (e) { }
+    }
+
+    // ═══ SEED DATA ═══
+    function getSeededProducts() {
+      const cats = { cases: 'Covers', tech: 'Cables y Carga', audio: 'Audio', equipos: 'Equipamiento' };
+      return [
+        { id: 'ts-100', title: 'Diagrama Núcleo de Cobre: Cables D09', category: 'tech', price: 450, stock: 30, sold: 85, discount: 0, rating: 5, description: 'Diagrama técnico del cable D09.', image: 'TeloCorp/images/image1.png', specs: '{"Material":"Cobre estañado y TPE"}' },
+        { id: 'ts-101', title: 'Cover Magnético Transparente MagSafe', category: 'cases', price: 600, stock: 22, sold: 340, discount: 0, rating: 5, description: 'Funda transparente con MagSafe.', image: 'TeloCorp/images/image2.png', specs: '{"Material":"TPU + Policarbonato","Compatibilidad":"iPhone 7+ a 17 Pro Max"}' },
+        { id: 'ts-102', title: 'Cover Silicona Stitch Azul', category: 'cases', price: 550, stock: 15, sold: 210, discount: 15, rating: 4.5, description: 'Silicona líquida con diseño 3D de Stitch.', image: 'TeloCorp/images/image3.png', specs: '{"Material":"Silicona líquida","Diseño":"Relieve 3D"}' },
+        { id: 'ts-103', title: 'Nevera Exhibidora Traulsen', category: 'equipos', price: 45000, stock: 3, sold: 12, discount: 0, rating: 4.5, description: 'Refrigerador comercial con vidrio templado.', image: 'TeloCorp/images/image4.png', specs: '{"Marca":"Traulsen","Material":"Acero inoxidable"}' },
+        { id: 'ts-104', title: 'Audífonos Deportivos Miccell BH96', category: 'audio', price: 1200, stock: 40, sold: 428, discount: 10, rating: 5, description: 'Auriculares BT 5.4 con pantalla LED.', image: 'TeloCorp/images/image5.png', specs: '{"Bluetooth":"5.4","Batería":"40mAh (5.5h)"}' },
+        { id: 'ts-105', title: 'Altavoz Miccell VQ-SP63', category: 'audio', price: 1500, stock: 18, sold: 195, discount: 0, rating: 5, description: 'Bluetooth portátil con estéreo 3D.', image: 'TeloCorp/images/image6.png', specs: '{"Batería":"1200mAh","Carga":"USB-C"}' },
+        { id: 'ts-106', title: 'Cargador T13 C-Lightning 20W', category: 'tech', price: 850, stock: 35, sold: 520, discount: 20, rating: 5, description: 'Cargador 20W con cable incluido.', image: 'TeloCorp/images/image7.png', specs: '{"Potencia":"20W","Cable":"1.0m"}' },
+        { id: 'ts-107', title: 'Freidora Industrial Vevor', category: 'equipos', price: 8500, stock: 5, sold: 38, discount: 0, rating: 5, description: 'Doble tina con control independiente.', image: 'TeloCorp/images/image8.png', specs: '{"Capacidad":"6L + 6L","Potencia":"3000W"}' },
+        { id: 'ts-108', title: 'Batería Portátil 10000mAh', category: 'tech', price: 1450, stock: 28, sold: 312, discount: 0, rating: 4.5, description: 'Power bank ultra delgada con display LED.', image: 'TeloCorp/images/image9.png', specs: '{"Capacidad":"10000mAh","Salidas":"2x USB-A"}' },
+        { id: 'ts-109', title: 'Altavoz Miccell VQ-SP64', category: 'audio', price: 2200, stock: 12, sold: 156, discount: 15, rating: 5, description: 'Altavoz mediano con radiadores pasivos.', image: 'TeloCorp/images/image10.png', specs: '{"Batería":"2400mAh","Potencia":"10W RMS"}' },
+        { id: 'ts-110', title: 'Cover Cristal MagSafe Transparente', category: 'cases', price: 800, stock: 20, sold: 275, discount: 0, rating: 4.5, description: 'Cristal templado con MagSafe N52.', image: 'TeloCorp/images/image11.png', specs: '{"Material":"Vidrio 9H + Aluminio"}' },
+        { id: 'ts-111', title: 'Cover Cristal MagSafe Grafito', category: 'cases', price: 800, stock: 17, sold: 248, discount: 0, rating: 5, description: 'Cristal templado bordes grafito.', image: 'TeloCorp/images/image12.png', specs: '{"Material":"Vidrio 9H","Color":"Grafito"}' },
+        { id: 'ts-112', title: 'Boombox Miccell SP56 30000mAh', category: 'audio', price: 4500, stock: 7, sold: 62, discount: 10, rating: 4.5, description: 'Altavoz gigante con chip DSP.', image: 'TeloCorp/images/image13.png', specs: '{"Batería":"30000mAh","Autonomía":"6-10h"}' },
+        { id: 'ts-113', title: 'Cable D06 Lightning Blanco', category: 'tech', price: 350, stock: 50, sold: 680, discount: 0, rating: 5, description: 'Cable USB-A a Lightning.', image: 'TeloCorp/images/image14.png', specs: '{"Longitud":"1.0m","Material":"PVC reforzado"}' },
+        { id: 'ts-114', title: 'Cover 360 Blindado Rojo', category: 'cases', price: 700, stock: 25, sold: 183, discount: 20, rating: 5, description: 'Protección total 360° blindada.', image: 'TeloCorp/images/image15.png', specs: '{"Protección":"360° blindada"}' },
+        { id: 'ts-115', title: 'Altavoz IPX7 Impermeable', category: 'audio', price: 1800, stock: 14, sold: 134, discount: 0, rating: 4.5, description: 'Resistente al agua certificado IPX7.', image: 'TeloCorp/images/image16.png', specs: '{"IPX":"7","Bluetooth":"5.3"}' },
+        { id: 'ts-116', title: 'Cover Chupón Succión', category: 'cases', price: 450, stock: 32, sold: 95, discount: 0, rating: 5, description: 'Ventosas para superficies planas.', image: 'TeloCorp/images/image17.png', specs: '{"Material":"Silicona + ventosas"}' },
+        { id: 'ts-117', title: 'Cargador T13 C-C 20W', category: 'tech', price: 850, stock: 30, sold: 445, discount: 0, rating: 4.5, description: 'Cargador 20W USB-C a USB-C.', image: 'TeloCorp/images/image18.png', specs: '{"Potencia":"20W","Cable":"1.0m C-C"}' },
+        { id: 'ts-118', title: 'Comparativa Altavoces SP63/64/65', category: 'audio', price: 2500, stock: 9, sold: 48, discount: 0, rating: 5, description: 'Ficha comparativa de la serie.', image: 'TeloCorp/images/image19.png', specs: '{"Modelos":"SP63/SP64/SP65"}' },
+        { id: 'ts-119', title: 'Audífonos TWS VQ-BH105', category: 'audio', price: 1100, stock: 22, sold: 367, discount: 25, rating: 4.5, description: 'TWS BT 5.3 con control táctil.', image: 'TeloCorp/images/image20.png', specs: '{"Bluetooth":"5.3","Control":"Táctil"}' },
+        { id: 'ts-120', title: 'Cable D02 Tipo C 2M', category: 'tech', price: 500, stock: 42, sold: 290, discount: 0, rating: 4.5, description: 'Cable 2m con Power Delivery.', image: 'TeloCorp/images/image21.png', specs: '{"Longitud":"2.0m","Carga":"PD"}' },
+        { id: 'ts-121', title: 'Ficha Técnica BH96 3D', category: 'audio', price: 1200, stock: 11, sold: 78, discount: 0, rating: 5, description: 'Altavoz doble cámara 13mm.', image: 'TeloCorp/images/image22.png', specs: '{"Altavoz":"13mm doble cámara"}' },
+      ];
+    }
+
+    // ═══ RENDER TABLE ═══
+    function renderTable() {
+      const search = document.getElementById('admin-search').value.toLowerCase();
+      const filter = document.getElementById('admin-filter').value;
+      const tbody = document.getElementById('table-body');
+
+      let filtered = allProducts.filter(p => {
+        const matchSearch = !search || p.title.toLowerCase().includes(search);
+        const matchCat = filter === 'all' || p.category === filter;
+        return matchSearch && matchCat;
+      });
+
+      const catLabels = { cases: 'Covers', tech: 'Tech', audio: 'Audio', equipos: 'Equipos' };
+      const cdnUrl = (img) => `https://wsrv.nl/?url=https://telocg.com/${encodeURIComponent(img)}&w=88&output=webp&q=70`;
+
+      tbody.innerHTML = filtered.map(p => {
+        const status = p.stock === 0 ? 'out' : p.stock <= 5 ? 'low' : 'active';
+        const statusLabel = status === 'out' ? 'Agotado' : status === 'low' ? 'Bajo' : 'Activo';
+        return `<tr>
+          <td><img src="${cdnUrl(p.image)}" class="table-img" alt="" loading="lazy"></td>
+          <td><div class="table-title">${p.title}</div>${p.discount ? `<small style="color:var(--primary)">-${p.discount}% OFF</small>` : ''}</td>
+          <td><span class="badge badge-cat">${catLabels[p.category] || p.category}</span></td>
+          <td><strong>RD$ ${p.price.toLocaleString()}</strong></td>
+          <td>${p.stock}</td>
+          <td>${p.sold}</td>
+          <td><span class="badge badge-${status}">${statusLabel}</span></td>
+          <td><div class="actions-cell">
+            <button class="btn btn-ghost btn-sm" onclick="editProduct('${p.id}')">✏️</button>
+            <button class="btn btn-danger btn-sm" onclick="confirmDelete('${p.id}')">🗑️</button>
+          </div></td>
+        </tr>`;
+      }).join('');
+
+      if (filtered.length === 0) tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--muted);">No se encontraron productos</td></tr>';
+    }
+
+    // ═══ STATS ═══
+    function updateStats() {
+      document.getElementById('stat-total').textContent = allProducts.length;
+      const totalValue = allProducts.reduce((s, p) => s + (p.price * p.stock), 0);
+      document.getElementById('stat-value').textContent = `RD$ ${totalValue.toLocaleString()}`;
+      document.getElementById('stat-low').textContent = allProducts.filter(p => p.stock < 5).length;
+      document.getElementById('stat-sold').textContent = allProducts.reduce((s, p) => s + (p.sold || 0), 0).toLocaleString();
+    }
+
+    // ═══ FORM MODAL ═══
+    function openProductForm(product = null) {
+      document.getElementById('modal-overlay').classList.add('open');
+      document.getElementById('product-modal').classList.add('open');
+      document.getElementById('modal-title').textContent = product ? 'Editar Producto' : 'Nuevo Producto';
+
+      if (product) {
+        document.getElementById('f-id').value = product.id;
+        document.getElementById('f-title').value = product.title;
+        document.getElementById('f-category').value = product.category;
+        document.getElementById('f-price').value = product.price;
+        document.getElementById('f-stock').value = product.stock;
+        document.getElementById('f-sold').value = product.sold || 0;
+        document.getElementById('f-discount').value = product.discount || 0;
+        document.getElementById('f-rating').value = product.rating || 5;
+        document.getElementById('f-description').value = product.description || '';
+        document.getElementById('f-image').value = product.image || '';
+        document.getElementById('f-specs').value = typeof product.specs === 'string' ? product.specs : JSON.stringify(product.specs || {});
+      } else {
+        document.getElementById('product-form').reset();
+        document.getElementById('f-id').value = '';
+        document.getElementById('f-rating').value = '5';
+      }
+    }
+
+    function closeProductForm() {
+      document.getElementById('modal-overlay').classList.remove('open');
+      document.getElementById('product-modal').classList.remove('open');
+    }
+
+    function editProduct(id) {
+      const product = allProducts.find(p => p.id === id);
+      if (product) openProductForm(product);
+    }
+
+    async function saveProduct(e) {
+      e.preventDefault();
+      const id = document.getElementById('f-id').value || `ts-${Date.now()}`;
+      const product = {
+        id,
+        title: document.getElementById('f-title').value.trim(),
+        category: document.getElementById('f-category').value,
+        price: parseFloat(document.getElementById('f-price').value),
+        stock: parseInt(document.getElementById('f-stock').value),
+        sold: parseInt(document.getElementById('f-sold').value) || 0,
+        discount: parseInt(document.getElementById('f-discount').value) || 0,
+        rating: parseFloat(document.getElementById('f-rating').value) || 5,
+        description: document.getElementById('f-description').value.trim(),
+        image: document.getElementById('f-image').value.trim() || 'TeloCorp/images/image1.png',
+        specs: document.getElementById('f-specs').value.trim() || '{}',
+        updated_at: new Date().toISOString()
+      };
+
+      await saveProductToDB(product);
+      closeProductForm();
+      renderTable();
+      updateStats();
+      toast('Producto guardado exitosamente ✓');
+    }
+
+    function confirmDelete(id) {
+      const product = allProducts.find(p => p.id === id);
+      if (confirm(`¿Eliminar "${product?.title}"?\nEsta acción no se puede deshacer.`)) {
+        deleteProductFromDB(id);
+        renderTable();
+        updateStats();
+        toast('Producto eliminado');
+      }
+    }
+
+    // ═══ EXPORT CSV ═══
+    function exportCSV() {
+      const headers = ['ID', 'Título', 'Categoría', 'Precio', 'Stock', 'Vendidos', 'Descuento', 'Rating', 'Descripción', 'Imagen'];
+      const rows = allProducts.map(p => [p.id, `"${p.title}"`, p.category, p.price, p.stock, p.sold, p.discount || 0, p.rating, `"${p.description}"`, p.image]);
+      const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `telosales-inventario-${new Date().toISOString().slice(0,10)}.csv`;
+      a.click();
+      toast('CSV descargado 📥');
+    }
+
+    // ═══ TOAST ═══
+    function toast(msg) {
+      const box = document.getElementById('toasts');
+      const el = document.createElement('div');
+      el.className = 'toast';
+      el.textContent = msg;
+      box.appendChild(el);
+      setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 300); }, 3000);
+    }
+
+    // ═══ START ═══
+    init();
+  </script>
+</body>
+</html>
