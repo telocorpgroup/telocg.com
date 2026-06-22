@@ -327,7 +327,7 @@ function openProductModal(id) {
   body.innerHTML = `
     <div class="product-detail">
       <div class="product-detail__gallery">
-        <div class="product-detail__main-img"><img src="${cdnImageFull(p.image)}" alt="${p.title}"></div>
+        <div class="product-detail__main-img" onclick="openImageZoom('${cdnImageFull(p.image)}')"><img src="${cdnImageFull(p.image)}" alt="${p.title}"><span class="zoom-hint">🔍 Click para ampliar</span></div>
         ${p.freeShipping ? '<div class="product-detail__ship-note">🚚 Envío gratis a todo el país · Entrega en 24-48h</div>' : ''}
       </div>
       <div class="product-detail__info">
@@ -1200,6 +1200,35 @@ async function submitContactForm(e) {
   BackendService.supabaseQuery('leads', 'POST', data);
   form.reset();
   showToast('Mensaje enviado correctamente');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// IMAGE ZOOM (Lightbox for product images)
+// ═══════════════════════════════════════════════════════════════
+
+let imgZoomLevel = 1;
+function openImageZoom(src) {
+  let lb = document.getElementById('img-lightbox');
+  if (!lb) {
+    lb = document.createElement('div');
+    lb.id = 'img-lightbox';
+    lb.className = 'img-lightbox';
+    lb.innerHTML = '<button class="img-lightbox__close" aria-label="Cerrar">×</button><img class="img-lightbox__img" alt="Zoom">';
+    lb.addEventListener('click', e => { if (e.target === lb || e.target.classList.contains('img-lightbox__close')) closeImageZoom(); });
+    lb.addEventListener('wheel', e => { e.preventDefault(); imgZoomLevel = Math.max(0.5, Math.min(5, imgZoomLevel + (e.deltaY > 0 ? -0.2 : 0.2))); lb.querySelector('img').style.transform = `scale(${imgZoomLevel})`; }, { passive: false });
+    document.body.appendChild(lb);
+  }
+  imgZoomLevel = 1;
+  const img = lb.querySelector('img');
+  img.src = src;
+  img.style.transform = 'scale(1)';
+  lb.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function closeImageZoom() {
+  const lb = document.getElementById('img-lightbox');
+  if (lb) lb.classList.remove('active');
+  document.body.style.overflow = '';
 }
 
 // ═══════════════════════════════════════════════════════════════

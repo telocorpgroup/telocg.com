@@ -855,3 +855,12 @@ textarea.input-control { resize: vertical; min-height: 80px; }
 /* ─── Google Maps container ─── */
 #gmap { background: var(--c-surface-2); border-radius: var(--radius-lg); }
 .lleva__map { border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--c-border); min-height: 400px; }
+
+/* ─── Image Lightbox (Zoom) ─── */
+.img-lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 1000; display: none; align-items: center; justify-content: center; cursor: zoom-out; }
+.img-lightbox.active { display: flex; }
+.img-lightbox__img { max-width: 90vw; max-height: 90vh; object-fit: contain; transition: transform 0.15s ease-out; transform-origin: center; }
+.img-lightbox__close { position: absolute; top: 16px; right: 16px; background: rgba(255,255,255,0.1); border: none; color: #fff; font-size: 2rem; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.img-lightbox__close:hover { background: rgba(255,255,255,0.2); }
+.zoom-hint { position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.6); color: rgba(255,255,255,0.8); font-size: 0.7rem; padding: 3px 8px; border-radius: var(--radius-full); pointer-events: none; }
+.product-detail__main-img { cursor: zoom-in; position: relative; }
