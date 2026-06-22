@@ -267,25 +267,83 @@ td img{width:36px;height:36px;border-radius:6px;object-fit:cover}
 </div>
 <div class="toast-c" id="toasts"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 // ═══ CONFIG ═══
 const SB_URL='https://bhdictzvboiojyxorfiq.supabase.co',SB_KEY='sb_publishable_AgpNN0k_KfW0moe6f1CKXg_qP2GKJCm';
-// Sensitive keys are fetched from admin session only (not in public frontend)
-const _K={i:'ODE5OWU0MzNkZmU5YzEyZDFmNDUyY2U4NTdkYmNlOWQ=',g:'QUl6YVN5QjZGdzlkY2lGbGlwd1BPTmVmUWJiVUIwdEpCRFdpYkZj'};
-function _d(s){return atob(s)}
-const IMGBB=_d(_K.i),GEMINI=_d(_K.g);
-const AUTH={email:'admin@telocg.com',pass:'telocorp2026'};
 const BASE_IMG='https://telocg.com/TeloCorp/images/';
+const ADMIN_SESSION_KEY='tcAdminSession';
+let adminSession=null;
+let adminRealtimeClient=null;
+let adminRealtimeChannel=null;
+let adminSyncTimer=null;
+let adminPollTimer=null;
+
+function getAdminSession(){
+  try{return JSON.parse(sessionStorage.getItem(ADMIN_SESSION_KEY)||'null')}catch(e){return null}
+}
+
+function setAdminSession(session){
+  adminSession={...session,expires_at:session.expires_at||Math.floor(Date.now()/1000)+(session.expires_in||3600)};
+  sessionStorage.setItem(ADMIN_SESSION_KEY,JSON.stringify(adminSession));
+}
+
+function adminHeaders(extra={}){
+  const token=adminSession?.access_token;
+  return {apikey:SB_KEY,Authorization:'Bearer '+token,...extra};
+}
+
+function adminSessionExpiresSoon(){
+  return !adminSession?.expires_at||Math.floor(Date.now()/1000)>adminSession.expires_at-60;
+}
+
+async function refreshAdminSession(){
+  if(!adminSession?.refresh_token)return false;
+  try{
+    const r=await fetch(`${SB_URL}/auth/v1/token?grant_type=refresh_token`,{
+      method:'POST',
+      headers:{apikey:SB_KEY,'Content-Type':'application/json'},
+      body:JSON.stringify({refresh_token:adminSession.refresh_token})
+    });
+    const data=await r.json();
+    if(!r.ok||!data.access_token)throw new Error('Refresh failed');
+    setAdminSession({...adminSession,...data});
+    adminRealtimeClient?.realtime?.setAuth?.(adminSession.access_token);
+    return true;
+  }catch(e){
+    logout();
+    return false;
+  }
+}
+
+async function ensureAdminSession(){
+  if(!adminSession?.access_token)return false;
+  if(adminSessionExpiresSoon())return refreshAdminSession();
+  return true;
+}
 
 // ═══ AUTH ═══
-function login(){
-  if(document.getElementById('lEmail').value.trim()===AUTH.email&&document.getElementById('lPass').value===AUTH.pass){
-    sessionStorage.setItem('tcAdmin','1');showApp();
-  } else document.getElementById('lErr').style.display='block';
+async function login(){
+  const email=document.getElementById('lEmail').value.trim();
+  const password=document.getElementById('lPass').value;
+  try{
+    const r=await fetch(`${SB_URL}/auth/v1/token?grant_type=password`,{
+      method:'POST',
+      headers:{apikey:SB_KEY,'Content-Type':'application/json'},
+      body:JSON.stringify({email,password})
+    });
+    const data=await r.json();
+    if(!r.ok||!data.access_token)throw new Error(data.error_description||'Login failed');
+    setAdminSession(data);
+    showApp();
+  }catch(e){
+    document.getElementById('lErr').style.display='block';
+  }
 }
-function logout(){sessionStorage.removeItem('tcAdmin');location.reload()}
+function logout(){sessionStorage.removeItem(ADMIN_SESSION_KEY);adminSession=null;location.reload()}
 function showApp(){document.getElementById('loginView').style.display='none';document.getElementById('appView').classList.add('on');init()}
-if(sessionStorage.getItem('tcAdmin')==='1')showApp();
+adminSession=getAdminSession();
+if(adminSession?.access_token)showApp();
 
 // ═══ NAVIGATION ═══
 document.querySelectorAll('.nav-item').forEach(btn=>{
@@ -301,6 +359,30 @@ document.querySelectorAll('.nav-item').forEach(btn=>{
 
 // ═══ DATA ═══
 let products=[];let categories=[];let editId=null;let imgs=[];
+
+function normalizeProduct(p){
+  return {...p,name:p.name||p.title||'',desc:p.desc||p.description||'',images:p.images||[]};
+}
+
+function toProductRecord(p){
+  return {
+    id:p.id,
+    title:p.name,
+    category:p.category,
+    price:p.price,
+    cost:p.cost,
+    stock:p.stock,
+    sold:p.sold||0,
+    discount:p.discount||0,
+    description:p.desc,
+    image:p.image||p.images?.[0]||'',
+    images:p.images||[],
+    video:p.video||'',
+    specs:p.specs||{},
+    active:p.active!==false,
+    updated_at:p.updated_at||new Date().toISOString()
+  };
+}
 
 function getDefaultCats(){return [{name:'Covers & Fundas',margin:50},{name:'Cables y Carga',margin:55},{name:'Audio',margin:45},{name:'Equipamiento',margin:35}]}
 function loadCats(){const c=JSON.parse(localStorage.getItem('tcCats2')||'null');categories=c||getDefaultCats();saveCats()}
@@ -334,21 +416,21 @@ function seedProducts(){return[
 function loadProducts(){
   const v=localStorage.getItem('tcProdVer');
   if(v!=='5'){products=seedProducts();localStorage.setItem('tcProdVer','5');saveProducts();return}
-  products=JSON.parse(localStorage.getItem('tcProds2')||'null')||seedProducts();
+  products=(JSON.parse(localStorage.getItem('tcProds2')||'null')||seedProducts()).map(normalizeProduct);
 }
 function saveProducts(){localStorage.setItem('tcProds2',JSON.stringify(products))}
 
 // ═══ SUPABASE ═══
-async function sbGet(table){try{const r=await fetch(`${SB_URL}/rest/v1/${table}?select=*`,{headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY}});return r.ok?await r.json():null}catch(e){return null}}
-async function sbPost(table,data){try{await fetch(`${SB_URL}/rest/v1/${table}`,{method:'POST',headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(data)})}catch(e){}}
-async function sbPatch(table,id,data){try{await fetch(`${SB_URL}/rest/v1/${table}?id=eq.${id}`,{method:'PATCH',headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(data)})}catch(e){}}
-async function sbDel(table,id){try{await fetch(`${SB_URL}/rest/v1/${table}?id=eq.${id}`,{method:'DELETE',headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY}})}catch(e){}}
+async function sbGet(table){try{if(!await ensureAdminSession())return null;const r=await fetch(`${SB_URL}/rest/v1/${table}?select=*`,{headers:adminHeaders()});return r.ok?await r.json():null}catch(e){return null}}
+async function sbPost(table,data){try{if(!await ensureAdminSession())return;await fetch(`${SB_URL}/rest/v1/${table}`,{method:'POST',headers:adminHeaders({'Content-Type':'application/json',Prefer:'return=minimal'}),body:JSON.stringify(data)})}catch(e){}}
+async function sbPatch(table,id,data){try{if(!await ensureAdminSession())return;await fetch(`${SB_URL}/rest/v1/${table}?id=eq.${id}`,{method:'PATCH',headers:adminHeaders({'Content-Type':'application/json',Prefer:'return=minimal'}),body:JSON.stringify(data)})}catch(e){}}
+async function sbDel(table,id){try{if(!await ensureAdminSession())return;await fetch(`${SB_URL}/rest/v1/${table}?id=eq.${id}`,{method:'DELETE',headers:adminHeaders()})}catch(e){}}
 
 // ═══ INIT ═══
-function init(){loadCats();loadProducts();renderDashboard();renderSales();renderCatsPage();syncAll()}
+function init(){loadCats();loadProducts();renderDashboard();renderSales();renderCatsPage();syncAll().finally(startAdminRealtime)}
 async function syncAll(){
   const data=await sbGet('products');
-  if(data&&data.length>0){products=data;saveProducts();renderSales()}
+  if(data&&data.length>0){products=data.map(normalizeProduct);saveProducts();renderSales()}
   const members=await sbGet('customers');
   if(members)renderMembers(members);
   const orders=await sbGet('orders');
@@ -361,6 +443,34 @@ async function syncAll(){
   if(repara)renderRepara(repara);
   const instala=await sbGet('instala_bookings');
   if(instala)renderInstala(instala);
+}
+
+function queueAdminSync(){
+  clearTimeout(adminSyncTimer);
+  adminSyncTimer=setTimeout(syncAll,400);
+}
+
+function startAdminPolling(){
+  if(adminPollTimer)return;
+  adminPollTimer=setInterval(syncAll,15000);
+}
+
+function startAdminRealtime(){
+  if(adminRealtimeChannel||!window.supabase?.createClient){
+    if(!window.supabase?.createClient)startAdminPolling();
+    return;
+  }
+
+  adminRealtimeClient=window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:false,autoRefreshToken:false}});
+  adminRealtimeClient.realtime.setAuth(adminSession.access_token);
+  adminRealtimeChannel=adminRealtimeClient.channel('admin-live-sync');
+  ['products','orders','customers','certificates','lleva_requests','repara_bookings','instala_bookings'].forEach(table=>{
+    adminRealtimeChannel.on('postgres_changes',{event:'*',schema:'public',table},queueAdminSync);
+  });
+  adminRealtimeChannel.subscribe(status=>{
+    if(status==='SUBSCRIBED'&&adminPollTimer){clearInterval(adminPollTimer);adminPollTimer=null}
+    if(status==='CHANNEL_ERROR'||status==='TIMED_OUT'||status==='CLOSED')startAdminPolling();
+  });
 }
 function loadPage(p){
   if(p==='sales')renderSales();
@@ -447,8 +557,8 @@ function saveProd(){
   const specs={};document.querySelectorAll('#fSpecs .spec-row').forEach(r=>{const k=r.querySelector('.sk').value.trim(),v=r.querySelector('.sv').value.trim();if(k&&v)specs[k]=v});
   const data={name:document.getElementById('fName').value.trim(),category:document.getElementById('fCat').value,price:+document.getElementById('fPrice').value||0,cost:+document.getElementById('fCost').value||0,stock:+document.getElementById('fStock').value||0,sold:0,discount:+document.getElementById('fDiscount').value||0,desc:document.getElementById('fDesc').value.trim(),video:document.getElementById('fVideo').value.trim(),images:imgs,image:imgs[0]||'',specs,updated_at:new Date().toISOString()};
   if(!data.name)return toast('Nombre requerido');
-  if(editId){const i=products.findIndex(x=>x.id===editId);data.id=editId;data.sold=products[i].sold||0;products[i]={...products[i],...data};sbPatch('products',editId,data)}
-  else{data.id='ts-'+Date.now();products.push(data);sbPost('products',data)}
+  if(editId){const i=products.findIndex(x=>x.id===editId);data.id=editId;data.sold=products[i].sold||0;products[i]={...products[i],...data};sbPatch('products',editId,toProductRecord(data))}
+  else{data.id='ts-'+Date.now();products.push(data);sbPost('products',toProductRecord(data))}
   saveProducts();closeProdModal();renderSales();renderDashboard();toast('Producto guardado ✓');
 }
 
@@ -471,11 +581,11 @@ function gDrag(e,i){gIdx=i}
 function gDrop(e,i){e.preventDefault();if(gIdx===null)return;const item=imgs.splice(gIdx,1)[0];imgs.splice(i,0,item);gIdx=null;renderGallery()}
 function toggleUrlAdd(){const r=document.getElementById('urlAddRow');r.style.display=r.style.display==='none'?'flex':'none'}
 function addImgUrl(){const u=document.getElementById('fImgUrl').value.trim();if(u){imgs.push(u);document.getElementById('fImgUrl').value='';renderGallery()}}
-async function uploadImg(input){const f=input.files[0];if(!f)return;const fd=new FormData();fd.append('image',f);try{const r=await fetch('https://api.imgbb.com/1/upload?key='+IMGBB,{method:'POST',body:fd});const j=await r.json();if(j.success){imgs.push(j.data.url);renderGallery();toast('Imagen subida ✓')}else toast('Error al subir')}catch(e){toast('Error de red')}input.value=''}
+async function uploadImg(input){const f=input.files[0];if(!f)return;const fd=new FormData();fd.append('image',f);try{const r=await fetch(`${SB_URL}/functions/v1/upload-image`,{method:'POST',headers:{Authorization:'Bearer '+adminSession.access_token},body:fd});const j=await r.json();if(j.success){imgs.push(j.data.url);renderGallery();toast('Imagen subida ✓')}else toast('Error al subir')}catch(e){toast('Error de red')}input.value=''}
 
 // ═══ SPECS ═══
 function addSpec(k='',v=''){document.getElementById('fSpecs').insertAdjacentHTML('beforeend',`<div class="spec-row"><input class="sk" value="${k}" placeholder="Clave"><input class="sv" value="${v}" placeholder="Valor"><button class="btn btn-d btn-sm" onclick="this.parentElement.remove()">×</button></div>`)}
-async function aiSpecs(){const name=document.getElementById('fName').value;if(!name)return toast('Ingresa nombre primero');try{const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:`Genera 5 especificaciones técnicas para "${name}". Solo JSON: {"clave":"valor"}`}]}]})});const j=await r.json();const t=j.candidates[0].content.parts[0].text.match(/\{[\s\S]*\}/);if(t){const s=JSON.parse(t[0]);document.getElementById('fSpecs').innerHTML='';Object.entries(s).forEach(([k,v])=>addSpec(k,String(v)));toast('Specs generados ✓')}}catch(e){toast('Error AI')}}
+async function aiSpecs(){const name=document.getElementById('fName').value;if(!name)return toast('Ingresa nombre primero');try{const r=await fetch(`${SB_URL}/functions/v1/chat`,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+adminSession.access_token},body:JSON.stringify({message:`Genera 5 especificaciones técnicas para "${name}". Responde solo JSON válido: {"clave":"valor"}`,context:'Modo administrador de catálogo.'})});const j=await r.json();const t=(j.reply||'').match(/\{[\s\S]*\}/);if(t){const s=JSON.parse(t[0]);document.getElementById('fSpecs').innerHTML='';Object.entries(s).forEach(([k,v])=>addSpec(k,String(v)));toast('Specs generados ✓')}else toast('La IA no devolvió JSON válido')}catch(e){toast('Error AI')}}
 
 // ═══ CATEGORIES ═══
 function renderCatsPage(){

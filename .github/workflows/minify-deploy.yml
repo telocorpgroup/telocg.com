@@ -5,12 +5,14 @@ on:
     branches: [main]
     paths:
       - "index.html"
+      - "admin.html"
       - "script.js"
       - "styles.css"
       - "sw.js"
       - "assets/**"
       - "TeloCorp/**"
       - "manifest.json"
+      - "config.example.js"
 
 # Only allow one deployment at a time
 concurrency:
@@ -77,6 +79,8 @@ jobs:
 
       # ── Prepare deployment folder ─────────────────────────────────────────────
       - name: Assemble dist/
+        env:
+          GOOGLE_MAPS_KEY: ${{ secrets.GOOGLE_MAPS_KEY }}
         run: |
           mkdir -p dist
 
@@ -93,6 +97,13 @@ jobs:
           cp manifest.json dist/
           cp sw.js         dist/
           cp CNAME         dist/
+          cp admin.html    dist/
+          if [ -n "$GOOGLE_MAPS_KEY" ]; then
+            printf "window.TELOCORP_CONFIG = { googleMapsKey: '%s' };\n" "$GOOGLE_MAPS_KEY" > dist/config.js
+          elif [ -f config.js ]; then
+            cp config.js dist/config.js
+          fi
+          cp config.example.js dist/
           cp -r assets     dist/assets
           cp -r TeloCorp   dist/TeloCorp
 

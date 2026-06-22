@@ -126,16 +126,47 @@ function enrichProductsData() {
   let seed = 7;
   const rng = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff; };
   products.forEach((p, i) => {
-    if (!p.discount && rng() < 0.4) { p.discount = [10, 15, 20, 25, 30][Math.floor(rng() * 5)]; }
+    if (!p._synced && !p.discount && rng() < 0.4) { p.discount = [10, 15, 20, 25, 30][Math.floor(rng() * 5)]; }
     if (p.discount) p.compareAtPrice = Math.round(p.price / (1 - p.discount / 100) / 10) * 10;
-    if (!p.stock) p.stock = Math.floor(rng() * 40) + 3;
-    if (!p.sold) p.sold = Math.floor(rng() * 500) + 12;
+    else delete p.compareAtPrice;
+    if (!p._synced && p.stock == null) p.stock = Math.floor(rng() * 40) + 3;
+    if (!p._synced && p.sold == null) p.sold = Math.floor(rng() * 500) + 12;
     p.freeShipping = p.price >= 1000;
     p.featured = i < 4;
     p.badge = p.discount ? `-${p.discount}%` : (p.featured ? 'Destacado' : (p.sold > 300 ? 'Más vendido' : null));
   });
 }
 enrichProductsData();
+
+function mapSupabaseProduct(p) {
+  const catMap = { 'Covers & Fundas': 'cases', 'Cables y Carga': 'tech', 'Audio': 'audio', 'Equipamiento': 'equipos' };
+  let specs = {};
+  try { specs = typeof p.specs === 'string' ? JSON.parse(p.specs || '{}') : (p.specs || {}); } catch (e) { specs = {}; }
+  return {
+    _synced: true,
+    id: p.id,
+    title: p.title || p.name || '',
+    category: catMap[p.category] || p.category || 'tech',
+    price: Number(p.price) || 0,
+    image: (p.images && p.images[0]) || p.image || '',
+    description: p.description || p.desc || '',
+    specs,
+    rating: Number(p.rating) || 5,
+    stock: Number(p.stock) || 0,
+    sold: Number(p.sold) || 0,
+    discount: Number(p.discount) || 0,
+    active: p.active !== false,
+    reviews: [{ user: 'Cliente', rating: Number(p.rating) || 5, date: 'Reciente', text: 'Excelente producto.' }]
+  };
+}
+
+function applySupabaseProducts(data) {
+  products = (Array.isArray(data) ? data : []).filter(p => p.active !== false).map(mapSupabaseProduct);
+  enrichProductsData();
+  if (document.getElementById('products-grid')) renderProducts();
+  if (document.getElementById('cart-drawer')?.classList.contains('active')) renderCart();
+  if (document.getElementById('wishlist-drawer')?.classList.contains('active')) renderWishlist();
+}
 
 // Load products from Supabase (replaces hardcoded catalog if available)
 async function syncProductsFromSupabase() {
@@ -145,23 +176,40 @@ async function syncProductsFromSupabase() {
     });
     if (res.ok) {
       const data = await res.json();
-      if (data && data.length > 0) {
-        const catMap = { 'Covers & Fundas': 'cases', 'Cables y Carga': 'tech', 'Audio': 'audio', 'Equipamiento': 'equipos' };
-        products = data.map(p => ({
-          id: p.id, title: p.title || p.name || '', category: catMap[p.category] || p.category || 'tech',
-          price: p.price || 0, image: (p.images && p.images[0]) || p.image || '',
-          description: p.description || p.desc || '',
-          specs: typeof p.specs === 'string' ? JSON.parse(p.specs || '{}') : (p.specs || {}),
-          rating: p.rating || 5, stock: p.stock || 0, sold: p.sold || 0, discount: p.discount || 0,
-          freeShipping: (p.price || 0) >= 1000,
-          reviews: [{ user: 'Cliente', rating: p.rating || 5, date: 'Reciente', text: 'Excelente producto.' }]
-        }));
-        enrichProductsData();
-        renderProducts();
-        console.log(`[Store] Synced ${products.length} products from Supabase`);
-      }
+      applySupabaseProducts(data);
+      console.log(`[Store] Synced ${products.length} products from Supabase`);
     }
   } catch (e) { /* Supabase unavailable — keep local catalog */ }
+}
+
+let productRealtimeChannel = null;
+let productSyncPoll = null;
+
+function startProductSyncPolling() {
+  if (productSyncPoll) return;
+  productSyncPoll = setInterval(syncProductsFromSupabase, 15000);
+}
+
+function initProductRealtime() {
+  if (productRealtimeChannel || !window.supabase?.createClient) {
+    if (!window.supabase?.createClient) startProductSyncPolling();
+    return;
+  }
+
+  const client = window.supabase.createClient(BackendService.config.supabaseUrl, BackendService.config.supabaseKey, {
+    auth: { persistSession: false, autoRefreshToken: false }
+  });
+
+  productRealtimeChannel = client
+    .channel('public-products-sync')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, syncProductsFromSupabase)
+    .subscribe(status => {
+      if (status === 'SUBSCRIBED' && productSyncPoll) {
+        clearInterval(productSyncPoll);
+        productSyncPoll = null;
+      }
+      if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') startProductSyncPolling();
+    });
 }
 
 const FREE_SHIPPING_THRESHOLD = 1500;
@@ -515,7 +563,7 @@ function registerOrder(total, paymentMethod) {
   BackendService.supabaseQuery('orders', 'POST', orderPayload);
   State.cart.forEach(item => {
     const p = products.find(x => x.id === item.id);
-    if (p) { p.stock = Math.max(0, (p.stock || 0) - item.qty); p.sold = (p.sold || 0) + item.qty; BackendService.supabaseQuery(`products?id=eq.${item.id}`, 'PATCH', { stock: p.stock, sold: p.sold }); }
+    if (p) { p.stock = Math.max(0, (p.stock || 0) - item.qty); p.sold = (p.sold || 0) + item.qty; }
   });
   State.cart = []; State.coupon = null; State.save(); updateCartBadge(); toggleCartDrawer(false);
 }
@@ -1423,7 +1471,7 @@ document.addEventListener('DOMContentLoaded', () => {
   updateEducaProgress();
 
   // Sync products from Supabase (updates store in background)
-  syncProductsFromSupabase();
+  syncProductsFromSupabase().finally(initProductRealtime);
 
   // Set default install date
   const dateInput = document.getElementById('instala-date');

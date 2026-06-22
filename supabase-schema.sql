@@ -136,44 +136,129 @@ CREATE TABLE IF NOT EXISTS leads (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- ═══ RLS (Drop existing policies first to avoid conflicts) ═══
+-- ═══ RLS (least privilege policies) ═══
+-- Admin users must have app_metadata.role = 'admin' in Supabase Auth.
 
 ALTER TABLE products ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Products are viewable by everyone" ON products;
 DROP POLICY IF EXISTS "Products are editable by authenticated" ON products;
-CREATE POLICY "Products are viewable by everyone" ON products FOR SELECT USING (true);
-CREATE POLICY "Products are editable by authenticated" ON products FOR ALL USING (true);
+DROP POLICY IF EXISTS "Products are manageable by admins" ON products;
+CREATE POLICY "Products are viewable by everyone" ON products FOR SELECT USING (active = true);
+CREATE POLICY "Products are manageable by admins" ON products FOR ALL
+  USING ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin')
+  WITH CHECK ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');
 
 ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Anyone can insert orders" ON orders;
 DROP POLICY IF EXISTS "Anyone can read orders" ON orders;
+DROP POLICY IF EXISTS "Orders are readable by admins" ON orders;
+DROP POLICY IF EXISTS "Orders are manageable by admins" ON orders;
 CREATE POLICY "Anyone can insert orders" ON orders FOR INSERT WITH CHECK (true);
-CREATE POLICY "Anyone can read orders" ON orders FOR SELECT USING (true);
+CREATE POLICY "Orders are readable by admins" ON orders FOR SELECT
+  USING ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');
+CREATE POLICY "Orders are manageable by admins" ON orders FOR UPDATE
+  USING ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin')
+  WITH CHECK ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');
 
 ALTER TABLE customers ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Anyone can manage customers" ON customers;
-CREATE POLICY "Anyone can manage customers" ON customers FOR ALL USING (true);
+DROP POLICY IF EXISTS "Anyone can insert customers" ON customers;
+DROP POLICY IF EXISTS "Customers are manageable by admins" ON customers;
+CREATE POLICY "Anyone can insert customers" ON customers FOR INSERT WITH CHECK (true);
+CREATE POLICY "Customers are manageable by admins" ON customers FOR ALL
+  USING ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin')
+  WITH CHECK ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');
 
 ALTER TABLE repara_bookings ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Anyone can manage repara" ON repara_bookings;
-CREATE POLICY "Anyone can manage repara" ON repara_bookings FOR ALL USING (true);
+DROP POLICY IF EXISTS "Anyone can insert repara" ON repara_bookings;
+DROP POLICY IF EXISTS "Repara is manageable by admins" ON repara_bookings;
+CREATE POLICY "Anyone can insert repara" ON repara_bookings FOR INSERT WITH CHECK (true);
+CREATE POLICY "Repara is manageable by admins" ON repara_bookings FOR ALL
+  USING ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin')
+  WITH CHECK ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');
 
 ALTER TABLE instala_bookings ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Anyone can manage instala" ON instala_bookings;
-CREATE POLICY "Anyone can manage instala" ON instala_bookings FOR ALL USING (true);
+DROP POLICY IF EXISTS "Anyone can insert instala" ON instala_bookings;
+DROP POLICY IF EXISTS "Instala is manageable by admins" ON instala_bookings;
+CREATE POLICY "Anyone can insert instala" ON instala_bookings FOR INSERT WITH CHECK (true);
+CREATE POLICY "Instala is manageable by admins" ON instala_bookings FOR ALL
+  USING ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin')
+  WITH CHECK ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');
 
 ALTER TABLE lleva_requests ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Anyone can manage lleva" ON lleva_requests;
-CREATE POLICY "Anyone can manage lleva" ON lleva_requests FOR ALL USING (true);
+DROP POLICY IF EXISTS "Anyone can insert lleva" ON lleva_requests;
+DROP POLICY IF EXISTS "Lleva is manageable by admins" ON lleva_requests;
+CREATE POLICY "Anyone can insert lleva" ON lleva_requests FOR INSERT WITH CHECK (true);
+CREATE POLICY "Lleva is manageable by admins" ON lleva_requests FOR ALL
+  USING ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin')
+  WITH CHECK ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');
 
 ALTER TABLE educa_progress ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Anyone can manage educa" ON educa_progress;
-CREATE POLICY "Anyone can manage educa" ON educa_progress FOR ALL USING (true);
+DROP POLICY IF EXISTS "Anyone can insert educa progress" ON educa_progress;
+DROP POLICY IF EXISTS "Educa progress is manageable by admins" ON educa_progress;
+CREATE POLICY "Anyone can insert educa progress" ON educa_progress FOR INSERT WITH CHECK (true);
+CREATE POLICY "Educa progress is manageable by admins" ON educa_progress FOR ALL
+  USING ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin')
+  WITH CHECK ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');
 
 ALTER TABLE certificates ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Anyone can manage certs" ON certificates;
-CREATE POLICY "Anyone can manage certs" ON certificates FOR ALL USING (true);
+DROP POLICY IF EXISTS "Anyone can insert certificates" ON certificates;
+DROP POLICY IF EXISTS "Certificates are manageable by admins" ON certificates;
+CREATE POLICY "Anyone can insert certificates" ON certificates FOR INSERT WITH CHECK (true);
+CREATE POLICY "Certificates are manageable by admins" ON certificates FOR ALL
+  USING ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin')
+  WITH CHECK ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');
 
 ALTER TABLE leads ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Anyone can manage leads" ON leads;
-CREATE POLICY "Anyone can manage leads" ON leads FOR ALL USING (true);
+DROP POLICY IF EXISTS "Anyone can insert leads" ON leads;
+DROP POLICY IF EXISTS "Leads are manageable by admins" ON leads;
+CREATE POLICY "Anyone can insert leads" ON leads FOR INSERT WITH CHECK (true);
+CREATE POLICY "Leads are manageable by admins" ON leads FOR ALL
+  USING ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin')
+  WITH CHECK ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');
+
+-- ═══ REALTIME PUBLICATION ═══
+-- Required for the public catalog and admin dashboard to receive live Supabase updates.
+ALTER TABLE products REPLICA IDENTITY FULL;
+ALTER TABLE orders REPLICA IDENTITY FULL;
+ALTER TABLE customers REPLICA IDENTITY FULL;
+ALTER TABLE repara_bookings REPLICA IDENTITY FULL;
+ALTER TABLE instala_bookings REPLICA IDENTITY FULL;
+ALTER TABLE lleva_requests REPLICA IDENTITY FULL;
+ALTER TABLE educa_progress REPLICA IDENTITY FULL;
+ALTER TABLE certificates REPLICA IDENTITY FULL;
+ALTER TABLE leads REPLICA IDENTITY FULL;
+
+DO $$
+DECLARE
+  realtime_table TEXT;
+  realtime_tables TEXT[] := ARRAY[
+    'products',
+    'orders',
+    'customers',
+    'repara_bookings',
+    'instala_bookings',
+    'lleva_requests',
+    'educa_progress',
+    'certificates',
+    'leads'
+  ];
+BEGIN
+  FOREACH realtime_table IN ARRAY realtime_tables LOOP
+    IF NOT EXISTS (
+      SELECT 1
+      FROM pg_publication_tables
+      WHERE pubname = 'supabase_realtime'
+        AND schemaname = 'public'
+        AND tablename = realtime_table
+    ) THEN
+      EXECUTE format('ALTER PUBLICATION supabase_realtime ADD TABLE public.%I', realtime_table);
+    END IF;
+  END LOOP;
+END $$;

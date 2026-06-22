@@ -1,0 +1,3 @@
+window.TELOCORP_CONFIG = {
+  googleMapsKey: 'YOUR_BROWSER_RESTRICTED_GOOGLE_MAPS_KEY'
+};

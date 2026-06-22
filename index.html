@@ -707,6 +707,7 @@
     <div class="chat-widget__input"><input type="text" id="chat-input" placeholder="Escribe tu pregunta..."><button class="btn btn--primary btn--icon" id="chat-send" type="button">➤</button></div>
   </div>
 
+  <script src="config.js"></script>
   <!-- Google Maps API -->
   <script src="script.js"></script>
   <script>
@@ -717,8 +718,16 @@
         el.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;gap:8px;color:#94a3b8;padding:20px;text-align:center;"><p style="font-size:0.9rem;">⚠️ Google Maps no pudo cargar.</p><p style="font-size:0.75rem;">Verifica la API Key y las restricciones de dominio en <a href="https://console.cloud.google.com/apis/credentials" target="_blank" style="color:#f59e0b;">Google Cloud Console</a>.</p><p style="font-size:0.7rem;margin-top:8px;">Referrer permitido: <code>telocg.com/*</code> y <code>localhost/*</code></p></div>';
       }
     }, 8000);
+
+    (function loadGoogleMaps() {
+      var key = window.TELOCORP_CONFIG && window.TELOCORP_CONFIG.googleMapsKey;
+      if (!key) return;
+      var script = document.createElement('script');
+      script.async = true;
+      script.src = 'https://maps.googleapis.com/maps/api/js?key=' + encodeURIComponent(key) + '&libraries=places&callback=initGoogleMaps';
+      document.head.appendChild(script);
+    })();
   </script>
-  <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB6Fw9dciFlipwPONefQbbUB0tJBDWibFc&libraries=places&callback=initGoogleMaps"></script>
   <!-- Supabase JS Client -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" defer></script>
 </body>
