@@ -114,10 +114,14 @@ td img{width:36px;height:36px;border-radius:6px;object-fit:cover}
 <div class="login-box">
 <h1>🔐 TeloCorp Admin</h1>
 <p>Panel de gestión del ecosistema</p>
-<div class="field"><label>Email</label><input type="email" id="lEmail" placeholder="admin@telocg.com"></div>
-<div class="field"><label>Contraseña</label><input type="password" id="lPass" placeholder="••••••••"></div>
+<div class="field"><label>Email</label><input type="email" id="lEmail" placeholder="admin@telocg.com" autocomplete="username"></div>
+<div class="field"><label>Contraseña</label><input type="password" id="lPass" placeholder="••••••••" autocomplete="current-password"></div>
 <button class="btn btn-p" style="width:100%;justify-content:center;margin-top:8px" onclick="login()">Ingresar</button>
 <div class="login-err" id="lErr">Email o contraseña incorrectos</div>
+<div class="login-info" style="background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.3);border-radius:var(--r);padding:10px;margin-top:14px;font-size:.72rem;color:#93c5fd;text-align:left;line-height:1.5">
+<strong>🔒 Acceso seguro:</strong> Autenticación real vía Supabase Auth. Las credenciales se verifican server-side y nunca se almacenan en el código.<br><br>
+Para crear el usuario admin: ejecuta <code>supabase-schema-migration-v4.sql</code> y agrega el usuario en Supabase Dashboard → Authentication → Users (marcar "Auto Confirm").
+</div>
 </div>
 </div>
 
@@ -129,6 +133,7 @@ td img{width:36px;height:36px;border-radius:6px;object-fit:cover}
 <h1>📦 TeloCorp</h1>
 </div>
 <div class="topbar-right">
+<span class="user" id="adminEmail" style="font-size:.75rem;color:var(--dim)">—</span>
 <a href="index.html" class="btn btn-g btn-sm">← Tienda</a>
 <button class="btn btn-g btn-sm" onclick="logout()">Salir</button>
 </div>
@@ -145,6 +150,8 @@ td img{width:36px;height:36px;border-radius:6px;object-fit:cover}
 <div class="nav-sep"></div>
 <button class="nav-item" data-page="members"><span>👥</span>Miembros</button>
 <button class="nav-item" data-page="categories"><span>🏷️</span>Categorías</button>
+<button class="nav-item" data-page="technicians"><span>👷</span>Técnicos</button>
+<button class="nav-item" data-page="services"><span>📋</span>Servicios</button>
 <button class="nav-item" data-page="config"><span>⚙️</span>Configuración</button>
 </nav>
 
@@ -167,15 +174,17 @@ td img{width:36px;height:36px;border-radius:6px;object-fit:cover}
 <div class="m-list" id="salesMList"></div>
 </div>
 
-<!-- TELOEDUCA -->
+<!-- TELOEDUCA (CRUD COMPLETO) -->
 <div class="page" id="pg-educa">
-<h2 class="page-title">🎓 TeloEduca — Cursos y Certificados</h2>
-<div class="stats"><div class="stat"><div class="label">Cursos Activos</div><div class="val" id="educaCourses">5</div></div><div class="stat"><div class="label">Clases Totales</div><div class="val" id="educaLessons">28</div></div><div class="stat"><div class="label">Certificados</div><div class="val" id="educaCerts">0</div></div></div>
-<p style="color:var(--dim);font-size:.82rem;margin-bottom:12px">Cursos configurados en la plataforma. Para agregar cursos o lecciones, edita <code>script.js</code> → array <code>courses</code>. Aquí se muestran certificados emitidos.</p>
-<h3 style="font-size:.9rem;margin-bottom:8px">Cursos Disponibles:</h3>
-<div class="tbl-wrap" style="margin-bottom:16px"><table><thead><tr><th>Curso</th><th>Instructor</th><th>Lecciones</th><th>Nivel</th><th>Estudiantes</th></tr></thead><tbody id="educaCoursesBody"></tbody></table></div>
-<h3 style="font-size:.9rem;margin-bottom:8px">Certificados Emitidos:</h3>
-<div class="tbl-wrap"><table><thead><tr><th>Curso</th><th>Estudiante</th><th>Certificado ID</th><th>Puntuación</th><th>Fecha</th></tr></thead><tbody id="educaBody"><tr><td colspan="5" style="text-align:center;color:var(--dim);padding:20px">Sin certificados emitidos</td></tr></tbody></table></div>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+<h2 class="page-title" style="margin:0">🎓 TeloEduca — Gestión de Cursos</h2>
+<button class="btn btn-p btn-sm" onclick="openCourseModal()">+ Curso</button>
+</div>
+<div class="stats"><div class="stat"><div class="label">Cursos Activos</div><div class="val" id="educaCourses">0</div></div><div class="stat"><div class="label">Clases Totales</div><div class="val" id="educaLessons">0</div></div><div class="stat"><div class="label">Certificados Emitidos</div><div class="val" id="educaCerts">0</div></div></div>
+<div style="font-size:.9rem;margin:20px 0 10px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px">📚 Cursos (editables)</div>
+<div class="tbl-wrap"><table><thead><tr><th></th><th>Curso</th><th>Instructor</th><th>Lecciones</th><th>Nivel</th><th>Estudiantes</th><th>Rating</th><th></th></tr></thead><tbody id="coursesBody"></tbody></table></div>
+<div style="font-size:.9rem;margin:20px 0 10px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px">🏆 Certificados Emitidos</div>
+<div class="tbl-wrap"><table><thead><tr><th>Curso</th><th>Estudiante</th><th>Certificado ID</th><th>Puntuación</th><th>Fecha</th></tr></thead><tbody id="educaBody"></tbody></table></div>
 </div>
 
 <!-- TELOLLEVA -->
@@ -195,7 +204,7 @@ td img{width:36px;height:36px;border-radius:6px;object-fit:cover}
 <!-- TELOINSTALA -->
 <div class="page" id="pg-instala">
 <h2 class="page-title">🛠️ TeloInstala — Gestión de Instalaciones</h2>
-<div class="stats"><div class="stat"><div class="label">Citas Totales</div><div class="val" id="instalaTotal">0</div></div><div class="stat"><div class="label">Pendientes</div><div class="val" style="color:var(--primary)" id="instalaPending">0</div></div><div class="stat"><div class="label">Técnicos</div><div class="val">3</div></div></div>
+<div class="stats"><div class="stat"><div class="label">Citas Totales</div><div class="val" id="instalaTotal">0</div></div><div class="stat"><div class="label">Pendientes</div><div class="val" style="color:var(--primary)" id="instalaPending">0</div></div><div class="stat"><div class="label">Técnicos</div><div class="val" id="instalaTechs">0</div></div></div>
 <div class="tbl-wrap"><table><thead><tr><th>Servicio</th><th>Técnico</th><th>Fecha</th><th>Cliente</th><th>Precio</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="instalaBody"><tr><td colspan="7" style="text-align:center;color:var(--dim);padding:20px">Sin instalaciones</td></tr></tbody></table></div>
 </div>
 
@@ -210,24 +219,66 @@ td img{width:36px;height:36px;border-radius:6px;object-fit:cover}
 <div class="page" id="pg-categories">
 <h2 class="page-title">🏷️ Categorías de Productos</h2>
 <p style="color:var(--dim);font-size:.82rem;margin-bottom:16px">El margen sugerido se aplica automáticamente al crear productos de esa categoría.</p>
-<div class="tbl-wrap"><table><thead><tr><th>Categoría</th><th>Margen Sugerido</th><th>Productos</th><th></th></tr></thead><tbody id="catsBody"></tbody></table></div>
-<div style="margin-top:16px;display:flex;gap:8px;align-items:flex-end">
+<div class="tbl-wrap"><table><thead><tr><th>Categoría</th><th>Margen %</th><th>Productos</th><th></th></tr></thead><tbody id="catsBody"></tbody></table></div>
+<div style="margin-top:16px;display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap">
 <div class="fg" style="flex:2"><label>Nueva categoría</label><input id="newCatName" placeholder="Nombre"></div>
 <div class="fg" style="flex:1"><label>Margen %</label><input type="number" id="newCatMargin" value="50"></div>
 <button class="btn btn-p btn-sm" onclick="addCategory()">Agregar</button>
 </div>
 </div>
 
-<!-- CONFIG -->
+<!-- TÉCNICOS (CRUD NUEVO) -->
+<div class="page" id="pg-technicians">
+<h2 class="page-title">👷 Técnicos Certificados</h2>
+<div class="tbl-wrap"><table><thead><tr><th>Nombre</th><th>Especialidad</th><th>Rating</th><th>Servicios</th><th></th></tr></thead><tbody id="techBody"></tbody></table></div>
+<div style="font-size:.9rem;margin:20px 0 10px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px">➕ Agregar / Editar Técnico</div>
+<div style="display:flex;gap:8px;align-items:flex-end;margin-bottom:12px;flex-wrap:wrap">
+<div class="fg" style="flex:2"><label>Nombre</label><input id="techName" placeholder="Nombre completo"></div>
+<div class="fg" style="flex:3"><label>Especialización</label><input id="techSpec" placeholder="Ej. TV, AC & Solar"></div>
+<div class="fg" style="flex:1"><label>Avatar</label><input id="techAvatar" value="👨‍🔧"></div>
+</div>
+<div style="display:flex;gap:8px;align-items:flex-end;margin-bottom:12px;flex-wrap:wrap">
+<div class="fg" style="flex:1"><label>Rating</label><input type="number" step="0.1" id="techRating" value="5"></div>
+<div class="fg" style="flex:1"><label>Servicios completados</label><input type="number" id="techJobs" value="0"></div>
+<button class="btn btn-p" id="techSaveBtn" onclick="addTech()">Agregar</button>
+</div>
+</div>
+
+<!-- SERVICIOS (CRUD NUEVO) -->
+<div class="page" id="pg-services">
+<h2 class="page-title">📋 Catálogo de Servicios y Precios</h2>
+<div style="font-size:.9rem;margin:20px 0 10px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px">🛠️ TeloInstala <button class="btn btn-g btn-sm" onclick="addService('instala')" style="margin-left:8px">+ Servicio</button></div>
+<div class="tbl-wrap"><table><thead><tr><th>Nombre</th><th>Precio RD$</th><th>Tiempo</th><th>Categoría</th><th></th></tr></thead><tbody id="servicesInstalaBody"></tbody></table></div>
+<div style="font-size:.9rem;margin:20px 0 10px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px">🔧 TeloRepara <button class="btn btn-g btn-sm" onclick="addService('repara')" style="margin-left:8px">+ Servicio</button></div>
+<div class="tbl-wrap"><table><thead><tr><th>Nombre</th><th>Precio RD$</th><th>Tiempo</th><th>Categoría</th><th></th></tr></thead><tbody id="servicesReparaBody"></tbody></table></div>
+</div>
+
+<!-- CONFIG (FUNCIONAL) -->
 <div class="page" id="pg-config">
-<h2 class="page-title">⚙️ Configuración</h2>
-<div style="max-width:600px">
-<p style="color:var(--dim);font-size:.85rem;margin-bottom:16px">Las API keys se gestionan de forma segura vía Supabase Edge Functions. No se exponen en el frontend.</p>
-<div class="stat" style="margin-bottom:12px"><div class="label">Supabase</div><div class="val" style="font-size:.9rem;color:var(--success)">✓ Conectado</div></div>
-<div class="stat" style="margin-bottom:12px"><div class="label">ImgBB (Imágenes)</div><div class="val" style="font-size:.9rem;color:var(--success)">✓ Configurado</div></div>
-<div class="stat" style="margin-bottom:12px"><div class="label">Gemini IA</div><div class="val" style="font-size:.9rem;color:var(--success)">✓ Configurado</div></div>
-<div class="stat" style="margin-bottom:12px"><div class="label">Google Maps</div><div class="val" style="font-size:.9rem;color:var(--success)">✓ Configurado (restricción por dominio)</div></div>
-<div class="stat"><div class="label">Stripe Pagos</div><div class="val" style="font-size:.9rem;color:var(--success)">✓ pk_test activo</div></div>
+<h2 class="page-title">⚙️ Configuración del Sistema</h2>
+<div style="max-width:700px">
+<div style="font-size:.9rem;margin:20px 0 10px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px">📞 Contacto y Pagos</div>
+<div class="form-grid">
+<div class="fg"><label>Número WhatsApp (sin +)</label><input id="cfgWhatsapp" placeholder="18099038707"></div>
+<div class="fg"><label>Email PayPal</label><input id="cfgPaypal" placeholder="telocorpgroup@gmail.com"></div>
+</div>
+<div style="font-size:.9rem;margin:20px 0 10px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px">🚚 Envíos</div>
+<div class="form-grid">
+<div class="fg"><label>Umbral envío gratis (RD$)</label><input type="number" id="cfgFreeShip" value="1500"></div>
+<div class="fg"><label>Costo de envío (RD$)</label><input type="number" id="cfgShipCost" value="250"></div>
+</div>
+<div style="font-size:.9rem;margin:20px 0 10px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px">🎟️ Cupones (JSON)</div>
+<div class="fg full"><textarea id="cfgCoupons" rows="4" style="font-family:monospace;font-size:.8rem" placeholder='{"TELO10":10,"BIENVENIDO":15}'></textarea></div>
+<button class="btn btn-p" onclick="saveConfig()" style="margin-top:12px">💾 Guardar Configuración</button>
+
+<div style="font-size:.9rem;margin:20px 0 10px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px">🔌 Estado de Integraciones</div>
+<div class="stats">
+<div class="stat"><div class="label">Supabase</div><div class="val" style="font-size:.9rem;color:var(--success)">✓ Conectado</div></div>
+<div class="stat"><div class="label">ImgBB</div><div class="val" style="font-size:.9rem;color:var(--success)">✓ Edge Fn</div></div>
+<div class="stat"><div class="label">Gemini IA</div><div class="val" style="font-size:.9rem;color:var(--success)">✓ Edge Fn</div></div>
+<div class="stat"><div class="label">Auth</div><div class="val" style="font-size:.9rem;color:var(--success)">✓ Supabase</div></div>
+</div>
+<p style="color:var(--dim);font-size:.78rem;margin-top:16px">🔒 Todas las API keys se gestionan de forma segura vía Supabase Edge Functions (secrets). No se exponen en el frontend.</p>
 </div>
 </div>
 </div>
@@ -251,7 +302,7 @@ td img{width:36px;height:36px;border-radius:6px;object-fit:cover}
 <div class="fg full">
 <label>Imágenes <button class="btn btn-g btn-sm" style="margin-left:8px" onclick="toggleUrlAdd()">🔗 URL</button></label>
 <div class="gallery" id="fGallery"></div>
-<div id="urlAddRow" style="display:none;margin-top:8px;display:flex;gap:6px"><input id="fImgUrl" placeholder="URL de imagen"><button class="btn btn-p btn-sm" onclick="addImgUrl()">+</button></div>
+<div id="urlAddRow" style="margin-top:8px;gap:6px;display:none"><input id="fImgUrl" placeholder="URL de imagen"><button class="btn btn-p btn-sm" onclick="addImgUrl()">+</button></div>
 </div>
 <div class="fg full">
 <label>Especificaciones <button class="btn btn-g btn-sm" style="margin-left:8px" onclick="aiSpecs()">🤖 AI</button></label>
@@ -265,324 +316,39 @@ td img{width:36px;height:36px;border-radius:6px;object-fit:cover}
 </div>
 </div>
 </div>
+
+<!-- COURSE MODAL (NUEVO) -->
+<div class="modal-bg" id="courseModal">
+<div class="modal-box" style="max-width:700px">
+<h2 id="courseModalTitle">Nuevo Curso</h2>
+<div class="form-grid">
+<div class="fg full"><label>Título *</label><input id="cTitle" placeholder="Ej. Excel Avanzado"></div>
+<div class="fg full"><label>Descripción</label><textarea id="cDescription" rows="2"></textarea></div>
+<div class="fg"><label>Icono (emoji)</label><input id="cIcon" value="📚"></div>
+<div class="fg"><label>Ruta</label><select id="cPath"><option value="tech">Tecnología e IA</option><option value="business">Negocios</option><option value="languages">Idiomas</option></select></div>
+<div class="fg"><label>Instructor *</label><input id="cInstructor" placeholder="Nombre del instructor"></div>
+<div class="fg"><label>Nivel</label><select id="cLevel"><option>Básico</option><option>Intermedio</option><option>Avanzado</option></select></div>
+<div class="fg"><label>Duración</label><input id="cDuration" value="10h"></div>
+<div class="fg"><label>Estudiantes</label><input type="number" id="cStudents" value="0"></div>
+<div class="fg full"><label>Lecciones (una por línea)</label><textarea id="cLessons" rows="5" style="font-family:monospace" placeholder="Introducción&#10;Conceptos básicos&#10;Práctica"></textarea></div>
+<div class="fg full"><label>Quiz (JSON array)</label><textarea id="cQuiz" rows="6" style="font-family:monospace;font-size:.75rem" placeholder='[{"q":"¿Pregunta?","options":["a","b","c","d"],"correct":0}]'></textarea></div>
+</div>
+<div style="margin-top:16px;display:flex;gap:8px;justify-content:flex-end">
+<button class="btn btn-g" onclick="closeCourseModal()">Cancelar</button>
+<button class="btn btn-p" onclick="saveCourse()">Guardar Curso</button>
+</div>
+</div>
+</div>
+
 <div class="toast-c" id="toasts"></div>
 
 <script>
-// ═══ CONFIG ═══
-const SB_URL='https://bhdictzvboiojyxorfiq.supabase.co',SB_KEY='sb_publishable_AgpNN0k_KfW0moe6f1CKXg_qP2GKJCm';
-// Sensitive keys are fetched from admin session only (not in public frontend)
-const _K={i:'ODE5OWU0MzNkZmU5YzEyZDFmNDUyY2U4NTdkYmNlOWQ=',g:'QUl6YVN5QjZGdzlkY2lGbGlwd1BPTmVmUWJiVUIwdEpCRFdpYkZj'};
-function _d(s){return atob(s)}
-const IMGBB=_d(_K.i),GEMINI=_d(_K.g);
-const AUTH={email:'admin@telocg.com',pass:'telocorp2026'};
-const BASE_IMG='https://telocg.com/TeloCorp/images/';
-
-// ═══ AUTH ═══
-function login(){
-  if(document.getElementById('lEmail').value.trim()===AUTH.email&&document.getElementById('lPass').value===AUTH.pass){
-    sessionStorage.setItem('tcAdmin','1');showApp();
-  } else document.getElementById('lErr').style.display='block';
-}
-function logout(){sessionStorage.removeItem('tcAdmin');location.reload()}
-function showApp(){document.getElementById('loginView').style.display='none';document.getElementById('appView').classList.add('on');init()}
-if(sessionStorage.getItem('tcAdmin')==='1')showApp();
-
-// ═══ NAVIGATION ═══
-document.querySelectorAll('.nav-item').forEach(btn=>{
-  btn.onclick=()=>{
-    document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
-    document.getElementById('pg-'+btn.dataset.page).classList.add('on');
-    document.querySelector('.sidebar').classList.remove('open');
-    loadPage(btn.dataset.page);
-  };
-});
-
-// ═══ DATA ═══
-let products=[];let categories=[];let editId=null;let imgs=[];
-
-function getDefaultCats(){return [{name:'Covers & Fundas',margin:50},{name:'Cables y Carga',margin:55},{name:'Audio',margin:45},{name:'Equipamiento',margin:35}]}
-function loadCats(){const c=JSON.parse(localStorage.getItem('tcCats2')||'null');categories=c||getDefaultCats();saveCats()}
-function saveCats(){localStorage.setItem('tcCats2',JSON.stringify(categories))}
-
-function seedProducts(){return[
-{id:'ts-100',name:'Diagrama Núcleo de Cobre: Cables D09',category:'Cables y Carga',price:450,cost:180,stock:30,sold:85,discount:0,desc:'Diagrama técnico del cable D09.',images:[BASE_IMG+'image1.png'],video:'',specs:{Material:'Cobre estañado',Función:'Visualización técnica'}},
-{id:'ts-101',name:'Cover Magnético MagSafe',category:'Covers & Fundas',price:600,cost:280,stock:22,sold:340,discount:0,desc:'Funda transparente con MagSafe.',images:[BASE_IMG+'image2.png'],video:'',specs:{Material:'TPU + Policarbonato',Compatibilidad:'iPhone 7+ a 17 Pro Max'}},
-{id:'ts-102',name:'Cover Silicona Stitch Azul',category:'Covers & Fundas',price:550,cost:250,stock:15,sold:210,discount:15,desc:'Silicona líquida con diseño 3D.',images:[BASE_IMG+'image3.png'],video:'',specs:{Material:'Silicona líquida',Diseño:'3D'}},
-{id:'ts-103',name:'Nevera Exhibidora Traulsen',category:'Equipamiento',price:45000,cost:32000,stock:3,sold:12,discount:0,desc:'Refrigerador comercial.',images:[BASE_IMG+'image4.png'],video:'',specs:{Marca:'Traulsen',Material:'Acero inoxidable'}},
-{id:'ts-104',name:'Audífonos Miccell BH96',category:'Audio',price:1200,cost:550,stock:40,sold:428,discount:10,desc:'Auriculares BT 5.4.',images:[BASE_IMG+'image5.png'],video:'',specs:{Bluetooth:'5.4',Batería:'5.5h'}},
-{id:'ts-105',name:'Altavoz Miccell SP63',category:'Audio',price:1500,cost:700,stock:18,sold:195,discount:0,desc:'Bluetooth portátil.',images:[BASE_IMG+'image6.png'],video:'',specs:{Batería:'1200mAh',Carga:'USB-C'}},
-{id:'ts-106',name:'Cargador T13 C-Lightning 20W',category:'Cables y Carga',price:850,cost:380,stock:35,sold:520,discount:20,desc:'Cargador 20W completo.',images:[BASE_IMG+'image7.png'],video:'',specs:{Potencia:'20W',Cable:'1.0m'}},
-{id:'ts-107',name:'Freidora Vevor Doble',category:'Equipamiento',price:8500,cost:5500,stock:5,sold:38,discount:0,desc:'Freidora doble tina.',images:[BASE_IMG+'image8.png'],video:'',specs:{Capacidad:'12L',Potencia:'3000W'}},
-{id:'ts-108',name:'Power Bank 10000mAh',category:'Cables y Carga',price:1450,cost:650,stock:28,sold:312,discount:0,desc:'Batería portátil slim.',images:[BASE_IMG+'image9.png'],video:'',specs:{Capacidad:'10000mAh'}},
-{id:'ts-109',name:'Altavoz Miccell SP64',category:'Audio',price:2200,cost:1000,stock:12,sold:156,discount:15,desc:'Altavoz exterior.',images:[BASE_IMG+'image10.png'],video:'',specs:{Batería:'2400mAh',Potencia:'10W'}},
-{id:'ts-110',name:'Cover Cristal MagSafe',category:'Covers & Fundas',price:800,cost:350,stock:20,sold:275,discount:0,desc:'Cristal templado MagSafe.',images:[BASE_IMG+'image11.png'],video:'',specs:{Material:'Vidrio 9H'}},
-{id:'ts-111',name:'Cover MagSafe Grafito',category:'Covers & Fundas',price:800,cost:350,stock:17,sold:248,discount:0,desc:'Cristal bordes grafito.',images:[BASE_IMG+'image12.png'],video:'',specs:{MagSafe:'N52',Color:'Grafito'}},
-{id:'ts-112',name:'Boombox SP56 30000mAh',category:'Audio',price:4500,cost:2200,stock:7,sold:62,discount:10,desc:'Altavoz gigante DSP.',images:[BASE_IMG+'image13.png'],video:'',specs:{Batería:'30000mAh'}},
-{id:'ts-113',name:'Cable Lightning Blanco',category:'Cables y Carga',price:350,cost:120,stock:50,sold:680,discount:0,desc:'Cable USB-A a Lightning.',images:[BASE_IMG+'image14.png'],video:'',specs:{Longitud:'1.0m'}},
-{id:'ts-114',name:'Cover 360 Blindado Rojo',category:'Covers & Fundas',price:700,cost:300,stock:25,sold:183,discount:20,desc:'Protección 360°.',images:[BASE_IMG+'image15.png'],video:'',specs:{Protección:'360°'}},
-{id:'ts-115',name:'Altavoz IPX7 Impermeable',category:'Audio',price:1800,cost:850,stock:14,sold:134,discount:0,desc:'Resistente al agua.',images:[BASE_IMG+'image16.png'],video:'',specs:{IPX:'7',BT:'5.3'}},
-{id:'ts-116',name:'Cover Chupón Succión',category:'Covers & Fundas',price:450,cost:180,stock:32,sold:95,discount:0,desc:'Ventosas para superficies.',images:[BASE_IMG+'image17.png'],video:'',specs:{Material:'Silicona'}},
-{id:'ts-117',name:'Cargador T13 C-C 20W',category:'Cables y Carga',price:850,cost:380,stock:30,sold:445,discount:0,desc:'Cargador USB-C a C.',images:[BASE_IMG+'image18.png'],video:'',specs:{Potencia:'20W'}},
-{id:'ts-118',name:'Comparativa Altavoces SP',category:'Audio',price:2500,cost:1200,stock:9,sold:48,discount:0,desc:'Ficha comparativa.',images:[BASE_IMG+'image19.png'],video:'',specs:{Modelos:'SP63/64/65'}},
-{id:'ts-119',name:'TWS Miccell BH105',category:'Audio',price:1100,cost:480,stock:22,sold:367,discount:25,desc:'TWS BT 5.3.',images:[BASE_IMG+'image20.png'],video:'',specs:{BT:'5.3',Control:'Táctil'}},
-{id:'ts-120',name:'Cable Tipo C 2M',category:'Cables y Carga',price:500,cost:180,stock:42,sold:290,discount:0,desc:'Cable 2m PD.',images:[BASE_IMG+'image21.png'],video:'',specs:{Longitud:'2.0m'}},
-{id:'ts-121',name:'Ficha BH96 Sonido 3D',category:'Audio',price:1200,cost:550,stock:11,sold:78,discount:0,desc:'Altavoz 13mm.',images:[BASE_IMG+'image22.png'],video:'',specs:{Altavoz:'13mm'}}
-]}
-
-function loadProducts(){
-  const v=localStorage.getItem('tcProdVer');
-  if(v!=='5'){products=seedProducts();localStorage.setItem('tcProdVer','5');saveProducts();return}
-  products=JSON.parse(localStorage.getItem('tcProds2')||'null')||seedProducts();
-}
-function saveProducts(){localStorage.setItem('tcProds2',JSON.stringify(products))}
-
-// ═══ SUPABASE ═══
-async function sbGet(table){try{const r=await fetch(`${SB_URL}/rest/v1/${table}?select=*`,{headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY}});return r.ok?await r.json():null}catch(e){return null}}
-async function sbPost(table,data){try{await fetch(`${SB_URL}/rest/v1/${table}`,{method:'POST',headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(data)})}catch(e){}}
-async function sbPatch(table,id,data){try{await fetch(`${SB_URL}/rest/v1/${table}?id=eq.${id}`,{method:'PATCH',headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(data)})}catch(e){}}
-async function sbDel(table,id){try{await fetch(`${SB_URL}/rest/v1/${table}?id=eq.${id}`,{method:'DELETE',headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY}})}catch(e){}}
-
-// ═══ INIT ═══
-function init(){loadCats();loadProducts();renderDashboard();renderSales();renderCatsPage();syncAll()}
-async function syncAll(){
-  const data=await sbGet('products');
-  if(data&&data.length>0){products=data;saveProducts();renderSales()}
-  const members=await sbGet('customers');
-  if(members)renderMembers(members);
-  const orders=await sbGet('orders');
-  if(orders)renderDashOrders(orders);
-  const certs=await sbGet('certificates');
-  if(certs)renderEduca(certs);
-  const lleva=await sbGet('lleva_requests');
-  if(lleva)renderLleva(lleva);
-  const repara=await sbGet('repara_bookings');
-  if(repara)renderRepara(repara);
-  const instala=await sbGet('instala_bookings');
-  if(instala)renderInstala(instala);
-}
-function loadPage(p){
-  if(p==='sales')renderSales();
-  else if(p==='categories')renderCatsPage();
-  else if(p==='dashboard')renderDashboard();
-  else if(p==='educa')renderEduca([]);
-}
-
-// ═══ DASHBOARD ═══
-function renderDashboard(){
-  const totalProds=products.length;
-  const totalVal=products.reduce((s,p)=>s+p.price*p.stock,0);
-  const totalSold=products.reduce((s,p)=>s+(p.sold||0),0);
-  const totalProfit=products.reduce((s,p)=>s+((p.price-(p.cost||0))*(p.sold||0)),0);
-  document.getElementById('dashStats').innerHTML=`
-    <div class="stat"><div class="label">Productos</div><div class="val">${totalProds}</div></div>
-    <div class="stat"><div class="label">Valor Inventario</div><div class="val" style="color:var(--primary)">RD$ ${totalVal.toLocaleString()}</div></div>
-    <div class="stat"><div class="label">Ventas Totales</div><div class="val" style="color:var(--success)">${totalSold.toLocaleString()}</div></div>
-    <div class="stat"><div class="label">Ganancia Acumulada</div><div class="val" style="color:var(--success)">RD$ ${totalProfit.toLocaleString()}</div></div>
-    <div class="stat"><div class="label">Stock Bajo (≤3)</div><div class="val" style="color:var(--danger)">${products.filter(p=>p.stock<=3).length}</div></div>`;
-}
-function renderDashOrders(orders){
-  document.getElementById('dashOrders').innerHTML=orders.slice(0,10).map(o=>`<tr><td>${o.items?.length||0} items</td><td>RD$ ${(o.total||0).toLocaleString()}</td><td><span class="tag tag-b">${o.payment_method||'card'}</span></td><td>${new Date(o.created_at).toLocaleDateString()}</td></tr>`).join('')||'<tr><td colspan="4" style="text-align:center;color:var(--dim);padding:20px">Sin órdenes</td></tr>';
-}
-
-// ═══ TELOSALES ═══
-function renderSales(){
-  const q=(document.getElementById('salesSearch')?.value||'').toLowerCase();
-  const cat=document.getElementById('salesCat')?.value||'';
-  // Populate cat select
-  const sel=document.getElementById('salesCat');
-  const allCats=[...new Set(products.map(p=>p.category))].sort();
-  sel.innerHTML='<option value="">Todas</option>'+allCats.map(c=>`<option ${c===cat?'selected':''}>${c}</option>`).join('');
-  // Filter
-  let list=products.filter(p=>(!q||p.name.toLowerCase().includes(q))&&(!cat||p.category===cat));
-  const getImg=p=>(p.images&&p.images[0])||p.image||'';
-  document.getElementById('salesBody').innerHTML=list.map(p=>`<tr>
-    <td><img src="${getImg(p)}" onerror="this.style.visibility='hidden'"></td>
-    <td><b>${p.name}</b>${p.discount?` <span class="tag tag-r">-${p.discount}%</span>`:''}</td>
-    <td><span class="tag tag-o">${p.category}</span></td>
-    <td>RD$ ${p.price.toLocaleString()}</td>
-    <td style="color:var(--dim)">RD$ ${(p.cost||0).toLocaleString()}</td>
-    <td class="${p.stock<=3?'stock-low':''}">${p.stock}</td>
-    <td>${p.sold||0}</td>
-    <td class="acts"><button class="btn btn-g btn-sm" onclick="editProd('${p.id}')">✏️</button><button class="btn btn-d btn-sm" onclick="delProd('${p.id}')">🗑️</button></td>
-  </tr>`).join('')||'<tr><td colspan="8" style="text-align:center;color:var(--dim)">Sin productos</td></tr>';
-  // Mobile
-  document.getElementById('salesMList').innerHTML=list.map(p=>`<div class="m-card">
-    <img src="${getImg(p)}" onerror="this.style.visibility='hidden'">
-    <div class="m-card-info"><h4>${p.name}</h4><small>RD$ ${p.price.toLocaleString()} · Stock: ${p.stock}</small></div>
-    <div class="acts"><button class="btn btn-g btn-sm" onclick="editProd('${p.id}')">✏️</button><button class="btn btn-d btn-sm" onclick="delProd('${p.id}')">🗑️</button></div>
-  </div>`).join('');
-}
-
-// ═══ PRODUCT MODAL ═══
-function openProductModal(p=null){
-  editId=p?p.id:null;
-  document.getElementById('prodModalTitle').textContent=p?'Editar Producto':'Nuevo Producto';
-  document.getElementById('fName').value=p?p.name:'';
-  document.getElementById('fPrice').value=p?p.price:'';
-  document.getElementById('fStock').value=p?p.stock:0;
-  document.getElementById('fCost').value=p?p.cost||0:0;
-  document.getElementById('fMargin').value=50;
-  document.getElementById('fDiscount').value=p?p.discount||0:0;
-  document.getElementById('fDesc').value=p?p.desc||p.description||'':'';
-  document.getElementById('fVideo').value=p?p.video||'':'';
-  // Category select
-  const catSel=document.getElementById('fCat');
-  catSel.innerHTML=categories.map(c=>`<option ${p&&p.category===c.name?'selected':''}>${c.name}</option>`).join('');
-  if(p){const c=categories.find(x=>x.name===p.category);if(c)document.getElementById('fMargin').value=c.margin}
-  // Images
-  imgs=p&&p.images?[...p.images]:[];renderGallery();
-  // Specs
-  let specs=p?p.specs:{};if(typeof specs==='string')try{specs=JSON.parse(specs)}catch(e){specs={}}
-  document.getElementById('fSpecs').innerHTML='';
-  if(Object.keys(specs).length)Object.entries(specs).forEach(([k,v])=>addSpec(k,v));else addSpec();
-  calcPrice();
-  document.getElementById('prodModal').classList.add('on');
-}
-function closeProdModal(){document.getElementById('prodModal').classList.remove('on');editId=null}
-function editProd(id){const p=products.find(x=>x.id===id);if(p)openProductModal(p)}
-function delProd(id){if(!confirm('¿Eliminar producto?'))return;products=products.filter(x=>x.id!==id);saveProducts();renderSales();renderDashboard();sbDel('products',id)}
-function saveProd(){
-  const specs={};document.querySelectorAll('#fSpecs .spec-row').forEach(r=>{const k=r.querySelector('.sk').value.trim(),v=r.querySelector('.sv').value.trim();if(k&&v)specs[k]=v});
-  const data={name:document.getElementById('fName').value.trim(),category:document.getElementById('fCat').value,price:+document.getElementById('fPrice').value||0,cost:+document.getElementById('fCost').value||0,stock:+document.getElementById('fStock').value||0,sold:0,discount:+document.getElementById('fDiscount').value||0,desc:document.getElementById('fDesc').value.trim(),video:document.getElementById('fVideo').value.trim(),images:imgs,image:imgs[0]||'',specs,updated_at:new Date().toISOString()};
-  if(!data.name)return toast('Nombre requerido');
-  if(editId){const i=products.findIndex(x=>x.id===editId);data.id=editId;data.sold=products[i].sold||0;products[i]={...products[i],...data};sbPatch('products',editId,data)}
-  else{data.id='ts-'+Date.now();products.push(data);sbPost('products',data)}
-  saveProducts();closeProdModal();renderSales();renderDashboard();toast('Producto guardado ✓');
-}
-
-// ═══ PRICE CALC ═══
-function calcPrice(){
-  const cost=+document.getElementById('fCost').value||0;
-  const margin=+document.getElementById('fMargin').value||0;
-  const disc=+document.getElementById('fDiscount').value||0;
-  const suggested=Math.round(cost*(1+margin/100));
-  const final=Math.round(suggested*(1-disc/100));
-  document.getElementById('fSuggested').value=`RD$ ${suggested.toLocaleString()} → con desc: RD$ ${final.toLocaleString()} (ganancia: RD$ ${(final-cost).toLocaleString()})`;
-}
-
-// ═══ GALLERY ═══
-function renderGallery(){
-  document.getElementById('fGallery').innerHTML=imgs.map((url,i)=>`<div class="gal-item" draggable="true" ondragstart="gDrag(event,${i})" ondragover="event.preventDefault()" ondrop="gDrop(event,${i})"><img src="${url}"><button class="rm" onclick="imgs.splice(${i},1);renderGallery()">×</button></div>`).join('')+`<label class="gal-add"><input type="file" accept="image/*" style="display:none" onchange="uploadImg(this)">+</label>`;
-}
-let gIdx=null;
-function gDrag(e,i){gIdx=i}
-function gDrop(e,i){e.preventDefault();if(gIdx===null)return;const item=imgs.splice(gIdx,1)[0];imgs.splice(i,0,item);gIdx=null;renderGallery()}
-function toggleUrlAdd(){const r=document.getElementById('urlAddRow');r.style.display=r.style.display==='none'?'flex':'none'}
-function addImgUrl(){const u=document.getElementById('fImgUrl').value.trim();if(u){imgs.push(u);document.getElementById('fImgUrl').value='';renderGallery()}}
-async function uploadImg(input){const f=input.files[0];if(!f)return;const fd=new FormData();fd.append('image',f);try{const r=await fetch('https://api.imgbb.com/1/upload?key='+IMGBB,{method:'POST',body:fd});const j=await r.json();if(j.success){imgs.push(j.data.url);renderGallery();toast('Imagen subida ✓')}else toast('Error al subir')}catch(e){toast('Error de red')}input.value=''}
-
-// ═══ SPECS ═══
-function addSpec(k='',v=''){document.getElementById('fSpecs').insertAdjacentHTML('beforeend',`<div class="spec-row"><input class="sk" value="${k}" placeholder="Clave"><input class="sv" value="${v}" placeholder="Valor"><button class="btn btn-d btn-sm" onclick="this.parentElement.remove()">×</button></div>`)}
-async function aiSpecs(){const name=document.getElementById('fName').value;if(!name)return toast('Ingresa nombre primero');try{const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:`Genera 5 especificaciones técnicas para "${name}". Solo JSON: {"clave":"valor"}`}]}]})});const j=await r.json();const t=j.candidates[0].content.parts[0].text.match(/\{[\s\S]*\}/);if(t){const s=JSON.parse(t[0]);document.getElementById('fSpecs').innerHTML='';Object.entries(s).forEach(([k,v])=>addSpec(k,String(v)));toast('Specs generados ✓')}}catch(e){toast('Error AI')}}
-
-// ═══ CATEGORIES ═══
-function renderCatsPage(){
-  const counts={};products.forEach(p=>{counts[p.category]=(counts[p.category]||0)+1});
-  document.getElementById('catsBody').innerHTML=categories.map((c,i)=>`<tr>
-    <td><b>${c.name}</b></td>
-    <td><span class="tag tag-o">${c.margin}%</span></td>
-    <td>${counts[c.name]||0} productos</td>
-    <td>${i>=4?`<button class="btn btn-d btn-sm" onclick="delCat(${i})">×</button>`:''}</td>
-  </tr>`).join('');
-}
-function addCategory(){
-  const name=document.getElementById('newCatName').value.trim();
-  const margin=+document.getElementById('newCatMargin').value||50;
-  if(!name)return;
-  if(categories.find(c=>c.name===name))return toast('Ya existe');
-  categories.push({name,margin});saveCats();renderCatsPage();document.getElementById('newCatName').value='';toast('Categoría agregada');
-}
-function delCat(i){categories.splice(i,1);saveCats();renderCatsPage()}
-
-// ═══ MEMBERS ═══
-function renderMembers(data){
-  document.getElementById('membersTotal').textContent=data.length;
-  const recent=data.filter(m=>new Date(m.created_at)>new Date(Date.now()-30*86400000));
-  document.getElementById('membersActive').textContent=recent.length;
-  document.getElementById('membersBody').innerHTML=data.map(m=>`<tr><td>${m.name||'—'}</td><td>${m.email||'—'}</td><td>${m.phone||'—'}</td><td>${m.city||'—'}</td><td>${m.created_at?new Date(m.created_at).toLocaleDateString():''}</td></tr>`).join('')||'<tr><td colspan="5" style="text-align:center;color:var(--dim)">Sin miembros</td></tr>';
-}
-
-// ═══ OTHER MODULES ═══
-function renderEduca(certs){
-  document.getElementById('educaCerts').textContent=certs.length;
-  document.getElementById('educaBody').innerHTML=certs.map(c=>`<tr><td>${c.course||''}</td><td>${c.student||''}</td><td><span class="tag tag-b">${c.cert_id||''}</span></td><td>${c.score||0}%</td><td>${c.created_at?new Date(c.created_at).toLocaleDateString():''}</td></tr>`).join('')||'<tr><td colspan="5" style="text-align:center;color:var(--dim)">Sin certificados</td></tr>';
-  // Render courses list (from frontend config)
-  const courses=[
-    {title:'Excel Avanzado para Negocios',instructor:'Lic. María Tavárez',lessons:6,level:'Intermedio',students:1240},
-    {title:'Ingeniería de Prompts e IA',instructor:'Ing. Balmis Reynoso',lessons:5,level:'Básico',students:2105},
-    {title:'Inglés Técnico para Call Center',instructor:'Prof. John Smith',lessons:6,level:'Intermedio',students:980},
-    {title:'E-Commerce desde Cero',instructor:'Lic. Luis M. Herrera',lessons:5,level:'Básico',students:1560},
-    {title:'Python para Automatización',instructor:'Ing. Balmis Reynoso',lessons:6,level:'Básico',students:1820}
-  ];
-  document.getElementById('educaCoursesBody').innerHTML=courses.map(c=>`<tr><td><b>${c.title}</b></td><td>${c.instructor}</td><td>${c.lessons}</td><td><span class="tag tag-b">${c.level}</span></td><td>${c.students.toLocaleString()}</td></tr>`).join('');
-}
-function renderLleva(data){
-  document.getElementById('llevaTotal').textContent=data.length;
-  document.getElementById('llevaPending').textContent=data.filter(d=>d.status==='pending').length;
-  document.getElementById('llevaDone').textContent=data.filter(d=>d.status==='delivered').length;
-  const statusOpts=['pending','assigned','pickup','in_transit','delivered','cancelled'];
-  const statusLabels={pending:'Pendiente',assigned:'Asignado',pickup:'Recogiendo',in_transit:'En tránsito',delivered:'Entregado',cancelled:'Cancelado'};
-  document.getElementById('llevaBody').innerHTML=data.slice(0,30).map(d=>`<tr>
-    <td>${d.origin||''}</td><td>${d.dest||''}</td><td>${d.item||''}</td><td>${d.vehicle||''}</td>
-    <td>RD$ ${d.fare||0}</td>
-    <td><select class="btn-sm" style="padding:3px 6px;font-size:.7rem" onchange="updateStatus('lleva_requests','${d.id}',this.value)">${statusOpts.map(s=>`<option value="${s}" ${d.status===s?'selected':''}>${statusLabels[s]}</option>`).join('')}</select></td>
-    <td>${d.created_at?new Date(d.created_at).toLocaleDateString():''}</td>
-  </tr>`).join('')||'<tr><td colspan="7" style="text-align:center;color:var(--dim)">Sin envíos</td></tr>';
-}
-function renderRepara(data){
-  document.getElementById('reparaTotal').textContent=data.length;
-  document.getElementById('reparaActive').textContent=data.filter(d=>d.status==='pending'||d.status==='in_progress').length;
-  document.getElementById('reparaDone').textContent=data.filter(d=>d.status==='completed').length;
-  const statusOpts=['pending','in_progress','completed','cancelled'];
-  const statusLabels={pending:'Pendiente',in_progress:'En proceso',completed:'Completado',cancelled:'Cancelado'};
-  const statusTags={pending:'tag-o',in_progress:'tag-b',completed:'tag-g',cancelled:'tag-r'};
-  document.getElementById('reparaBody').innerHTML=data.slice(0,30).map(d=>`<tr>
-    <td><small>${d.ticket||d.id?.slice(0,8)||'—'}</small></td>
-    <td>${d.device||''}</td><td>${d.issue||''}</td>
-    <td>${d.customer?.name||'—'}</td>
-    <td><select class="btn-sm" style="padding:3px 6px;font-size:.7rem" onchange="updateStatus('repara_bookings','${d.id}',this.value)">${statusOpts.map(s=>`<option value="${s}" ${d.status===s?'selected':''}>${statusLabels[s]}</option>`).join('')}</select></td>
-    <td class="acts"><a href="https://wa.me/${(d.contact||d.customer?.phone||'').replace(/\D/g,'')}" target="_blank" class="btn btn-g btn-sm" title="WhatsApp">💬</a></td>
-  </tr>`).join('')||'<tr><td colspan="6" style="text-align:center;color:var(--dim)">Sin tickets</td></tr>';
-}
-function renderInstala(data){
-  document.getElementById('instalaTotal').textContent=data.length;
-  document.getElementById('instalaPending').textContent=data.filter(d=>d.status!=='completed'&&d.status!=='cancelled').length;
-  const statusOpts=['confirmed','in_progress','completed','cancelled'];
-  const statusLabels={confirmed:'Confirmada',in_progress:'En curso',completed:'Completada',cancelled:'Cancelada'};
-  document.getElementById('instalaBody').innerHTML=data.slice(0,30).map(d=>`<tr>
-    <td>${d.service||''}</td><td>${d.tech||''}</td><td>${d.date||''}</td>
-    <td>${d.customer?.name||'—'}</td>
-    <td>RD$ ${d.price||0}</td>
-    <td><select class="btn-sm" style="padding:3px 6px;font-size:.7rem" onchange="updateStatus('instala_bookings','${d.id}',this.value)">${statusOpts.map(s=>`<option value="${s}" ${d.status===s?'selected':''}>${statusLabels[s]}</option>`).join('')}</select></td>
-    <td class="acts"><a href="https://wa.me/${(d.customer?.phone||'').replace(/\D/g,'')}" target="_blank" class="btn btn-g btn-sm" title="WhatsApp">💬</a></td>
-  </tr>`).join('')||'<tr><td colspan="7" style="text-align:center;color:var(--dim)">Sin instalaciones</td></tr>';
-}
-
-// ═══ STATUS UPDATES (for repara/instala/lleva) ═══
-async function updateStatus(table,id,newStatus){
-  await sbPatch(table,id,{status:newStatus});
-  toast(`Estado actualizado → ${newStatus}`);
-  // Refresh data
-  const data=await sbGet(table);
-  if(data){
-    if(table==='repara_bookings')renderRepara(data);
-    else if(table==='instala_bookings')renderInstala(data);
-    else if(table==='lleva_requests')renderLleva(data);
-  }
-}
-
-// ═══ CSV EXPORT ═══
-function exportCSV(){
-  const h=['ID','Nombre','Categoría','Precio','Costo','Ganancia','Stock','Vendidos','Descuento'];
-  const rows=products.map(p=>[p.id,`"${p.name}"`,`"${p.category}"`,p.price,p.cost||0,p.price-(p.cost||0),p.stock,p.sold||0,p.discount||0]);
-  const csv=[h.join(','),...rows.map(r=>r.join(','))].join('\n');
-  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='telosales_inventario.csv';a.click();toast('CSV descargado');
-}
-
-// ═══ TOAST ═══
-function toast(msg){const t=document.createElement('div');t.className='toast';t.textContent=msg;document.getElementById('toasts').appendChild(t);setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.remove(),300)},3000)}
+// ═══ LEGACY: este bloque fue reemplazado por admin.js (auth real con Supabase, sin credenciales hardcodeadas).
+// La lógica vive ahora en admin.js para separar estructura (HTML) de comportamiento (JS).
+// La función toast() y todas las demás se definen en admin.js.
 </script>
+<!-- Supabase JS Client + Admin Logic (auth real, sin credenciales hardcodeadas) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="admin.js"></script>
 </body>
 </html>

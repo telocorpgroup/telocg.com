@@ -164,6 +164,113 @@ async function syncProductsFromSupabase() {
   } catch (e) { /* Supabase unavailable — keep local catalog */ }
 }
 
+// Load courses from Supabase (replaces hardcoded array if available)
+async function syncCoursesFromSupabase() {
+  try {
+    const res = await fetch(`${BackendService.config.supabaseUrl}/rest/v1/courses?select=*&order=sort_order.asc`, {
+      headers: { 'apikey': BackendService.config.supabaseKey, 'Authorization': `Bearer ${BackendService.config.supabaseKey}` }
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.length > 0) {
+        courses = data.map(c => ({
+          id: c.id,
+          title: c.title,
+          icon: c.icon || '📚',
+          path: c.path || 'tech',
+          duration: c.duration || '10h',
+          level: c.level || 'Básico',
+          instructor: c.instructor,
+          students: c.students || 0,
+          rating: c.rating || 5,
+          lessons: Array.isArray(c.lessons) ? c.lessons : (typeof c.lessons === 'string' ? JSON.parse(c.lessons || '[]') : []),
+          quiz: Array.isArray(c.quiz) ? c.quiz : (typeof c.quiz === 'string' ? JSON.parse(c.quiz || '[]') : [])
+        }));
+        renderCourses();
+        console.log(`[Educa] Synced ${courses.length} courses from Supabase`);
+      }
+    }
+  } catch (e) { /* keep local catalog */ }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// TRACKING REAL — lee estados persistidos en Supabase
+// Muestra al usuario el estado real de sus solicitudes gestionado por el admin
+// ═══════════════════════════════════════════════════════════════
+
+const STATUS_LABELS = {
+  repara: { pending: 'Pendiente', in_progress: 'En diagnóstico', completed: 'Reparación completada', cancelled: 'Cancelada' },
+  instala: { confirmed: 'Cita confirmada', in_progress: 'En curso', completed: 'Completada', cancelled: 'Cancelada' },
+  lleva: { pending: 'Buscando mensajero', assigned: 'Mensajero asignado', pickup: 'Recogiendo paquete', in_transit: 'En tránsito', delivered: 'Entregado', cancelled: 'Cancelado' }
+};
+
+// Carga el historial real del usuario desde Supabase y lo renderiza en los CRM lists
+async function loadUserHistory() {
+  const phone = State.userProfile.phone;
+  const email = State.userProfile.email;
+  if (!phone && !email) return; // sin perfil no se puede vincular
+
+  const filter = (col) => {
+    const parts = [];
+    if (phone) parts.push(`customer->>phone=eq.${encodeURIComponent(phone)}`);
+    if (email) parts.push(`customer->>email=eq.${encodeURIComponent(email)}`);
+    return parts.length ? `&or=(${parts.join(',')})` : '';
+  };
+
+  try {
+    // TeloRepara history
+    const [reparaRes, instalaRes, llevaRes] = await Promise.all([
+      fetch(`${BackendService.config.supabaseUrl}/rest/v1/repara_bookings?select=*&order=created_at.desc${filter()}&limit=10`, { headers: { apikey: BackendService.config.supabaseKey } }),
+      fetch(`${BackendService.config.supabaseUrl}/rest/v1/instala_bookings?select=*&order=created_at.desc${filter()}&limit=10`, { headers: { apikey: BackendService.config.supabaseKey } }),
+      fetch(`${BackendService.config.supabaseUrl}/rest/v1/lleva_requests?select=*&order=created_at.desc${filter()}&limit=10`, { headers: { apikey: BackendService.config.supabaseKey } })
+    ]);
+
+    const repara = reparaRes.ok ? await reparaRes.json() : [];
+    const instala = instalaRes.ok ? await instalaRes.json() : [];
+    const lleva = llevaRes.ok ? await llevaRes.json() : [];
+
+    renderReparaHistory(repara);
+    renderInstalaHistory(instala);
+    renderLlevaHistory(lleva);
+  } catch (e) { /* silent */ }
+}
+
+function renderReparaHistory(items) {
+  const el = document.getElementById('repara-crm-list');
+  if (!el) return;
+  if (!items || !items.length) { el.innerHTML = '<p class="text-muted text-center">Sin reparaciones previas registradas.</p>'; return; }
+  el.innerHTML = items.map(d => {
+    const status = d.status || 'pending';
+    const label = STATUS_LABELS.repara[status] || status;
+    const color = status === 'completed' ? 'var(--c-success)' : status === 'cancelled' ? 'var(--c-danger)' : 'var(--c-repara)';
+    return `<div class="crm-item"><div class="crm-item__info"><strong>${d.device || 'Dispositivo'}</strong> · ${d.issue || ''}<small>Ticket: ${d.ticket || (d.id && d.id.slice(0, 8)) || '—'}</small></div><span class="status-pill" style="background:${color}22;color:${color}">${label}</span></div>`;
+  }).join('');
+}
+
+function renderInstalaHistory(items) {
+  const el = document.getElementById('instala-crm-list');
+  if (!el) return;
+  if (!items || !items.length) { el.innerHTML = '<p class="text-muted text-center">Sin instalaciones previas registradas.</p>'; return; }
+  el.innerHTML = items.map(d => {
+    const status = d.status || 'confirmed';
+    const label = STATUS_LABELS.instala[status] || status;
+    const color = status === 'completed' ? 'var(--c-success)' : status === 'cancelled' ? 'var(--c-danger)' : 'var(--c-instala)';
+    return `<div class="crm-item"><div class="crm-item__info"><strong>${d.service || 'Servicio'}</strong><small>${d.date || ''} · ${d.tech || ''}</small></div><span class="status-pill" style="background:${color}22;color:${color}">${label}</span></div>`;
+  }).join('');
+}
+
+function renderLlevaHistory(items) {
+  // Reutiliza el chat-box del estado de envío si está oculto, o crea un resumen
+  const statusCard = document.getElementById('lleva-status-card');
+  if (statusCard && !statusCard.hidden) return; // hay un envío activo en pantalla
+  if (!items || !items.length) return;
+  // Si no hay envío activo, mostrar último estado real en el status card
+  const last = items[0];
+  if (last.status === 'delivered' || last.status === 'cancelled') return; // ya terminado
+  const label = STATUS_LABELS.lleva[last.status] || last.status;
+  showToast(`Tienes un envío: ${label}`);
+}
+
 const FREE_SHIPPING_THRESHOLD = 1500;
 const SHIPPING_COST = 250;
 
@@ -218,6 +325,11 @@ function switchView(viewId) {
   closeMobileMenu();
   window.scrollTo(0, 0);
   document.getElementById('views').scrollTop = 0;
+
+  // Lazy-load Google Maps only when entering TeloLleva (perf optimization)
+  if (viewId === 'lleva') loadGoogleMaps();
+  // Refresh user history when entering CRM sections
+  if (viewId === 'repara' || viewId === 'instala') loadUserHistory();
 }
 
 function closeMobileMenu() {
@@ -312,7 +424,6 @@ function quickAddToCart(id) {
   updateCartBadge();
   const p = products.find(x => x.id === id);
   showToast(`${p.title.slice(0, 24)}… añadido`);
-  BackendService.sendWebhook(BackendService.config.n8nOrders, { event: 'cart_add', product: p.title, price: p.price, qty: 1, timestamp: new Date().toISOString() });
 }
 
 function openProductModal(id) {
@@ -375,6 +486,8 @@ function openProductModal(id) {
     </div>`;
   modal.classList.add('active');
   overlay.classList.add('active');
+  // Accessibility: trap focus inside modal
+  trapFocus(modal);
   // Initialize hover-zoom after DOM update
   setTimeout(initProductImageZoom, 50);
 }
@@ -382,7 +495,54 @@ function openProductModal(id) {
 function closeProductModal() {
   document.getElementById('product-modal').classList.remove('active');
   document.getElementById('product-modal-overlay').classList.remove('active');
+  releaseFocusTrap();
 }
+
+// ═══════════════════════════════════════════════════════════════
+// FOCUS TRAP — Accessibility: keeps focus inside open modals (WCAG)
+// ═══════════════════════════════════════════════════════════════
+let _trapHandler = null;
+let _lastFocused = null;
+
+function trapFocus(container) {
+  _lastFocused = document.activeElement;
+  _trapHandler = (e) => {
+    if (e.key !== 'Tab') return;
+    const focusable = container.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+    if (!focusable.length) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault(); last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault(); first.focus();
+    }
+  };
+  container.addEventListener('keydown', _trapHandler);
+  // Enfocar primer elemento focusable al abrir
+  setTimeout(() => {
+    const f = container.querySelector('button, [href], input, [tabindex]:not([tabindex="-1"])');
+    if (f) f.focus();
+  }, 50);
+}
+
+function releaseFocusTrap() {
+  if (_lastFocused) _lastFocused.focus();
+  if (_trapHandler) {
+    document.removeEventListener('keydown', _trapHandler);
+    _trapHandler = null;
+  }
+}
+
+// Esc cerrar modales
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    const pm = document.getElementById('product-modal');
+    if (pm && pm.classList.contains('active')) closeProductModal();
+    const cm = document.getElementById('cert-modal');
+    if (cm && cm.classList.contains('active')) closeCertificate();
+  }
+});
 
 let modalQty = 1;
 function adjustQty(delta) {
@@ -404,9 +564,6 @@ function addToCart(id) {
   updateCartBadge();
   showToast('Añadido al carrito');
   closeProductModal();
-  // Send to backend
-  const p = products.find(x => x.id === id);
-  if (p) BackendService.sendWebhook(BackendService.config.n8nOrders, { event: 'cart_add', product: p.title, price: p.price, qty: modalQty, timestamp: new Date().toISOString() });
 }
 
 function removeFromCart(id) {
@@ -843,6 +1000,24 @@ function filterCoursesByPath(path) {
 const llevaZones = {};
 let gmapInstance = null, gmapDirectionsService = null, gmapDirectionsRenderer = null;
 
+// Google Maps — LAZY LOAD on demand (perf: ahorra ~200-500KB en carga inicial)
+let _mapsLoading = false;
+function loadGoogleMaps() {
+  if (window.google || _mapsLoading) return;
+  _mapsLoading = true;
+  // Fallback: si no carga en 8s, mostrar mensaje
+  window._mapsTimeout = setTimeout(() => {
+    const el = document.getElementById('gmap');
+    if (el && !window.google) {
+      el.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;gap:8px;color:#94a3b8;padding:20px;text-align:center;"><p style="font-size:0.9rem;">⚠️ Google Maps no pudo cargar.</p><p style="font-size:0.75rem;">Usa el formulario manual o contáctanos por WhatsApp.</p></div>';
+    }
+  }, 8000);
+  const s = document.createElement('script');
+  s.async = true;
+  s.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyB6Fw9dciFlipwPONefQbbUB0tJBDWibFc&libraries=places&callback=initGoogleMaps';
+  document.head.appendChild(s);
+}
+
 // Google Maps Initialization (called by Maps API callback)
 window.initGoogleMaps = function() {
   const mapDiv = document.getElementById('gmap');
@@ -961,18 +1136,33 @@ function calculateLlevaRoute() {
 function updateLlevaPrice() { calculateLlevaRoute(); }
 
 function startLlevaRequest() {
+  const originInput = document.getElementById('lleva-origin-input');
+  const destInput = document.getElementById('lleva-dest-input');
+  // Validación de campos requeridos
+  const item = document.getElementById('lleva-item').value.trim();
+  const vehicle = document.querySelector('.vehicle-option.active')?.dataset.vehicle;
+  const fare = parseInt(document.getElementById('lleva-fare').value);
+  if (!originInput?.value.trim()) return showToast('Indica el punto de recogida', 'error');
+  if (!destInput?.value.trim()) return showToast('Indica el punto de entrega', 'error');
+  if (!item) return showToast('Describe qué vas a enviar', 'error');
+  if (!fare || fare < 100) return showToast('La tarifa debe ser de al menos RD$ 100', 'error');
+
   const payload = {
-    origin: document.getElementById('lleva-origin').value,
-    dest: document.getElementById('lleva-dest').value,
-    item: document.getElementById('lleva-item').value,
+    origin: originInput.value.trim(),
+    dest: destInput.value.trim(),
+    item,
     details: document.getElementById('lleva-details').value,
-    vehicle: document.querySelector('.vehicle-option.active')?.dataset.vehicle,
-    fare: document.getElementById('lleva-fare').value,
+    vehicle,
+    fare,
     schedule: document.getElementById('lleva-schedule').value,
+    origin_lat: parseFloat(document.getElementById('lleva-origin-lat').value) || null,
+    origin_lng: parseFloat(document.getElementById('lleva-origin-lng').value) || null,
+    dest_lat: parseFloat(document.getElementById('lleva-dest-lat').value) || null,
+    dest_lng: parseFloat(document.getElementById('lleva-dest-lng').value) || null,
     customer: State.userProfile,
+    status: 'pending',
     timestamp: new Date().toISOString()
   };
-  BackendService.sendWebhook(BackendService.config.n8nServices, { event: 'lleva_request', ...payload });
   BackendService.supabaseQuery('lleva_requests', 'POST', payload);
   // Simulate offers
   document.getElementById('lleva-form-card').hidden = true;
@@ -1095,8 +1285,22 @@ function updateReparaQuote() {
 
 let reparaTimer = null;
 function bookRepara() {
-  const payload = { event: 'repara_booking', device: document.getElementById('repara-device').value, issue: document.getElementById('repara-issue').value, address: document.getElementById('repara-address').value, customer: State.userProfile, timestamp: new Date().toISOString() };
-  BackendService.sendWebhook(BackendService.config.n8nServices, payload);
+  const device = document.getElementById('repara-device').value;
+  const issue = document.getElementById('repara-issue').value;
+  const address = document.getElementById('repara-address').value.trim();
+  const contact = document.getElementById('repara-contact').value.trim();
+  if (!address) return showToast('Indica la dirección de recogida', 'error');
+  if (!contact) return showToast('Indica un teléfono/WhatsApp de contacto', 'error');
+
+  const payload = {
+    device, issue,
+    brand: document.getElementById('repara-brand').value,
+    description: document.getElementById('repara-desc').value,
+    address, contact,
+    customer: State.userProfile,
+    status: 'pending',
+    created_at: new Date().toISOString()
+  };
   BackendService.supabaseQuery('repara_bookings', 'POST', payload);
   const ticket = `RP-${Date.now().toString().slice(-6)}`;
   document.getElementById('repara-tracker').hidden = false;
@@ -1132,8 +1336,23 @@ function updateInstalaPrice() {
 function bookInstala() {
   const service = document.getElementById('instala-service').value;
   const tech = document.querySelector('.tech-card.active')?.dataset.tech || 'ramon';
-  const payload = { event: 'instala_booking', service: instalaNames[service], date: document.getElementById('instala-date').value, time: document.getElementById('instala-time').value, tech, price: instalaPrices[service], customer: State.userProfile, timestamp: new Date().toISOString() };
-  BackendService.sendWebhook(BackendService.config.n8nServices, payload);
+  const date = document.getElementById('instala-date').value;
+  const address = document.getElementById('instala-address').value.trim();
+  if (!date) return showToast('Selecciona una fecha', 'error');
+  if (!address) return showToast('Indica la dirección', 'error');
+
+  const payload = {
+    service: instalaNames[service],
+    date,
+    time: document.getElementById('instala-time').value,
+    tech,
+    price: instalaPrices[service],
+    address,
+    notes: document.getElementById('instala-notes').value,
+    customer: State.userProfile,
+    status: 'confirmed',
+    created_at: new Date().toISOString()
+  };
   BackendService.supabaseQuery('instala_bookings', 'POST', payload);
   document.getElementById('instala-confirmation').hidden = false;
   document.getElementById('instala-details').innerHTML = `<ul style="list-style:none;display:flex;flex-direction:column;gap:8px;"><li><strong>Servicio:</strong> ${instalaNames[service]}</li><li><strong>Fecha:</strong> ${payload.date}</li><li><strong>Horario:</strong> ${payload.time === 'am' ? 'Mañana' : 'Tarde'}</li><li><strong>Técnico:</strong> ${tech}</li><li><strong>Total:</strong> <span style="color:var(--c-instala);font-weight:700">RD$ ${instalaPrices[service].toLocaleString()}</span></li></ul><div class="status-pill status-pill--active" style="margin-top:12px;display:inline-block;">✓ Cita Confirmada</div>`;
@@ -1164,6 +1383,8 @@ function saveProfile(e) {
   loadProfile();
   // Upsert to customers table (creates member record)
   BackendService.supabaseQuery('customers', 'POST', { ...State.userProfile, updated_at: new Date().toISOString() });
+  // Cargar historial de servicios del usuario desde Supabase
+  loadUserHistory();
   showToast('Perfil guardado — Eres miembro de TeloCorp ✓');
 }
 
@@ -1224,15 +1445,21 @@ async function submitContactForm(e) {
   e.preventDefault();
   const form = e.target;
   const data = Object.fromEntries(new FormData(form));
-  // Web3Forms
+  // Validación básica
+  if (!data.name?.trim() || !data.email?.trim() || !data.message?.trim()) {
+    return showToast('Completa todos los campos requeridos', 'error');
+  }
+  // Web3Forms espera FormData (no JSON)
   try {
-    await fetch('https://api.web3forms.com/submit', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
-  } catch (err) { /* fallback */ }
-  // Webhook
-  BackendService.sendWebhook(BackendService.config.n8nLeads, { event: 'contact_form', ...data, timestamp: new Date().toISOString() });
-  BackendService.supabaseQuery('leads', 'POST', data);
+    const fd = new FormData(form);
+    await fetch('https://api.web3forms.com/submit', { method: 'POST', body: fd });
+  } catch (err) { /* fallback silencioso a Supabase */ }
+  // Persistir en Supabase (leads)
+  await BackendService.supabaseQuery('leads', 'POST', {
+    name: data.name, email: data.email, department: data.department, message: data.message
+  });
   form.reset();
-  showToast('Mensaje enviado correctamente');
+  showToast('Mensaje enviado correctamente ✓');
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -1405,11 +1632,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Contact form
   document.getElementById('contact-form').addEventListener('submit', submitContactForm);
-  document.getElementById('partner-form')?.addEventListener('submit', e => {
+  document.getElementById('partner-form')?.addEventListener('submit', async e => {
     e.preventDefault();
-    BackendService.sendWebhook(BackendService.config.n8nLeads, { event: 'partner_application', name: document.getElementById('partner-name').value, email: document.getElementById('partner-email').value, type: document.getElementById('partner-type').value, proposal: document.getElementById('partner-proposal').value });
+    const name = document.getElementById('partner-name').value.trim();
+    const email = document.getElementById('partner-email').value.trim();
+    const type = document.getElementById('partner-type').value;
+    const proposal = document.getElementById('partner-proposal').value.trim();
+    if (!name || !email || !proposal) return showToast('Completa todos los campos', 'error');
+    await BackendService.supabaseQuery('leads', 'POST', { name, email, department: 'partner', message: `[${type}] ${proposal}` });
     e.target.reset();
-    showToast('Propuesta enviada exitosamente');
+    showToast('Propuesta enviada exitosamente ✓');
   });
 
   // Initial renders
@@ -1422,8 +1654,10 @@ document.addEventListener('DOMContentLoaded', () => {
   updateInstalaPrice();
   updateEducaProgress();
 
-  // Sync products from Supabase (updates store in background)
+  // Sync products and courses from Supabase (updates store in background)
   syncProductsFromSupabase();
+  syncCoursesFromSupabase();
+  loadUserHistory();
 
   // Set default install date
   const dateInput = document.getElementById('instala-date');

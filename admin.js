@@ -1,0 +1,903 @@
+/**
+ * TeloCorp Admin Panel — v4.0
+ * - Autenticación real con Supabase Auth (sin credenciales hardcodeadas)
+ * - Sin API keys sensibles en el frontend (todo vía Edge Functions)
+ * - CRUD completo de TODOS los módulos (incluyendo TeloEduca, technicians, services)
+ * - Tracking persistente real (lee estados desde Supabase)
+ */
+
+// ═══ CONFIG (solo datos públicos, nunca secretos) ═══
+const SB_URL = 'https://bhdictzvboiojyxorfiq.supabase.co';
+const SB_ANON_KEY = 'sb_publishable_AgpNN0k_KfW0moe6f1CKXg_qP2GKJCm';
+const BASE_IMG = 'https://telocg.com/TeloCorp/images/';
+
+// Cliente Supabase (cargado vía UMD en el HTML)
+let sb = null;
+let session = null;
+
+// ═══ ESTADO DE LA APP ═══
+let products = [];
+let categories = [];
+let technicians = [];
+let servicesCatalog = { instala: [], repara: [] };
+let courses = [];
+let settings = { coupons: {}, free_shipping_threshold: 1500, shipping_cost: 250, whatsapp_number: '18099038707', paypal_email: 'telocorpgroup@gmail.com' };
+let editId = null;
+let editCourseId = null;
+let imgs = [];
+let gIdx = null;
+
+// ═══ INICIALIZACIÓN SUPABASE ═══
+function initSupabase() {
+  if (!window.supabase) {
+    console.error('Supabase JS no cargado');
+    return false;
+  }
+  sb = window.supabase.createClient(SB_URL, SB_ANON_KEY);
+  return true;
+}
+
+// ═══ AUTENTICACIÓN REAL (Supabase Auth) ═══
+
+async function login() {
+  const email = document.getElementById('lEmail').value.trim();
+  const pass = document.getElementById('lPass').value;
+  const errEl = document.getElementById('lErr');
+
+  if (!email || !pass) {
+    errEl.textContent = 'Ingresa email y contraseña';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  // Feedback visual de carga
+  const btn = document.querySelector('.login-box .btn-p');
+  if (btn) { btn.disabled = true; btn.textContent = 'Verificando...'; }
+
+  try {
+    const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
+    if (error) throw error;
+    session = data.session;
+    showApp();
+  } catch (err) {
+    errEl.textContent = err.message || 'Email o contraseña incorrectos';
+    errEl.style.display = 'block';
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = 'Ingresar'; }
+  }
+}
+
+async function logout() {
+  try { await sb.auth.signOut(); } catch (e) {}
+  sessionStorage.removeItem('tcAdmin');
+  location.reload();
+}
+
+async function checkSession() {
+  if (!sb) return false;
+  const { data } = await sb.auth.getSession();
+  if (data.session) {
+    session = data.session;
+    return true;
+  }
+  return false;
+}
+
+async function showApp() {
+  document.getElementById('loginView').style.display = 'none';
+  document.getElementById('appView').classList.add('on');
+
+  // Email visible en topbar
+  const user = session?.user;
+  const emailLabel = document.getElementById('adminEmail');
+  if (emailLabel && user) emailLabel.textContent = user.email;
+
+  await init();
+}
+
+// ═══ HELPERS SUPABASE (con token de sesión inyectado automáticamente) ═══
+
+async function sbGet(table, query = '') {
+  try {
+    const { data, error } = await sb.from(table).select('*' + query);
+    if (error) throw error;
+    return data || [];
+  } catch (e) {
+    console.error('[sbGet]', table, e);
+    return [];
+  }
+}
+
+async function sbPost(table, payload) {
+  try {
+    const { data, error } = await sb.from(table).insert(payload).select();
+    if (error) throw error;
+    logAudit('create', table, payload.id || (data[0] && data[0].id), payload);
+    return data;
+  } catch (e) {
+    console.error('[sbPost]', table, e);
+    toast('Error: ' + (e.message || 'no se pudo guardar'), 'error');
+    return null;
+  }
+}
+
+async function sbPatch(table, id, payload) {
+  try {
+    const { data, error } = await sb.from(table).update(payload).eq('id', id).select();
+    if (error) throw error;
+    logAudit('update', table, id, payload);
+    return data;
+  } catch (e) {
+    console.error('[sbPatch]', table, e);
+    toast('Error: ' + (e.message || 'no se pudo actualizar'), 'error');
+    return null;
+  }
+}
+
+async function sbDel(table, id) {
+  try {
+    const { error } = await sb.from(table).delete().eq('id', id);
+    if (error) throw error;
+    logAudit('delete', table, id, {});
+    return true;
+  } catch (e) {
+    console.error('[sbDel]', table, e);
+    toast('Error: ' + (e.message || 'no se pudo eliminar'), 'error');
+    return false;
+  }
+}
+
+// Log de auditoría
+async function logAudit(action, entity, entityId, details) {
+  try {
+    await sb.from('audit_log').insert({
+      admin_email: session?.user?.email || 'unknown',
+      action,
+      entity,
+      entity_id: String(entityId || ''),
+      details
+    });
+  } catch (e) { /* no bloquear por audit */ }
+}
+
+// Subida de imágenes vía Edge Function (ImgBB) — sin API key en el frontend
+async function uploadImageViaEdge(file) {
+  const fd = new FormData();
+  fd.append('image', file);
+  try {
+    const r = await fetch(`${SB_URL}/functions/v1/upload-image`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${SB_ANON_KEY}` },
+      body: fd
+    });
+    const j = await r.json();
+    if (j.success) return j.data.url;
+    return null;
+  } catch (e) {
+    console.error('[upload]', e);
+    return null;
+  }
+}
+
+// Generación de specs vía Edge Function (Gemini) — sin API key en el frontend
+async function generateSpecsViaEdge(productName) {
+  try {
+    const r = await fetch(`${SB_URL}/functions/v1/ai-specs`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SB_ANON_KEY}` },
+      body: JSON.stringify({ product_name: productName })
+    });
+    const j = await r.json();
+    return j.specs || null;
+  } catch (e) {
+    console.error('[ai-specs]', e);
+    return null;
+  }
+}
+
+// ═══ NAVIGATION ═══
+document.querySelectorAll('.nav-item').forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
+    const page = document.getElementById('pg-' + btn.dataset.page);
+    if (page) page.classList.add('on');
+    document.querySelector('.sidebar').classList.remove('open');
+    loadPage(btn.dataset.page);
+  };
+});
+
+// ═══ INIT — carga todos los datos desde Supabase ═══
+async function init() {
+  await Promise.all([
+    loadSettings(),
+    loadCategories(),
+    loadTechnicians(),
+    loadServices(),
+    loadProducts(),
+    loadCourses()
+  ]);
+  renderDashboard();
+  renderSales();
+  renderCatsPage();
+  renderTechniciansPage();
+  renderCoursesPage();
+  await syncTransactional();
+}
+
+async function syncTransactional() {
+  const [members, orders, certs, lleva, repara, instala] = await Promise.all([
+    sbGet('customers'),
+    sbGet('orders'),
+    sbGet('certificates'),
+    sbGet('lleva_requests'),
+    sbGet('repara_bookings'),
+    sbGet('instala_bookings')
+  ]);
+  renderMembers(members);
+  renderDashOrders(orders);
+  renderEduca(certs);
+  renderLleva(lleva);
+  renderRepara(repara);
+  renderInstala(instala);
+}
+
+function loadPage(p) {
+  if (p === 'dashboard') renderDashboard();
+  else if (p === 'sales') renderSales();
+  else if (p === 'categories') renderCatsPage();
+  else if (p === 'technicians') renderTechniciansPage();
+  else if (p === 'courses') renderCoursesPage();
+  else if (p === 'services') renderServicesPage();
+  else if (p === 'config') renderConfigPage();
+  else if (p === 'educa') { renderCoursesPage(); sbGet('certificates').then(renderEduca); }
+}
+
+// ═══ LOAD DATA ═══
+
+async function loadSettings() {
+  const data = await sbGet('site_settings', '?id=eq.global&limit=1');
+  if (data && data[0]) settings = { ...settings, ...data[0] };
+}
+
+async function loadCategories() {
+  categories = await sbGet('categories', '?order=name.asc');
+  if (!categories.length) {
+    categories = [
+      { name: 'Covers & Fundas', margin: 50 },
+      { name: 'Cables y Carga', margin: 55 },
+      { name: 'Audio', margin: 45 },
+      { name: 'Equipamiento', margin: 35 }
+    ];
+  }
+}
+
+async function loadTechnicians() {
+  technicians = await sbGet('technicians', '?order=name.asc');
+}
+
+async function loadServices() {
+  const data = await sbGet('services_catalog', '?order=sort_order.asc');
+  servicesCatalog.instala = data.filter(s => s.service === 'instala');
+  servicesCatalog.repara = data.filter(s => s.service === 'repara');
+}
+
+async function loadProducts() {
+  products = await sbGet('products', '?order=created_at.desc');
+}
+
+async function loadCourses() {
+  courses = await sbGet('courses', '?order=sort_order.asc');
+  if (!courses.length) courses = []; // tabla vacía hasta que se ejecute el seed SQL
+}
+
+// ═══ DASHBOARD ═══
+function renderDashboard() {
+  const totalProds = products.length;
+  const totalVal = products.reduce((s, p) => s + (p.price || 0) * (p.stock || 0), 0);
+  const totalSold = products.reduce((s, p) => s + (p.sold || 0), 0);
+  const totalProfit = products.reduce((s, p) => s + ((p.price || 0) - (p.cost || 0)) * (p.sold || 0), 0);
+  document.getElementById('dashStats').innerHTML = `
+    <div class="stat"><div class="label">Productos</div><div class="val">${totalProds}</div></div>
+    <div class="stat"><div class="label">Valor Inventario</div><div class="val" style="color:var(--primary)">RD$ ${totalVal.toLocaleString()}</div></div>
+    <div class="stat"><div class="label">Ventas Totales</div><div class="val" style="color:var(--success)">${totalSold.toLocaleString()}</div></div>
+    <div class="stat"><div class="label">Ganancia Acumulada</div><div class="val" style="color:var(--success)">RD$ ${totalProfit.toLocaleString()}</div></div>
+    <div class="stat"><div class="label">Stock Bajo (≤3)</div><div class="val" style="color:var(--danger)">${products.filter(p => (p.stock || 0) <= 3).length}</div></div>
+    <div class="stat"><div class="label">Cursos Activos</div><div class="val">${courses.filter(c => c.active).length}</div></div>`;
+}
+
+function renderDashOrders(orders) {
+  document.getElementById('dashOrders').innerHTML = (orders && orders.length)
+    ? orders.slice(0, 10).map(o => `<tr>
+        <td>${(o.items && o.items.length) || 0} items</td>
+        <td>RD$ ${(o.total || 0).toLocaleString()}</td>
+        <td><span class="tag tag-b">${o.payment_method || 'card'}</span></td>
+        <td>${o.created_at ? new Date(o.created_at).toLocaleDateString() : ''}</td></tr>`).join('')
+    : '<tr><td colspan="4" style="text-align:center;color:var(--dim);padding:20px">Sin órdenes</td></tr>';
+}
+
+// ═══ TELOSALES — CRUD ═══
+function renderSales() {
+  const q = (document.getElementById('salesSearch')?.value || '').toLowerCase();
+  const cat = document.getElementById('salesCat')?.value || '';
+
+  const sel = document.getElementById('salesCat');
+  const allCats = [...new Set(products.map(p => p.category))].sort();
+  sel.innerHTML = '<option value="">Todas</option>' + allCats.map(c => `<option ${c === cat ? 'selected' : ''}>${c}</option>`).join('');
+
+  const list = products.filter(p => (!q || (p.title || p.name || '').toLowerCase().includes(q)) && (!cat || p.category === cat));
+  const getImg = p => (p.images && p.images[0]) || p.image || '';
+
+  document.getElementById('salesBody').innerHTML = list.map(p => `<tr>
+    <td><img src="${getImg(p)}" onerror="this.style.visibility='hidden'"></td>
+    <td><b>${p.title || p.name}</b>${p.discount ? ` <span class="tag tag-r">-${p.discount}%</span>` : ''}</td>
+    <td><span class="tag tag-o">${p.category}</span></td>
+    <td>RD$ ${(p.price || 0).toLocaleString()}</td>
+    <td style="color:var(--dim)">RD$ ${(p.cost || 0).toLocaleString()}</td>
+    <td class="${(p.stock || 0) <= 3 ? 'stock-low' : ''}">${p.stock || 0}</td>
+    <td>${p.sold || 0}</td>
+    <td class="acts">
+      <button class="btn btn-g btn-sm" onclick="editProd('${p.id}')">✏️</button>
+      <button class="btn btn-d btn-sm" onclick="delProd('${p.id}')">🗑️</button>
+    </td></tr>`).join('') || '<tr><td colspan="8" style="text-align:center;color:var(--dim)">Sin productos</td></tr>';
+
+  document.getElementById('salesMList').innerHTML = list.map(p => `<div class="m-card">
+    <img src="${getImg(p)}" onerror="this.style.visibility='hidden'">
+    <div class="m-card-info"><h4>${p.title || p.name}</h4><small>RD$ ${(p.price || 0).toLocaleString()} · Stock: ${p.stock || 0}</small></div>
+    <div class="acts">
+      <button class="btn btn-g btn-sm" onclick="editProd('${p.id}')">✏️</button>
+      <button class="btn btn-d btn-sm" onclick="delProd('${p.id}')">🗑️</button>
+    </div></div>`).join('');
+}
+
+function openProductModal(p = null) {
+  editId = p ? p.id : null;
+  document.getElementById('prodModalTitle').textContent = p ? 'Editar Producto' : 'Nuevo Producto';
+  document.getElementById('fName').value = p ? (p.title || p.name || '') : '';
+  document.getElementById('fPrice').value = p ? (p.price || 0) : '';
+  document.getElementById('fStock').value = p ? (p.stock || 0) : 0;
+  document.getElementById('fCost').value = p ? (p.cost || 0) : 0;
+  document.getElementById('fMargin').value = 50;
+  document.getElementById('fDiscount').value = p ? (p.discount || 0) : 0;
+  document.getElementById('fDesc').value = p ? (p.description || p.desc || '') : '';
+  document.getElementById('fVideo').value = p ? (p.video || '') : '';
+
+  const catSel = document.getElementById('fCat');
+  catSel.innerHTML = categories.map(c => `<option ${p && p.category === c.name ? 'selected' : ''}>${c.name}</option>`).join('');
+  if (p) { const c = categories.find(x => x.name === p.category); if (c) document.getElementById('fMargin').value = c.margin; }
+
+  imgs = p && p.images ? [...p.images] : [];
+  renderGallery();
+
+  let specs = p ? (p.specs || {}) : {};
+  if (typeof specs === 'string') { try { specs = JSON.parse(specs); } catch (e) { specs = {}; } }
+  document.getElementById('fSpecs').innerHTML = '';
+  if (Object.keys(specs).length) Object.entries(specs).forEach(([k, v]) => addSpec(k, v)); else addSpec();
+
+  calcPrice();
+  document.getElementById('prodModal').classList.add('on');
+}
+
+function closeProdModal() { document.getElementById('prodModal').classList.remove('on'); editId = null; }
+function editProd(id) { const p = products.find(x => x.id === id); if (p) openProductModal(p); }
+
+async function delProd(id) {
+  if (!confirm('¿Eliminar producto?')) return;
+  const ok = await sbDel('products', id);
+  if (ok) { products = products.filter(x => x.id !== id); renderSales(); renderDashboard(); toast('Producto eliminado'); }
+}
+
+async function saveProd() {
+  const name = document.getElementById('fName').value.trim();
+  if (!name) return toast('Nombre requerido', 'error');
+
+  const specs = {};
+  document.querySelectorAll('#fSpecs .spec-row').forEach(r => {
+    const k = r.querySelector('.sk').value.trim();
+    const v = r.querySelector('.sv').value.trim();
+    if (k && v) specs[k] = v;
+  });
+
+  const data = {
+    title: name,
+    category: document.getElementById('fCat').value,
+    price: +document.getElementById('fPrice').value || 0,
+    cost: +document.getElementById('fCost').value || 0,
+    stock: +document.getElementById('fStock').value || 0,
+    discount: +document.getElementById('fDiscount').value || 0,
+    description: document.getElementById('fDesc').value.trim(),
+    video: document.getElementById('fVideo').value.trim(),
+    images: imgs,
+    image: imgs[0] || '',
+    specs,
+    active: true
+  };
+
+  if (editId) {
+    const updated = await sbPatch('products', editId, data);
+    if (updated) { const i = products.findIndex(x => x.id === editId); products[i] = { ...products[i], ...data }; }
+  } else {
+    data.id = 'ts-' + Date.now();
+    data.sold = 0;
+    data.rating = 5;
+    const created = await sbPost('products', data);
+    if (created && created[0]) products.unshift(created[0]);
+  }
+  closeProdModal();
+  renderSales();
+  renderDashboard();
+  toast('Producto guardado ✓');
+}
+
+function calcPrice() {
+  const cost = +document.getElementById('fCost').value || 0;
+  const margin = +document.getElementById('fMargin').value || 0;
+  const disc = +document.getElementById('fDiscount').value || 0;
+  const suggested = Math.round(cost * (1 + margin / 100));
+  const final = Math.round(suggested * (1 - disc / 100));
+  document.getElementById('fSuggested').value = `RD$ ${suggested.toLocaleString()} → con desc: RD$ ${final.toLocaleString()} (ganancia: RD$ ${(final - cost).toLocaleString()})`;
+}
+
+// ═══ GALLERY ═══
+function renderGallery() {
+  document.getElementById('fGallery').innerHTML = imgs.map((url, i) => `<div class="gal-item" draggable="true" ondragstart="gDrag(event,${i})" ondragover="event.preventDefault()" ondrop="gDrop(event,${i})"><img src="${url}"><button class="rm" onclick="imgs.splice(${i},1);renderGallery()">×</button></div>`).join('') + `<label class="gal-add"><input type="file" accept="image/*" style="display:none" onchange="uploadImg(this)">+</label>`;
+}
+function gDrag(e, i) { gIdx = i; }
+function gDrop(e, i) { e.preventDefault(); if (gIdx === null) return; const item = imgs.splice(gIdx, 1)[0]; imgs.splice(i, 0, item); gIdx = null; renderGallery(); }
+function toggleUrlAdd() { const r = document.getElementById('urlAddRow'); r.style.display = r.style.display === 'none' ? 'flex' : 'none'; }
+function addImgUrl() { const u = document.getElementById('fImgUrl').value.trim(); if (u) { imgs.push(u); document.getElementById('fImgUrl').value = ''; renderGallery(); } }
+
+async function uploadImg(input) {
+  const f = input.files[0];
+  if (!f) return;
+  toast('Subiendo imagen...');
+  const url = await uploadImageViaEdge(f);
+  if (url) { imgs.push(url); renderGallery(); toast('Imagen subida ✓'); }
+  else toast('Error al subir imagen', 'error');
+  input.value = '';
+}
+
+// ═══ SPECS ═══
+function addSpec(k = '', v = '') {
+  document.getElementById('fSpecs').insertAdjacentHTML('beforeend',
+    `<div class="spec-row"><input class="sk" value="${k}" placeholder="Clave"><input class="sv" value="${v}" placeholder="Valor"><button class="btn btn-d btn-sm" onclick="this.parentElement.remove()">×</button></div>`);
+}
+
+async function aiSpecs() {
+  const name = document.getElementById('fName').value.trim();
+  if (!name) return toast('Ingresa nombre primero', 'error');
+  toast('Generando specs con IA...');
+  const specs = await generateSpecsViaEdge(name);
+  if (specs && Object.keys(specs).length) {
+    document.getElementById('fSpecs').innerHTML = '';
+    Object.entries(specs).forEach(([k, v]) => addSpec(k, String(v)));
+    toast('Specs generados ✓');
+  } else {
+    toast('No se pudieron generar specs. Intenta de nuevo.', 'error');
+  }
+}
+
+// ═══ CATEGORIES CRUD ═══
+function renderCatsPage() {
+  const counts = {};
+  products.forEach(p => { counts[p.category] = (counts[p.category] || 0) + 1; });
+  document.getElementById('catsBody').innerHTML = categories.map((c, i) => `<tr>
+    <td><b>${c.name}</b></td>
+    <td><input type="number" value="${c.margin || 50}" style="width:70px" onchange="updateCatMargin('${c.name}',this.value)"></td>
+    <td>${counts[c.name] || 0} productos</td>
+    <td><button class="btn btn-d btn-sm" onclick="delCat('${c.name}')">×</button></td></tr>`).join('') || '<tr><td colspan="4" style="text-align:center;color:var(--dim)">Sin categorías</td></tr>';
+}
+
+async function addCategory() {
+  const name = document.getElementById('newCatName').value.trim();
+  const margin = +document.getElementById('newCatMargin').value || 50;
+  if (!name) return;
+  if (categories.find(c => c.name === name)) return toast('Ya existe', 'error');
+  const created = await sbPost('categories', { name, margin, active: true });
+  if (created) { categories.push(created[0]); renderCatsPage(); document.getElementById('newCatName').value = ''; toast('Categoría agregada'); }
+}
+
+async function updateCatMargin(name, margin) {
+  const cat = categories.find(c => c.name === name);
+  if (!cat) return;
+  await sbPatch('categories', cat.id, { margin: +margin });
+  cat.margin = +margin;
+  toast('Margen actualizado');
+}
+
+async function delCat(name) {
+  if (!confirm(`¿Eliminar categoría "${name}"?`)) return;
+  const cat = categories.find(c => c.name === name);
+  if (!cat) return;
+  const ok = await sbDel('categories', cat.id);
+  if (ok) { categories = categories.filter(c => c.name !== name); renderCatsPage(); toast('Categoría eliminada'); }
+}
+
+// ═══ TECHNICIANS CRUD ═══
+function renderTechniciansPage() {
+  document.getElementById('techBody').innerHTML = technicians.map(t => `<tr>
+    <td><b>${t.name}</b></td>
+    <td>${t.specialization || ''}</td>
+    <td>★ ${t.rating || 5}</td>
+    <td>${t.jobs_completed || 0}</td>
+    <td class="acts">
+      <button class="btn btn-g btn-sm" onclick="editTech('${t.id}')">✏️</button>
+      <button class="btn btn-d btn-sm" onclick="delTech('${t.id}')">🗑️</button>
+    </td></tr>`).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--dim)">Sin técnicos</td></tr>';
+}
+
+function editTech(id) {
+  const t = technicians.find(x => x.id === id);
+  document.getElementById('techName').value = t.name;
+  document.getElementById('techSpec').value = t.specialization || '';
+  document.getElementById('techAvatar').value = t.avatar || '👨‍🔧';
+  document.getElementById('techRating').value = t.rating || 5;
+  document.getElementById('techJobs').value = t.jobs_completed || 0;
+  document.getElementById('techSaveBtn').textContent = 'Actualizar';
+  document.getElementById('techSaveBtn').onclick = () => updateTech(id);
+}
+
+async function addTech() {
+  const name = document.getElementById('techName').value.trim();
+  if (!name) return toast('Nombre requerido', 'error');
+  const data = {
+    id: 'tech-' + Date.now(),
+    name,
+    specialization: document.getElementById('techSpec').value.trim(),
+    avatar: document.getElementById('techAvatar').value.trim() || '👨‍🔧',
+    rating: +document.getElementById('techRating').value || 5,
+    jobs_completed: +document.getElementById('techJobs').value || 0,
+    active: true
+  };
+  const created = await sbPost('technicians', data);
+  if (created) { technicians.push(created[0]); renderTechniciansPage(); resetTechForm(); toast('Técnico agregado'); }
+}
+
+async function updateTech(id) {
+  const data = {
+    name: document.getElementById('techName').value.trim(),
+    specialization: document.getElementById('techSpec').value.trim(),
+    avatar: document.getElementById('techAvatar').value.trim() || '👨‍🔧',
+    rating: +document.getElementById('techRating').value || 5,
+    jobs_completed: +document.getElementById('techJobs').value || 0
+  };
+  const updated = await sbPatch('technicians', id, data);
+  if (updated) { const i = technicians.findIndex(x => x.id === id); technicians[i] = { ...technicians[i], ...data }; renderTechniciansPage(); resetTechForm(); toast('Técnico actualizado'); }
+}
+
+function resetTechForm() {
+  ['techName', 'techSpec', 'techAvatar'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('techRating').value = 5;
+  document.getElementById('techJobs').value = 0;
+  document.getElementById('techAvatar').value = '👨‍🔧';
+  document.getElementById('techSaveBtn').textContent = 'Agregar';
+  document.getElementById('techSaveBtn').onclick = addTech;
+}
+
+async function delTech(id) {
+  if (!confirm('¿Eliminar técnico?')) return;
+  const ok = await sbDel('technicians', id);
+  if (ok) { technicians = technicians.filter(x => x.id !== id); renderTechniciansPage(); toast('Técnico eliminado'); }
+}
+
+// ═══ SERVICES CATALOG CRUD ═══
+function renderServicesPage() {
+  const renderList = (list, type) => list.map(s => `<tr>
+    <td><input value="${s.name}" onchange="updateService('${s.id}','name',this.value)" style="width:100%"></td>
+    <td><input type="number" value="${s.price}" onchange="updateService('${s.id}','price',this.value)" style="width:90px"></td>
+    <td><input value="${s.estimated_time || ''}" onchange="updateService('${s.id}','estimated_time',this.value)" style="width:80px"></td>
+    <td><input value="${s.category || ''}" onchange="updateService('${s.id}','category',this.value)" style="width:100px"></td>
+    <td><button class="btn btn-d btn-sm" onclick="delService('${s.id}')">×</button></td></tr>`).join('');
+
+  document.getElementById('servicesInstalaBody').innerHTML = renderList(servicesCatalog.instala, 'instala') || '<tr><td colspan="5" style="text-align:center;color:var(--dim)">Sin servicios</td></tr>';
+  document.getElementById('servicesReparaBody').innerHTML = renderList(servicesCatalog.repara, 'repara') || '<tr><td colspan="5" style="text-align:center;color:var(--dim)">Sin servicios</td></tr>';
+}
+
+async function addService(type) {
+  const maxSort = Math.max(0, ...servicesCatalog[type].map(s => s.sort_order || 0));
+  const data = {
+    id: `${type}-${Date.now()}`,
+    service: type,
+    key: 'new',
+    name: 'Nuevo servicio',
+    price: 1000,
+    estimated_time: '1h',
+    category: '',
+    active: true,
+    sort_order: maxSort + 1
+  };
+  const created = await sbPost('services_catalog', data);
+  if (created) { servicesCatalog[type].push(created[0]); renderServicesPage(); toast('Servicio agregado'); }
+}
+
+async function updateService(id, field, value) {
+  const payload = { [field]: field === 'price' ? (+value || 0) : value };
+  await sbPatch('services_catalog', id, payload);
+  const all = [...servicesCatalog.instala, ...servicesCatalog.repara];
+  const s = all.find(x => x.id === id);
+  if (s) s[field] = payload[field];
+  toast('Actualizado');
+}
+
+async function delService(id) {
+  if (!confirm('¿Eliminar servicio?')) return;
+  const ok = await sbDel('services_catalog', id);
+  if (ok) {
+    servicesCatalog.instala = servicesCatalog.instala.filter(s => s.id !== id);
+    servicesCatalog.repara = servicesCatalog.repara.filter(s => s.id !== id);
+    renderServicesPage();
+    toast('Servicio eliminado');
+  }
+}
+
+// ═══ TELOEDUCA — CRUD COMPLETO DE CURSOS ═══
+function renderCoursesPage() {
+  document.getElementById('educaCourses').textContent = courses.length;
+  document.getElementById('educaLessons').textContent = courses.reduce((s, c) => s + ((c.lessons && c.lessons.length) || 0), 0);
+  document.getElementById('coursesBody').innerHTML = courses.map(c => `<tr>
+    <td>${c.icon || '📚'}</td>
+    <td><b>${c.title}</b>${!c.active ? ' <span class="tag tag-r">Inactivo</span>' : ''}</td>
+    <td>${c.instructor}</td>
+    <td><span class="tag tag-o">${(c.lessons && c.lessons.length) || 0}</span></td>
+    <td><span class="tag tag-b">${c.level}</span></td>
+    <td>${(c.students || 0).toLocaleString()}</td>
+    <td>${(c.rating || 5).toFixed(1)} ★</td>
+    <td class="acts">
+      <button class="btn btn-g btn-sm" onclick="editCourse('${c.id}')">✏️</button>
+      <button class="btn btn-d btn-sm" onclick="delCourse('${c.id}')">🗑️</button>
+    </td></tr>`).join('') || '<tr><td colspan="8" style="text-align:center;color:var(--dim)">Sin cursos</td></tr>';
+}
+
+function openCourseModal(c = null) {
+  editCourseId = c ? c.id : null;
+  document.getElementById('courseModalTitle').textContent = c ? 'Editar Curso' : 'Nuevo Curso';
+  document.getElementById('cTitle').value = c ? (c.title || '') : '';
+  document.getElementById('cDescription').value = c ? (c.description || '') : '';
+  document.getElementById('cIcon').value = c ? (c.icon || '📚') : '📚';
+  document.getElementById('cPath').value = c ? (c.path || 'tech') : 'tech';
+  document.getElementById('cDuration').value = c ? (c.duration || '10h') : '10h';
+  document.getElementById('cLevel').value = c ? (c.level || 'Básico') : 'Básico';
+  document.getElementById('cInstructor').value = c ? (c.instructor || '') : '';
+  document.getElementById('cStudents').value = c ? (c.students || 0) : 0;
+  document.getElementById('cRating').value = c ? (c.rating || 5) : 5;
+  // Lecciones (textarea, una por línea)
+  const lessons = c && c.lessons ? (Array.isArray(c.lessons) ? c.lessons.join('\n') : '') : '';
+  document.getElementById('cLessons').value = lessons;
+  // Quiz (JSON editable)
+  const quiz = c && c.quiz ? (typeof c.quiz === 'string' ? c.quiz : JSON.stringify(c.quiz, null, 2)) : '[]';
+  document.getElementById('cQuiz').value = quiz;
+  document.getElementById('courseModal').classList.add('on');
+}
+
+function closeCourseModal() { document.getElementById('courseModal').classList.remove('on'); editCourseId = null; }
+function editCourse(id) { const c = courses.find(x => x.id === id); if (c) openCourseModal(c); }
+
+async function delCourse(id) {
+  if (!confirm('¿Eliminar curso?')) return;
+  const ok = await sbDel('courses', id);
+  if (ok) { courses = courses.filter(x => x.id !== id); renderCoursesPage(); toast('Curso eliminado'); }
+}
+
+async function saveCourse() {
+  const title = document.getElementById('cTitle').value.trim();
+  const instructor = document.getElementById('cInstructor').value.trim();
+  if (!title) return toast('Título requerido', 'error');
+  if (!instructor) return toast('Instructor requerido', 'error');
+
+  // Parse lecciones (una por línea)
+  const lessons = document.getElementById('cLessons').value.split('\n').map(l => l.trim()).filter(Boolean);
+
+  // Parse quiz JSON
+  let quiz = [];
+  try { quiz = JSON.parse(document.getElementById('cQuiz').value || '[]'); }
+  catch (e) { return toast('Quiz JSON inválido', 'error'); }
+
+  const data = {
+    title,
+    description: document.getElementById('cDescription').value.trim(),
+    icon: document.getElementById('cIcon').value.trim() || '📚',
+    path: document.getElementById('cPath').value,
+    duration: document.getElementById('cDuration').value.trim() || '10h',
+    level: document.getElementById('cLevel').value,
+    instructor,
+    students: +document.getElementById('cStudents').value || 0,
+    rating: +document.getElementById('cRating').value || 5,
+    lessons,
+    quiz,
+    active: true
+  };
+
+  if (editCourseId) {
+    const maxSort = Math.max(0, ...courses.map(c => c.sort_order || 0));
+    if (!('sort_order' in data)) data.sort_order = maxSort + 1;
+    const updated = await sbPatch('courses', editCourseId, data);
+    if (updated) { const i = courses.findIndex(x => x.id === editCourseId); courses[i] = { ...courses[i], ...data }; }
+  } else {
+    data.id = 'course-' + Date.now();
+    data.sort_order = Math.max(0, ...courses.map(c => c.sort_order || 0)) + 1;
+    const created = await sbPost('courses', data);
+    if (created && created[0]) courses.push(created[0]);
+  }
+  closeCourseModal();
+  renderCoursesPage();
+  toast('Curso guardado ✓');
+}
+
+// ═══ MEMBERS ═══
+function renderMembers(data) {
+  document.getElementById('membersTotal').textContent = data.length;
+  const recent = data.filter(m => m.created_at && new Date(m.created_at) > new Date(Date.now() - 30 * 86400000));
+  document.getElementById('membersActive').textContent = recent.length;
+  document.getElementById('membersBody').innerHTML = data.map(m => `<tr>
+    <td>${m.name || '—'}</td>
+    <td>${m.email || '—'}</td>
+    <td>${m.phone || '—'}</td>
+    <td>${m.city || '—'}</td>
+    <td>${m.created_at ? new Date(m.created_at).toLocaleDateString() : ''}</td></tr>`).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--dim)">Sin miembros</td></tr>';
+}
+
+// ═══ CERTIFICATES ═══
+function renderEduca(certs) {
+  document.getElementById('educaCerts').textContent = certs.length;
+  document.getElementById('educaBody').innerHTML = (certs && certs.length)
+    ? certs.map(c => `<tr>
+        <td>${c.course || ''}</td>
+        <td>${c.student || ''}</td>
+        <td><span class="tag tag-b">${c.cert_id || ''}</span></td>
+        <td>${c.score || 0}%</td>
+        <td>${c.created_at ? new Date(c.created_at).toLocaleDateString() : ''}</td></tr>`).join('')
+    : '<tr><td colspan="5" style="text-align:center;color:var(--dim);padding:20px">Sin certificados emitidos</td></tr>';
+}
+
+// ═══ TRANSACTIONAL — estados gestionables ═══
+const STATUS = {
+  lleva:   { opts: ['pending', 'assigned', 'pickup', 'in_transit', 'delivered', 'cancelled'],
+             labels: { pending: 'Pendiente', assigned: 'Asignado', pickup: 'Recogiendo', in_transit: 'En tránsito', delivered: 'Entregado', cancelled: 'Cancelado' } },
+  repara:  { opts: ['pending', 'in_progress', 'completed', 'cancelled'],
+             labels: { pending: 'Pendiente', in_progress: 'En proceso', completed: 'Completado', cancelled: 'Cancelado' } },
+  instala: { opts: ['confirmed', 'in_progress', 'completed', 'cancelled'],
+             labels: { confirmed: 'Confirmada', in_progress: 'En curso', completed: 'Completada', cancelled: 'Cancelada' } }
+};
+
+function renderLleva(data) {
+  document.getElementById('llevaTotal').textContent = data.length;
+  document.getElementById('llevaPending').textContent = data.filter(d => d.status === 'pending').length;
+  document.getElementById('llevaDone').textContent = data.filter(d => d.status === 'delivered').length;
+  document.getElementById('llevaBody').innerHTML = (data && data.length)
+    ? data.slice(0, 50).map(d => `<tr>
+        <td>${d.origin || ''}</td>
+        <td>${d.dest || ''}</td>
+        <td>${d.item || ''}</td>
+        <td>${d.vehicle || ''}</td>
+        <td>RD$ ${d.fare || 0}</td>
+        <td><select class="btn-sm" style="padding:3px 6px;font-size:.7rem" onchange="updateStatus('lleva_requests','${d.id}',this.value)">${STATUS.lleva.opts.map(s => `<option value="${s}" ${d.status === s ? 'selected' : ''}>${STATUS.lleva.labels[s]}</option>`).join('')}</select></td>
+        <td>${d.created_at ? new Date(d.created_at).toLocaleDateString() : ''}</td></tr>`).join('')
+    : '<tr><td colspan="7" style="text-align:center;color:var(--dim)">Sin envíos</td></tr>';
+}
+
+function renderRepara(data) {
+  document.getElementById('reparaTotal').textContent = data.length;
+  document.getElementById('reparaActive').textContent = data.filter(d => d.status === 'pending' || d.status === 'in_progress').length;
+  document.getElementById('reparaDone').textContent = data.filter(d => d.status === 'completed').length;
+  document.getElementById('reparaBody').innerHTML = (data && data.length)
+    ? data.slice(0, 50).map(d => `<tr>
+        <td><small>${d.ticket || (d.id && d.id.slice(0, 8)) || '—'}</small></td>
+        <td>${d.device || ''}</td>
+        <td>${d.issue || ''}</td>
+        <td>${(d.customer && d.customer.name) || '—'}</td>
+        <td><select class="btn-sm" style="padding:3px 6px;font-size:.7rem" onchange="updateStatus('repara_bookings','${d.id}',this.value)">${STATUS.repara.opts.map(s => `<option value="${s}" ${d.status === s ? 'selected' : ''}>${STATUS.repara.labels[s]}</option>`).join('')}</select></td>
+        <td class="acts"><a href="https://wa.me/${(d.contact || (d.customer && d.customer.phone) || '').replace(/\D/g, '')}" target="_blank" class="btn btn-g btn-sm" title="WhatsApp">💬</a></td></tr>`).join('')
+    : '<tr><td colspan="6" style="text-align:center;color:var(--dim)">Sin tickets</td></tr>';
+}
+
+function renderInstala(data) {
+  document.getElementById('instalaTotal').textContent = data.length;
+  document.getElementById('instalaPending').textContent = data.filter(d => d.status !== 'completed' && d.status !== 'cancelled').length;
+  document.getElementById('instalaTechs').textContent = technicians.length;
+  document.getElementById('instalaBody').innerHTML = (data && data.length)
+    ? data.slice(0, 50).map(d => `<tr>
+        <td>${d.service || ''}</td>
+        <td>${d.tech || ''}</td>
+        <td>${d.date || ''}</td>
+        <td>${(d.customer && d.customer.name) || '—'}</td>
+        <td>RD$ ${d.price || 0}</td>
+        <td><select class="btn-sm" style="padding:3px 6px;font-size:.7rem" onchange="updateStatus('instala_bookings','${d.id}',this.value)">${STATUS.instala.opts.map(s => `<option value="${s}" ${d.status === s ? 'selected' : ''}>${STATUS.instala.labels[s]}</option>`).join('')}</select></td>
+        <td class="acts"><a href="https://wa.me/${(d.customer && d.customer.phone || '').replace(/\D/g, '')}" target="_blank" class="btn btn-g btn-sm" title="WhatsApp">💬</a></td></tr>`).join('')
+    : '<tr><td colspan="7" style="text-align:center;color:var(--dim)">Sin instalaciones</td></tr>';
+}
+
+async function updateStatus(table, id, newStatus) {
+  const updated = await sbPatch(table, id, { status: newStatus });
+  if (updated) {
+    toast(`Estado actualizado → ${newStatus}`);
+    // refrescar la data correspondiente
+    const data = await sbGet(table);
+    if (table === 'repara_bookings') renderRepara(data);
+    else if (table === 'instala_bookings') renderInstala(data);
+    else if (table === 'lleva_requests') renderLleva(data);
+  }
+}
+
+// ═══ CONFIGURACIÓN ═══
+function renderConfigPage() {
+  // Llenar formulario de settings
+  const s = settings;
+  document.getElementById('cfgWhatsapp').value = s.whatsapp_number || '';
+  document.getElementById('cfgPaypal').value = s.paypal_email || '';
+  document.getElementById('cfgFreeShip').value = s.free_shipping_threshold || 1500;
+  document.getElementById('cfgShipCost').value = s.shipping_cost || 250;
+  document.getElementById('cfgCoupons').value = s.coupons ? JSON.stringify(s.coupons, null, 2) : '{}';
+}
+
+async function saveConfig() {
+  let coupons = {};
+  try { coupons = JSON.parse(document.getElementById('cfgCoupons').value || '{}'); }
+  catch (e) { return toast('JSON de cupones inválido', 'error'); }
+  const data = {
+    id: 'global',
+    whatsapp_number: document.getElementById('cfgWhatsapp').value.trim(),
+    paypal_email: document.getElementById('cfgPaypal').value.trim(),
+    free_shipping_threshold: +document.getElementById('cfgFreeShip').value || 1500,
+    shipping_cost: +document.getElementById('cfgShipCost').value || 250,
+    coupons
+  };
+  await sbPatch('site_settings', 'global', data);
+  Object.assign(settings, data);
+  toast('Configuración guardada ✓');
+}
+
+// ═══ CSV EXPORT ═══
+function exportCSV() {
+  const h = ['ID', 'Nombre', 'Categoría', 'Precio', 'Costo', 'Ganancia', 'Stock', 'Vendidos', 'Descuento'];
+  const rows = products.map(p => [p.id, `"${p.title || p.name}"`, `"${p.category}"`, p.price, p.cost || 0, p.price - (p.cost || 0), p.stock, p.sold || 0, p.discount || 0]);
+  const csv = [h.join(','), ...rows.map(r => r.join(','))].join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+  a.download = 'telosales_inventario.csv';
+  a.click();
+  toast('CSV descargado');
+}
+
+// ═══ TOAST ═══
+function toast(msg, type = 'success') {
+  const t = document.createElement('div');
+  t.className = 'toast' + (type === 'error' ? ' toast-error' : '');
+  t.textContent = msg;
+  document.getElementById('toasts').appendChild(t);
+  setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 3000);
+}
+
+// ═══ BOOTSTRAP — arranque al cargar la página ═══
+(async function bootstrap() {
+  if (!initSupabase()) {
+    document.getElementById('lErr').textContent = 'Error de conexión con Supabase';
+    document.getElementById('lErr').style.display = 'block';
+    return;
+  }
+
+  // Listener Enter en el login
+  ['lEmail', 'lPass'].forEach(id => {
+    document.getElementById(id).addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
+  });
+
+  // Verificar sesión activa
+  const hasSession = await checkSession();
+  if (hasSession) {
+    showApp();
+  } else {
+    // Estado de logout limpio
+    document.getElementById('loginView').style.display = 'flex';
+  }
+
+  // Escuchar cambios de sesión (logout en otra pestaña, etc.)
+  sb.auth.onAuthStateChange(async (event, newSession) => {
+    if (event === 'SIGNED_OUT') {
+      session = null;
+      document.getElementById('appView').classList.remove('on');
+      document.getElementById('loginView').style.display = 'flex';
+    } else if (event === 'SIGNED_IN' && newSession) {
+      session = newSession;
+    }
+  });
+})();

@@ -1,25 +1,114 @@
 <!doctype html>
-<html lang="es">
+<html lang="es-DO">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Telo' Corp Group | Plataforma Digital</title>
-  <meta name="description" content="Telo' Corp Group: Plataforma digital integrada — TeloSales, TeloEduca, TeloLleva, TeloRepara y TeloInstala. Comercio, educación, logística y servicios técnicos.">
+  <title>Telo' Corp Group | Plataforma Digital — Ventas, Educación, Logística y Servicios en RD</title>
+  <meta name="description" content="Telo' Corp Group: Plataforma digital integrada — TeloSales, TeloEduca, TeloLleva, TeloRepara y TeloInstala. Comercio, educación, logística y servicios técnicos en República Dominicana.">
+  <meta name="author" content="TeloCorp Group">
+  <meta name="keywords" content="telocorp, telocg, tienda online dominicana, reparación celular RD, cursos online dominicana, logística Santo Domingo, instalación AC, e-commerce República Dominicana">
   <meta name="theme-color" content="#0a0f1a">
+  <link rel="canonical" href="https://telocg.com/">
+
+  <!-- Open Graph -->
   <meta property="og:title" content="Telo' Corp Group | Plataforma Digital">
-  <meta property="og:description" content="Conglomerado digital con comercio electrónico, academia, logística y soporte técnico.">
+  <meta property="og:description" content="Conglomerado digital con comercio electrónico, academia, logística y soporte técnico en República Dominicana.">
   <meta property="og:image" content="assets/telocorpgroup-logo.jpg">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://telocg.com">
+  <meta property="og:site_name" content="TeloCorp Group">
+  <meta property="og:locale" content="es_DO">
+
+  <!-- Twitter Cards -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Telo' Corp Group | Plataforma Digital">
+  <meta name="twitter:description" content="Comercio, educación, logística y servicios técnicos en República Dominicana.">
+  <meta name="twitter:image" content="assets/telocorpgroup-logo.jpg">
+
+  <!-- Icons & PWA -->
   <link rel="icon" type="image/png" href="assets/telocorpgroup-mark.png">
   <link rel="apple-touch-icon" href="assets/telocorpgroup-mark.png">
   <link rel="manifest" href="manifest.json">
+
+  <!-- Performance: preconnect + preload critical assets -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="preconnect" href="https://bhdictzvboiojyxorfiq.supabase.co" crossorigin>
+  <link rel="preload" as="style" href="styles.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+
+  <!-- Structured Data: Organization (JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "TeloCorp Group",
+    "alternateName": "Telo' Corp Group",
+    "url": "https://telocg.com",
+    "logo": "https://telocg.com/assets/telocorpgroup-logo.jpg",
+    "description": "Plataforma digital integrada: comercio electrónico, academia online, logística y servicios técnicos en República Dominicana.",
+    "foundingDate": "2024",
+    "areaServed": { "@type": "Country", "name": "República Dominicana" },
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": "+1-809-903-8707",
+      "contactType": "customer service",
+      "areaServed": "DO",
+      "availableLanguage": ["Spanish", "English"]
+    },
+    "sameAs": ["https://wa.me/18099038707"]
+  }
+  </script>
+
+  <!-- Structured Data: WebSite + Search Action -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "TeloCorp Group",
+    "url": "https://telocg.com",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://telocg.com/#telosales?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+
+  <!-- Structured Data: Service catalog (LocalBusiness) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "TeloCorp Group",
+    "image": "https://telocg.com/assets/telocorpgroup-logo.jpg",
+    "url": "https://telocg.com",
+    "telephone": "+1-809-903-8707",
+    "priceRange": "RD$",
+    "address": {
+      "@type": "PostalAddress",
+      "addressCountry": "DO",
+      "addressRegion": "Santo Domingo"
+    },
+    "hasOfferCatalog": {
+      "@type": "OfferCatalog",
+      "name": "Servicios TeloCorp",
+      "itemListElement": [
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "TeloSales — Tienda de tecnología" } },
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "TeloEduca — Academia online" } },
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "TeloLleva — Logística y mensajería" } },
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "TeloRepara — Reparación de dispositivos" } },
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "TeloInstala — Instalaciones técnicas" } }
+      ]
+    }
+  }
+  </script>
 </head>
 <body>
+  <!-- Skip to main content link (WCAG 2.1 Level A) -->
+  <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
   <div class="app" id="app">
     <!-- Sidebar -->
     <aside class="sidebar" id="sidebar" aria-label="Navegación principal">
@@ -72,7 +161,7 @@
     </aside>
 
     <!-- Main Content -->
-    <main class="main" id="main">
+    <main class="main" id="main-content">
       <!-- Topbar -->
       <header class="topbar">
         <div class="topbar__left">
@@ -238,7 +327,7 @@
                 <div class="classroom-tabs__panel" id="tab-forum">
                   <div class="forum-messages" id="forum-messages"></div>
                   <div class="forum-input">
-                    <input type="text" id="forum-input" placeholder="Pregunta sobre esta clase...">
+                    <input type="text" id="forum-input" placeholder="Pregunta sobre esta clase..." aria-label="Escribe tu pregunta para el foro de la clase">
                     <button class="btn btn--primary btn--sm" id="btn-forum-post">Enviar</button>
                   </div>
                 </div>
@@ -704,21 +793,16 @@
   <div class="chat-widget" id="chat-widget" style="display:none;">
     <div class="chat-widget__header"><h4>TeloAsistente</h4><button class="chat-widget__close" id="chat-close" type="button" aria-label="Cerrar chat">×</button></div>
     <div class="chat-widget__messages" id="chat-messages"></div>
-    <div class="chat-widget__input"><input type="text" id="chat-input" placeholder="Escribe tu pregunta..."><button class="btn btn--primary btn--icon" id="chat-send" type="button">➤</button></div>
+    <div class="chat-widget__input"><input type="text" id="chat-input" placeholder="Escribe tu pregunta..." aria-label="Escribe tu pregunta para el asistente TeloAsistente"><button class="btn btn--primary btn--icon" id="chat-send" type="button" aria-label="Enviar mensaje">➤</button></div>
   </div>
 
-  <!-- Google Maps API -->
+  <!-- Google Maps API — LAZY LOADED on demand (perf optimization) -->
   <script src="script.js"></script>
   <script>
-    // Fallback: si Google Maps no carga en 8s, mostrar mensaje
-    window._mapsTimeout = setTimeout(function() {
-      var el = document.getElementById('gmap');
-      if (el && !window.google) {
-        el.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;gap:8px;color:#94a3b8;padding:20px;text-align:center;"><p style="font-size:0.9rem;">⚠️ Google Maps no pudo cargar.</p><p style="font-size:0.75rem;">Verifica la API Key y las restricciones de dominio en <a href="https://console.cloud.google.com/apis/credentials" target="_blank" style="color:#f59e0b;">Google Cloud Console</a>.</p><p style="font-size:0.7rem;margin-top:8px;">Referrer permitido: <code>telocg.com/*</code> y <code>localhost/*</code></p></div>';
-      }
-    }, 8000);
+    // Google Maps se carga solo cuando el usuario navega a TeloLleva.
+    // Esto ahorra ~200-500KB en la carga inicial de la página.
+    // Ver loadGoogleMaps() en script.js
   </script>
-  <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB6Fw9dciFlipwPONefQbbUB0tJBDWibFc&libraries=places&callback=initGoogleMaps"></script>
   <!-- Supabase JS Client -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" defer></script>
 </body>

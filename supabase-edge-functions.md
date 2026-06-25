@@ -1,95 +1,113 @@
-# Supabase Edge Functions para TeloCorp
+# Supabase Edge Functions — TeloCorp Group v4.0
 
-## Función: chat (TeloAsistente IA)
+Guía de deploy y configuración de las Edge Functions del ecosistema TeloCorp.
 
-Para desplegar esta Edge Function en Supabase:
+## 📋 Edge Functions disponibles
 
-1. Instala Supabase CLI: `npm install -g supabase`
-2. Enlaza tu proyecto: `supabase link --project-ref bhdictzvboiojyxorfiq`
-3. Crea la función: `supabase functions new chat`
-4. Reemplaza el contenido de `supabase/functions/chat/index.ts` con:
+| Función | Propósito | Secret requerido |
+|---------|-----------|------------------|
+| `chat` | Proxy de Gemini 2.0 Flash para TeloAsistente | `GEMINI_API_KEY` |
+| `upload-image` | Proxy de ImgBB para subir imágenes de productos | `IMGBB_API_KEY` |
+| `ai-specs` | Generación de especificaciones de producto con Gemini (NUEVA v4.0) | `GEMINI_API_KEY` |
+| `create-checkout` | Crea sesión de Stripe Checkout | `STRIPE_SECRET_KEY` |
 
-```typescript
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+## 🔧 Deploy
 
-const GEMINI_KEY = Deno.env.get('GEMINI_API_KEY') || ''
-
-serve(async (req) => {
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'authorization, content-type' } })
-  }
-
-  const { message, context } = await req.json()
-  const systemPrompt = `Eres TeloAsistente, el asistente IA de Telo' Corp Group. Responde en español, de forma concisa y útil. Servicios: TeloSales (tienda), TeloEduca (cursos), TeloLleva (mensajería), TeloRepara (reparaciones), TeloInstala (instalaciones). ${context || ''}`
-
-  const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ contents: [{ parts: [{ text: `${systemPrompt}\n\nUsuario: ${message}` }] }] })
-  })
-
-  const data = await res.json()
-  const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || 'No pude generar una respuesta.'
-
-  return new Response(JSON.stringify({ reply }), {
-    headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
-  })
-})
+### Pre-requisitos
+```bash
+npm install -g supabase
+supabase login
 ```
 
-5. Configura el secret: `supabase secrets set GEMINI_API_KEY=AIzaSyB6Fw9dciFlipwPONefQbbUB0tJBDWibFc`
-6. Despliega: `supabase functions deploy chat --no-verify-jwt`
-
-## Función: upload-image (Proxy ImgBB)
-
-```typescript
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-
-const IMGBB_KEY = Deno.env.get('IMGBB_API_KEY') || ''
-
-serve(async (req) => {
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'authorization, content-type' } })
-  }
-
-  const formData = await req.formData()
-  formData.append('key', IMGBB_KEY)
-
-  const res = await fetch('https://api.imgbb.com/1/upload', { method: 'POST', body: formData })
-  const data = await res.json()
-
-  return new Response(JSON.stringify(data), {
-    headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
-  })
-})
+### Configurar secrets (una sola vez)
+```bash
+supabase secrets set GEMINI_API_KEY=tu_key_aqui --project-ref bhdictzvboiojyxorfiq
+supabase secrets set IMGBB_API_KEY=tu_key_aqui --project-ref bhdictzvboiojyxorfiq
+supabase secrets set STRIPE_SECRET_KEY=sk_test_xxx --project-ref bhdictzvboiojyxorfiq
 ```
 
-Configura: `supabase secrets set IMGBB_API_KEY=8199e433dfe9c12d1f452ce857dbce9d`
-Despliega: `supabase functions deploy upload-image --no-verify-jwt`
+### Deploy de todas las funciones
 
-## Database Triggers (Notificaciones automáticas)
+**⚠️ IMPORTANTE:** La ruta del workspace contiene caracteres especiales (OneDrive + acentos).
+Copia la carpeta `supabase/` a una ruta sin espacios antes de deployar:
 
-Ejecutar en SQL Editor para crear triggers que puedan enviar webhooks:
+```bash
+# 1. Copiar a ruta limpia
+xcopy /E /I "supabase" "C:\temp\sb-deploy\supabase"
 
-```sql
--- Trigger para notificar nuevas órdenes
-CREATE OR REPLACE FUNCTION notify_new_order()
-RETURNS TRIGGER AS $$
-BEGIN
-  PERFORM net.http_post(
-    url := 'https://n8n.tudominio.com/webhook/new-order',
-    body := row_to_json(NEW)::text,
-    headers := '{"Content-Type": "application/json"}'::jsonb
-  );
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER on_new_order
-  AFTER INSERT ON orders
-  FOR EACH ROW EXECUTE FUNCTION notify_new_order();
+# 2. Deployar desde ahí
+cd C:\temp\sb-deploy
+supabase functions deploy chat --project-ref bhdictzvboiojyxorfiq --no-verify-jwt
+supabase functions deploy upload-image --project-ref bhdictzvboiojyxorfiq --no-verify-jwt
+supabase functions deploy ai-specs --project-ref bhdictzvboiojyxorfiq --no-verify-jwt
+supabase functions deploy create-checkout --project-ref bhdictzvboiojyxorfiq --no-verify-jwt
 ```
 
-## Variables de entorno necesarias en Supabase:
-- GEMINI_API_KEY
-- IMGBB_API_KEY
+### Invocación desde el frontend
+
+```javascript
+const SB_URL = 'https://bhdictzvboiojyxorfiq.supabase.co';
+const SB_ANON_KEY = 'sb_publishable_AgpNN0k_KfW0moe6f1CKXg_qP2GKJCm';
+
+// Chat (TeloAsistente)
+const res = await fetch(`${SB_URL}/functions/v1/chat`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SB_ANON_KEY}` },
+  body: JSON.stringify({ message: 'Hola' })
+});
+
+// Subida de imagen (admin)
+const fd = new FormData();
+fd.append('image', file);
+const res = await fetch(`${SB_URL}/functions/v1/upload-image`, {
+  method: 'POST',
+  headers: { 'Authorization': `Bearer ${SB_ANON_KEY}` },
+  body: fd
+});
+
+// AI Specs (admin, NUEVA v4.0)
+const res = await fetch(`${SB_URL}/functions/v1/ai-specs`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SB_ANON_KEY}` },
+  body: JSON.stringify({ product_name: 'iPhone 15 Pro' })
+});
+```
+
+## 🔒 Seguridad
+
+- **Las API keys NUNCA se exponen en el frontend.** Viven exclusivamente como secrets de Supabase.
+- Las Edge Functions actúan como proxies que inyectan la API key server-side.
+- `--no-verify-jwt` permite invocación desde el storefront público (clientes no autenticados crean órdenes/leads).
+- El admin panel (`admin.js`) autentica con Supabase Auth real; el token JWT se inyecta automáticamente en las queries posteriores.
+- RLS granular protege UPDATE/DELETE: solo `is_admin()` (definida en SQL) permite modificaciones.
+
+## 🆕 ai-specs (nueva en v4.0)
+
+Reemplaza la llamada directa a la API de Gemini desde el frontend del admin (que exponía la API key en base64). Genera 5 especificaciones técnicas realistas para un producto.
+
+**Request:**
+```json
+{ "product_name": "AirPods Pro 2", "context": "Inalámbricos, cancelación de ruido" }
+```
+
+**Response:**
+```json
+{ "specs": { "Tipo": "In-ear", "Cancelación": "Activa ANC", "Batería": "6h + 24h estuche" } }
+```
+
+## 🗃️ Base de datos
+
+Ejecutar `supabase-schema-migration-v4.sql` en Supabase Dashboard → SQL Editor para:
+- Crear tablas nuevas: `courses`, `categories`, `technicians`, `services_catalog`, `site_settings`, `audit_log`
+- Aplicar RLS granular (SELECT público, INSERT público para clientes, UPDATE/DELETE solo admin)
+- Crear función `is_admin()` para verificar permisos
+- Cargar datos semilla (cursos, técnicos, catálogo de servicios)
+- Crear triggers `updated_at` automáticos
+- Crear índices para performance
+
+## 👤 Crear usuario admin
+
+1. Ejecutar `supabase-schema-migration-v4.sql`
+2. Supabase Dashboard → Authentication → Users → Add user
+3. Email: `admin@telocg.com`, contraseña segura, marcar "Auto Confirm User"
+4. La función `is_admin()` otorga permisos automáticamente si el email termina en `@telocg.com`
