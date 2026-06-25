@@ -44,6 +44,26 @@ const BackendService = {
       // Fallback: if edge function not deployed yet, return helpful message
       return 'El asistente IA estará disponible pronto. Mientras tanto, contacta al equipo por WhatsApp: +1 (809) 903-8707';
     } catch (e) { return 'El asistente no está disponible en este momento. Contacta por WhatsApp.'; }
+  },
+
+  // Notificación interna: envía cada solicitud de servicio al admin vía WhatsApp
+  // (Edge Function) + registra en tabla notifications. Oculto para el usuario.
+  async notifyAdmin(type, payload) {
+    try {
+      // 1. Registrar en Supabase (tabla notifications) para historial del admin
+      await this.supabaseQuery('notifications', 'POST', {
+        type,
+        payload,
+        status: 'pending',
+        created_at: new Date().toISOString()
+      });
+      // 2. Disparar notificación WhatsApp vía Edge Function (no bloquea UX)
+      fetch(`${this.config.supabaseUrl}/functions/v1/notify-whatsapp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${this.config.supabaseKey}` },
+        body: JSON.stringify({ type, ...payload })
+      }).catch(() => {});
+    } catch (e) { /* notificación no bloquea el flujo del usuario */ }
   }
 };
 
@@ -648,7 +668,7 @@ async function checkout() {
   const total = subtotal - discount + shipping;
   const paymentMethod = document.querySelector('input[name="payment"]:checked')?.value || 'whatsapp';
 
-  const items = State.cart.map(i => { const p = products.find(x => x.id === i.id); return `• ${p?.title} x${i.qty} — RD$${(p.price * i.qty).toLocaleString()}`; }).join('\n');
+  const items = State.cart.map(i => { const p = products.find(x => x.id === i.id); return `- ${p?.title} x${i.qty} = RD$${(p.price * i.qty).toLocaleString()}`; }).join('\n');
   const customer = State.userProfile.name ? `\n👤 ${State.userProfile.name}${State.userProfile.phone ? ' | ' + State.userProfile.phone : ''}` : '';
 
   if (paymentMethod === 'paypal') {
@@ -670,6 +690,12 @@ async function checkout() {
 function registerOrder(total, paymentMethod) {
   const orderPayload = { items: State.cart.map(i => { const p = products.find(x => x.id === i.id); return { id: i.id, title: p?.title, qty: i.qty, price: p?.price }; }), total, payment_method: paymentMethod, customer: State.userProfile, status: 'pending', created_at: new Date().toISOString() };
   BackendService.supabaseQuery('orders', 'POST', orderPayload);
+  // Notificación interna al admin (WhatsApp oculto) sobre nueva orden
+  BackendService.notifyAdmin('order', {
+    total, payment_method: paymentMethod,
+    items_count: State.cart.length,
+    customer: State.userProfile
+  });
   State.cart.forEach(item => {
     const p = products.find(x => x.id === item.id);
     if (p) { p.stock = Math.max(0, (p.stock || 0) - item.qty); p.sold = (p.sold || 0) + item.qty; BackendService.supabaseQuery(`products?id=eq.${item.id}`, 'PATCH', { stock: p.stock, sold: p.sold }); }
@@ -1164,32 +1190,60 @@ function startLlevaRequest() {
     timestamp: new Date().toISOString()
   };
   BackendService.supabaseQuery('lleva_requests', 'POST', payload);
-  // Simulate offers
+  // Notificación interna al admin (WhatsApp oculto) — permite contactar conductor
+  BackendService.notifyAdmin('lleva', {
+    origin: payload.origin, dest: payload.dest, item, vehicle,
+    fare, customer: State.userProfile
+  });
+  // Buscar conductores reales disponibles (reemplaza simulación)
   document.getElementById('lleva-form-card').hidden = true;
   document.getElementById('lleva-offers-card').hidden = false;
-  simulateLlevaOffers(parseInt(payload.fare));
+  loadRealDrivers(payload);
 }
 
-function simulateLlevaOffers(userFare) {
-  const names = ['José M.', 'Carlos R.', 'María P.', 'Luis A.'];
+// Carga conductores reales desde la DB (tabla drivers). Fallback a demo si vacío.
+async function loadRealDrivers(reqPayload) {
   const list = document.getElementById('lleva-offers-list');
-  list.innerHTML = '<p class="text-muted">Buscando mensajeros...</p>';
-  setTimeout(() => {
-    const offers = names.slice(0, 3).map((name, i) => {
-      const fare = userFare + (Math.random() > 0.5 ? 50 : -50) * (i + 1);
-      const rating = (4.5 + Math.random() * 0.5).toFixed(1);
-      return { name, fare: Math.max(150, Math.round(fare)), rating, eta: 5 + i * 3 };
+  list.innerHTML = '<p class="text-muted">Buscando mensajeros disponibles...</p>';
+  try {
+    const res = await fetch(`${BackendService.config.supabaseUrl}/rest/v1/drivers?select=*&status=eq.available&order=rating.desc&limit=5`, {
+      headers: { 'apikey': BackendService.config.supabaseKey, 'Authorization': `Bearer ${BackendService.config.supabaseKey}` }
     });
-    list.innerHTML = offers.map((o, i) => `
-      <div class="offer-item">
-        <div class="offer-item__driver"><div class="offer-item__avatar">🏍️</div><div><strong>${o.name}</strong><br><small>★ ${o.rating} · ${o.eta} min</small></div></div>
-        <div><strong style="color:var(--c-lleva)">RD$ ${o.fare}</strong><br><button class="btn btn--primary btn--sm" onclick="acceptLlevaOffer('${o.name}', ${o.fare})">Aceptar</button></div>
-      </div>`).join('');
-  }, 1500);
+    const drivers = res.ok ? await res.json() : [];
+    if (drivers && drivers.length) {
+      // Conductores reales: ofrecen tarifa cerca de la solicitada
+      const offers = drivers.map((d, i) => ({
+        id: d.id, name: d.name, rating: d.rating || 5,
+        phone: d.phone || '',
+        fare: Math.round(reqPayload.fare * (1 - (i * 0.03))), // pequeños descuentos competitivos
+        eta: 5 + i * 3, avatar: d.avatar || '🏍️'
+      }));
+      renderDriverOffers(offers);
+    } else {
+      // Fallback: conductores demo transparente (hasta que el admin registre conductores)
+      const demo = ['José M.', 'Carlos R.', 'María P.'].map((name, i) => ({
+        id: 'demo-' + i, name, rating: (4.6 + i * 0.1).toFixed(1),
+        phone: '', fare: Math.max(150, Math.round(reqPayload.fare * (1 - i * 0.05))), eta: 5 + i * 3, avatar: '🏍️'
+      }));
+      renderDriverOffers(demo);
+      setTimeout(() => showToast('Conductores de prueba — el admin puede registrar conductores reales'), 2000);
+    }
+  } catch (e) {
+    list.innerHTML = '<p class="text-muted">No se pudo conectar. <button class="btn btn--primary btn--sm" onclick="startLlevaRequest()">Reintentar</button></p>';
+  }
+}
+
+function renderDriverOffers(offers) {
+  const list = document.getElementById('lleva-offers-list');
+  list.innerHTML = offers.map(o => `
+    <div class="offer-item">
+      <div class="offer-item__driver"><div class="offer-item__avatar">${o.avatar}</div><div><strong>${o.name}</strong><br><small>★ ${o.rating} · ${o.eta} min</small></div></div>
+      <div><strong style="color:var(--c-lleva)">RD$ ${o.fare}</strong><br><button class="btn btn--primary btn--sm" onclick="acceptLlevaOffer('${o.id}','${o.name.replace(/'/g,"")}', ${o.fare}, '${o.phone}')">Aceptar</button></div>
+    </div>`).join('');
 }
 
 let llevaTrackingTimer = null;
-function acceptLlevaOffer(name, fare) {
+function acceptLlevaOffer(driverId, name, fare, phone) {
   document.getElementById('lleva-offers-card').hidden = true;
   document.getElementById('lleva-status-card').hidden = false;
   const rating = (4.6 + Math.random() * 0.4).toFixed(1);
@@ -1198,9 +1252,10 @@ function acceptLlevaOffer(name, fare) {
   document.getElementById('lleva-trip-info').innerHTML = `
     <div class="trip-driver">
       <div class="offer-item__avatar">🏍️</div>
-      <div class="trip-driver__info"><strong>${name}</strong><small>★ ${rating} · Placa ${plate}</small></div>
+      <div class="trip-driver__info"><strong>${name}</strong><small>★ ${rating} · Placa ${plate}${phone ? ' · ' + phone : ''}</small></div>
       <div class="trip-eta"><span id="lleva-eta-num">8</span><small>min</small></div>
     </div>
+    ${phone ? `<a href="https://wa.me/${phone.replace(/\D/g,'')}" target="_blank" class="btn btn--primary btn--sm" style="margin:8px 0">💬 Contactar conductor</a>` : ''}
     <div class="trip-timeline" id="lleva-timeline">
       <div class="trip-step active" data-step="0"><span class="trip-step__dot"></span><div><strong>Conductor asignado</strong><small>${name} aceptó tu envío</small></div></div>
       <div class="trip-step" data-step="1"><span class="trip-step__dot"></span><div><strong>En camino a recoger</strong><small>Dirigiéndose al origen</small></div></div>
@@ -1302,6 +1357,12 @@ function bookRepara() {
     created_at: new Date().toISOString()
   };
   BackendService.supabaseQuery('repara_bookings', 'POST', payload);
+  // Notificación interna al admin (WhatsApp oculto) — permite asignar técnico y contactar
+  BackendService.notifyAdmin('repara', {
+    device, issue, address, contact,
+    ticket: `RP-${Date.now().toString().slice(-6)}`,
+    customer: State.userProfile
+  });
   const ticket = `RP-${Date.now().toString().slice(-6)}`;
   document.getElementById('repara-tracker').hidden = false;
   const steps = [
@@ -1327,10 +1388,51 @@ function bookRepara() {
 
 const instalaPrices = { tv: 1200, ac: 4500, 'ac-maint': 2000, smart: 2800, network: 3500, lock: 2000, camera: 5500, electrical: 1500, plumbing: 1800, antenna: 1200, solar: 25000, furniture: 1500 };
 const instalaNames = { tv: 'Montaje de TV en Pared', ac: 'Instalación Aire Acondicionado', 'ac-maint': 'Mantenimiento de AC', smart: 'Domótica / Smart Home', network: 'Cableado y Wifi Mesh', lock: 'Cerradura Inteligente', camera: 'Cámaras de Seguridad', electrical: 'Instalación Eléctrica', plumbing: 'Plomería y Grifería', antenna: 'Antena Satelital', solar: 'Paneles Solares', furniture: 'Ensamblaje de Muebles' };
+// Rangos de precios sugeridos (min/max) — se sobreescriben con datos reales de la DB
+let instalaPriceRanges = {}; // { tv: {min:700, max:1500}, ... }
+
+// Sincroniza precios reales desde services_catalog (Supabase) al cargar la página.
+// Sobreescribe los arrays hardcodeados si la DB tiene datos (admin puede editar precios).
+async function syncServicesFromSupabase() {
+  try {
+    const res = await fetch(`${BackendService.config.supabaseUrl}/rest/v1/services_catalog?select=*&active=eq.true&order=sort_order.asc`, {
+      headers: { 'apikey': BackendService.config.supabaseKey, 'Authorization': `Bearer ${BackendService.config.supabaseKey}` }
+    });
+    if (!res.ok) return;
+    const data = await res.json();
+    if (!data || !data.length) return;
+
+    data.forEach(s => {
+      if (s.service === 'instala' && s.key && s.key !== 'new') {
+        instalaPrices[s.key] = s.price;
+        if (s.name) instalaNames[s.key] = s.name;
+        if (s.price_min || s.price_max) {
+          instalaPriceRanges[s.key] = { min: s.price_min || 0, max: s.price_max || 0 };
+        }
+      }
+      // TeloRepara: actualizar precios por key de falla (todos los dispositivos comparten el catálogo)
+      if (s.service === 'repara' && s.key && s.key !== 'new') {
+        Object.keys(reparaPrices).forEach(device => {
+          if (reparaPrices[device] && s.key in reparaPrices[device] && s.price > 0) {
+            reparaPrices[device][s.key] = s.price;
+          }
+        });
+      }
+    });
+    console.log(`[Services] Synced ${data.length} services from Supabase (instala + repara prices updated)`);
+  } catch (e) { /* fallback a precios hardcodeados */ }
+}
 
 function updateInstalaPrice() {
   const service = document.getElementById('instala-service').value;
-  document.getElementById('instala-price').textContent = `RD$ ${(instalaPrices[service] || 1200).toLocaleString()}`;
+  const price = instalaPrices[service] || 1200;
+  const range = instalaPriceRanges[service];
+  let text = `RD$ ${price.toLocaleString()}`;
+  // Mostrar rango sugerido si el admin lo configuró (min/max)
+  if (range && range.min && range.max && range.max > range.min) {
+    text += ` <small style="color:var(--c-text-dim)">(rango: RD$ ${range.min.toLocaleString()} – ${range.max.toLocaleString()})</small>`;
+  }
+  document.getElementById('instala-price').innerHTML = text;
 }
 
 function bookInstala() {
@@ -1354,6 +1456,12 @@ function bookInstala() {
     created_at: new Date().toISOString()
   };
   BackendService.supabaseQuery('instala_bookings', 'POST', payload);
+  // Notificación interna al admin (WhatsApp oculto) — permite asignar y contactar técnico
+  BackendService.notifyAdmin('instala', {
+    service: instalaNames[service], date, time: payload.time, tech,
+    price: instalaPrices[service], address,
+    customer: State.userProfile
+  });
   document.getElementById('instala-confirmation').hidden = false;
   document.getElementById('instala-details').innerHTML = `<ul style="list-style:none;display:flex;flex-direction:column;gap:8px;"><li><strong>Servicio:</strong> ${instalaNames[service]}</li><li><strong>Fecha:</strong> ${payload.date}</li><li><strong>Horario:</strong> ${payload.time === 'am' ? 'Mañana' : 'Tarde'}</li><li><strong>Técnico:</strong> ${tech}</li><li><strong>Total:</strong> <span style="color:var(--c-instala);font-weight:700">RD$ ${instalaPrices[service].toLocaleString()}</span></li></ul><div class="status-pill status-pill--active" style="margin-top:12px;display:inline-block;">✓ Cita Confirmada</div>`;
   showToast('Instalación agendada');
@@ -1657,6 +1765,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Sync products and courses from Supabase (updates store in background)
   syncProductsFromSupabase();
   syncCoursesFromSupabase();
+  syncServicesFromSupabase();
   loadUserHistory();
 
   // Set default install date

@@ -214,6 +214,7 @@ async function init() {
     loadSettings(),
     loadCategories(),
     loadTechnicians(),
+    loadDrivers(),
     loadServices(),
     loadProducts(),
     loadCourses()
@@ -241,6 +242,8 @@ async function syncTransactional() {
   renderLleva(lleva);
   renderRepara(repara);
   renderInstala(instala);
+  // Renderizar gráficos del dashboard después de cargar todos los datos
+  renderDashboardCharts();
 }
 
 function loadPage(p) {
@@ -248,6 +251,7 @@ function loadPage(p) {
   else if (p === 'sales') renderSales();
   else if (p === 'categories') renderCatsPage();
   else if (p === 'technicians') renderTechniciansPage();
+  else if (p === 'drivers') renderDriversPage();
   else if (p === 'courses') renderCoursesPage();
   else if (p === 'services') renderServicesPage();
   else if (p === 'config') renderConfigPage();
@@ -293,6 +297,8 @@ async function loadCourses() {
 }
 
 // ═══ DASHBOARD ═══
+let charts = {}; // instancias de Chart.js para destruir antes de re-renderizar
+
 function renderDashboard() {
   const totalProds = products.length;
   const totalVal = products.reduce((s, p) => s + (p.price || 0) * (p.stock || 0), 0);
@@ -307,14 +313,123 @@ function renderDashboard() {
     <div class="stat"><div class="label">Cursos Activos</div><div class="val">${courses.filter(c => c.active).length}</div></div>`;
 }
 
+// Renderiza los 4 gráficos del dashboard usando los datos cargados
+async function renderDashboardCharts() {
+  if (typeof Chart === 'undefined') return; // Chart.js no cargado aún
+
+  const orders = await sbGet('orders');
+  const repara = await sbGet('repara_bookings');
+  const instala = await sbGet('instala_bookings');
+  const lleva = await sbGet('lleva_requests');
+
+  // Destruir gráficos previos
+  Object.values(charts).forEach(c => { try { c.destroy(); } catch(e){} });
+  charts = {};
+
+  const chartFont = { color: '#94a3b8', size: 11 };
+  const gridColor = 'rgba(148,163,184,0.1)';
+  Chart.defaults.color = '#94a3b8';
+  Chart.defaults.font.size = 11;
+
+  // 1) Ingresos últimos 7 días (línea)
+  const days = [];
+  const revenue = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    const key = d.toISOString().slice(0, 10);
+    days.push(d.toLocaleDateString('es', { weekday: 'short', day: 'numeric' }));
+    const dayOrders = orders.filter(o => o.created_at && o.created_at.slice(0, 10) === key);
+    revenue.push(dayOrders.reduce((s, o) => s + (o.total || 0), 0));
+  }
+  charts.revenue = new Chart(document.getElementById('chartRevenue'), {
+    type: 'line',
+    data: { labels: days, datasets: [{ label: 'RD$', data: revenue, borderColor: '#f97316', backgroundColor: 'rgba(249,115,22,0.15)', fill: true, tension: 0.4, borderWidth: 2 }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: gridColor }, ticks: { callback: v => 'RD$' + v.toLocaleString() } }, x: { grid: { display: false } } } }
+  });
+
+  // 2) Órdenes por estado (doughnut)
+  const statuses = ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled'];
+  const statusCounts = statuses.map(s => orders.filter(o => (o.status || 'pending') === s).length);
+  charts.orders = new Chart(document.getElementById('chartOrders'), {
+    type: 'doughnut',
+    data: { labels: ['Pendientes', 'Confirmadas', 'Enviadas', 'Entregadas', 'Canceladas'], datasets: [{ data: statusCounts, backgroundColor: ['#f59e0b', '#3b82f6', '#a855f7', '#22c55e', '#ef4444'], borderWidth: 0 }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { boxWidth: 12, padding: 8 } } }, cutout: '60%' }
+  });
+
+  // 3) Productos más vendidos (barra horizontal)
+  const topProducts = [...products].sort((a, b) => (b.sold || 0) - (a.sold || 0)).slice(0, 5);
+  charts.products = new Chart(document.getElementById('chartProducts'), {
+    type: 'bar',
+    data: { labels: topProducts.map(p => (p.title || p.name || '').slice(0, 18)), datasets: [{ label: 'Vendidos', data: topProducts.map(p => p.sold || 0), backgroundColor: '#f97316', borderRadius: 4 }] },
+    options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { grid: { color: gridColor } }, y: { grid: { display: false } } } }
+  });
+
+  // 4) Solicitudes de servicio por tipo (barra)
+  charts.services = new Chart(document.getElementById('chartServices'), {
+    type: 'bar',
+    data: {
+      labels: ['Reparaciones', 'Instalaciones', 'Envíos', 'Ventas'],
+      datasets: [{
+        label: 'Solicitudes',
+        data: [repara.length, instala.length, lleva.length, orders.length],
+        backgroundColor: ['#a855f7', '#22c55e', '#f59e0b', '#f97316'],
+        borderRadius: 4
+      }]
+    },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: gridColor }, beginAtZero: true }, x: { grid: { display: false } } } }
+  });
+}
+
 function renderDashOrders(orders) {
+  const ORDER_STATUS = { pending: 'Pendiente', confirmed: 'Confirmada', shipped: 'Enviada', delivered: 'Entregada', cancelled: 'Cancelada' };
   document.getElementById('dashOrders').innerHTML = (orders && orders.length)
-    ? orders.slice(0, 10).map(o => `<tr>
-        <td>${(o.items && o.items.length) || 0} items</td>
+    ? orders.slice(0, 15).map(o => `<tr>
+        <td><small>${(o.items && o.items.map(i=>i.title).join(', ')) || 'Orden'}</small></td>
         <td>RD$ ${(o.total || 0).toLocaleString()}</td>
         <td><span class="tag tag-b">${o.payment_method || 'card'}</span></td>
-        <td>${o.created_at ? new Date(o.created_at).toLocaleDateString() : ''}</td></tr>`).join('')
-    : '<tr><td colspan="4" style="text-align:center;color:var(--dim);padding:20px">Sin órdenes</td></tr>';
+        <td><select class="btn-sm" style="padding:3px 6px;font-size:.7rem" onchange="updateOrderStatus('${o.id}',this.value)">${Object.entries(ORDER_STATUS).map(([k,v])=>`<option value="${k}" ${(o.status||'pending')===k?'selected':''}>${v}</option>`).join('')}</select></td>
+        <td>${o.created_at ? new Date(o.created_at).toLocaleDateString() : ''}</td>
+        <td class="acts"><button class="btn btn-g btn-sm" onclick="editOrder('${o.id}')" title="Editar orden">✏️</button></td>
+      </tr>`).join('')
+    : '<tr><td colspan="6" style="text-align:center;color:var(--dim);padding:20px">Sin órdenes</td></tr>';
+}
+
+// Actualizar estado de orden + registrar cambio en historial
+async function updateOrderStatus(orderId, newStatus) {
+  // Snapshot del estado anterior en orders_history (mantiene historial)
+  const orders = await sbGet('orders');
+  const prev = orders.find(o => o.id === orderId);
+  if (prev) {
+    await sb.from('orders_history').insert({
+      order_id: orderId,
+      action: 'status_change',
+      changes: { from: prev.status, to: newStatus },
+      admin_email: session?.user?.email || 'unknown'
+    });
+  }
+  await sbPatch('orders', orderId, { status: newStatus });
+  toast(`Orden → ${newStatus}`);
+}
+
+// Editar orden completa (modal) — mantiene historial
+async function editOrder(orderId) {
+  const orders = await sbGet('orders');
+  const o = orders.find(x => x.id === orderId);
+  if (!o) return toast('Orden no encontrada', 'error');
+  const newStatus = prompt(`Editar orden ${orderId.slice(0,8)}\n\nEstado actual: ${o.status||'pending'}\n\nNuevo estado (pending/confirmed/shipped/delivered/cancelled):`, o.status || 'pending');
+  if (newStatus && newStatus !== o.status) {
+    await updateOrderStatus(orderId, newStatus.trim());
+    // refrescar
+    const refreshed = await sbGet('orders');
+    renderDashOrders(refreshed);
+  }
+  // Notas del admin
+  const notes = prompt('Notas internas (opcional):', o.notes || '');
+  if (notes !== null && notes !== (o.notes || '')) {
+    await sb.from('orders_history').insert({ order_id: orderId, action: 'modified', changes: { field: 'notes', from: o.notes||'', to: notes }, admin_email: session?.user?.email || 'unknown' });
+    await sbPatch('orders', orderId, { notes });
+    toast('Notas actualizadas');
+  }
 }
 
 // ═══ TELOSALES — CRUD ═══
@@ -581,17 +696,108 @@ async function delTech(id) {
   if (ok) { technicians = technicians.filter(x => x.id !== id); renderTechniciansPage(); toast('Técnico eliminado'); }
 }
 
+// ═══ DRIVERS (TeloLleva) CRUD ═══
+let drivers = [];
+
+async function loadDrivers() {
+  drivers = await sbGet('drivers', '?order=rating.desc');
+}
+
+function renderDriversPage() {
+  const VEH = { motorcycle: '🏍️ Moto', car: '🚗 Carro', van: '🚐 Van' };
+  const ST = { available: ['Disponible', 'var(--success)'], busy: ['Ocupado', 'var(--primary)'], offline: ['Desconectado', 'var(--dim)'] };
+  document.getElementById('driversBody').innerHTML = drivers.map(d => {
+    const [sLabel, sColor] = ST[d.status] || ST.available;
+    return `<tr>
+      <td><b>${d.name}</b></td>
+      <td>${d.phone || '—'}${d.phone ? ` <a href="https://wa.me/${d.phone.replace(/\D/g,'')}" target="_blank" class="btn btn-g btn-sm">💬</a>` : ''}</td>
+      <td>${VEH[d.vehicle] || d.vehicle}</td>
+      <td>★ ${d.rating || 5}</td>
+      <td>${d.jobs_completed || 0}</td>
+      <td><select class="btn-sm" style="padding:3px 6px;font-size:.7rem" onchange="updateDriverStatus('${d.id}',this.value)">${Object.entries(ST).map(([k,[l]])=>`<option value="${k}" ${d.status===k?'selected':''}>${l}</option>`).join('')}</select></td>
+      <td class="acts"><button class="btn btn-g btn-sm" onclick="editDriver('${d.id}')">✏️</button><button class="btn btn-d btn-sm" onclick="delDriver('${d.id}')">🗑️</button></td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="7" style="text-align:center;color:var(--dim)">Sin conductores. Agrega conductores para activar TeloLleva real.</td></tr>';
+}
+
+function editDriver(id) {
+  const d = drivers.find(x => x.id === id);
+  if (!d) return;
+  document.getElementById('drvName').value = d.name;
+  document.getElementById('drvPhone').value = d.phone || '';
+  document.getElementById('drvVehicle').value = d.vehicle || 'motorcycle';
+  document.getElementById('drvZone').value = d.zone || '';
+  document.getElementById('drvStatus').value = d.status || 'available';
+  document.getElementById('drvSaveBtn').textContent = 'Actualizar';
+  document.getElementById('drvSaveBtn').onclick = () => updateDriver(id);
+}
+
+async function addDriver() {
+  const name = document.getElementById('drvName').value.trim();
+  if (!name) return toast('Nombre requerido', 'error');
+  const phone = document.getElementById('drvPhone').value.trim();
+  const data = {
+    id: 'drv-' + Date.now(),
+    name,
+    phone,
+    vehicle: document.getElementById('drvVehicle').value,
+    zone: document.getElementById('drvZone').value.trim(),
+    status: document.getElementById('drvStatus').value,
+    rating: 5,
+    jobs_completed: 0,
+    avatar: document.getElementById('drvVehicle').value === 'car' ? '🚗' : (document.getElementById('drvVehicle').value === 'van' ? '🚐' : '🏍️')
+  };
+  const created = await sbPost('drivers', data);
+  if (created) { drivers.push(created[0]); renderDriversPage(); resetDriverForm(); toast('Conductor agregado ✓'); }
+}
+
+async function updateDriver(id) {
+  const data = {
+    name: document.getElementById('drvName').value.trim(),
+    phone: document.getElementById('drvPhone').value.trim(),
+    vehicle: document.getElementById('drvVehicle').value,
+    zone: document.getElementById('drvZone').value.trim(),
+    status: document.getElementById('drvStatus').value
+  };
+  const updated = await sbPatch('drivers', id, data);
+  if (updated) { const i = drivers.findIndex(x => x.id === id); drivers[i] = { ...drivers[i], ...data }; renderDriversPage(); resetDriverForm(); toast('Conductor actualizado ✓'); }
+}
+
+async function updateDriverStatus(id, status) {
+  await sbPatch('drivers', id, { status });
+  const d = drivers.find(x => x.id === id);
+  if (d) d.status = status;
+  toast(`Conductor → ${status}`);
+}
+
+function resetDriverForm() {
+  ['drvName', 'drvPhone', 'drvZone'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('drvVehicle').value = 'motorcycle';
+  document.getElementById('drvStatus').value = 'available';
+  const btn = document.getElementById('drvSaveBtn');
+  btn.textContent = 'Agregar';
+  btn.onclick = addDriver;
+}
+
+async function delDriver(id) {
+  if (!confirm('¿Eliminar conductor?')) return;
+  const ok = await sbDel('drivers', id);
+  if (ok) { drivers = drivers.filter(x => x.id !== id); renderDriversPage(); toast('Conductor eliminado'); }
+}
+
 // ═══ SERVICES CATALOG CRUD ═══
 function renderServicesPage() {
   const renderList = (list, type) => list.map(s => `<tr>
     <td><input value="${s.name}" onchange="updateService('${s.id}','name',this.value)" style="width:100%"></td>
-    <td><input type="number" value="${s.price}" onchange="updateService('${s.id}','price',this.value)" style="width:90px"></td>
-    <td><input value="${s.estimated_time || ''}" onchange="updateService('${s.id}','estimated_time',this.value)" style="width:80px"></td>
-    <td><input value="${s.category || ''}" onchange="updateService('${s.id}','category',this.value)" style="width:100px"></td>
+    <td><input type="number" value="${s.price || 0}" onchange="updateService('${s.id}','price',this.value)" style="width:80px" title="Precio sugerido"></td>
+    <td><input type="number" value="${s.price_min || 0}" onchange="updateService('${s.id}','price_min',this.value)" style="width:70px" title="Precio mínimo"></td>
+    <td><input type="number" value="${s.price_max || 0}" onchange="updateService('${s.id}','price_max',this.value)" style="width:70px" title="Precio máximo"></td>
+    <td><input value="${s.estimated_time || ''}" onchange="updateService('${s.id}','estimated_time',this.value)" style="width:70px"></td>
+    <td><input value="${s.category || ''}" onchange="updateService('${s.id}','category',this.value)" style="width:90px"></td>
     <td><button class="btn btn-d btn-sm" onclick="delService('${s.id}')">×</button></td></tr>`).join('');
 
-  document.getElementById('servicesInstalaBody').innerHTML = renderList(servicesCatalog.instala, 'instala') || '<tr><td colspan="5" style="text-align:center;color:var(--dim)">Sin servicios</td></tr>';
-  document.getElementById('servicesReparaBody').innerHTML = renderList(servicesCatalog.repara, 'repara') || '<tr><td colspan="5" style="text-align:center;color:var(--dim)">Sin servicios</td></tr>';
+  document.getElementById('servicesInstalaBody').innerHTML = renderList(servicesCatalog.instala, 'instala') || '<tr><td colspan="7" style="text-align:center;color:var(--dim)">Sin servicios</td></tr>';
+  document.getElementById('servicesReparaBody').innerHTML = renderList(servicesCatalog.repara, 'repara') || '<tr><td colspan="7" style="text-align:center;color:var(--dim)">Sin servicios</td></tr>';
 }
 
 async function addService(type) {
@@ -602,17 +808,20 @@ async function addService(type) {
     key: 'new',
     name: 'Nuevo servicio',
     price: 1000,
+    price_min: 700,
+    price_max: 1500,
     estimated_time: '1h',
     category: '',
     active: true,
     sort_order: maxSort + 1
   };
   const created = await sbPost('services_catalog', data);
-  if (created) { servicesCatalog[type].push(created[0]); renderServicesPage(); toast('Servicio agregado'); }
+  if (created) { servicesCatalog[type].push(created[0]); renderServicesPage(); toast('Servicio agregado — edita nombre y precios'); }
 }
 
 async function updateService(id, field, value) {
-  const payload = { [field]: field === 'price' ? (+value || 0) : value };
+  const numericFields = ['price', 'price_min', 'price_max'];
+  const payload = { [field]: numericFields.includes(field) ? (+value || 0) : value };
   await sbPatch('services_catalog', id, payload);
   const all = [...servicesCatalog.instala, ...servicesCatalog.repara];
   const s = all.find(x => x.id === id);

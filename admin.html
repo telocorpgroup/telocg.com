@@ -107,6 +107,9 @@ td img{width:36px;height:36px;border-radius:6px;object-fit:cover}
 .toast-c{position:fixed;bottom:16px;right:16px;z-index:999;display:flex;flex-direction:column;gap:6px}
 .toast{background:var(--surface);border:1px solid var(--border);padding:10px 14px;border-radius:var(--r);font-size:.82rem;box-shadow:0 4px 20px rgba(0,0,0,.4);animation:slideUp .2s}
 @keyframes slideUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.form-row{display:flex;gap:8px;align-items:flex-end;margin-bottom:12px;flex-wrap:wrap}
+.section-title{font-size:.9rem;margin:20px 0 10px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px}
+@media(max-width:768px){.charts-grid{grid-template-columns:1fr !important}}
 </style>
 
 <!-- LOGIN -->
@@ -151,6 +154,7 @@ Para crear el usuario admin: ejecuta <code>supabase-schema-migration-v4.sql</cod
 <button class="nav-item" data-page="members"><span>👥</span>Miembros</button>
 <button class="nav-item" data-page="categories"><span>🏷️</span>Categorías</button>
 <button class="nav-item" data-page="technicians"><span>👷</span>Técnicos</button>
+<button class="nav-item" data-page="drivers"><span>🛵</span>Conductores</button>
 <button class="nav-item" data-page="services"><span>📋</span>Servicios</button>
 <button class="nav-item" data-page="config"><span>⚙️</span>Configuración</button>
 </nav>
@@ -160,7 +164,26 @@ Para crear el usuario admin: ejecuta <code>supabase-schema-migration-v4.sql</cod
 <div class="page on" id="pg-dashboard">
 <h2 class="page-title">📊 Dashboard General</h2>
 <div class="stats" id="dashStats"></div>
-<div class="tbl-wrap"><table><thead><tr><th>Últimas Órdenes</th><th>Total</th><th>Método</th><th>Fecha</th></tr></thead><tbody id="dashOrders"><tr><td colspan="4" style="text-align:center;color:var(--dim);padding:20px">Sin órdenes registradas</td></tr></tbody></table></div>
+<!-- Gráficos -->
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px" class="charts-grid">
+  <div class="tbl-wrap" style="padding:16px">
+    <h3 style="font-size:.85rem;color:var(--dim);margin-bottom:12px">💰 Ingresos últimos 7 días</h3>
+    <canvas id="chartRevenue" height="160"></canvas>
+  </div>
+  <div class="tbl-wrap" style="padding:16px">
+    <h3 style="font-size:.85rem;color:var(--dim);margin-bottom:12px">📦 Órdenes por estado</h3>
+    <canvas id="chartOrders" height="160"></canvas>
+  </div>
+  <div class="tbl-wrap" style="padding:16px">
+    <h3 style="font-size:.85rem;color:var(--dim);margin-bottom:12px">🏆 Productos más vendidos</h3>
+    <canvas id="chartProducts" height="160"></canvas>
+  </div>
+  <div class="tbl-wrap" style="padding:16px">
+    <h3 style="font-size:.85rem;color:var(--dim);margin-bottom:12px">🛠️ Solicitudes de servicio</h3>
+    <canvas id="chartServices" height="160"></canvas>
+  </div>
+</div>
+<div class="tbl-wrap"><table><thead><tr><th>Últimas Órdenes</th><th>Total</th><th>Método</th><th>Estado</th><th>Fecha</th><th></th></tr></thead><tbody id="dashOrders"><tr><td colspan="6" style="text-align:center;color:var(--dim);padding:20px">Sin órdenes registradas</td></tr></tbody></table></div>
 </div>
 
 <!-- TELOSALES -->
@@ -244,13 +267,30 @@ Para crear el usuario admin: ejecuta <code>supabase-schema-migration-v4.sql</cod
 </div>
 </div>
 
+<!-- CONDUCTORES (TeloLleva — CRUD NUEVO) -->
+<div class="page" id="pg-drivers">
+<h2 class="page-title">🛵 Conductores TeloLleva</h2>
+<div class="tbl-wrap"><table><thead><tr><th>Nombre</th><th>Teléfono</th><th>Vehículo</th><th>Rating</th><th>Servicios</th><th>Estado</th><th></th></tr></thead><tbody id="driversBody"></tbody></table></div>
+<div class="section-title">➕ Agregar / Editar Conductor</div>
+<div style="display:flex;gap:8px;align-items:flex-end;margin-bottom:12px;flex-wrap:wrap">
+<div class="fg" style="flex:2"><label>Nombre</label><input id="drvName" placeholder="Nombre completo"></div>
+<div class="fg" style="flex:1"><label>Teléfono (+1...)</label><input id="drvPhone" placeholder="+18095551234"></div>
+<div class="fg" style="flex:1"><label>Vehículo</label><select id="drvVehicle"><option value="motorcycle">🏍️ Moto</option><option value="car">🚗 Carro</option><option value="van">🚐 Van</option></select></div>
+</div>
+<div style="display:flex;gap:8px;align-items:flex-end;margin-bottom:12px;flex-wrap:wrap">
+<div class="fg" style="flex:1"><label>Zona</label><input id="drvZone" placeholder="Santo Domingo Norte"></div>
+<div class="fg" style="flex:1"><label>Estado</label><select id="drvStatus"><option value="available">Disponible</option><option value="busy">Ocupado</option><option value="offline">Desconectado</option></select></div>
+<button class="btn btn-p" id="drvSaveBtn" onclick="addDriver()">Agregar</button>
+</div>
+</div>
+
 <!-- SERVICIOS (CRUD NUEVO) -->
 <div class="page" id="pg-services">
 <h2 class="page-title">📋 Catálogo de Servicios y Precios</h2>
 <div style="font-size:.9rem;margin:20px 0 10px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px">🛠️ TeloInstala <button class="btn btn-g btn-sm" onclick="addService('instala')" style="margin-left:8px">+ Servicio</button></div>
-<div class="tbl-wrap"><table><thead><tr><th>Nombre</th><th>Precio RD$</th><th>Tiempo</th><th>Categoría</th><th></th></tr></thead><tbody id="servicesInstalaBody"></tbody></table></div>
+<div class="tbl-wrap"><table><thead><tr><th>Nombre</th><th>Precio RD$</th><th>Mín</th><th>Máx</th><th>Tiempo</th><th>Categoría</th><th></th></tr></thead><tbody id="servicesInstalaBody"></tbody></table></div>
 <div style="font-size:.9rem;margin:20px 0 10px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px">🔧 TeloRepara <button class="btn btn-g btn-sm" onclick="addService('repara')" style="margin-left:8px">+ Servicio</button></div>
-<div class="tbl-wrap"><table><thead><tr><th>Nombre</th><th>Precio RD$</th><th>Tiempo</th><th>Categoría</th><th></th></tr></thead><tbody id="servicesReparaBody"></tbody></table></div>
+<div class="tbl-wrap"><table><thead><tr><th>Nombre</th><th>Precio RD$</th><th>Mín</th><th>Máx</th><th>Tiempo</th><th>Categoría</th><th></th></tr></thead><tbody id="servicesReparaBody"></tbody></table></div>
 </div>
 
 <!-- CONFIG (FUNCIONAL) -->
@@ -347,8 +387,9 @@ Para crear el usuario admin: ejecuta <code>supabase-schema-migration-v4.sql</cod
 // La lógica vive ahora en admin.js para separar estructura (HTML) de comportamiento (JS).
 // La función toast() y todas las demás se definen en admin.js.
 </script>
-<!-- Supabase JS Client + Admin Logic (auth real, sin credenciales hardcodeadas) -->
+<!-- Supabase JS Client + Chart.js + Admin Logic -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="admin.js"></script>
 </body>
 </html>
