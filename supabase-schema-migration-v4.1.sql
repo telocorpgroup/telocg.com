@@ -83,7 +83,7 @@ ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "notifications_insert_public" ON notifications;
 DROP POLICY IF EXISTS "notifications_all_admin" ON notifications;
 CREATE POLICY "notifications_insert_public" ON notifications FOR INSERT WITH CHECK (true);
-CREATE POLICY "notifications_all_admin" ON notifications FOR SELECT USING (is_admin()) WITH CHECK (is_admin());
+CREATE POLICY "notifications_all_admin" ON notifications FOR SELECT USING (is_admin());
 
 -- orders_history: admin lee todo, cualquiera inserta (para auditoría automática)
 ALTER TABLE orders_history ENABLE ROW LEVEL SECURITY;

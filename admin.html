@@ -109,6 +109,8 @@ td img{width:36px;height:36px;border-radius:6px;object-fit:cover}
 @keyframes slideUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 .form-row{display:flex;gap:8px;align-items:flex-end;margin-bottom:12px;flex-wrap:wrap}
 .section-title{font-size:.9rem;margin:20px 0 10px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px}
+.chart-card{min-height:260px;display:flex;flex-direction:column}
+.chart-box{position:relative;height:200px;width:100%}
 @media(max-width:768px){.charts-grid{grid-template-columns:1fr !important}}
 </style>
 
@@ -166,21 +168,21 @@ Para crear el usuario admin: ejecuta <code>supabase-schema-migration-v4.sql</cod
 <div class="stats" id="dashStats"></div>
 <!-- Gráficos -->
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px" class="charts-grid">
-  <div class="tbl-wrap" style="padding:16px">
+  <div class="tbl-wrap chart-card" style="padding:16px">
     <h3 style="font-size:.85rem;color:var(--dim);margin-bottom:12px">💰 Ingresos últimos 7 días</h3>
-    <canvas id="chartRevenue" height="160"></canvas>
+    <div class="chart-box"><canvas id="chartRevenue"></canvas></div>
   </div>
-  <div class="tbl-wrap" style="padding:16px">
+  <div class="tbl-wrap chart-card" style="padding:16px">
     <h3 style="font-size:.85rem;color:var(--dim);margin-bottom:12px">📦 Órdenes por estado</h3>
-    <canvas id="chartOrders" height="160"></canvas>
+    <div class="chart-box"><canvas id="chartOrders"></canvas></div>
   </div>
-  <div class="tbl-wrap" style="padding:16px">
+  <div class="tbl-wrap chart-card" style="padding:16px">
     <h3 style="font-size:.85rem;color:var(--dim);margin-bottom:12px">🏆 Productos más vendidos</h3>
-    <canvas id="chartProducts" height="160"></canvas>
+    <div class="chart-box"><canvas id="chartProducts"></canvas></div>
   </div>
-  <div class="tbl-wrap" style="padding:16px">
+  <div class="tbl-wrap chart-card" style="padding:16px">
     <h3 style="font-size:.85rem;color:var(--dim);margin-bottom:12px">🛠️ Solicitudes de servicio</h3>
-    <canvas id="chartServices" height="160"></canvas>
+    <div class="chart-box"><canvas id="chartServices"></canvas></div>
   </div>
 </div>
 <div class="tbl-wrap"><table><thead><tr><th>Últimas Órdenes</th><th>Total</th><th>Método</th><th>Estado</th><th>Fecha</th><th></th></tr></thead><tbody id="dashOrders"><tr><td colspan="6" style="text-align:center;color:var(--dim);padding:20px">Sin órdenes registradas</td></tr></tbody></table></div>
