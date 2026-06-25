@@ -1,0 +1,25 @@
+{
+  "name": "Telo' Corp Group",
+  "short_name": "TeloCorp",
+  "description": "Plataforma digital integrada: comercio, educación, logística y servicios técnicos.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0a0f1a",
+  "theme_color": "#0a0f1a",
+  "orientation": "portrait-primary",
+  "categories": ["business", "shopping", "education"],
+  "icons": [
+    {
+      "src": "assets/telocorpgroup-mark.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/telocorpgroup-logo.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any"
+    }
+  ]
+}
