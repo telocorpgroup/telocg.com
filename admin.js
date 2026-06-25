@@ -313,9 +313,31 @@ function renderDashboard() {
     <div class="stat"><div class="label">Cursos Activos</div><div class="val">${courses.filter(c => c.active).length}</div></div>`;
 }
 
-// Renderiza los 4 gráficos del dashboard usando los datos cargados
+// Renderiza los 4 gráficos del dashboard usando los datos cargados.
+// Reintenta cada 300ms hasta que Chart.js esté disponible (hasta 5s).
 async function renderDashboardCharts() {
-  if (typeof Chart === 'undefined') return; // Chart.js no cargado aún
+  let tries = 0;
+  const waitForChart = () => new Promise((resolve) => {
+    const check = () => {
+      if (typeof Chart !== 'undefined') return resolve(true);
+      if (++tries > 16) return resolve(false); // ~5s timeout
+      setTimeout(check, 300);
+    };
+    check();
+  });
+
+  const ready = await waitForChart();
+  if (!ready) {
+    console.warn('[Dashboard] Chart.js no cargó tras 5s — gráficos omitidos');
+    return;
+  }
+
+  // Verificar que todos los canvas existen en el DOM
+  const ids = ['chartRevenue', 'chartOrders', 'chartProducts', 'chartServices'];
+  if (!ids.every(id => document.getElementById(id))) {
+    console.warn('[Dashboard] Canvas no encontrados en el DOM');
+    return;
+  }
 
   const orders = await sbGet('orders');
   const repara = await sbGet('repara_bookings');
@@ -326,7 +348,6 @@ async function renderDashboardCharts() {
   Object.values(charts).forEach(c => { try { c.destroy(); } catch(e){} });
   charts = {};
 
-  const chartFont = { color: '#94a3b8', size: 11 };
   const gridColor = 'rgba(148,163,184,0.1)';
   Chart.defaults.color = '#94a3b8';
   Chart.defaults.font.size = 11;
@@ -341,43 +362,51 @@ async function renderDashboardCharts() {
     const dayOrders = orders.filter(o => o.created_at && o.created_at.slice(0, 10) === key);
     revenue.push(dayOrders.reduce((s, o) => s + (o.total || 0), 0));
   }
-  charts.revenue = new Chart(document.getElementById('chartRevenue'), {
-    type: 'line',
-    data: { labels: days, datasets: [{ label: 'RD$', data: revenue, borderColor: '#f97316', backgroundColor: 'rgba(249,115,22,0.15)', fill: true, tension: 0.4, borderWidth: 2 }] },
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: gridColor }, ticks: { callback: v => 'RD$' + v.toLocaleString() } }, x: { grid: { display: false } } } }
-  });
+  try {
+    charts.revenue = new Chart(document.getElementById('chartRevenue'), {
+      type: 'line',
+      data: { labels: days, datasets: [{ label: 'RD$', data: revenue, borderColor: '#f97316', backgroundColor: 'rgba(249,115,22,0.15)', fill: true, tension: 0.4, borderWidth: 2, pointRadius: 3, pointBackgroundColor: '#f97316' }] },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: gridColor }, ticks: { callback: v => 'RD$' + (v||0).toLocaleString() } }, x: { grid: { display: false } } } }
+    });
+  } catch (e) { console.error('[chart revenue]', e); }
 
   // 2) Órdenes por estado (doughnut)
   const statuses = ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled'];
   const statusCounts = statuses.map(s => orders.filter(o => (o.status || 'pending') === s).length);
-  charts.orders = new Chart(document.getElementById('chartOrders'), {
-    type: 'doughnut',
-    data: { labels: ['Pendientes', 'Confirmadas', 'Enviadas', 'Entregadas', 'Canceladas'], datasets: [{ data: statusCounts, backgroundColor: ['#f59e0b', '#3b82f6', '#a855f7', '#22c55e', '#ef4444'], borderWidth: 0 }] },
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { boxWidth: 12, padding: 8 } } }, cutout: '60%' }
-  });
+  try {
+    charts.orders = new Chart(document.getElementById('chartOrders'), {
+      type: 'doughnut',
+      data: { labels: ['Pendientes', 'Confirmadas', 'Enviadas', 'Entregadas', 'Canceladas'], datasets: [{ data: statusCounts, backgroundColor: ['#f59e0b', '#3b82f6', '#a855f7', '#22c55e', '#ef4444'], borderWidth: 0 }] },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { boxWidth: 12, padding: 8 } } }, cutout: '60%' }
+    });
+  } catch (e) { console.error('[chart orders]', e); }
 
   // 3) Productos más vendidos (barra horizontal)
   const topProducts = [...products].sort((a, b) => (b.sold || 0) - (a.sold || 0)).slice(0, 5);
-  charts.products = new Chart(document.getElementById('chartProducts'), {
-    type: 'bar',
-    data: { labels: topProducts.map(p => (p.title || p.name || '').slice(0, 18)), datasets: [{ label: 'Vendidos', data: topProducts.map(p => p.sold || 0), backgroundColor: '#f97316', borderRadius: 4 }] },
-    options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { grid: { color: gridColor } }, y: { grid: { display: false } } } }
-  });
+  try {
+    charts.products = new Chart(document.getElementById('chartProducts'), {
+      type: 'bar',
+      data: { labels: topProducts.map(p => (p.title || p.name || '').slice(0, 18) || 'Producto'), datasets: [{ label: 'Vendidos', data: topProducts.map(p => p.sold || 0), backgroundColor: '#f97316', borderRadius: 4 }] },
+      options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { grid: { color: gridColor }, beginAtZero: true }, y: { grid: { display: false } } } }
+    });
+  } catch (e) { console.error('[chart products]', e); }
 
   // 4) Solicitudes de servicio por tipo (barra)
-  charts.services = new Chart(document.getElementById('chartServices'), {
-    type: 'bar',
-    data: {
-      labels: ['Reparaciones', 'Instalaciones', 'Envíos', 'Ventas'],
-      datasets: [{
-        label: 'Solicitudes',
-        data: [repara.length, instala.length, lleva.length, orders.length],
-        backgroundColor: ['#a855f7', '#22c55e', '#f59e0b', '#f97316'],
-        borderRadius: 4
-      }]
-    },
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: gridColor }, beginAtZero: true }, x: { grid: { display: false } } } }
-  });
+  try {
+    charts.services = new Chart(document.getElementById('chartServices'), {
+      type: 'bar',
+      data: {
+        labels: ['Reparaciones', 'Instalaciones', 'Envíos', 'Ventas'],
+        datasets: [{
+          label: 'Solicitudes',
+          data: [repara.length, instala.length, lleva.length, orders.length],
+          backgroundColor: ['#a855f7', '#22c55e', '#f59e0b', '#f97316'],
+          borderRadius: 4
+        }]
+      },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: gridColor }, beginAtZero: true }, x: { grid: { display: false } } } }
+    });
+  } catch (e) { console.error('[chart services]', e); }
 }
 
 function renderDashOrders(orders) {
