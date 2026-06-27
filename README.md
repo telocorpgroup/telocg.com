@@ -1,4 +1,4 @@
-# Telo' Corp Group — Plataforma Digital v4.0
+# Telo' Corp Group — Plataforma Digital v4.1
 
 > Super-app multi-servicio para República Dominicana: e-commerce, academia online, logística, reparación e instalaciones técnicas.
 
@@ -17,10 +17,10 @@
                          │ HTTPS / REST
 ┌────────────────────────▼────────────────────────────────┐
 │  Supabase (PostgreSQL + Auth + RLS + Edge Functions)    │
-│  • 16 tablas con RLS granular                           │
+│  • 19 tablas con RLS granular                           │
 │  • Auth real (email/password, server-side verified)     │
-│  • 4 Edge Functions (chat, upload-image, ai-specs,      │
-│    create-checkout)                                     │
+│  • 5 Edge Functions (chat, upload-image, ai-specs,      │
+│    create-checkout, notify-whatsapp)                    │
 └────────────────────────┬────────────────────────────────┘
                          │ Secrets (nunca en frontend)
 ┌────────────────────────▼────────────────────────────────┐
@@ -77,7 +77,7 @@ python -m http.server 8000
 
 - **URL:** `telocg.com/admin.html`
 - **Auth:** Supabase Auth real (credenciales verificadas server-side)
-- **Módulos:** Dashboard, TeloSales (CRUD), TeloEduca (CRUD), TeloLleva, TeloRepara, TeloInstala, Miembros, Categorías, Técnicos, Servicios, Configuración
+- **Módulos:** Dashboard (gráficos Chart.js), TeloSales (CRUD), TeloEduca (CRUD), TeloLleva, TeloRepara, TeloInstala, Miembros, Categorías, Técnicos, Conductores, Servicios, Configuración
 - **No hay credenciales hardcodeadas** — el login usa Supabase Auth
 
 ## 📊 Evaluación de calidad (v4.0)

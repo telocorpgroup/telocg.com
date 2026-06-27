@@ -107,4 +107,8 @@ ALTER TABLE drivers ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW(
 CREATE TRIGGER trg_drivers_updated BEFORE UPDATE ON drivers
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+-- ═══ PARTE 7: POLICY DELETE FALTANTE EN ORDERS ═══
+DROP POLICY IF EXISTS "orders_delete_admin" ON orders;
+CREATE POLICY "orders_delete_admin" ON orders FOR DELETE USING (is_admin());
+
 -- ═══ FIN MIGRACIÓN v4.1 ═══

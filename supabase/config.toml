@@ -22,12 +22,19 @@ entrypoint = "./functions/upload-image/index.ts"
 # static_files = [ "./functions/upload-image/*.html" ]
 
 [functions.create-checkout]
-enabled = true
+enabled = false
 verify_jwt = false
 import_map = "./functions/create-checkout/deno.json"
-# Uncomment to specify a custom file path to the entrypoint.
-# Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
 entrypoint = "./functions/create-checkout/index.ts"
-# Specifies static files to be bundled with the function. Supports glob patterns.
-# For example, if you want to serve static HTML pages in your function:
-# static_files = [ "./functions/create-checkout/*.html" ]
+# DESACTIVADA: Stripe reemplazado por link de pago CardNET vía WhatsApp
+
+[functions.ai-specs]
+enabled = true
+verify_jwt = false
+import_map = "./functions/ai-specs/deno.json"
+entrypoint = "./functions/ai-specs/index.ts"
+
+[functions.notify-whatsapp]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/notify-whatsapp/index.ts"

@@ -78,6 +78,26 @@
   </script>
 
   <!-- Structured Data: Service catalog (LocalBusiness) -->
+
+  <!-- Google Analytics 4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX');
+  </script>
+
+  <!-- Meta Pixel (Facebook/Instagram) -->
+  <script>
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+    document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', 'TU_PIXEL_ID');
+    fbq('track', 'PageView');
+  </script>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -229,10 +249,24 @@
 
         <!-- TELOSALES -->
         <section class="view" id="view-sales">
+          <!-- Promotional Top Banner (configurable from admin) -->
+          <div class="promo-banner" id="promo-banner" hidden>
+            <span class="promo-banner__text" id="promo-banner-text"></span>
+            <button class="promo-banner__close" onclick="document.getElementById('promo-banner').hidden=true" aria-label="Cerrar">&times;</button>
+          </div>
           <div class="view__header">
             <h2>TeloSales Store</h2>
             <p>Catálogo de tecnología y accesorios premium con envío express.</p>
           </div>
+          <!-- Trust Badges Strip -->
+          <div class="trust-strip">
+            <span class="trust-strip__item">🚚 Envío gratis +RD$1,500</span>
+            <span class="trust-strip__item">🔒 Pago seguro</span>
+            <span class="trust-strip__item">↩️ Devolución 7 días</span>
+            <span class="trust-strip__item">💬 Soporte 24/7</span>
+          </div>
+          <!-- Flash Sale Countdown -->
+          <div class="flash-sale-banner" id="flash-sale-banner" hidden></div>
           <div class="sales-toolbar">
             <div class="search-box">
               <svg class="search-box__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -243,7 +277,29 @@
               <option value="price-asc">Precio: Bajo a Alto</option>
               <option value="price-desc">Precio: Alto a Bajo</option>
               <option value="rating-desc">Mejor Valorados</option>
+              <option value="best-sellers">Más Vendidos</option>
             </select>
+          </div>
+          <!-- Advanced Filters -->
+          <div class="advanced-filters" id="advanced-filters">
+            <div class="filter-group">
+              <label class="filter-label">Precio</label>
+              <div class="price-range-inputs">
+                <input type="number" id="filter-price-min" class="input-sm" placeholder="Min" aria-label="Precio mínimo">
+                <span>—</span>
+                <input type="number" id="filter-price-max" class="input-sm" placeholder="Max" aria-label="Precio máximo">
+                <button class="btn btn--ghost btn--xs" onclick="applyPriceFilter()">Filtrar</button>
+              </div>
+            </div>
+            <div class="filter-group">
+              <label class="filter-label">Rating mínimo</label>
+              <div class="rating-filter">
+                <button class="chip chip--sm" data-min-rating="4" onclick="setRatingFilter(4)">★4+</button>
+                <button class="chip chip--sm" data-min-rating="4.5" onclick="setRatingFilter(4.5)">★4.5+</button>
+                <button class="chip chip--sm" data-min-rating="0" onclick="setRatingFilter(0)">Todos</button>
+              </div>
+            </div>
+            <label class="filter-check"><input type="checkbox" id="filter-free-shipping" onchange="renderProducts()"> 🚚 Solo envío gratis</label>
           </div>
           <div class="filter-chips" role="tablist" aria-label="Categorías">
             <button class="chip active" data-cat="all" role="tab" aria-selected="true">Todos</button>
@@ -252,7 +308,14 @@
             <button class="chip" data-cat="audio" role="tab" aria-selected="false">Audio</button>
             <button class="chip" data-cat="equipos" role="tab" aria-selected="false">Equipamiento</button>
           </div>
+          <!-- Products Counter -->
+          <div class="products-counter" id="products-counter"></div>
           <div class="products-grid" id="products-grid" role="tabpanel"></div>
+          <!-- Recently Viewed -->
+          <div class="recently-viewed" id="recently-viewed" hidden>
+            <h3 class="recently-viewed__title">👁️ Vistos recientemente</h3>
+            <div class="recently-viewed__grid" id="recently-viewed-grid"></div>
+          </div>
         </section>
 
         <!-- TELOEDUCA -->
@@ -260,6 +323,13 @@
           <div class="view__header">
             <h2>Academia TeloEduca</h2>
             <p>Rutas de aprendizaje estructuradas con certificaciones verificables.</p>
+          </div>
+          <!-- Educa Stats Banner -->
+          <div class="educa-stats">
+            <div class="educa-stat"><span class="educa-stat__val" id="educa-total-courses">5</span><span class="educa-stat__label">Cursos</span></div>
+            <div class="educa-stat"><span class="educa-stat__val" id="educa-total-students">5,000+</span><span class="educa-stat__label">Estudiantes</span></div>
+            <div class="educa-stat"><span class="educa-stat__val" id="educa-total-certs">100+</span><span class="educa-stat__label">Certificados</span></div>
+            <div class="educa-stat"><span class="educa-stat__val">4.8 ★</span><span class="educa-stat__label">Valoración</span></div>
           </div>
           <div class="educa-progress-banner">
             <div class="educa-progress-banner__info">
@@ -288,6 +358,15 @@
           </div>
           <h3 class="section-title">Talleres Disponibles</h3>
           <div class="courses-grid" id="courses-grid"></div>
+          <!-- Certificate Verification Link -->
+          <div class="cert-verify-section">
+            <h4>🔗 Verificar Certificado</h4>
+            <div class="cert-verify-form">
+              <input type="text" id="verify-cert-id" class="input-control input-control--sm" placeholder="Ingresa el ID del certificado (TC-XXXX-XXXXXX)">
+              <button class="btn btn--ghost btn--sm" onclick="verifyCertificate()">Verificar</button>
+            </div>
+            <div id="cert-verify-result" hidden></div>
+          </div>
         </section>
 
         <!-- TELOEDUCA CLASSROOM -->
@@ -416,6 +495,7 @@
                   </div>
                 </div>
                 <label class="checkbox-control"><input type="checkbox" id="lleva-recurring"><span>Servicio recurrente (iguala mensual)</span></label>
+                <label class="checkbox-control"><input type="checkbox" id="lleva-insurance"><span>🛡️ Seguro de paquete (+5% del valor declarado)</span></label>
                 <button class="btn btn--primary btn--full" id="lleva-submit">Solicitar Mensajero</button>
                 <a href="https://wa.me/18099038707?text=Hola%20TeloLleva%2C%20necesito%20un%20env%C3%ADo" target="_blank" class="btn btn--whatsapp btn--full">💬 Solicitar por WhatsApp</a>
               </div>
@@ -492,9 +572,19 @@
                 <label for="repara-desc">Descripción del Problema</label>
                 <textarea id="repara-desc" class="input-control" rows="2" placeholder="Describe con detalle qué le sucede a tu dispositivo..."></textarea>
               </div>
+              <div class="form-group">
+                <label>📸 Foto del dispositivo (opcional)</label>
+                <input type="file" id="repara-photo" class="input-control" accept="image/*" capture="environment">
+                <small class="text-muted">Sube una foto del daño para un diagnóstico más preciso</small>
+              </div>
               <div class="quote-box">
                 <div class="quote-box__price">Estimado: <strong id="repara-price">RD$ 1,500</strong></div>
                 <small>Tiempo: <span id="repara-time">24-48 horas</span> · Garantía 90 días</small>
+                <div class="quote-box__includes">
+                  <span>✓ Diagnóstico gratis</span>
+                  <span>✓ Recogida a domicilio</span>
+                  <span>✓ Repuestos originales</span>
+                </div>
               </div>
               <div class="form-group">
                 <label for="repara-address">Dirección de Recogida</label>
@@ -594,6 +684,11 @@
               <div class="quote-box">
                 <div class="quote-box__price">Costo: <strong id="instala-price">RD$ 1,200</strong></div>
                 <small>Incluye mano de obra y garantía 30 días</small>
+                <div class="quote-box__includes">
+                  <span>✓ Mano de obra incluida</span>
+                  <span>✓ Garantía 30 días</span>
+                  <span>✓ Materiales aparte (cotizar)</span>
+                </div>
               </div>
               <div class="form-group">
                 <label>Técnico Certificado</label>
@@ -755,12 +850,25 @@
       <div class="coupon-row"><input type="text" id="coupon-input" class="input-control input-control--sm" placeholder="Código de cupón"><button class="btn btn--ghost btn--sm" id="btn-coupon">Aplicar</button></div>
       <div class="cart-breakdown" id="cart-breakdown"></div>
       <div class="cart-total"><span>Total:</span><strong id="cart-total">RD$ 0</strong></div>
+      <!-- Checkout Form (inline, 1 paso) -->
+      <div class="checkout-form" id="checkout-form">
+        <div class="checkout-form__title">📋 Datos de envío</div>
+        <input type="text" id="checkout-name" class="input-control input-control--sm" placeholder="Nombre completo *" required>
+        <input type="tel" id="checkout-phone" class="input-control input-control--sm" placeholder="WhatsApp (809-000-0000) *" required>
+        <input type="text" id="checkout-address" class="input-control input-control--sm" placeholder="Dirección de entrega *" required>
+        <input type="text" id="checkout-city" class="input-control input-control--sm" placeholder="Ciudad / Sector">
+        <textarea id="checkout-notes" class="input-control input-control--sm" placeholder="Notas (opcional: horario preferido, referencias)" rows="2"></textarea>
+      </div>
       <div class="payment-methods">
-        <label class="payment-option"><input type="radio" name="payment" value="whatsapp" checked><span class="payment-option__label">💬 WhatsApp (Transferencia / Efectivo)</span></label>
+        <label class="payment-option"><input type="radio" name="payment" value="cardnet" checked><span class="payment-option__label">💳 Tarjeta (Link de pago CardNET)</span></label>
+        <label class="payment-option"><input type="radio" name="payment" value="whatsapp"><span class="payment-option__label">💬 Transferencia / Depósito / Efectivo</span></label>
         <label class="payment-option"><input type="radio" name="payment" value="paypal"><span class="payment-option__label">🌐 PayPal (Internacional)</span></label>
       </div>
-      <small class="text-muted" style="display:block;margin-bottom:10px;font-size:.7rem">Coordina tu pago directamente con TeloCorpGroup. Aceptamos transferencia bancaria, depósito y efectivo contra entrega.</small>
-      <button class="btn btn--primary btn--full" id="btn-checkout">Procesar Pedido</button>
+      <small class="text-muted" style="display:block;margin-bottom:10px;font-size:.7rem">Con CardNET te enviaremos un link de pago seguro a tu WhatsApp para pagar con tarjeta al instante.</small>
+      <button class="btn btn--primary btn--full" id="btn-checkout">💳 Confirmar y Pagar</button>
+      <div class="checkout-trust" style="display:flex;justify-content:center;gap:12px;margin-top:8px;font-size:.65rem;color:var(--c-text-dim)">
+        <span>🔒 Pago seguro</span><span>📦 Envío 24-48h</span><span>↩️ Devolución 7d</span>
+      </div>
     </div>
   </aside>
 
@@ -789,11 +897,27 @@
   <div class="toast-container" id="toasts" aria-live="polite"></div>
 
   <!-- Chat Widget (FAB flotante) -->
+  <a href="https://wa.me/18099038707?text=Hola%2C%20quiero%20información%20sobre%20TeloSales" target="_blank" class="whatsapp-fab" aria-label="Contactar por WhatsApp" title="Escríbenos por WhatsApp">💬</a>
   <button class="chat-fab" id="chat-fab" aria-label="Abrir TeloAsistente">🤖</button>
   <div class="chat-widget" id="chat-widget" style="display:none;">
     <div class="chat-widget__header"><h4>TeloAsistente</h4><button class="chat-widget__close" id="chat-close" type="button" aria-label="Cerrar chat">×</button></div>
     <div class="chat-widget__messages" id="chat-messages"></div>
     <div class="chat-widget__input"><input type="text" id="chat-input" placeholder="Escribe tu pregunta..." aria-label="Escribe tu pregunta para el asistente TeloAsistente"><button class="btn btn--primary btn--icon" id="chat-send" type="button" aria-label="Enviar mensaje">➤</button></div>
+  </div>
+
+  <!-- Exit-Intent / Email Capture Popup -->
+  <div class="popup-overlay" id="exit-popup-overlay" hidden></div>
+  <div class="exit-popup" id="exit-popup" hidden>
+    <button class="exit-popup__close" onclick="closeExitPopup()" aria-label="Cerrar">&times;</button>
+    <div class="exit-popup__icon">🎁</div>
+    <h3 class="exit-popup__title">¡Espera! 10% OFF tu primera compra</h3>
+    <p class="exit-popup__text">Suscríbete y recibe un cupón exclusivo directo en tu WhatsApp.</p>
+    <form class="exit-popup__form" onsubmit="captureEmail(event)">
+      <input type="email" id="popup-email" class="input-control" placeholder="tu@correo.com" required aria-label="Email para cupón">
+      <input type="tel" id="popup-phone" class="input-control" placeholder="+1 (809) 000-0000" aria-label="WhatsApp para cupón">
+      <button type="submit" class="btn btn--primary btn--full">Obtener mi 10% OFF</button>
+    </form>
+    <p class="exit-popup__note">Código: <strong>PRIMERA10</strong> · Sin spam, solo ofertas.</p>
   </div>
 
   <!-- Google Maps API — LAZY LOADED on demand (perf optimization) -->

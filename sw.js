@@ -1,9 +1,11 @@
-const CACHE_NAME = 'telocorp-v2';
+const CACHE_NAME = 'telocorp-v4.1';
 const ASSETS = [
   './',
   './index.html',
+  './admin.html',
   './styles.css',
   './script.js',
+  './admin.js',
   './manifest.json',
   './assets/telocorpgroup-logo.jpg',
   './assets/telocorpgroup-mark.png'

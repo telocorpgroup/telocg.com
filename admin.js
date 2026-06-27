@@ -57,6 +57,11 @@ async function login() {
   try {
     const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
     if (error) throw error;
+    // Verificar que el usuario tenga permisos de admin antes de entrar
+    if (!isAdminUser(data.user)) {
+      await sb.auth.signOut().catch(() => {});
+      throw new Error('Esta cuenta no tiene permisos de administrador.');
+    }
     session = data.session;
     showApp();
   } catch (err) {
@@ -75,12 +80,35 @@ async function logout() {
 
 async function checkSession() {
   if (!sb) return false;
-  const { data } = await sb.auth.getSession();
-  if (data.session) {
-    session = data.session;
-    return true;
+  // getSession() lee localStorage (puede estar expirada). Validamos con el servidor vía getUser().
+  const { data: sessionData } = await sb.auth.getSession();
+  if (!sessionData.session) return false;
+
+  // Validar el token server-side: getUser() rechaza tokens expirados/inválidos
+  const { data: userData, error } = await sb.auth.getUser();
+  if (error || !userData.user) {
+    console.warn('[checkSession] Sesión inválida o expirada, requiere re-login');
+    await sb.auth.signOut().catch(() => {});
+    return false;
   }
-  return false;
+
+  // Verificar que el usuario sea admin (coincide con la función is_admin() en SQL)
+  if (!isAdminUser(userData.user)) {
+    console.warn('[checkSession] Usuario sin permisos de admin');
+    await sb.auth.signOut().catch(() => {});
+    return false;
+  }
+
+  session = sessionData.session;
+  return true;
+}
+
+// Verifica si el usuario tiene permisos de admin (espejo de is_admin() en SQL)
+function isAdminUser(user) {
+  if (!user) return false;
+  const email = (user.email || '').toLowerCase();
+  const role = user.user_metadata?.role || user.app_metadata?.role;
+  return email.endsWith('@telocg.com') || role === 'admin';
 }
 
 async function showApp() {
@@ -99,7 +127,38 @@ async function showApp() {
 
 async function sbGet(table, query = '') {
   try {
-    const { data, error } = await sb.from(table).select('*' + query);
+    let q = sb.from(table).select('*');
+    // Parsear query params estilo PostgREST: ?order=col.asc&id=eq.value&limit=N
+    if (query) {
+      const params = new URLSearchParams(query.replace(/^\?/, ''));
+      for (const [key, val] of params.entries()) {
+        if (key === 'order') {
+          const parts = val.split('.');
+          const col = parts[0];
+          const asc = parts[1] !== 'desc';
+          q = q.order(col, { ascending: asc });
+        } else if (key === 'limit') {
+          q = q.limit(parseInt(val));
+        } else {
+          // Filtros tipo col=op.value (e.g. id=eq.global)
+          const m = val.match(/^(eq|neq|gt|gte|lt|lte|like|ilike|is)\.(.+)$/);
+          if (m) {
+            const op = m[1];
+            const v = m[2];
+            if (op === 'eq') q = q.eq(key, v);
+            else if (op === 'neq') q = q.neq(key, v);
+            else if (op === 'gt') q = q.gt(key, v);
+            else if (op === 'gte') q = q.gte(key, v);
+            else if (op === 'lt') q = q.lt(key, v);
+            else if (op === 'lte') q = q.lte(key, v);
+            else if (op === 'like') q = q.like(key, v);
+            else if (op === 'ilike') q = q.ilike(key, v);
+            else if (op === 'is') q = q.is(key, v === 'null' ? null : v);
+          }
+        }
+      }
+    }
+    const { data, error } = await q;
     if (error) throw error;
     return data || [];
   } catch (e) {
@@ -125,6 +184,12 @@ async function sbPatch(table, id, payload) {
   try {
     const { data, error } = await sb.from(table).update(payload).eq('id', id).select();
     if (error) throw error;
+    // RLS bloquea silenciosamente: UPDATE sin permiso devuelve [] sin error.
+    if (!data || data.length === 0) {
+      console.warn('[sbPatch] 0 filas actualizadas (RLS o id inexistente):', table, id);
+      toast('No se pudo actualizar — sin permisos de admin o registro no encontrado. Inicia sesión de nuevo.', 'error');
+      return null;
+    }
     logAudit('update', table, id, payload);
     return data;
   } catch (e) {
@@ -230,11 +295,11 @@ async function init() {
 async function syncTransactional() {
   const [members, orders, certs, lleva, repara, instala] = await Promise.all([
     sbGet('customers'),
-    sbGet('orders'),
+    sbGet('orders', '?order=created_at.desc'),
     sbGet('certificates'),
-    sbGet('lleva_requests'),
-    sbGet('repara_bookings'),
-    sbGet('instala_bookings')
+    sbGet('lleva_requests', '?order=created_at.desc'),
+    sbGet('repara_bookings', '?order=created_at.desc'),
+    sbGet('instala_bookings', '?order=created_at.desc')
   ]);
   renderMembers(members);
   renderDashOrders(orders);
@@ -247,7 +312,7 @@ async function syncTransactional() {
 }
 
 function loadPage(p) {
-  if (p === 'dashboard') renderDashboard();
+  if (p === 'dashboard') { renderDashboard(); syncTransactional(); }
   else if (p === 'sales') renderSales();
   else if (p === 'categories') renderCatsPage();
   else if (p === 'technicians') renderTechniciansPage();
@@ -256,6 +321,10 @@ function loadPage(p) {
   else if (p === 'services') renderServicesPage();
   else if (p === 'config') renderConfigPage();
   else if (p === 'educa') { renderCoursesPage(); sbGet('certificates').then(renderEduca); }
+  else if (p === 'members') { sbGet('customers').then(renderMembers); }
+  else if (p === 'lleva') { sbGet('lleva_requests', '?order=created_at.desc').then(renderLleva); }
+  else if (p === 'repara') { sbGet('repara_bookings', '?order=created_at.desc').then(renderRepara); }
+  else if (p === 'instala') { sbGet('instala_bookings', '?order=created_at.desc').then(renderInstala); }
 }
 
 // ═══ LOAD DATA ═══
@@ -332,8 +401,13 @@ async function renderDashboardCharts() {
     return;
   }
 
-  // Verificar que todos los canvas existen en el DOM
+  // Verificar que todos los canvas existen en el DOM y la página dashboard está visible
   const ids = ['chartRevenue', 'chartOrders', 'chartProducts', 'chartServices'];
+  const dashPage = document.getElementById('pg-dashboard');
+  if (!dashPage || !dashPage.classList.contains('on')) {
+    // Dashboard no visible, omitir gráficos (se renderizarán al navegar al dashboard)
+    return;
+  }
   if (!ids.every(id => document.getElementById(id))) {
     console.warn('[Dashboard] Canvas no encontrados en el DOM');
     return;
@@ -410,34 +484,52 @@ async function renderDashboardCharts() {
 }
 
 function renderDashOrders(orders) {
-  const ORDER_STATUS = { pending: 'Pendiente', confirmed: 'Confirmada', shipped: 'Enviada', delivered: 'Entregada', cancelled: 'Cancelada' };
+  const ORDER_STATUS = { pending: 'Pendiente', confirmed: 'Confirmada', processing: 'Procesando', shipped: 'Enviada', delivered: 'Entregada', cancelled: 'Cancelada' };
+  const PAY_BADGES = { cardnet: ['💳 CardNET', '#3b82f6'], whatsapp: ['💬 Transfer.', '#22c55e'], paypal: ['🌐 PayPal', '#a855f7'], card: ['💳 Tarjeta', '#3b82f6'] };
   document.getElementById('dashOrders').innerHTML = (orders && orders.length)
-    ? orders.slice(0, 15).map(o => `<tr>
-        <td><small>${(o.items && o.items.map(i=>i.title).join(', ')) || 'Orden'}</small></td>
-        <td>RD$ ${(o.total || 0).toLocaleString()}</td>
-        <td><span class="tag tag-b">${o.payment_method || 'card'}</span></td>
+    ? orders.slice(0, 20).map(o => {
+        const [payLabel, payColor] = PAY_BADGES[o.payment_method] || PAY_BADGES.card;
+        const custName = (o.customer && o.customer.name) || '';
+        const custPhone = (o.customer && o.customer.phone) || '';
+        return `<tr>
+        <td><small>${(o.items && o.items.map(i=>i.title).join(', ').slice(0, 50)) || 'Orden'}${o.items && o.items.map(i=>i.title).join(', ').length > 50 ? '…' : ''}</small>${custName ? `<br><span style="font-size:.65rem;color:var(--dim)">👤 ${custName}</span>` : ''}</td>
+        <td><b>RD$ ${(o.total || 0).toLocaleString()}</b></td>
+        <td><span class="tag" style="background:${payColor}22;color:${payColor};border:1px solid ${payColor}44">${payLabel}</span></td>
         <td><select class="btn-sm" style="padding:3px 6px;font-size:.7rem" onchange="updateOrderStatus('${o.id}',this.value)">${Object.entries(ORDER_STATUS).map(([k,v])=>`<option value="${k}" ${(o.status||'pending')===k?'selected':''}>${v}</option>`).join('')}</select></td>
-        <td>${o.created_at ? new Date(o.created_at).toLocaleDateString() : ''}</td>
-        <td class="acts"><button class="btn btn-g btn-sm" onclick="editOrder('${o.id}')" title="Editar orden">✏️</button></td>
-      </tr>`).join('')
+        <td>${o.created_at ? new Date(o.created_at).toLocaleDateString('es-DO', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'}) : ''}</td>
+        <td class="acts">${custPhone ? `<a href="https://wa.me/${custPhone.replace(/\\D/g,'')}" target="_blank" class="btn btn-g btn-sm" title="WhatsApp cliente">💬</a>` : ''}<button class="btn btn-g btn-sm" onclick="editOrder('${o.id}')" title="Editar orden">✏️</button></td>
+      </tr>`;
+      }).join('')
     : '<tr><td colspan="6" style="text-align:center;color:var(--dim);padding:20px">Sin órdenes</td></tr>';
 }
 
 // Actualizar estado de orden + registrar cambio en historial
 async function updateOrderStatus(orderId, newStatus) {
-  // Snapshot del estado anterior en orders_history (mantiene historial)
-  const orders = await sbGet('orders');
+  const orders = await sbGet('orders', '?order=created_at.desc');
   const prev = orders.find(o => o.id === orderId);
-  if (prev) {
-    await sb.from('orders_history').insert({
-      order_id: orderId,
-      action: 'status_change',
-      changes: { from: prev.status, to: newStatus },
-      admin_email: session?.user?.email || 'unknown'
-    });
+  if (prev && prev.status === newStatus) return; // sin cambio real
+
+  // Intentar el UPDATE primero (sbPatch detecta bloqueos RLS y devuelve null)
+  const updated = await sbPatch('orders', orderId, { status: newStatus });
+  if (!updated) {
+    // El error ya fue mostrado por sbPatch. Revertir el select visualmente.
+    renderDashOrders(orders);
+    return;
   }
-  await sbPatch('orders', orderId, { status: newStatus });
+
+  // Registrar historial solo tras un cambio exitoso
+  await sb.from('orders_history').insert({
+    order_id: orderId,
+    action: 'status_change',
+    changes: { from: prev?.status || null, to: newStatus },
+    admin_email: session?.user?.email || 'unknown'
+  }).then(({ error }) => { if (error) console.warn('[orders_history]', error.message); });
+
   toast(`Orden → ${newStatus}`);
+  // Refrescar tabla de órdenes y gráficos del dashboard
+  const refreshed = await sbGet('orders', '?order=created_at.desc');
+  renderDashOrders(refreshed);
+  renderDashboardCharts();
 }
 
 // Editar orden completa (modal) — mantiene historial
@@ -446,11 +538,8 @@ async function editOrder(orderId) {
   const o = orders.find(x => x.id === orderId);
   if (!o) return toast('Orden no encontrada', 'error');
   const newStatus = prompt(`Editar orden ${orderId.slice(0,8)}\n\nEstado actual: ${o.status||'pending'}\n\nNuevo estado (pending/confirmed/shipped/delivered/cancelled):`, o.status || 'pending');
-  if (newStatus && newStatus !== o.status) {
+  if (newStatus && newStatus.trim() !== o.status) {
     await updateOrderStatus(orderId, newStatus.trim());
-    // refrescar
-    const refreshed = await sbGet('orders');
-    renderDashOrders(refreshed);
   }
   // Notas del admin
   const notes = prompt('Notas internas (opcional):', o.notes || '');
@@ -793,10 +882,14 @@ async function updateDriver(id) {
 }
 
 async function updateDriverStatus(id, status) {
-  await sbPatch('drivers', id, { status });
-  const d = drivers.find(x => x.id === id);
-  if (d) d.status = status;
-  toast(`Conductor → ${status}`);
+  const updated = await sbPatch('drivers', id, { status });
+  if (updated) {
+    const d = drivers.find(x => x.id === id);
+    if (d) d.status = status;
+    toast(`Conductor → ${status}`);
+  } else {
+    renderDriversPage(); // revertir select al estado real
+  }
 }
 
 function resetDriverForm() {
@@ -1047,25 +1140,48 @@ function renderInstala(data) {
 
 async function updateStatus(table, id, newStatus) {
   const updated = await sbPatch(table, id, { status: newStatus });
-  if (updated) {
-    toast(`Estado actualizado → ${newStatus}`);
-    // refrescar la data correspondiente
-    const data = await sbGet(table);
-    if (table === 'repara_bookings') renderRepara(data);
-    else if (table === 'instala_bookings') renderInstala(data);
-    else if (table === 'lleva_requests') renderLleva(data);
-  }
+  // refrescar la data correspondiente (en éxito muestra nuevo estado, en fallo revierte el select)
+  const data = await sbGet(table, '?order=created_at.desc');
+  if (table === 'repara_bookings') renderRepara(data);
+  else if (table === 'instala_bookings') renderInstala(data);
+  else if (table === 'lleva_requests') renderLleva(data);
+  if (updated) toast(`Estado actualizado → ${newStatus}`);
 }
 
 // ═══ CONFIGURACIÓN ═══
 function renderConfigPage() {
-  // Llenar formulario de settings
   const s = settings;
   document.getElementById('cfgWhatsapp').value = s.whatsapp_number || '';
   document.getElementById('cfgPaypal').value = s.paypal_email || '';
   document.getElementById('cfgFreeShip').value = s.free_shipping_threshold || 1500;
   document.getElementById('cfgShipCost').value = s.shipping_cost || 250;
+  document.getElementById('cfgDeliveryTime').value = s.delivery_time || '24-48 horas';
   document.getElementById('cfgCoupons').value = s.coupons ? JSON.stringify(s.coupons, null, 2) : '{}';
+  // Marketing & Conversion
+  document.getElementById('cfgExitPopup').value = s.exit_popup_enabled !== false ? '1' : '0';
+  document.getElementById('cfgPopupCoupon').value = s.popup_coupon_code || 'PRIMERA10';
+  document.getElementById('cfgPopupDiscount').value = s.popup_coupon_discount || 10;
+  document.getElementById('cfgSocialProof').value = s.social_proof_enabled !== false ? '1' : '0';
+  document.getElementById('cfgFlashSale').value = s.flash_sale_enabled !== false ? '1' : '0';
+  document.getElementById('cfgUpsell').value = s.upsell_enabled !== false ? '1' : '0';
+  // Quantity breaks
+  document.getElementById('cfgQtyBreak3').value = s.qty_break_3 || 5;
+  document.getElementById('cfgQtyBreak5').value = s.qty_break_5 || 10;
+  document.getElementById('cfgQtyBreak10').value = s.qty_break_10 || 15;
+  // Payment methods
+  document.getElementById('cfgCardnet').value = s.cardnet_enabled !== false ? '1' : '0';
+  document.getElementById('cfgTransfer').value = s.transfer_enabled !== false ? '1' : '0';
+  document.getElementById('cfgPaypalActive').value = s.paypal_enabled !== false ? '1' : '0';
+  document.getElementById('cfgCardnetMsg').value = s.cardnet_message || 'Recibirás tu link de pago en WhatsApp';
+  // Chatbot
+  document.getElementById('cfgChatbot').value = s.chatbot_enabled !== false ? '1' : '0';
+  document.getElementById('cfgChatContext').value = s.chatbot_context || '';
+  // Analytics
+  document.getElementById('cfgGA4').value = s.ga4_id || '';
+  document.getElementById('cfgPixel').value = s.pixel_id || '';
+  // Promo Banner
+  document.getElementById('cfgBannerActive').value = s.promo_banner_enabled ? '1' : '0';
+  document.getElementById('cfgBannerText').value = s.promo_banner_text || '';
 }
 
 async function saveConfig() {
@@ -1078,7 +1194,33 @@ async function saveConfig() {
     paypal_email: document.getElementById('cfgPaypal').value.trim(),
     free_shipping_threshold: +document.getElementById('cfgFreeShip').value || 1500,
     shipping_cost: +document.getElementById('cfgShipCost').value || 250,
-    coupons
+    delivery_time: document.getElementById('cfgDeliveryTime').value.trim() || '24-48 horas',
+    coupons,
+    // Marketing & Conversion
+    exit_popup_enabled: document.getElementById('cfgExitPopup').value === '1',
+    popup_coupon_code: document.getElementById('cfgPopupCoupon').value.trim() || 'PRIMERA10',
+    popup_coupon_discount: +document.getElementById('cfgPopupDiscount').value || 10,
+    social_proof_enabled: document.getElementById('cfgSocialProof').value === '1',
+    flash_sale_enabled: document.getElementById('cfgFlashSale').value === '1',
+    upsell_enabled: document.getElementById('cfgUpsell').value === '1',
+    // Quantity breaks
+    qty_break_3: +document.getElementById('cfgQtyBreak3').value || 5,
+    qty_break_5: +document.getElementById('cfgQtyBreak5').value || 10,
+    qty_break_10: +document.getElementById('cfgQtyBreak10').value || 15,
+    // Payment methods
+    cardnet_enabled: document.getElementById('cfgCardnet').value === '1',
+    transfer_enabled: document.getElementById('cfgTransfer').value === '1',
+    paypal_enabled: document.getElementById('cfgPaypalActive').value === '1',
+    cardnet_message: document.getElementById('cfgCardnetMsg').value.trim(),
+    // Chatbot
+    chatbot_enabled: document.getElementById('cfgChatbot').value === '1',
+    chatbot_context: document.getElementById('cfgChatContext').value.trim(),
+    // Analytics
+    ga4_id: document.getElementById('cfgGA4').value.trim(),
+    pixel_id: document.getElementById('cfgPixel').value.trim(),
+    // Promo Banner
+    promo_banner_enabled: document.getElementById('cfgBannerActive').value === '1',
+    promo_banner_text: document.getElementById('cfgBannerText').value.trim()
   };
   await sbPatch('site_settings', 'global', data);
   Object.assign(settings, data);
@@ -1119,12 +1261,13 @@ function toast(msg, type = 'success') {
     document.getElementById(id).addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
   });
 
-  // Verificar sesión activa
+  // Verificar sesión activa (validada server-side + permisos admin)
   const hasSession = await checkSession();
   if (hasSession) {
     showApp();
   } else {
-    // Estado de logout limpio
+    // Estado de logout limpio: ocultar app y mostrar login
+    document.getElementById('appView').classList.remove('on');
     document.getElementById('loginView').style.display = 'flex';
   }
 

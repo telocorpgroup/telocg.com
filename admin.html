@@ -185,7 +185,7 @@ Para crear el usuario admin: ejecuta <code>supabase-schema-migration-v4.sql</cod
     <div class="chart-box"><canvas id="chartServices"></canvas></div>
   </div>
 </div>
-<div class="tbl-wrap"><table><thead><tr><th>Últimas Órdenes</th><th>Total</th><th>Método</th><th>Estado</th><th>Fecha</th><th></th></tr></thead><tbody id="dashOrders"><tr><td colspan="6" style="text-align:center;color:var(--dim);padding:20px">Sin órdenes registradas</td></tr></tbody></table></div>
+<div class="tbl-wrap"><table><thead><tr><th>Pedido / Cliente</th><th>Total</th><th>Pago</th><th>Estado</th><th>Fecha</th><th>Acciones</th></tr></thead><tbody id="dashOrders"><tr><td colspan="6" style="text-align:center;color:var(--dim);padding:20px">Sin órdenes registradas</td></tr></tbody></table></div>
 </div>
 
 <!-- TELOSALES -->
@@ -308,10 +308,55 @@ Para crear el usuario admin: ejecuta <code>supabase-schema-migration-v4.sql</cod
 <div class="form-grid">
 <div class="fg"><label>Umbral envío gratis (RD$)</label><input type="number" id="cfgFreeShip" value="1500"></div>
 <div class="fg"><label>Costo de envío (RD$)</label><input type="number" id="cfgShipCost" value="250"></div>
+<div class="fg"><label>Tiempo estimado entrega</label><input id="cfgDeliveryTime" placeholder="24-48 horas"></div>
 </div>
 <div style="font-size:.9rem;margin:20px 0 10px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px">🎟️ Cupones (JSON)</div>
-<div class="fg full"><textarea id="cfgCoupons" rows="4" style="font-family:monospace;font-size:.8rem" placeholder='{"TELO10":10,"BIENVENIDO":15}'></textarea></div>
-<button class="btn btn-p" onclick="saveConfig()" style="margin-top:12px">💾 Guardar Configuración</button>
+<div class="fg full"><textarea id="cfgCoupons" rows="4" style="font-family:monospace;font-size:.8rem" placeholder='{"TELO10":10,"BIENVENIDO":15,"PRIMERA10":10}'></textarea></div>
+
+<div style="font-size:.9rem;margin:20px 0 10px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px">🛒 Conversión y Marketing</div>
+<div class="form-grid">
+<div class="fg"><label>Exit popup activo</label><select id="cfgExitPopup"><option value="1">Sí</option><option value="0">No</option></select></div>
+<div class="fg"><label>Cupón popup (código)</label><input id="cfgPopupCoupon" placeholder="PRIMERA10"></div>
+<div class="fg"><label>Descuento popup (%)</label><input type="number" id="cfgPopupDiscount" value="10"></div>
+<div class="fg"><label>Social proof activo</label><select id="cfgSocialProof"><option value="1">Sí</option><option value="0">No</option></select></div>
+<div class="fg"><label>Flash sale banner</label><select id="cfgFlashSale"><option value="1">Sí</option><option value="0">No</option></select></div>
+<div class="fg"><label>Upsell en carrito</label><select id="cfgUpsell"><option value="1">Sí</option><option value="0">No</option></select></div>
+</div>
+
+<div style="font-size:.9rem;margin:20px 0 10px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px">📦 Quantity Breaks (descuentos por volumen)</div>
+<div class="form-grid">
+<div class="fg"><label>Mín. 3 items — Descuento %</label><input type="number" id="cfgQtyBreak3" value="5"></div>
+<div class="fg"><label>Mín. 5 items — Descuento %</label><input type="number" id="cfgQtyBreak5" value="10"></div>
+<div class="fg"><label>Mín. 10 items — Descuento %</label><input type="number" id="cfgQtyBreak10" value="15"></div>
+</div>
+
+<div style="font-size:.9rem;margin:20px 0 10px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px">💳 Métodos de Pago</div>
+<div class="form-grid">
+<div class="fg"><label>CardNET activo</label><select id="cfgCardnet"><option value="1">Sí</option><option value="0">No</option></select></div>
+<div class="fg"><label>Transferencia activo</label><select id="cfgTransfer"><option value="1">Sí</option><option value="0">No</option></select></div>
+<div class="fg"><label>PayPal activo</label><select id="cfgPaypalActive"><option value="1">Sí</option><option value="0">No</option></select></div>
+<div class="fg full"><label>Mensaje post-checkout CardNET</label><input id="cfgCardnetMsg" placeholder="Recibirás tu link de pago en WhatsApp"></div>
+</div>
+
+<div style="font-size:.9rem;margin:20px 0 10px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px">🤖 TeloAsistente (Chatbot IA)</div>
+<div class="form-grid">
+<div class="fg"><label>Chatbot activo</label><select id="cfgChatbot"><option value="1">Sí</option><option value="0">No</option></select></div>
+<div class="fg full"><label>Contexto personalizado (se inyecta al prompt)</label><textarea id="cfgChatContext" rows="3" placeholder="Información adicional: horario, políticas especiales, productos destacados..."></textarea></div>
+</div>
+
+<div style="font-size:.9rem;margin:20px 0 10px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px">📊 Analytics</div>
+<div class="form-grid">
+<div class="fg"><label>Google Analytics ID</label><input id="cfgGA4" placeholder="G-XXXXXXXXXX"></div>
+<div class="fg"><label>Meta Pixel ID</label><input id="cfgPixel" placeholder="000000000000"></div>
+</div>
+
+<div style="font-size:.9rem;margin:20px 0 10px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px">📣 Banner Promocional (aparece arriba de la tienda)</div>
+<div class="form-grid">
+<div class="fg"><label>Banner activo</label><select id="cfgBannerActive"><option value="1">Sí</option><option value="0">No</option></select></div>
+<div class="fg full"><label>Texto del banner</label><input id="cfgBannerText" placeholder="🎉 Envío GRATIS en compras +RD$1,500 — Usa cupón TELO20 para 20% OFF"></div>
+</div>
+
+<button class="btn btn-p" onclick="saveConfig()" style="margin-top:16px">💾 Guardar Toda la Configuración</button>
 
 <div style="font-size:.9rem;margin:20px 0 10px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px">🔌 Estado de Integraciones</div>
 <div class="stats">
@@ -319,6 +364,7 @@ Para crear el usuario admin: ejecuta <code>supabase-schema-migration-v4.sql</cod
 <div class="stat"><div class="label">ImgBB</div><div class="val" style="font-size:.9rem;color:var(--success)">✓ Edge Fn</div></div>
 <div class="stat"><div class="label">Gemini IA</div><div class="val" style="font-size:.9rem;color:var(--success)">✓ Edge Fn</div></div>
 <div class="stat"><div class="label">Auth</div><div class="val" style="font-size:.9rem;color:var(--success)">✓ Supabase</div></div>
+<div class="stat"><div class="label">CardNET</div><div class="val" style="font-size:.9rem;color:var(--success)">✓ Link WhatsApp</div></div>
 </div>
 <p style="color:var(--dim);font-size:.78rem;margin-top:16px">🔒 Todas las API keys se gestionan de forma segura vía Supabase Edge Functions (secrets). No se exponen en el frontend.</p>
 </div>

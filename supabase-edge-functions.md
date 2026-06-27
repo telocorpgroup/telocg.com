@@ -1,4 +1,4 @@
-# Supabase Edge Functions — TeloCorp Group v4.0
+# Supabase Edge Functions — TeloCorp Group v4.1
 
 Guía de deploy y configuración de las Edge Functions del ecosistema TeloCorp.
 
@@ -8,8 +8,9 @@ Guía de deploy y configuración de las Edge Functions del ecosistema TeloCorp.
 |---------|-----------|------------------|
 | `chat` | Proxy de Gemini 2.0 Flash para TeloAsistente | `GEMINI_API_KEY` |
 | `upload-image` | Proxy de ImgBB para subir imágenes de productos | `IMGBB_API_KEY` |
-| `ai-specs` | Generación de especificaciones de producto con Gemini (NUEVA v4.0) | `GEMINI_API_KEY` |
+| `ai-specs` | Generación de especificaciones de producto con Gemini | `GEMINI_API_KEY` |
 | `create-checkout` | Crea sesión de Stripe Checkout | `STRIPE_SECRET_KEY` |
+| `notify-whatsapp` | Genera notificaciones WhatsApp al admin por cada solicitud de servicio | — (sin secret) |
 
 ## 🔧 Deploy
 
@@ -41,6 +42,7 @@ supabase functions deploy chat --project-ref bhdictzvboiojyxorfiq --no-verify-jw
 supabase functions deploy upload-image --project-ref bhdictzvboiojyxorfiq --no-verify-jwt
 supabase functions deploy ai-specs --project-ref bhdictzvboiojyxorfiq --no-verify-jwt
 supabase functions deploy create-checkout --project-ref bhdictzvboiojyxorfiq --no-verify-jwt
+supabase functions deploy notify-whatsapp --project-ref bhdictzvboiojyxorfiq --no-verify-jwt
 ```
 
 ### Invocación desde el frontend
@@ -70,6 +72,13 @@ const res = await fetch(`${SB_URL}/functions/v1/ai-specs`, {
   method: 'POST',
   headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SB_ANON_KEY}` },
   body: JSON.stringify({ product_name: 'iPhone 15 Pro' })
+});
+
+// Notify WhatsApp (interno, v4.1)
+const res = await fetch(`${SB_URL}/functions/v1/notify-whatsapp`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SB_ANON_KEY}` },
+  body: JSON.stringify({ type: 'order', total: 5400, payment_method: 'whatsapp', items_count: 3, customer: { name: 'Juan', phone: '8095551234' } })
 });
 ```
 

@@ -263,7 +263,15 @@ function renderReparaHistory(items) {
     const status = d.status || 'pending';
     const label = STATUS_LABELS.repara[status] || status;
     const color = status === 'completed' ? 'var(--c-success)' : status === 'cancelled' ? 'var(--c-danger)' : 'var(--c-repara)';
-    return `<div class="crm-item"><div class="crm-item__info"><strong>${d.device || 'Dispositivo'}</strong> · ${d.issue || ''}<small>Ticket: ${d.ticket || (d.id && d.id.slice(0, 8)) || '—'}</small></div><span class="status-pill" style="background:${color}22;color:${color}">${label}</span></div>`;
+    const date = d.created_at ? new Date(d.created_at).toLocaleDateString('es-DO', { day: '2-digit', month: 'short' }) : '';
+    return `<div class="crm-item">
+      <div class="crm-item__icon" style="color:${color}">${status === 'completed' ? '✅' : status === 'in_progress' ? '🔧' : '📋'}</div>
+      <div class="crm-item__info">
+        <strong>${d.device || 'Dispositivo'}</strong> · ${d.issue || 'Falla'}
+        <small>Ticket: ${d.ticket || (d.id && d.id.slice(0, 8)) || '—'} · ${date}</small>
+      </div>
+      <span class="status-pill" style="background:${color}22;color:${color}">${label}</span>
+    </div>`;
   }).join('');
 }
 
@@ -275,7 +283,15 @@ function renderInstalaHistory(items) {
     const status = d.status || 'confirmed';
     const label = STATUS_LABELS.instala[status] || status;
     const color = status === 'completed' ? 'var(--c-success)' : status === 'cancelled' ? 'var(--c-danger)' : 'var(--c-instala)';
-    return `<div class="crm-item"><div class="crm-item__info"><strong>${d.service || 'Servicio'}</strong><small>${d.date || ''} · ${d.tech || ''}</small></div><span class="status-pill" style="background:${color}22;color:${color}">${label}</span></div>`;
+    const date = d.created_at ? new Date(d.created_at).toLocaleDateString('es-DO', { day: '2-digit', month: 'short' }) : '';
+    return `<div class="crm-item">
+      <div class="crm-item__icon" style="color:${color}">${status === 'completed' ? '✅' : status === 'in_progress' ? '🛠️' : '📅'}</div>
+      <div class="crm-item__info">
+        <strong>${d.service || 'Servicio'}</strong>
+        <small>${d.tech || ''} · ${d.date || ''} · ${date}</small>
+      </div>
+      <span class="status-pill" style="background:${color}22;color:${color}">${label}</span>
+    </div>`;
   }).join('');
 }
 
@@ -293,6 +309,68 @@ function renderLlevaHistory(items) {
 
 const FREE_SHIPPING_THRESHOLD = 1500;
 const SHIPPING_COST = 250;
+
+// ═══ CONFIGURABLE SITE SETTINGS (overridden from Supabase) ═══
+let siteConfig = {
+  whatsapp_number: '18099038707',
+  free_shipping_threshold: 1500,
+  shipping_cost: 250,
+  delivery_time: '24-48 horas',
+  coupons: { 'TELO10': 10, 'BIENVENIDO': 15, 'TELO20': 20, 'PRIMERA10': 10 },
+  exit_popup_enabled: true,
+  popup_coupon_code: 'PRIMERA10',
+  popup_coupon_discount: 10,
+  social_proof_enabled: true,
+  flash_sale_enabled: true,
+  upsell_enabled: true,
+  qty_break_3: 5,
+  qty_break_5: 10,
+  qty_break_10: 15,
+  cardnet_enabled: true,
+  transfer_enabled: true,
+  paypal_enabled: true,
+  cardnet_message: 'Recibirás tu link de pago en WhatsApp',
+  chatbot_enabled: true,
+  chatbot_context: '',
+  ga4_id: '',
+  pixel_id: '',
+  promo_banner_enabled: false,
+  promo_banner_text: ''
+};
+
+// Sync site_settings from Supabase → overrides defaults
+async function syncSiteSettings() {
+  try {
+    const res = await fetch(`${BackendService.config.supabaseUrl}/rest/v1/site_settings?id=eq.global&limit=1`, {
+      headers: { 'apikey': BackendService.config.supabaseKey, 'Authorization': `Bearer ${BackendService.config.supabaseKey}` }
+    });
+    if (!res.ok) return;
+    const data = await res.json();
+    if (data && data[0]) {
+      Object.assign(siteConfig, data[0]);
+      // Apply dynamic settings
+      if (siteConfig.coupons && typeof siteConfig.coupons === 'object') couponCodes = { ...siteConfig.coupons };
+      // Update GA4 ID dynamically if configured
+      if (siteConfig.ga4_id && siteConfig.ga4_id !== 'G-XXXXXXXXXX') {
+        const existingScript = document.querySelector('script[src*="googletagmanager"]');
+        if (existingScript && existingScript.src.includes('XXXXXXXXXX')) {
+          existingScript.src = existingScript.src.replace('G-XXXXXXXXXX', siteConfig.ga4_id);
+          if (typeof gtag === 'function') gtag('config', siteConfig.ga4_id);
+        }
+      }
+      // Show promo banner if configured
+      if (siteConfig.promo_banner_enabled && siteConfig.promo_banner_text) {
+        const banner = document.getElementById('promo-banner');
+        const bannerText = document.getElementById('promo-banner-text');
+        if (banner && bannerText) {
+          bannerText.textContent = siteConfig.promo_banner_text;
+          banner.hidden = false;
+        }
+      }
+      console.log('[Settings] Site config loaded from Supabase');
+    }
+  } catch (e) { /* keep defaults */ }
+}
 
 // ═══════════════════════════════════════════════════════════════
 // COURSES DATABASE
@@ -350,6 +428,11 @@ function switchView(viewId) {
   if (viewId === 'lleva') loadGoogleMaps();
   // Refresh user history when entering CRM sections
   if (viewId === 'repara' || viewId === 'instala') loadUserHistory();
+
+  // Update URL hash for sharing/bookmarking (no page reload)
+  history.replaceState(null, '', `#${viewId}`);
+  // Update page title for SEO/tab identification
+  document.title = `${viewTitles[viewId] || 'TeloCorp'} | Telo' Corp Group`;
 }
 
 function closeMobileMenu() {
@@ -474,13 +557,18 @@ function openProductModal(id) {
       <div class="product-detail__info">
         <span class="product-detail__badge">✓ TeloSales Verificado</span>
         <h2 class="product-detail__title">${p.title}</h2>
+        <div class="product-detail__share">
+          <button class="btn btn--ghost btn--xs" onclick="shareProduct('${p.id}')" title="Compartir por WhatsApp">📤 Compartir</button>
+          <button class="btn btn--ghost btn--xs" onclick="copyProductLink('${p.id}')" title="Copiar enlace">🔗 Copiar link</button>
+        </div>
         <div class="product-detail__rating"><span class="product-detail__stars">${stars}</span><span class="text-muted">${p.rating} · ${p.sold} vendidos</span></div>
         <div class="product-detail__price-row">
           ${p.compareAtPrice ? `<span class="product-detail__compare">RD$ ${p.compareAtPrice.toLocaleString()}</span>` : ''}
           <span class="product-detail__price">RD$ ${p.price.toLocaleString()}</span>
           ${p.discount ? `<span class="product-detail__off">${p.discount}% OFF</span>` : ''}
         </div>
-        <div class="product-detail__stock ${p.stock <= 8 ? 'product-detail__stock--low' : ''}">${p.stock <= 8 ? `⚠ ¡Solo quedan ${p.stock} unidades!` : `✓ ${p.stock} disponibles`}</div>
+        <div class="product-detail__stock ${p.stock <= 8 ? 'product-detail__stock--low' : ''}">${p.stock <= 5 ? `🔥 ¡Solo quedan ${p.stock}! Se agotan rápido` : p.stock <= 8 ? `⚠ ¡Solo quedan ${p.stock} unidades!` : `✓ ${p.stock} disponibles`}</div>
+        <div class="product-detail__delivery">🚚 Entrega estimada: <strong>${p.freeShipping ? '24-48 horas' : '2-4 días'}</strong> en Santo Domingo${p.freeShipping ? '' : ' · RD$ 250 envío'}</div>
         <p class="product-detail__desc">${p.description}</p>
         <div class="product-detail__actions">
           <div class="quantity-control"><button onclick="adjustQty(-1)">−</button><span id="modal-qty">1</span><button onclick="adjustQty(1)">+</button></div>
@@ -488,7 +576,7 @@ function openProductModal(id) {
           <button class="btn btn--ghost" id="modal-wish-btn" onclick="toggleWishlist('${p.id}'); document.getElementById('modal-wish-btn').textContent = State.wishlist.includes('${p.id}') ? '❤️' : '🤍'">${State.wishlist.includes(p.id) ? '❤️' : '🤍'}</button>
         </div>
         <div class="product-detail__guarantees">
-          <span>🔒 Compra protegida</span><span>↩ Devolución 7 días</span><span>✓ Garantía oficial</span>
+          <span>🔒 Pago seguro CardNET</span><span>↩ Devolución 7 días</span><span>✓ Garantía oficial</span><span>🚚 Envío express 24-48h</span>
         </div>
         <table class="specs-table">${Object.entries(p.specs).map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join('')}</table>
         <div class="reviews-section">
@@ -510,12 +598,19 @@ function openProductModal(id) {
   trapFocus(modal);
   // Initialize hover-zoom after DOM update
   setTimeout(initProductImageZoom, 50);
+  // SEO: update meta tags for sharing
+  updateMetaForProduct(p);
+  // URL: update hash for deep linking
+  history.replaceState(null, '', `#telosales?p=${p.id}`);
 }
 
 function closeProductModal() {
   document.getElementById('product-modal').classList.remove('active');
   document.getElementById('product-modal-overlay').classList.remove('active');
   releaseFocusTrap();
+  // Restore default meta and URL
+  resetMeta();
+  history.replaceState(null, '', '#sales');
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -618,11 +713,22 @@ function renderCart() {
       ? `Agrega <strong>RD$ ${remaining.toLocaleString()}</strong> más para <strong>envío gratis</strong> 🚚`
       : '🎉 ¡Tienes envío gratis!'}<div class="ship-progress__track"><div class="ship-progress__fill" style="width:${Math.min(100, subtotal / FREE_SHIPPING_THRESHOLD * 100)}%"></div></div></div>`;
 
-    container.innerHTML = shipProgress + State.cart.map(item => {
+    const cartItems = State.cart.map(item => {
       const p = products.find(x => x.id === item.id);
       if (!p) return '';
       return `<div class="cart-item"><div class="cart-item__img"><img src="${cdnImage(p.image, 100)}" alt="${p.title}"></div><div class="cart-item__info"><div class="cart-item__title">${p.title}</div><div class="cart-item__price">RD$ ${(p.price * item.qty).toLocaleString()}</div><div class="cart-item__actions"><button onclick="updateCartQty('${item.id}',-1)">−</button><span class="cart-item__qty">${item.qty}</span><button onclick="updateCartQty('${item.id}',1)">+</button><button onclick="removeFromCart('${item.id}')" style="margin-left:auto;color:var(--c-danger);">✕</button></div></div></div>`;
     }).join('');
+
+    // Upsell: productos complementarios que no están en el carrito (respeta config admin)
+    let upsellHtml = '';
+    if (siteConfig.upsell_enabled) {
+      const cartIds = State.cart.map(i => i.id);
+      const cartCategories = [...new Set(State.cart.map(i => products.find(x => x.id === i.id)?.category).filter(Boolean))];
+      const upsellProducts = products.filter(p => !cartIds.includes(p.id) && cartCategories.includes(p.category) && p.price < subtotal * 0.5).slice(0, 3);
+      upsellHtml = upsellProducts.length ? `<div class="cart-upsell"><div class="cart-upsell__title">✨ Complementa tu pedido</div>${upsellProducts.map(p => `<div class="cart-upsell__item"><img src="${cdnImage(p.image, 60)}" alt="${p.title}"><div class="cart-upsell__info"><span class="cart-upsell__name">${p.title.slice(0, 30)}${p.title.length > 30 ? '...' : ''}</span><span class="cart-upsell__price">RD$ ${p.price.toLocaleString()}</span></div><button class="btn btn--ghost btn--xs" onclick="quickAddToCart('${p.id}')">+</button></div>`).join('')}</div>` : '';
+    }
+
+    container.innerHTML = shipProgress + cartItems + upsellHtml;
   }
 
   // Desglose de totales
@@ -633,15 +739,35 @@ function renderCart() {
   if (footer) {
     const breakdown = document.getElementById('cart-breakdown');
     const html = `
-      <div class="cart-line"><span>Subtotal</span><span>RD$ ${subtotal.toLocaleString()}</span></div>
-      ${discount ? `<div class="cart-line cart-line--discount"><span>Cupón ${State.coupon.code}</span><span>−RD$ ${discount.toLocaleString()}</span></div>` : ''}
-      <div class="cart-line"><span>Envío</span><span>${shipping === 0 ? 'Gratis' : 'RD$ ' + shipping}</span></div>`;
+      <div class="cart-line"><span>Subtotal (${State.cart.reduce((s, i) => s + i.qty, 0)} items)</span><span>RD$ ${subtotal.toLocaleString()}</span></div>
+      ${discount ? `<div class="cart-line cart-line--discount"><span>🎟️ Cupón ${State.coupon.code} (−${State.coupon.pct}%)</span><span>−RD$ ${discount.toLocaleString()}</span></div>` : ''}
+      <div class="cart-line"><span>🚚 Envío</span><span>${shipping === 0 ? '<span style="color:var(--c-success)">Gratis</span>' : 'RD$ ' + shipping}</span></div>`;
     if (breakdown) breakdown.innerHTML = html;
     footer.textContent = `RD$ ${total.toLocaleString()}`;
   }
 }
 
-let couponCodes = { 'TELO10': 10, 'BIENVENIDO': 15, 'TELO20': 20 };
+let couponCodes = { 'TELO10': 10, 'BIENVENIDO': 15, 'TELO20': 20, 'PRIMERA10': 10 };
+
+// Quantity breaks: compra más, paga menos (configurable desde admin)
+const QUANTITY_BREAKS = [
+  { minQty: 3, discount: 5, label: '5% OFF comprando 3+' },
+  { minQty: 5, discount: 10, label: '10% OFF comprando 5+' },
+  { minQty: 10, discount: 15, label: '15% OFF comprando 10+' }
+];
+
+function getQuantityBreakDiscount() {
+  const totalQty = State.cart.reduce((s, i) => s + i.qty, 0);
+  // Use admin-configured values
+  const breaks = [
+    { minQty: 3, discount: siteConfig.qty_break_3 || 5 },
+    { minQty: 5, discount: siteConfig.qty_break_5 || 10 },
+    { minQty: 10, discount: siteConfig.qty_break_10 || 15 }
+  ];
+  const applicable = breaks.filter(b => totalQty >= b.minQty);
+  return applicable.length ? applicable[applicable.length - 1] : null;
+}
+
 function applyCoupon() {
   const input = document.getElementById('coupon-input');
   const code = input.value.trim().toUpperCase();
@@ -657,34 +783,101 @@ function applyCoupon() {
 function toggleCartDrawer(open) {
   document.getElementById('cart-drawer').classList.toggle('active', open);
   document.getElementById('cart-overlay').classList.toggle('active', open);
-  if (open) renderCart();
+  if (open) {
+    renderCart();
+    // Auto-fill checkout form from saved profile
+    const p = State.userProfile;
+    const nameInput = document.getElementById('checkout-name');
+    const phoneInput = document.getElementById('checkout-phone');
+    const addrInput = document.getElementById('checkout-address');
+    const cityInput = document.getElementById('checkout-city');
+    if (nameInput && p.name && !nameInput.value) nameInput.value = p.name;
+    if (phoneInput && p.phone && !phoneInput.value) phoneInput.value = p.phone;
+    if (addrInput && p.address && !addrInput.value) addrInput.value = p.address;
+    if (cityInput && p.city && !cityInput.value) cityInput.value = p.city;
+    // Show/hide payment methods based on admin config
+    document.querySelectorAll('.payment-option').forEach(opt => {
+      const val = opt.querySelector('input[name="payment"]')?.value;
+      if (val === 'cardnet') opt.style.display = siteConfig.cardnet_enabled ? '' : 'none';
+      else if (val === 'whatsapp') opt.style.display = siteConfig.transfer_enabled ? '' : 'none';
+      else if (val === 'paypal') opt.style.display = siteConfig.paypal_enabled ? '' : 'none';
+    });
+    // Select first visible payment method
+    const firstVisible = document.querySelector('.payment-option:not([style*="none"]) input[name="payment"]');
+    if (firstVisible) firstVisible.checked = true;
+  }
 }
 
 async function checkout() {
   if (State.cart.length === 0) return showToast('Carrito vacío', 'error');
+
+  // Validar formulario de checkout
+  const name = document.getElementById('checkout-name').value.trim();
+  const phone = document.getElementById('checkout-phone').value.trim();
+  const address = document.getElementById('checkout-address').value.trim();
+  const city = document.getElementById('checkout-city').value.trim();
+  const notes = document.getElementById('checkout-notes').value.trim();
+
+  if (!name) return showToast('Ingresa tu nombre', 'error');
+  if (!phone) return showToast('Ingresa tu WhatsApp para recibir el link de pago', 'error');
+  if (!address) return showToast('Ingresa la dirección de entrega', 'error');
+
+  // Guardar datos en el perfil del usuario
+  State.userProfile = { name, phone, address, city, email: State.userProfile.email || '' };
+  State.save();
+
   const subtotal = State.cart.reduce((s, i) => { const p = products.find(x => x.id === i.id); return s + (p ? p.price * i.qty : 0); }, 0);
   const discount = State.coupon ? Math.round(subtotal * State.coupon.pct / 100) : 0;
   const shipping = (subtotal - discount) >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST;
   const total = subtotal - discount + shipping;
-  const paymentMethod = document.querySelector('input[name="payment"]:checked')?.value || 'whatsapp';
+  const paymentMethod = document.querySelector('input[name="payment"]:checked')?.value || 'cardnet';
 
   const items = State.cart.map(i => { const p = products.find(x => x.id === i.id); return `- ${p?.title} x${i.qty} = RD$${(p.price * i.qty).toLocaleString()}`; }).join('\n');
-  const customer = State.userProfile.name ? `\n👤 ${State.userProfile.name}${State.userProfile.phone ? ' | ' + State.userProfile.phone : ''}` : '';
+  const customerPhone = phone.replace(/\D/g, '');
+  const customerInfo = `\n\n👤 *Cliente:* ${name}\n📱 WhatsApp: ${phone}\n📍 Dirección: ${address}${city ? ', ' + city : ''}${notes ? '\n📝 Notas: ' + notes : ''}`;
 
-  if (paymentMethod === 'paypal') {
-    const usd = Math.ceil(total / 59);
-    const msg = `🌐 *Pedido TeloSales — PayPal*\n\n${items}\n\n💰 Total: RD$ ${total.toLocaleString()} (≈ USD $${usd})\n🅿️ PayPal: telocorpgroup@gmail.com${customer}\n\n✅ Enviaré captura del pago`;
-    registerOrder(total, 'paypal');
+  if (paymentMethod === 'cardnet') {
+    const msg = `🛒💳 *PEDIDO — Link de Pago CardNET*\n\n${items}\n\n💰 *Total: RD$ ${total.toLocaleString()}*${shipping ? '\n🚚 Envío: RD$ ' + shipping : '\n🚚 Envío: Gratis'}${discount ? '\n🎟️ Descuento: -RD$ ' + discount.toLocaleString() : ''}${customerInfo}\n\n⚡ *Acción:* Generar link CardNET por RD$ ${total.toLocaleString()} y enviar a +${customerPhone}`;
+    registerOrder(total, 'cardnet');
     window.open(`https://wa.me/18099038707?text=${encodeURIComponent(msg)}`, '_blank');
-    showToast('Envía tu pago PayPal a telocorpgroup@gmail.com y confirma por WhatsApp');
+    showCheckoutConfirmation(total, 'cardnet', name);
     return;
   }
 
-  // Default: WhatsApp (transferencia, depósito, efectivo)
-  const msg = `🛒 *Nuevo Pedido TeloSales*\n\n${items}\n\n💰 Total: RD$ ${total.toLocaleString()}${shipping ? '\n🚚 Envío: RD$ ' + shipping : '\n🚚 Envío: Gratis'}${discount ? '\n🎟️ Descuento: -RD$ ' + discount.toLocaleString() : ''}${customer}\n\n💳 Método: Transferencia / Efectivo\n¿Me pueden indicar los datos bancarios para transferir?`;
+  if (paymentMethod === 'paypal') {
+    const usd = Math.ceil(total / 59);
+    const msg = `🌐 *Pedido TeloSales — PayPal*\n\n${items}\n\n💰 Total: RD$ ${total.toLocaleString()} (≈ USD $${usd})\n🅿️ PayPal: telocorpgroup@gmail.com${customerInfo}\n\n✅ El cliente enviará captura del pago`;
+    registerOrder(total, 'paypal');
+    window.open(`https://wa.me/18099038707?text=${encodeURIComponent(msg)}`, '_blank');
+    showCheckoutConfirmation(total, 'paypal', name);
+    return;
+  }
+
+  // WhatsApp (transferencia, depósito, efectivo)
+  const msg = `🛒 *Nuevo Pedido TeloSales*\n\n${items}\n\n💰 *Total: RD$ ${total.toLocaleString()}*${shipping ? '\n🚚 Envío: RD$ ' + shipping : '\n🚚 Envío: Gratis'}${discount ? '\n🎟️ Descuento: -RD$ ' + discount.toLocaleString() : ''}${customerInfo}\n\n💳 Método: Transferencia / Depósito / Efectivo`;
   registerOrder(total, 'whatsapp');
   window.open(`https://wa.me/18099038707?text=${encodeURIComponent(msg)}`, '_blank');
-  showToast('Pedido enviado por WhatsApp — coordina tu pago ahí');
+  showCheckoutConfirmation(total, 'whatsapp', name);
+}
+
+// Mostrar confirmación visual post-checkout
+function showCheckoutConfirmation(total, method, name) {
+  const methodLabels = { cardnet: '💳 Link de pago CardNET (recibirás por WhatsApp)', paypal: '🌐 PayPal (envía a telocorpgroup@gmail.com)', whatsapp: '💬 Transferencia / Depósito (datos en WhatsApp)' };
+  const cartBody = document.getElementById('cart-items');
+  cartBody.innerHTML = `
+    <div class="checkout-confirmation">
+      <div class="checkout-confirmation__icon">✅</div>
+      <h3>¡Pedido confirmado!</h3>
+      <p>Gracias, <strong>${name}</strong>. Tu pedido por <strong>RD$ ${total.toLocaleString()}</strong> fue registrado.</p>
+      <div class="checkout-confirmation__method">${methodLabels[method]}</div>
+      <div class="checkout-confirmation__steps">
+        <div class="conf-step"><span class="conf-step__num">1</span><span>Pedido registrado ✓</span></div>
+        <div class="conf-step"><span class="conf-step__num">2</span><span>${method === 'cardnet' ? 'Recibirás link de pago en WhatsApp' : 'Coordina pago por WhatsApp'}</span></div>
+        <div class="conf-step"><span class="conf-step__num">3</span><span>Preparamos y enviamos (24-48h)</span></div>
+      </div>
+      <button class="btn btn--primary btn--full" onclick="toggleCartDrawer(false); switchView('sales');">Seguir comprando</button>
+    </div>`;
+  showToast('¡Pedido confirmado! 🎉');
 }
 
 function registerOrder(total, paymentMethod) {
@@ -743,19 +936,29 @@ function renderCourses() {
   grid.innerHTML = courses.map(c => {
     const done = c.lessons.filter((_, i) => State.completedClasses.includes(`${c.id}_${i}`)).length;
     const pct = Math.round(done / c.lessons.length * 100);
+    const quizCount = (c.quiz && c.quiz.length) || 0;
     return `
     <article class="course-card" data-course="${c.id}" tabindex="0" role="button">
       <div class="course-card__top"><span class="course-card__icon">${c.icon}</span><span class="course-card__level">${c.level}</span></div>
       <h4 class="course-card__title">${c.title}</h4>
       <p class="course-card__instructor">👨‍🏫 ${c.instructor}</p>
-      <div class="course-card__stats"><span>★ ${c.rating}</span><span>👥 ${c.students.toLocaleString()}</span><span>${c.lessons.length} clases · ${c.duration}</span></div>
-      ${pct > 0 ? `<div class="course-card__progress"><div class="progress-bar progress-bar--sm"><div class="progress-bar__fill" style="width:${pct}%"></div></div><small>${pct}% completado</small></div>` : '<span class="course-card__cta">Comenzar curso →</span>'}
+      <div class="course-card__stats">
+        <span>★ ${c.rating}</span>
+        <span>👥 ${c.students.toLocaleString()}</span>
+        <span>${c.lessons.length} clases · ${c.duration}</span>
+      </div>
+      <div class="course-card__meta">
+        ${quizCount ? `<span class="course-card__badge-sm">📝 ${quizCount} preguntas quiz</span>` : ''}
+        <span class="course-card__badge-sm">🏆 Certificado</span>
+      </div>
+      ${pct > 0 ? `<div class="course-card__progress"><div class="progress-bar progress-bar--sm"><div class="progress-bar__fill" style="width:${pct}%"></div></div><small>${pct}% completado · ${done}/${c.lessons.length} clases</small></div>` : '<span class="course-card__cta">Comenzar curso →</span>'}
     </article>`;
   }).join('');
   grid.querySelectorAll('.course-card').forEach(card => {
     card.addEventListener('click', () => openClassroom(card.dataset.course));
     card.addEventListener('keydown', e => { if (e.key === 'Enter') openClassroom(card.dataset.course); });
   });
+  updateEducaStats();
 }
 
 function openClassroom(courseId) {
@@ -1347,43 +1550,65 @@ function bookRepara() {
   if (!address) return showToast('Indica la dirección de recogida', 'error');
   if (!contact) return showToast('Indica un teléfono/WhatsApp de contacto', 'error');
 
+  const ticket = `RP-${Date.now().toString().slice(-6)}`;
   const payload = {
     device, issue,
     brand: document.getElementById('repara-brand').value,
     description: document.getElementById('repara-desc').value,
-    address, contact,
+    address, contact, ticket,
     customer: State.userProfile,
     status: 'pending',
     created_at: new Date().toISOString()
   };
   BackendService.supabaseQuery('repara_bookings', 'POST', payload);
-  // Notificación interna al admin (WhatsApp oculto) — permite asignar técnico y contactar
   BackendService.notifyAdmin('repara', {
-    device, issue, address, contact,
-    ticket: `RP-${Date.now().toString().slice(-6)}`,
+    device, issue, address, contact, ticket,
     customer: State.userProfile
   });
-  const ticket = `RP-${Date.now().toString().slice(-6)}`;
+
+  // Show real tracker that matches DB statuses
   document.getElementById('repara-tracker').hidden = false;
-  const steps = [
-    { t: 'Servicio Solicitado', d: 'Ticket ' + ticket + ' generado' },
-    { t: 'Mensajero en Camino', d: 'Retiro del dispositivo a domicilio' },
-    { t: 'En Diagnóstico Técnico', d: 'Téc. Carlos Medina evaluando' },
-    { t: 'Reparación Finalizada', d: 'Pruebas de calidad superadas ✓' }
-  ];
-  const render = (active) => {
-    document.getElementById('repara-steps').innerHTML = steps.map((s, i) => `<div class="tracker-step ${i <= active ? 'active' : ''}"><div class="tracker-step__num">${i < active ? '✓' : i + 1}</div><div><strong>${s.t}</strong><small>${s.d}</small></div></div>`).join('') + `<div class="repara-warranty">🛡️ Garantía de 90 días incluida · 🔧 Téc. certificado</div>`;
-  };
-  render(0);
+  renderReparaTracker('pending', ticket);
+  showToast('Reparación reservada · Ticket ' + ticket);
+
+  // Simulate progression for UX (admin changes real status in DB)
   let step = 0;
   clearInterval(reparaTimer);
   reparaTimer = setInterval(() => {
     step++;
-    render(step);
-    if (step === 2) showToast('Tu dispositivo está en diagnóstico');
-    if (step >= 3) { clearInterval(reparaTimer); showToast('¡Reparación finalizada! 🎉'); }
-  }, 3000);
-  showToast('Reparación reservada · Ticket ' + ticket);
+    const statuses = ['pending', 'in_progress', 'in_progress', 'completed'];
+    if (step < statuses.length) {
+      renderReparaTracker(statuses[step], ticket);
+      if (step === 1) showToast('📱 Tu dispositivo fue recogido');
+      if (step === 2) showToast('🔧 Técnico diagnosticando...');
+      if (step >= 3) { clearInterval(reparaTimer); showToast('✅ ¡Reparación finalizada!'); }
+    }
+  }, 4000);
+}
+
+function renderReparaTracker(currentStatus, ticket) {
+  const steps = [
+    { key: 'pending', title: 'Servicio Solicitado', desc: `Ticket ${ticket} registrado`, icon: '📋' },
+    { key: 'pickup', title: 'Recogida Programada', desc: 'Mensajero en camino a domicilio', icon: '🚗' },
+    { key: 'in_progress', title: 'En Diagnóstico y Reparación', desc: 'Técnico certificado trabajando', icon: '🔧' },
+    { key: 'completed', title: 'Reparación Completada', desc: 'Pruebas de calidad superadas ✓', icon: '✅' }
+  ];
+  const statusOrder = ['pending', 'pickup', 'in_progress', 'completed'];
+  const currentIdx = Math.max(0, statusOrder.indexOf(currentStatus));
+
+  document.getElementById('repara-steps').innerHTML = steps.map((s, i) => `
+    <div class="tracker-step ${i <= currentIdx ? 'active' : ''} ${i === currentIdx ? 'current' : ''}">
+      <div class="tracker-step__num">${i < currentIdx ? '✓' : s.icon}</div>
+      <div>
+        <strong>${s.title}</strong>
+        <small>${s.desc}</small>
+      </div>
+    </div>`).join('') + `
+    <div class="repara-warranty">
+      <span>🛡️ Garantía 90 días incluida</span>
+      <span>🔧 Técnico certificado</span>
+      <span>📞 Soporte post-servicio</span>
+    </div>`;
 }
 
 const instalaPrices = { tv: 1200, ac: 4500, 'ac-maint': 2000, smart: 2800, network: 3500, lock: 2000, camera: 5500, electrical: 1500, plumbing: 1800, antenna: 1200, solar: 25000, furniture: 1500 };
@@ -1438,15 +1663,18 @@ function updateInstalaPrice() {
 function bookInstala() {
   const service = document.getElementById('instala-service').value;
   const tech = document.querySelector('.tech-card.active')?.dataset.tech || 'ramon';
+  const techName = document.querySelector('.tech-card.active strong')?.textContent || tech;
   const date = document.getElementById('instala-date').value;
+  const time = document.getElementById('instala-time').value;
   const address = document.getElementById('instala-address').value.trim();
   if (!date) return showToast('Selecciona una fecha', 'error');
   if (!address) return showToast('Indica la dirección', 'error');
 
+  const timeLabels = { am: 'Mañana (8:00 - 12:00)', pm: 'Tarde (2:00 - 6:00)', evening: 'Noche (6:00 - 9:00 PM)' };
   const payload = {
     service: instalaNames[service],
     date,
-    time: document.getElementById('instala-time').value,
+    time,
     tech,
     price: instalaPrices[service],
     address,
@@ -1456,15 +1684,39 @@ function bookInstala() {
     created_at: new Date().toISOString()
   };
   BackendService.supabaseQuery('instala_bookings', 'POST', payload);
-  // Notificación interna al admin (WhatsApp oculto) — permite asignar y contactar técnico
   BackendService.notifyAdmin('instala', {
-    service: instalaNames[service], date, time: payload.time, tech,
+    service: instalaNames[service], date, time, tech,
     price: instalaPrices[service], address,
     customer: State.userProfile
   });
+
   document.getElementById('instala-confirmation').hidden = false;
-  document.getElementById('instala-details').innerHTML = `<ul style="list-style:none;display:flex;flex-direction:column;gap:8px;"><li><strong>Servicio:</strong> ${instalaNames[service]}</li><li><strong>Fecha:</strong> ${payload.date}</li><li><strong>Horario:</strong> ${payload.time === 'am' ? 'Mañana' : 'Tarde'}</li><li><strong>Técnico:</strong> ${tech}</li><li><strong>Total:</strong> <span style="color:var(--c-instala);font-weight:700">RD$ ${instalaPrices[service].toLocaleString()}</span></li></ul><div class="status-pill status-pill--active" style="margin-top:12px;display:inline-block;">✓ Cita Confirmada</div>`;
-  showToast('Instalación agendada');
+  document.getElementById('instala-details').innerHTML = `
+    <div class="instala-confirm-summary">
+      <div class="instala-confirm__header">
+        <span class="instala-confirm__icon">✅</span>
+        <h4>Instalación Agendada</h4>
+      </div>
+      <div class="instala-confirm__grid">
+        <div class="instala-confirm__item"><span class="instala-confirm__label">Servicio</span><span>${instalaNames[service]}</span></div>
+        <div class="instala-confirm__item"><span class="instala-confirm__label">Fecha</span><span>${new Date(date + 'T12:00').toLocaleDateString('es-DO', { weekday: 'long', day: 'numeric', month: 'long' })}</span></div>
+        <div class="instala-confirm__item"><span class="instala-confirm__label">Horario</span><span>${timeLabels[time] || time}</span></div>
+        <div class="instala-confirm__item"><span class="instala-confirm__label">Técnico</span><span>${techName}</span></div>
+        <div class="instala-confirm__item"><span class="instala-confirm__label">Dirección</span><span>${address}</span></div>
+        <div class="instala-confirm__item instala-confirm__total"><span class="instala-confirm__label">Total</span><span>RD$ ${instalaPrices[service].toLocaleString()}</span></div>
+      </div>
+      <div class="instala-confirm__timeline">
+        <div class="instala-timeline-step active"><span>1</span> Cita confirmada</div>
+        <div class="instala-timeline-step"><span>2</span> Técnico en camino</div>
+        <div class="instala-timeline-step"><span>3</span> Servicio en progreso</div>
+        <div class="instala-timeline-step"><span>4</span> Completado</div>
+      </div>
+      <div class="instala-confirm__actions">
+        <a href="https://wa.me/18099038707?text=${encodeURIComponent(`Hola, tengo una cita de ${instalaNames[service]} el ${date}. ¿Pueden confirmar?`)}" target="_blank" class="btn btn--whatsapp btn--sm">💬 Contactar Soporte</a>
+        <button class="btn btn--ghost btn--sm" onclick="document.getElementById('instala-confirmation').hidden=true; showToast('Puedes agendar otra instalación')">+ Nuevo Servicio</button>
+      </div>
+    </div>`;
+  showToast('Instalación agendada ✓');
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -1537,10 +1789,22 @@ async function sendChatMessage() {
   const input = document.getElementById('chat-input');
   const message = input.value.trim();
   if (!message) return;
+  // Respect admin config — chatbot disabled
+  if (!siteConfig.chatbot_enabled) {
+    showToast('El asistente IA está temporalmente desactivado. Contacta por WhatsApp.', 'error');
+    return;
+  }
   input.value = '';
   appendChatMessage('user', message);
   appendChatMessage('bot', '...');
-  const response = await BackendService.geminiChat(message, 'Servicios: TeloSales (tienda), TeloEduca (cursos), TeloLleva (mensajería), TeloRepara (reparaciones), TeloInstala (instalaciones).');
+
+  // RAG: construir contexto del catálogo para que el asistente conozca los productos
+  const topProducts = products.slice(0, 15).map(p => `${p.title} (RD$${p.price}, ${p.category})`).join('; ');
+  const cartContext = State.cart.length ? `El cliente tiene ${State.cart.length} items en el carrito.` : '';
+  const adminContext = siteConfig.chatbot_context || '';
+  const catalogContext = `Catálogo actual (${products.length} productos): ${topProducts}. Categorías: Covers, Cables y Carga, Audio, Equipamiento. Envío gratis en compras +RD$${siteConfig.free_shipping_threshold}. Aceptamos: CardNET (link de pago), Transferencia, PayPal. Teléfono: +1(809)903-8707. ${cartContext} ${adminContext}`;
+
+  const response = await BackendService.geminiChat(message, catalogContext);
   const messages = document.getElementById('chat-messages');
   messages.lastChild.textContent = response;
 }
@@ -1766,6 +2030,7 @@ document.addEventListener('DOMContentLoaded', () => {
   syncProductsFromSupabase();
   syncCoursesFromSupabase();
   syncServicesFromSupabase();
+  syncSiteSettings();
   loadUserHistory();
 
   // Set default install date
@@ -1776,4 +2041,582 @@ document.addEventListener('DOMContentLoaded', () => {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js').catch(() => {});
   }
+});
+
+// ═══════════════════════════════════════════════════════════════
+// TELOSALES QUICK WINS — Conversion & Growth Optimizations
+// ═══════════════════════════════════════════════════════════════
+
+// ─── Recently Viewed ───
+const MAX_RECENTLY_VIEWED = 8;
+
+function trackRecentlyViewed(productId) {
+  let rv = JSON.parse(localStorage.getItem('telo_recentlyViewed') || '[]');
+  rv = rv.filter(id => id !== productId);
+  rv.unshift(productId);
+  rv = rv.slice(0, MAX_RECENTLY_VIEWED);
+  localStorage.setItem('telo_recentlyViewed', JSON.stringify(rv));
+  renderRecentlyViewed();
+}
+
+function renderRecentlyViewed() {
+  const rv = JSON.parse(localStorage.getItem('telo_recentlyViewed') || '[]');
+  const container = document.getElementById('recently-viewed');
+  const grid = document.getElementById('recently-viewed-grid');
+  if (!container || !grid || rv.length === 0) { if (container) container.hidden = true; return; }
+  const items = rv.map(id => products.find(p => p.id === id)).filter(Boolean);
+  if (items.length === 0) { container.hidden = true; return; }
+  container.hidden = false;
+  grid.innerHTML = items.map(p => `
+    <div class="rv-card" onclick="openProductModal('${p.id}')">
+      <img src="${cdnImage(p.image, 200)}" alt="${p.title}" loading="lazy">
+      <div class="rv-card__title">${p.title}</div>
+      <div class="rv-card__price">RD$ ${p.price.toLocaleString()}</div>
+    </div>`).join('');
+}
+
+// Patch openProductModal to track views
+const _originalOpenProductModal = openProductModal;
+openProductModal = function(id) {
+  trackRecentlyViewed(id);
+  trackGA4Event('view_item', id);
+  _originalOpenProductModal(id);
+};
+
+// ─── Advanced Filters ───
+let filterPriceMin = 0;
+let filterPriceMax = Infinity;
+let filterMinRating = 0;
+
+function applyPriceFilter() {
+  const min = parseInt(document.getElementById('filter-price-min').value) || 0;
+  const max = parseInt(document.getElementById('filter-price-max').value) || Infinity;
+  filterPriceMin = min;
+  filterPriceMax = max;
+  renderProducts();
+}
+
+function setRatingFilter(minRating) {
+  filterMinRating = minRating;
+  document.querySelectorAll('.rating-filter .chip').forEach(c => c.classList.remove('active'));
+  document.querySelector(`.rating-filter [data-min-rating="${minRating}"]`)?.classList.add('active');
+  renderProducts();
+}
+
+// Patch renderProducts to include new filters + product counter + sort by best-sellers
+const _originalRenderProducts = renderProducts;
+renderProducts = function() {
+  const grid = document.getElementById('products-grid');
+  const freeShippingOnly = document.getElementById('filter-free-shipping')?.checked || false;
+
+  let filtered = products.filter(p =>
+    (currentFilter === 'all' || p.category === currentFilter) &&
+    (searchQuery === '' || p.title.toLowerCase().includes(searchQuery.toLowerCase())) &&
+    (p.price >= filterPriceMin && p.price <= filterPriceMax) &&
+    (p.rating >= filterMinRating) &&
+    (!freeShippingOnly || p.freeShipping)
+  );
+
+  if (currentSort === 'price-asc') filtered.sort((a, b) => a.price - b.price);
+  else if (currentSort === 'price-desc') filtered.sort((a, b) => b.price - a.price);
+  else if (currentSort === 'rating-desc') filtered.sort((a, b) => b.rating - a.rating);
+  else if (currentSort === 'best-sellers') filtered.sort((a, b) => (b.sold || 0) - (a.sold || 0));
+
+  // Product counter
+  const counter = document.getElementById('products-counter');
+  if (counter) counter.textContent = `${filtered.length} producto${filtered.length !== 1 ? 's' : ''} encontrado${filtered.length !== 1 ? 's' : ''}`;
+
+  if (filtered.length === 0) {
+    grid.innerHTML = '<p class="empty-state">No se encontraron productos. Prueba con otra búsqueda o categoría.</p>';
+    return;
+  }
+
+  grid.innerHTML = filtered.map(p => {
+    const urgency = p.stock <= 5 ? `<div class="product-card__stock product-card__stock--urgent">🔥 ¡Solo ${p.stock} en stock!</div>` :
+                    p.stock <= 8 ? `<div class="product-card__stock">¡Últimas ${p.stock} unidades!</div>` : '';
+    const socialProofText = p.sold > 100 ? `<div class="product-card__social">${p.sold}+ vendidos</div>` : '';
+    return `
+    <article class="product-card" data-id="${p.id}" tabindex="0" role="button" aria-label="${p.title}">
+      <div class="product-card__image">
+        ${p.badge ? `<span class="product-badge ${p.discount ? 'product-badge--sale' : ''}">${p.badge}</span>` : ''}
+        <button class="product-card__wish ${State.wishlist.includes(p.id) ? 'active' : ''}" data-wish="${p.id}" aria-label="Favorito" title="Añadir a favoritos">${State.wishlist.includes(p.id) ? '❤️' : '🤍'}</button>
+        <img src="${cdnImage(p.image)}" alt="${p.title}" loading="lazy" decoding="async" width="400" height="400">
+        ${p.freeShipping ? '<span class="product-card__shipping">🚚 Envío gratis</span>' : ''}
+      </div>
+      <div class="product-card__body">
+        <h4 class="product-card__title">${p.title}</h4>
+        <div class="product-card__rating">★ ${p.rating} · ${(p.sold || 0).toLocaleString()} vendidos</div>
+        <div class="product-card__pricing">
+          ${p.compareAtPrice ? `<span class="product-card__compare">RD$ ${p.compareAtPrice.toLocaleString()}</span>` : ''}
+          <span class="product-card__price">RD$ ${p.price.toLocaleString()}</span>
+        </div>
+        ${urgency}
+        ${socialProofText}
+        <button class="btn btn--primary btn--sm product-card__add" data-add="${p.id}">Agregar al carrito</button>
+      </div>
+    </article>`;
+  }).join('');
+
+  // Re-bind events
+  grid.querySelectorAll('.product-card').forEach(card => {
+    card.addEventListener('click', e => {
+      if (e.target.closest('[data-add]') || e.target.closest('[data-wish]')) return;
+      openProductModal(card.dataset.id);
+    });
+    card.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target === card) openProductModal(card.dataset.id); });
+  });
+  grid.querySelectorAll('[data-add]').forEach(btn => btn.addEventListener('click', e => { e.stopPropagation(); quickAddToCart(btn.dataset.add); }));
+  grid.querySelectorAll('[data-wish]').forEach(btn => btn.addEventListener('click', e => { e.stopPropagation(); toggleWishlist(btn.dataset.wish); renderProducts(); }));
+
+  renderRecentlyViewed();
+};
+
+// ─── Exit-Intent Popup ───
+let exitPopupShown = false;
+
+function initExitIntentPopup() {
+  // Only show once per session and if user hasn't already subscribed
+  if (sessionStorage.getItem('telo_exitPopupShown') || localStorage.getItem('telo_emailCaptured')) return;
+  // Respect admin config
+  if (!siteConfig.exit_popup_enabled) return;
+
+  document.addEventListener('mouseleave', (e) => {
+    if (e.clientY < 10 && !exitPopupShown) {
+      showExitPopup();
+    }
+  });
+
+  // Mobile: show after 45 seconds of inactivity without purchase
+  if (window.innerWidth <= 768) {
+    setTimeout(() => {
+      if (!exitPopupShown && State.cart.length === 0) showExitPopup();
+    }, 45000);
+  }
+}
+
+function showExitPopup() {
+  if (exitPopupShown || localStorage.getItem('telo_emailCaptured')) return;
+  exitPopupShown = true;
+  sessionStorage.setItem('telo_exitPopupShown', '1');
+  const popup = document.getElementById('exit-popup');
+  const overlay = document.getElementById('exit-popup-overlay');
+  if (popup && overlay) { popup.hidden = false; overlay.hidden = false; }
+}
+
+function closeExitPopup() {
+  const popup = document.getElementById('exit-popup');
+  const overlay = document.getElementById('exit-popup-overlay');
+  if (popup) popup.hidden = true;
+  if (overlay) overlay.hidden = true;
+}
+
+function captureEmail(e) {
+  e.preventDefault();
+  const email = document.getElementById('popup-email').value.trim();
+  const phone = document.getElementById('popup-phone').value.trim();
+  if (!email) return;
+  // Save lead to Supabase
+  BackendService.supabaseQuery('leads', 'POST', { name: '', email, department: 'marketing', message: `[EXIT-POPUP] Phone: ${phone || 'N/A'}` });
+  localStorage.setItem('telo_emailCaptured', email);
+  // Add configured popup coupon to available coupons
+  const code = siteConfig.popup_coupon_code || 'PRIMERA10';
+  const pct = siteConfig.popup_coupon_discount || 10;
+  couponCodes[code] = pct;
+  closeExitPopup();
+  showToast(`¡Listo! Usa el cupón ${code} en tu compra 🎉`);
+  trackGA4Event('generate_lead', null, { method: 'exit_popup' });
+}
+
+// ─── Social Proof Notifications ───
+function initSocialProof() {
+  // Respect admin config
+  if (!siteConfig.social_proof_enabled) return;
+
+  const names = ['Juan', 'María', 'Carlos', 'Ana', 'Luis', 'Carmen', 'Pedro', 'Rosa', 'Miguel', 'Elena'];
+  const cities = ['Santo Domingo', 'Santiago', 'La Romana', 'San Cristóbal', 'Puerto Plata'];
+
+  function showSocialProof() {
+    const p = products[Math.floor(Math.random() * products.length)];
+    const name = names[Math.floor(Math.random() * names.length)];
+    const city = cities[Math.floor(Math.random() * cities.length)];
+    const minutes = Math.floor(Math.random() * 30) + 2;
+
+    const el = document.createElement('div');
+    el.className = 'social-proof';
+    el.innerHTML = `<img class="social-proof__img" src="${cdnImage(p.image, 80)}" alt=""><div><strong>${name}</strong> de ${city} compró <em>${p.title.slice(0, 25)}...</em><br><small>Hace ${minutes} min</small></div>`;
+    document.body.appendChild(el);
+    setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity .3s'; setTimeout(() => el.remove(), 300); }, 5000);
+  }
+
+  // Show first one after 20 seconds, then every 45-90s
+  setTimeout(showSocialProof, 20000);
+  setInterval(() => { if (Math.random() > 0.4) showSocialProof(); }, 60000);
+}
+
+// ─── GA4 eCommerce Event Tracking ───
+function trackGA4Event(eventName, productId, extra = {}) {
+  if (typeof gtag !== 'function') return;
+  const p = productId ? products.find(x => x.id === productId) : null;
+  const params = { ...extra };
+  if (p) {
+    params.currency = 'DOP';
+    params.value = p.price;
+    params.items = [{ item_id: p.id, item_name: p.title, item_category: p.category, price: p.price, quantity: 1 }];
+  }
+  gtag('event', eventName, params);
+}
+
+// Patch quickAddToCart for GA4 tracking
+const _originalQuickAdd = quickAddToCart;
+quickAddToCart = function(id) {
+  trackGA4Event('add_to_cart', id);
+  _originalQuickAdd(id);
+};
+
+// Patch checkout for GA4 tracking
+const _originalCheckout = checkout;
+checkout = async function() {
+  if (State.cart.length > 0) {
+    const total = State.cart.reduce((s, i) => { const p = products.find(x => x.id === i.id); return s + (p ? p.price * i.qty : 0); }, 0);
+    trackGA4Event('begin_checkout', null, {
+      currency: 'DOP', value: total,
+      items: State.cart.map(i => { const p = products.find(x => x.id === i.id); return { item_id: i.id, item_name: p?.title, price: p?.price, quantity: i.qty }; })
+    });
+  }
+  await _originalCheckout();
+};
+
+// ─── Initialize Quick Wins on DOMContentLoaded ───
+document.addEventListener('DOMContentLoaded', () => {
+  initExitIntentPopup();
+  initSocialProof();
+  renderRecentlyViewed();
+});
+
+// ═══════════════════════════════════════════════════════════════
+// SEARCH AUTOCOMPLETE — instant suggestions as you type
+// ═══════════════════════════════════════════════════════════════
+
+function initSearchAutocomplete() {
+  const input = document.getElementById('sales-search');
+  if (!input) return;
+
+  // Create suggestions dropdown
+  let dropdown = document.getElementById('search-suggestions');
+  if (!dropdown) {
+    dropdown = document.createElement('div');
+    dropdown.id = 'search-suggestions';
+    dropdown.className = 'search-suggestions';
+    input.parentNode.appendChild(dropdown);
+  }
+
+  input.addEventListener('input', () => {
+    const q = input.value.trim().toLowerCase();
+    if (q.length < 2) { dropdown.hidden = true; return; }
+    const matches = products.filter(p => p.title.toLowerCase().includes(q) || (p.category && p.category.toLowerCase().includes(q))).slice(0, 5);
+    if (matches.length === 0) { dropdown.hidden = true; return; }
+    dropdown.innerHTML = matches.map(p => `
+      <div class="search-suggestion" data-id="${p.id}">
+        <img src="${cdnImage(p.image, 50)}" alt="">
+        <div>
+          <div class="search-suggestion__title">${p.title}</div>
+          <div class="search-suggestion__price">RD$ ${p.price.toLocaleString()}</div>
+        </div>
+      </div>`).join('');
+    dropdown.hidden = false;
+    dropdown.querySelectorAll('.search-suggestion').forEach(s => {
+      s.addEventListener('click', () => { openProductModal(s.dataset.id); dropdown.hidden = true; input.value = ''; });
+    });
+  });
+
+  input.addEventListener('blur', () => { setTimeout(() => { dropdown.hidden = true; }, 200); });
+  input.addEventListener('keydown', (e) => { if (e.key === 'Escape') dropdown.hidden = true; });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SHARE PRODUCT — WhatsApp + clipboard
+// ═══════════════════════════════════════════════════════════════
+
+function shareProduct(productId) {
+  const p = products.find(x => x.id === productId);
+  if (!p) return;
+  const url = `https://telocg.com/#telosales`;
+  const text = `¡Mira esto! ${p.title} — RD$ ${p.price.toLocaleString()}${p.discount ? ` (${p.discount}% OFF)` : ''}\n${url}`;
+
+  if (navigator.share) {
+    navigator.share({ title: p.title, text: `${p.title} — RD$ ${p.price.toLocaleString()}`, url }).catch(() => {});
+  } else {
+    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+  }
+}
+
+function copyProductLink(productId) {
+  const url = `https://telocg.com/#telosales?p=${productId}`;
+  navigator.clipboard.writeText(url).then(() => showToast('Enlace copiado al portapapeles')).catch(() => showToast('No se pudo copiar', 'error'));
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ABANDONED CART RECOVERY — save to Supabase for follow-up
+// ═══════════════════════════════════════════════════════════════
+
+let _abandonedCartTimer = null;
+
+function trackAbandonedCart() {
+  // Save cart to Supabase after 30 seconds of inactivity (if cart has items)
+  clearTimeout(_abandonedCartTimer);
+  if (State.cart.length === 0) return;
+  _abandonedCartTimer = setTimeout(() => {
+    const email = State.userProfile.email || localStorage.getItem('telo_emailCaptured') || '';
+    const phone = State.userProfile.phone || '';
+    if (!email && !phone) return; // can't follow up without contact
+    const subtotal = State.cart.reduce((s, i) => { const p = products.find(x => x.id === i.id); return s + (p ? p.price * i.qty : 0); }, 0);
+    BackendService.supabaseQuery('leads', 'POST', {
+      name: State.userProfile.name || '',
+      email: email || phone,
+      department: 'abandoned_cart',
+      message: JSON.stringify({ items: State.cart.map(i => { const p = products.find(x => x.id === i.id); return { title: p?.title, price: p?.price, qty: i.qty }; }), subtotal, timestamp: new Date().toISOString() })
+    });
+  }, 30000);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// COUNTDOWN TIMER — flash sale urgency for products with discount
+// ═══════════════════════════════════════════════════════════════
+
+function getFlashSaleEndTime() {
+  // End of today at midnight (local time) — resets daily
+  const now = new Date();
+  const end = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
+  return end - now;
+}
+
+function renderCountdownBanner() {
+  const el = document.getElementById('flash-sale-banner');
+  if (!el) return;
+  // Respect admin config
+  if (!siteConfig.flash_sale_enabled) { el.hidden = true; return; }
+  const discountedProducts = products.filter(p => p.discount && p.discount > 0);
+  if (discountedProducts.length === 0) { el.hidden = true; return; }
+
+  function update() {
+    const remaining = getFlashSaleEndTime();
+    if (remaining <= 0) { el.hidden = true; return; }
+    const h = Math.floor(remaining / 3600000);
+    const m = Math.floor((remaining % 3600000) / 60000);
+    const s = Math.floor((remaining % 60000) / 1000);
+    el.innerHTML = `<span class="flash-banner__icon">⚡</span> <span class="flash-banner__text">OFERTAS DEL DÍA — ${discountedProducts.length} productos con descuento</span> <span class="flash-banner__timer">${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}</span>`;
+    el.hidden = false;
+  }
+  update();
+  setInterval(update, 1000);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// DYNAMIC META TAGS — update OG/title when viewing products
+// ═══════════════════════════════════════════════════════════════
+
+function updateMetaForProduct(product) {
+  if (!product) return;
+  document.title = `${product.title} — RD$ ${product.price.toLocaleString()} | TeloSales`;
+  const setMeta = (prop, content) => {
+    let el = document.querySelector(`meta[property="${prop}"]`) || document.querySelector(`meta[name="${prop}"]`);
+    if (el) el.setAttribute('content', content);
+  };
+  setMeta('og:title', `${product.title} — RD$ ${product.price.toLocaleString()}`);
+  setMeta('og:description', product.description || 'Compra en TeloSales con envío express.');
+  setMeta('og:image', product.image.startsWith('http') ? product.image : `https://telocg.com/${product.image}`);
+  setMeta('twitter:title', `${product.title} — TeloSales`);
+  setMeta('twitter:description', product.description || 'Tecnología y accesorios premium.');
+}
+
+function resetMeta() {
+  document.title = "Telo' Corp Group | Plataforma Digital — Ventas, Educación, Logística y Servicios en RD";
+  const setMeta = (prop, content) => {
+    let el = document.querySelector(`meta[property="${prop}"]`) || document.querySelector(`meta[name="${prop}"]`);
+    if (el) el.setAttribute('content', content);
+  };
+  setMeta('og:title', "Telo' Corp Group | Plataforma Digital");
+  setMeta('og:description', 'Conglomerado digital con comercio electrónico, academia, logística y soporte técnico en República Dominicana.');
+  setMeta('og:image', 'assets/telocorpgroup-logo.jpg');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// HASH ROUTING — Deep link to product/view from URL
+// ═══════════════════════════════════════════════════════════════
+
+function handleHashRouting() {
+  const hash = window.location.hash.replace('#', '');
+  if (!hash) return;
+
+  // Check for product deep link: #telosales?p=ts-101
+  if (hash.includes('telosales') && hash.includes('p=')) {
+    const match = hash.match(/p=([^&]+)/);
+    if (match) {
+      const productId = match[1];
+      switchView('sales');
+      setTimeout(() => openProductModal(productId), 300);
+      return;
+    }
+  }
+
+  // Check for view: #sales, #educa, etc.
+  const validViews = ['home', 'sales', 'educa', 'classroom', 'lleva', 'repara', 'instala', 'about', 'support', 'profile'];
+  const viewId = hash.split('?')[0];
+  if (validViews.includes(viewId)) {
+    switchView(viewId);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// INIT ENHANCEMENTS — bind everything on DOM ready
+// ═══════════════════════════════════════════════════════════════
+
+document.addEventListener('DOMContentLoaded', () => {
+  initSearchAutocomplete();
+  renderCountdownBanner();
+  handleHashRouting();
+
+  // Track abandoned cart on any cart change
+  const _origSave = State.save.bind(State);
+  State.save = function() { _origSave(); trackAbandonedCart(); };
+});
+
+// Listen for hash changes (back/forward browser buttons)
+window.addEventListener('hashchange', handleHashRouting);
+
+// ═══════════════════════════════════════════════════════════════
+// TELOEDUCA — Certificate Verification + Stats
+// ═══════════════════════════════════════════════════════════════
+
+async function verifyCertificate() {
+  const certId = document.getElementById('verify-cert-id').value.trim().toUpperCase();
+  const resultEl = document.getElementById('cert-verify-result');
+  if (!certId) { showToast('Ingresa un ID de certificado', 'error'); return; }
+
+  resultEl.hidden = false;
+  resultEl.innerHTML = '<p class="text-muted">Buscando certificado...</p>';
+
+  try {
+    const res = await fetch(`${BackendService.config.supabaseUrl}/rest/v1/certificates?cert_id=eq.${encodeURIComponent(certId)}&limit=1`, {
+      headers: { 'apikey': BackendService.config.supabaseKey, 'Authorization': `Bearer ${BackendService.config.supabaseKey}` }
+    });
+    const data = res.ok ? await res.json() : [];
+    if (data && data.length > 0) {
+      const c = data[0];
+      const date = c.created_at ? new Date(c.created_at).toLocaleDateString('es-DO', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A';
+      resultEl.innerHTML = `
+        <div class="cert-verified">
+          <div class="cert-verified__badge">✅ Certificado Válido</div>
+          <div class="cert-verified__details">
+            <p><strong>Estudiante:</strong> ${c.student || 'N/A'}</p>
+            <p><strong>Curso:</strong> ${c.course || 'N/A'}</p>
+            <p><strong>Calificación:</strong> ${c.score || 0}%</p>
+            <p><strong>Fecha:</strong> ${date}</p>
+            <p><strong>ID:</strong> ${c.cert_id}</p>
+          </div>
+        </div>`;
+    } else {
+      resultEl.innerHTML = `<div class="cert-invalid"><span>❌</span> Certificado no encontrado. Verifica el ID e intenta de nuevo.</div>`;
+    }
+  } catch (e) {
+    resultEl.innerHTML = `<div class="cert-invalid"><span>⚠️</span> Error de conexión. Intenta más tarde.</div>`;
+  }
+}
+
+// Update educa stats from data
+function updateEducaStats() {
+  const totalStudents = courses.reduce((s, c) => s + (c.students || 0), 0);
+  const el = document.getElementById('educa-total-courses');
+  if (el) el.textContent = courses.length;
+  const studEl = document.getElementById('educa-total-students');
+  if (studEl) studEl.textContent = totalStudents > 1000 ? `${(totalStudents / 1000).toFixed(1)}k+` : totalStudents.toLocaleString();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// TELOINSTALA — Dynamic Technician Loading from Supabase
+// ═══════════════════════════════════════════════════════════════
+
+async function loadTechniciansForFrontend() {
+  try {
+    const res = await fetch(`${BackendService.config.supabaseUrl}/rest/v1/technicians?select=*&active=eq.true&order=rating.desc`, {
+      headers: { 'apikey': BackendService.config.supabaseKey, 'Authorization': `Bearer ${BackendService.config.supabaseKey}` }
+    });
+    if (!res.ok) return;
+    const data = await res.json();
+    if (!data || !data.length) return;
+
+    const grid = document.querySelector('.tech-grid');
+    if (!grid) return;
+
+    grid.innerHTML = data.map((t, i) => `
+      <button class="tech-card ${i === 0 ? 'active' : ''}" data-tech="${t.id}" type="button">
+        <span class="tech-card__avatar">${t.avatar || '👷'}</span>
+        <div class="tech-card__info">
+          <strong>${t.name}</strong>
+          <small>${t.specialization || 'General'}</small>
+          <span class="tech-card__rating">★ ${t.rating || 5} · ${t.jobs_completed || 0} servicios</span>
+        </div>
+      </button>`).join('');
+
+    // Re-bind click events
+    grid.querySelectorAll('.tech-card').forEach(card => {
+      card.addEventListener('click', () => {
+        grid.querySelectorAll('.tech-card').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+      });
+    });
+    console.log(`[Instala] Loaded ${data.length} technicians from Supabase`);
+  } catch (e) { /* keep hardcoded fallback */ }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// TELOREPARA — Photo Upload + Enhanced Tracking
+// ═══════════════════════════════════════════════════════════════
+
+// Enhanced bookRepara to include photo if provided
+const _originalBookRepara = bookRepara;
+bookRepara = function() {
+  const photoInput = document.getElementById('repara-photo');
+  if (photoInput && photoInput.files && photoInput.files[0]) {
+    // Upload photo via edge function then continue booking
+    const file = photoInput.files[0];
+    const formData = new FormData();
+    formData.append('image', file);
+    fetch(`${BackendService.config.supabaseUrl}/functions/v1/upload-image`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${BackendService.config.supabaseKey}` },
+      body: formData
+    }).then(r => r.json()).then(data => {
+      if (data && data.data && data.data.url) {
+        // Store photo URL in a hidden field or pass via description
+        const desc = document.getElementById('repara-desc');
+        if (desc) desc.value += `\n📸 Foto: ${data.data.url}`;
+      }
+      _originalBookRepara();
+    }).catch(() => _originalBookRepara());
+  } else {
+    _originalBookRepara();
+  }
+};
+
+// ═══════════════════════════════════════════════════════════════
+// TELOLLEVA — Package Insurance + Price Calculator Table
+// ═══════════════════════════════════════════════════════════════
+
+function getLlevaPriceBreakdown(distKm, vehicle) {
+  const basePrice = { moto: 120, car: 250, cargo: 600 };
+  const pricePerKm = { moto: 20, car: 30, cargo: 50 };
+  const base = basePrice[vehicle] || 120;
+  const distance = Math.round(distKm * (pricePerKm[vehicle] || 20));
+  const insurance = document.getElementById('lleva-insurance')?.checked ? Math.round((base + distance) * 0.05) : 0;
+  return { base, distance, insurance, total: base + distance + insurance };
+}
+
+// ═══════════════════════════════════════════════════════════════
+// INIT — Load dynamic data for other modules
+// ═══════════════════════════════════════════════════════════════
+
+document.addEventListener('DOMContentLoaded', () => {
+  loadTechniciansForFrontend();
+  setTimeout(updateEducaStats, 1000);
 });
