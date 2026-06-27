@@ -2748,3 +2748,91 @@ loadProfile = function() {
   _origLoadProfile();
   updateProfileDashboard();
 };
+
+// ═══════════════════════════════════════════════════════════════
+// TELOEDUCA — Persist progress to Supabase (backup localStorage)
+// ═══════════════════════════════════════════════════════════════
+
+async function syncEducaProgressToSupabase() {
+  if (!State.userProfile.email && !State.userProfile.phone) return;
+  if (State.completedClasses.length === 0) return;
+
+  // Batch insert completed lessons (idempotent — duplicates ignored by DB)
+  const lessons = State.completedClasses.map(key => {
+    const [courseId, lessonIdx] = key.split('_');
+    return { course: courseId, lesson: parseInt(lessonIdx), completed: true, student: State.userProfile.name || State.userProfile.email || 'anon' };
+  });
+
+  // Insert in batches of 10
+  for (let i = 0; i < lessons.length; i += 10) {
+    const batch = lessons.slice(i, i + 10);
+    await BackendService.supabaseQuery('educa_progress', 'POST', batch.length === 1 ? batch[0] : batch);
+  }
+}
+
+// Sync on profile save and periodically
+const _origSaveProfile = saveProfile;
+saveProfile = function(e) {
+  _origSaveProfile(e);
+  syncEducaProgressToSupabase();
+};
+
+// ═══════════════════════════════════════════════════════════════
+// IN-APP NOTIFICATION SYSTEM — Activity feed for user
+// ═══════════════════════════════════════════════════════════════
+
+const notificationQueue = [];
+
+function addNotification(title, body, type = 'info') {
+  notificationQueue.push({ title, body, type, time: Date.now() });
+  renderNotificationBadge();
+  // Also use browser Notification API if permitted
+  if ('Notification' in window && Notification.permission === 'granted') {
+    new Notification(title, { body, icon: 'assets/telocorpgroup-mark.png' });
+  }
+}
+
+function renderNotificationBadge() {
+  // Update topbar notification indicator (if exists)
+  const badge = document.getElementById('notif-badge');
+  if (badge) {
+    const unread = notificationQueue.filter(n => Date.now() - n.time < 300000).length; // last 5 min
+    badge.textContent = unread;
+    badge.hidden = unread === 0;
+  }
+}
+
+// Request notification permission on first interaction
+function requestNotificationPermission() {
+  if ('Notification' in window && Notification.permission === 'default') {
+    // Ask after user has interacted (not on page load)
+    Notification.requestPermission();
+  }
+}
+
+// Trigger permission request after first add-to-cart or checkout
+const _origQuickAddNotif = quickAddToCart;
+quickAddToCart = function(id) {
+  _origQuickAddNotif(id);
+  requestNotificationPermission();
+};
+
+// ═══════════════════════════════════════════════════════════════
+// KEYBOARD SHORTCUTS — Power user features
+// ═══════════════════════════════════════════════════════════════
+
+document.addEventListener('keydown', (e) => {
+  // Don't trigger shortcuts when typing in inputs
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
+
+  if (e.key === '/' || (e.ctrlKey && e.key === 'k')) {
+    e.preventDefault();
+    const searchInput = document.getElementById('sales-search');
+    if (searchInput) { switchView('sales'); setTimeout(() => searchInput.focus(), 100); }
+  }
+  if (e.key === 'Escape') {
+    closeProductModal();
+    toggleCartDrawer(false);
+    toggleChat(false);
+  }
+});
