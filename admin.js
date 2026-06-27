@@ -373,13 +373,41 @@ function renderDashboard() {
   const totalVal = products.reduce((s, p) => s + (p.price || 0) * (p.stock || 0), 0);
   const totalSold = products.reduce((s, p) => s + (p.sold || 0), 0);
   const totalProfit = products.reduce((s, p) => s + ((p.price || 0) - (p.cost || 0)) * (p.sold || 0), 0);
+  const lowStock = products.filter(p => (p.stock || 0) <= 3).length;
   document.getElementById('dashStats').innerHTML = `
     <div class="stat"><div class="label">Productos</div><div class="val">${totalProds}</div></div>
     <div class="stat"><div class="label">Valor Inventario</div><div class="val" style="color:var(--primary)">RD$ ${totalVal.toLocaleString()}</div></div>
     <div class="stat"><div class="label">Ventas Totales</div><div class="val" style="color:var(--success)">${totalSold.toLocaleString()}</div></div>
     <div class="stat"><div class="label">Ganancia Acumulada</div><div class="val" style="color:var(--success)">RD$ ${totalProfit.toLocaleString()}</div></div>
-    <div class="stat"><div class="label">Stock Bajo (≤3)</div><div class="val" style="color:var(--danger)">${products.filter(p => (p.stock || 0) <= 3).length}</div></div>
+    <div class="stat"><div class="label">Stock Bajo (≤3)</div><div class="val" style="color:${lowStock ? 'var(--danger)' : 'var(--dim)'}">${lowStock}${lowStock ? ' ⚠️' : ''}</div></div>
     <div class="stat"><div class="label">Cursos Activos</div><div class="val">${courses.filter(c => c.active).length}</div></div>`;
+  // Load pending notifications count
+  loadPendingNotifications();
+}
+
+async function loadPendingNotifications() {
+  try {
+    const notifs = await sbGet('notifications', '?status=eq.pending&order=created_at.desc&limit=20');
+    const count = notifs.length;
+    // Show alert in dashboard if there are pending notifications
+    const dashStats = document.getElementById('dashStats');
+    if (dashStats && count > 0) {
+      const existingAlert = document.getElementById('dash-notif-alert');
+      if (existingAlert) existingAlert.remove();
+      dashStats.insertAdjacentHTML('afterend', `<div id="dash-notif-alert" class="dash-alert"><span>🔔 ${count} solicitud${count > 1 ? 'es' : ''} pendiente${count > 1 ? 's' : ''} de atención</span><button class="btn btn-g btn-sm" onclick="markNotificationsResolved()">Marcar resueltas</button></div>`);
+    }
+  } catch (e) { /* silent */ }
+}
+
+async function markNotificationsResolved() {
+  try {
+    const notifs = await sbGet('notifications', '?status=eq.pending');
+    for (const n of notifs) {
+      await sbPatch('notifications', n.id, { status: 'resolved' });
+    }
+    document.getElementById('dash-notif-alert')?.remove();
+    toast(`${notifs.length} notificaciones marcadas como resueltas ✓`);
+  } catch (e) { toast('Error al actualizar', 'error'); }
 }
 
 // Renderiza los 4 gráficos del dashboard usando los datos cargados.
@@ -1229,14 +1257,38 @@ async function saveConfig() {
 
 // ═══ CSV EXPORT ═══
 function exportCSV() {
-  const h = ['ID', 'Nombre', 'Categoría', 'Precio', 'Costo', 'Ganancia', 'Stock', 'Vendidos', 'Descuento'];
-  const rows = products.map(p => [p.id, `"${p.title || p.name}"`, `"${p.category}"`, p.price, p.cost || 0, p.price - (p.cost || 0), p.stock, p.sold || 0, p.discount || 0]);
+  const h = ['ID', 'Nombre', 'Categoría', 'Precio', 'Costo', 'Ganancia', 'Margen%', 'Stock', 'Vendidos', 'Revenue', 'Descuento', 'Rating', 'Estado'];
+  const rows = products.map(p => {
+    const ganancia = (p.price || 0) - (p.cost || 0);
+    const margen = p.price ? Math.round(ganancia / p.price * 100) : 0;
+    const revenue = (p.price || 0) * (p.sold || 0);
+    return [p.id, `"${(p.title || p.name || '').replace(/"/g, '""')}"`, `"${p.category}"`, p.price, p.cost || 0, ganancia, margen, p.stock, p.sold || 0, revenue, p.discount || 0, p.rating || 5, p.active !== false ? 'Activo' : 'Inactivo'];
+  });
   const csv = [h.join(','), ...rows.map(r => r.join(','))].join('\n');
   const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
-  a.download = 'telosales_inventario.csv';
+  a.href = URL.createObjectURL(new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' }));
+  a.download = `telosales_inventario_${new Date().toISOString().slice(0,10)}.csv`;
   a.click();
-  toast('CSV descargado');
+  toast('CSV descargado ✓');
+}
+
+// Export orders to CSV
+async function exportOrdersCSV() {
+  const orders = await sbGet('orders', '?order=created_at.desc');
+  if (!orders.length) return toast('No hay órdenes para exportar', 'error');
+  const h = ['ID', 'Fecha', 'Cliente', 'Teléfono', 'Dirección', 'Items', 'Total', 'Método Pago', 'Estado', 'Notas'];
+  const rows = orders.map(o => {
+    const cust = o.customer || {};
+    const itemsList = (o.items || []).map(i => `${i.title || 'Producto'} x${i.qty || 1}`).join('; ');
+    const date = o.created_at ? new Date(o.created_at).toLocaleDateString('es-DO') : '';
+    return [o.id.slice(0, 8), date, `"${cust.name || ''}"`, `"${cust.phone || ''}"`, `"${(cust.address || '').replace(/"/g, '""')}"`, `"${itemsList}"`, o.total || 0, o.payment_method || '', o.status || 'pending', `"${(o.notes || '').replace(/"/g, '""')}"`];
+  });
+  const csv = [h.join(','), ...rows.map(r => r.join(','))].join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' }));
+  a.download = `telosales_ordenes_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  toast(`${orders.length} órdenes exportadas ✓`);
 }
 
 // ═══ TOAST ═══

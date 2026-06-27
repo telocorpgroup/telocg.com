@@ -112,6 +112,7 @@ td img{width:36px;height:36px;border-radius:6px;object-fit:cover}
 .chart-card{min-height:260px;display:flex;flex-direction:column}
 .chart-box{position:relative;height:200px;width:100%}
 @media(max-width:768px){.charts-grid{grid-template-columns:1fr !important}}
+.dash-alert{display:flex;align-items:center;justify-content:space-between;gap:12px;background:rgba(249,115,22,.08);border:1px solid rgba(249,115,22,.25);border-radius:var(--r);padding:10px 16px;margin-bottom:14px;font-size:.82rem;color:var(--primary)}
 </style>
 
 <!-- LOGIN -->
@@ -192,7 +193,7 @@ Para crear el usuario admin: ejecuta <code>supabase-schema-migration-v4.sql</cod
 <div class="page" id="pg-sales">
 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px">
 <h2 class="page-title" style="margin:0">🛒 Inventario TeloSales</h2>
-<div style="display:flex;gap:6px"><button class="btn btn-p btn-sm" onclick="openProductModal()">+ Producto</button><button class="btn btn-g btn-sm" onclick="exportCSV()">📥 CSV</button></div>
+<div style="display:flex;gap:6px"><button class="btn btn-p btn-sm" onclick="openProductModal()">+ Producto</button><button class="btn btn-g btn-sm" onclick="exportCSV()">📥 Inventario CSV</button><button class="btn btn-g btn-sm" onclick="exportOrdersCSV()">📦 Órdenes CSV</button></div>
 </div>
 <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap"><input type="text" id="salesSearch" placeholder="Buscar..." style="max-width:240px" oninput="renderSales()"><select id="salesCat" style="max-width:180px" onchange="renderSales()"></select></div>
 <div class="tbl-wrap"><table><thead><tr><th></th><th>Producto</th><th>Cat.</th><th>Precio</th><th>Costo</th><th>Stock</th><th>Vendidos</th><th></th></tr></thead><tbody id="salesBody"></tbody></table></div>
