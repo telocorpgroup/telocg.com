@@ -296,15 +296,68 @@ function renderInstalaHistory(items) {
 }
 
 function renderLlevaHistory(items) {
-  // Reutiliza el chat-box del estado de envío si está oculto, o crea un resumen
   const statusCard = document.getElementById('lleva-status-card');
   if (statusCard && !statusCard.hidden) return; // hay un envío activo en pantalla
   if (!items || !items.length) return;
-  // Si no hay envío activo, mostrar último estado real en el status card
-  const last = items[0];
-  if (last.status === 'delivered' || last.status === 'cancelled') return; // ya terminado
-  const label = STATUS_LABELS.lleva[last.status] || last.status;
-  showToast(`Tienes un envío: ${label}`);
+
+  // Mostrar historial de envíos previos en una sección bajo el formulario
+  let historyEl = document.getElementById('lleva-history-list');
+  if (!historyEl) {
+    // Crear sección de historial si no existe
+    const formCard = document.getElementById('lleva-form-card');
+    if (formCard) {
+      const historyCard = document.createElement('div');
+      historyCard.className = 'card';
+      historyCard.style.marginTop = '12px';
+      historyCard.innerHTML = `<h3 class="card__title">📋 Envíos Anteriores</h3><div class="crm-list" id="lleva-history-list"></div>`;
+      formCard.parentNode.insertBefore(historyCard, formCard.nextSibling);
+      historyEl = document.getElementById('lleva-history-list');
+    }
+  }
+  if (!historyEl) return;
+
+  historyEl.innerHTML = items.slice(0, 5).map(d => {
+    const status = d.status || 'pending';
+    const label = STATUS_LABELS.lleva[status] || status;
+    const color = status === 'delivered' ? 'var(--c-success)' : status === 'cancelled' ? 'var(--c-danger)' : 'var(--c-lleva)';
+    const date = d.created_at ? new Date(d.created_at).toLocaleDateString('es-DO', { day: '2-digit', month: 'short' }) : '';
+    const canReorder = status === 'delivered' || status === 'cancelled';
+    return `<div class="crm-item">
+      <div class="crm-item__icon" style="color:${color}">${status === 'delivered' ? '✅' : status === 'in_transit' ? '🚗' : '📦'}</div>
+      <div class="crm-item__info">
+        <strong>${d.origin || '?'} → ${d.dest || '?'}</strong>
+        <small>${d.item || 'Paquete'} · ${d.vehicle || 'moto'} · RD$ ${d.fare || 0} · ${date}</small>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end">
+        <span class="status-pill" style="background:${color}22;color:${color};font-size:.6rem">${label}</span>
+        ${canReorder ? `<button class="btn btn--ghost btn--xs" onclick="reorderLleva('${d.origin || ''}','${d.dest || ''}','${d.item || ''}','${d.vehicle || 'moto'}')">🔄 Re-pedir</button>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+
+  // Show toast for active shipment
+  const active = items.find(d => d.status !== 'delivered' && d.status !== 'cancelled');
+  if (active) {
+    const label = STATUS_LABELS.lleva[active.status] || active.status;
+    showToast(`📦 Envío activo: ${label}`);
+  }
+}
+
+// Re-order a previous TeloLleva shipment
+function reorderLleva(origin, dest, item, vehicle) {
+  const originInput = document.getElementById('lleva-origin-input');
+  const destInput = document.getElementById('lleva-dest-input');
+  const itemInput = document.getElementById('lleva-item');
+  if (originInput) originInput.value = origin;
+  if (destInput) destInput.value = dest;
+  if (itemInput) itemInput.value = item;
+  // Set vehicle
+  document.querySelectorAll('.vehicle-option').forEach(o => {
+    o.classList.toggle('active', o.dataset.vehicle === vehicle);
+  });
+  showToast('Datos cargados del envío anterior — ajusta y solicita');
+  // Scroll to form
+  document.getElementById('lleva-form-card')?.scrollIntoView({ behavior: 'smooth' });
 }
 
 const FREE_SHIPPING_THRESHOLD = 1500;
@@ -2620,3 +2673,78 @@ document.addEventListener('DOMContentLoaded', () => {
   loadTechniciansForFrontend();
   setTimeout(updateEducaStats, 1000);
 });
+
+// ═══════════════════════════════════════════════════════════════
+// PROFILE DASHBOARD — Personal activity + loyalty program
+// ═══════════════════════════════════════════════════════════════
+
+function updateProfileDashboard() {
+  // Courses progress
+  const coursesStarted = courses.filter(c => c.lessons.some((_, i) => State.completedClasses.includes(`${c.id}_${i}`))).length;
+  const ordersCount = parseInt(localStorage.getItem('telo_ordersCount') || '0');
+  const shipmentsCount = parseInt(localStorage.getItem('telo_shipmentsCount') || '0');
+  const servicesCount = parseInt(localStorage.getItem('telo_servicesCount') || '0');
+
+  const pdOrders = document.getElementById('pd-orders');
+  const pdCourses = document.getElementById('pd-courses');
+  const pdShipments = document.getElementById('pd-shipments');
+  const pdServices = document.getElementById('pd-services');
+  if (pdOrders) pdOrders.textContent = ordersCount;
+  if (pdCourses) pdCourses.textContent = coursesStarted;
+  if (pdShipments) pdShipments.textContent = shipmentsCount;
+  if (pdServices) pdServices.textContent = servicesCount;
+
+  // Loyalty program
+  const totalActivity = ordersCount + shipmentsCount + servicesCount;
+  const tiers = [
+    { name: '🥉 Bronce', min: 0, color: '#cd7f32' },
+    { name: '🥈 Plata', min: 3, color: '#c0c0c0' },
+    { name: '🥇 Oro', min: 8, color: '#ffd700' },
+    { name: '💎 Platino', min: 15, color: '#b9f2ff' }
+  ];
+  const currentTier = tiers.filter(t => totalActivity >= t.min).pop();
+  const nextTier = tiers.find(t => totalActivity < t.min);
+  const tierEl = document.getElementById('loyalty-tier');
+  const fillEl = document.getElementById('loyalty-fill');
+  const textEl = document.getElementById('loyalty-text');
+  if (tierEl) tierEl.textContent = currentTier.name;
+  if (nextTier && fillEl) {
+    const progress = Math.min(100, (totalActivity / nextTier.min) * 100);
+    fillEl.style.width = `${progress}%`;
+    fillEl.style.background = currentTier.color;
+  } else if (fillEl) {
+    fillEl.style.width = '100%';
+    fillEl.style.background = currentTier.color;
+  }
+  if (textEl) {
+    textEl.textContent = nextTier ? `${nextTier.min - totalActivity} más para ${nextTier.name}` : '¡Nivel máximo alcanzado!';
+  }
+}
+
+// Track activity counts for loyalty
+function incrementActivityCount(type) {
+  const key = `telo_${type}Count`;
+  const current = parseInt(localStorage.getItem(key) || '0');
+  localStorage.setItem(key, String(current + 1));
+}
+
+// Patch registerOrder to track orders count
+const _origRegisterOrder = registerOrder;
+registerOrder = function(total, paymentMethod) {
+  incrementActivityCount('orders');
+  _origRegisterOrder(total, paymentMethod);
+};
+
+// Patch startLlevaRequest to track shipments
+const _origStartLleva = startLlevaRequest;
+startLlevaRequest = function() {
+  incrementActivityCount('shipments');
+  _origStartLleva();
+};
+
+// Update dashboard when profile is shown
+const _origLoadProfile = loadProfile;
+loadProfile = function() {
+  _origLoadProfile();
+  updateProfileDashboard();
+};

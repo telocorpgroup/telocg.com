@@ -1186,3 +1186,16 @@ textarea.input-control { resize: vertical; min-height: 80px; }
 /* ═══ TeloEduca Course Card Meta ═══ */
 .course-card__meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
 .course-card__badge-sm { font-size: 0.65rem; padding: 2px 8px; border-radius: 10px; background: var(--c-surface-2); color: var(--c-text-dim); border: 1px solid var(--c-border); }
+
+/* ═══ Profile Dashboard & Loyalty ═══ */
+.profile-dashboard { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 16px 0; }
+.profile-dash-stat { background: var(--c-surface-2); border-radius: var(--radius); padding: 12px 8px; text-align: center; }
+.profile-dash-stat__val { display: block; font-size: 1.4rem; font-weight: 800; color: var(--c-primary); }
+.profile-dash-stat__label { font-size: 0.65rem; color: var(--c-text-dim); text-transform: uppercase; }
+@media (max-width: 480px) { .profile-dashboard { grid-template-columns: repeat(2, 1fr); } }
+
+.profile-loyalty { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--c-border); }
+.profile-loyalty h4 { font-size: 0.85rem; margin-bottom: 10px; }
+.loyalty-progress { display: flex; flex-direction: column; gap: 6px; }
+.loyalty-tier { font-size: 0.9rem; font-weight: 700; }
+.loyalty-progress .progress-bar { height: 8px; }
