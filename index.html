@@ -249,6 +249,47 @@
               <p class="service-card__desc">Instalaciones del Hogar</p>
             </article>
           </div>
+
+          <!-- Trust Metrics -->
+          <div class="home-metrics">
+            <div class="home-metric"><span class="home-metric__val">5,000+</span><span class="home-metric__label">Clientes satisfechos</span></div>
+            <div class="home-metric"><span class="home-metric__val">22+</span><span class="home-metric__label">Productos premium</span></div>
+            <div class="home-metric"><span class="home-metric__val">24h</span><span class="home-metric__label">Entrega express</span></div>
+            <div class="home-metric"><span class="home-metric__val">4.8★</span><span class="home-metric__label">Valoración promedio</span></div>
+          </div>
+
+          <!-- Featured Products (dynamic) -->
+          <h3 class="section-title">🔥 Productos Destacados</h3>
+          <div class="featured-products-grid" id="home-featured-products"></div>
+
+          <!-- Testimonials -->
+          <h3 class="section-title">💬 Lo que dicen nuestros clientes</h3>
+          <div class="testimonials-grid">
+            <div class="testimonial-card">
+              <div class="testimonial-card__stars">★★★★★</div>
+              <p class="testimonial-card__text">"Compré un altavoz Miccell y llegó al siguiente día. Excelente calidad y servicio."</p>
+              <div class="testimonial-card__author">— María L., Santo Domingo</div>
+            </div>
+            <div class="testimonial-card">
+              <div class="testimonial-card__stars">★★★★★</div>
+              <p class="testimonial-card__text">"TeloRepara me salvó el celular. Lo recogieron, repararon y devolvieron en 48h."</p>
+              <div class="testimonial-card__author">— Carlos R., Santiago</div>
+            </div>
+            <div class="testimonial-card">
+              <div class="testimonial-card__stars">★★★★★</div>
+              <p class="testimonial-card__text">"El curso de Ingeniería de Prompts cambió mi productividad. 100% recomendado."</p>
+              <div class="testimonial-card__author">— Ana G., La Vega</div>
+            </div>
+          </div>
+
+          <!-- CTA Banner -->
+          <div class="home-cta-banner">
+            <div class="home-cta-banner__content">
+              <h3>🎁 ¿Primera vez aquí?</h3>
+              <p>Usa el cupón <strong>PRIMERA10</strong> y obtén 10% OFF en tu primera compra.</p>
+            </div>
+            <button class="btn btn--primary" onclick="switchView('sales')">Ir a la tienda →</button>
+          </div>
         </section>
 
         <!-- TELOSALES -->
@@ -599,6 +640,7 @@
                 <input type="tel" id="repara-contact" class="input-control" placeholder="+1 (809) 000-0000">
               </div>
               <button class="btn btn--primary btn--full" id="repara-submit">Reservar Reparación</button>
+              <button class="btn btn--ghost btn--full" onclick="checkWarrantyStatus()" style="margin-top:6px">🛡️ Consultar Garantía / Estado</button>
               <a href="https://wa.me/18099038707?text=Hola%20TeloRepara%2C%20necesito%20una%20reparaci%C3%B3n" target="_blank" class="btn btn--whatsapp btn--full">💬 Cotizar por WhatsApp</a>
             </div>
             <div class="repara__visual">

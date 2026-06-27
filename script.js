@@ -2836,3 +2836,107 @@ document.addEventListener('keydown', (e) => {
     toggleChat(false);
   }
 });
+
+// ═══════════════════════════════════════════════════════════════
+// HOME PAGE — Featured products + dynamic content
+// ═══════════════════════════════════════════════════════════════
+
+function renderHomeFeatured() {
+  const grid = document.getElementById('home-featured-products');
+  if (!grid) return;
+  const featured = products.filter(p => p.featured || p.discount).slice(0, 4);
+  if (featured.length === 0) return;
+
+  grid.innerHTML = featured.map(p => `
+    <div class="featured-card" onclick="switchView('sales'); setTimeout(()=>openProductModal('${p.id}'),200)">
+      <div class="featured-card__img"><img src="${cdnImage(p.image, 200)}" alt="${p.title}" loading="lazy">
+        ${p.discount ? `<span class="featured-card__badge">-${p.discount}%</span>` : ''}
+      </div>
+      <div class="featured-card__info">
+        <h4>${p.title.slice(0, 35)}${p.title.length > 35 ? '...' : ''}</h4>
+        <div class="featured-card__price">
+          ${p.compareAtPrice ? `<span class="featured-card__was">RD$ ${p.compareAtPrice.toLocaleString()}</span>` : ''}
+          <span>RD$ ${p.price.toLocaleString()}</span>
+        </div>
+        <span class="featured-card__rating">★ ${p.rating} · ${(p.sold || 0).toLocaleString()} vendidos</span>
+      </div>
+    </div>`).join('');
+}
+
+// Render on page load (after products sync)
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(renderHomeFeatured, 500);
+});
+
+// ═══════════════════════════════════════════════════════════════
+// TELOREPARA — Warranty Tracker (check existing repair status)
+// ═══════════════════════════════════════════════════════════════
+
+async function checkWarrantyStatus(ticket) {
+  if (!ticket) {
+    ticket = prompt('Ingresa tu número de ticket (RP-XXXXXX):');
+    if (!ticket) return;
+  }
+  ticket = ticket.trim().toUpperCase();
+  try {
+    const res = await fetch(`${BackendService.config.supabaseUrl}/rest/v1/repara_bookings?ticket=eq.${encodeURIComponent(ticket)}&limit=1`, {
+      headers: { 'apikey': BackendService.config.supabaseKey, 'Authorization': `Bearer ${BackendService.config.supabaseKey}` }
+    });
+    const data = res.ok ? await res.json() : [];
+    if (data && data.length > 0) {
+      const d = data[0];
+      const status = d.status || 'pending';
+      const label = STATUS_LABELS.repara[status] || status;
+      const createdDate = d.created_at ? new Date(d.created_at) : new Date();
+      const warrantyEnd = new Date(createdDate.getTime() + 90 * 24 * 60 * 60 * 1000);
+      const warrantyActive = new Date() < warrantyEnd;
+
+      document.getElementById('repara-tracker').hidden = false;
+      renderReparaTracker(status, ticket);
+
+      // Show warranty info
+      const warrantyHtml = warrantyActive
+        ? `<div class="warranty-active">🛡️ Garantía activa hasta: <strong>${warrantyEnd.toLocaleDateString('es-DO')}</strong></div>`
+        : `<div class="warranty-expired">⚠️ Garantía expirada el ${warrantyEnd.toLocaleDateString('es-DO')}</div>`;
+      const stepsEl = document.getElementById('repara-steps');
+      if (stepsEl) stepsEl.innerHTML += warrantyHtml;
+
+      showToast(`Ticket ${ticket}: ${label}`);
+    } else {
+      showToast('Ticket no encontrado. Verifica el número.', 'error');
+    }
+  } catch (e) {
+    showToast('Error al consultar. Intenta más tarde.', 'error');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// TELOEDUCA — YouTube Video Support (embed real videos if URL provided)
+// ═══════════════════════════════════════════════════════════════
+
+function getYouTubeEmbedUrl(url) {
+  if (!url) return null;
+  const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
+  return match ? `https://www.youtube.com/embed/${match[1]}?rel=0&modestbranding=1` : null;
+}
+
+// Enhance loadLesson to support real YouTube URLs in lesson content
+const _origLoadLesson = loadLesson;
+loadLesson = function(idx) {
+  _origLoadLesson(idx);
+
+  // Check if the course has video URLs for this lesson
+  const course = State.currentCourse;
+  if (!course) return;
+  const lesson = course.lessons[idx];
+  // If lessons are objects with video_url field (from enhanced DB)
+  if (typeof lesson === 'object' && lesson.video_url) {
+    const embedUrl = getYouTubeEmbedUrl(lesson.video_url);
+    if (embedUrl) {
+      const playerScreen = document.querySelector('.video-player__screen');
+      if (playerScreen) {
+        playerScreen.innerHTML = `<iframe src="${embedUrl}" width="100%" height="100%" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius:var(--radius);aspect-ratio:16/9"></iframe>`;
+      }
+    }
+  }
+};
