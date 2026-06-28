@@ -1260,3 +1260,17 @@ textarea.input-control { resize: vertical; min-height: 80px; }
 
 /* ═══ Profile Auth Buttons ═══ */
 .profile-auth-btns { display: flex; gap: 8px; margin-top: 10px; }
+
+/* ═══ Service Packages ═══ */
+.package-card { background: var(--c-surface-2); border: 1px solid var(--c-border); border-radius: var(--radius); padding: 14px; margin-bottom: 10px; cursor: pointer; transition: border-color .2s; }
+.package-card:hover { border-color: var(--c-instala); }
+.package-card__name { font-size: 0.9rem; font-weight: 700; margin-bottom: 4px; }
+.package-card__desc { font-size: 0.75rem; color: var(--c-text-dim); margin-bottom: 8px; }
+.package-card__price { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.package-card__was { font-size: 0.75rem; color: var(--c-text-dim); text-decoration: line-through; }
+.package-card__now { font-size: 1rem; font-weight: 800; color: var(--c-instala); }
+.package-card__save { font-size: 0.68rem; background: rgba(34,197,94,.12); color: var(--c-success); padding: 2px 8px; border-radius: 10px; font-weight: 600; }
+
+/* ═══ Waypoint Rows ═══ */
+.waypoint-row { animation: fadeIn .2s; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
