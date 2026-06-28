@@ -2940,3 +2940,185 @@ loadLesson = function(idx) {
     }
   }
 };
+
+// ═══════════════════════════════════════════════════════════════
+// IA DIAGNOSTICS — TeloRepara: symptoms → probable issue
+// ═══════════════════════════════════════════════════════════════
+
+async function aiDiagnoseIssue() {
+  const device = document.getElementById('repara-device').value;
+  const desc = document.getElementById('repara-desc').value.trim();
+  if (!desc || desc.length < 10) return showToast('Describe el problema con al menos 10 caracteres', 'error');
+
+  showToast('🤖 Analizando síntomas...');
+  const prompt = `Eres un técnico de reparación de dispositivos electrónicos. El cliente tiene un ${device} con este problema: "${desc}". Responde SOLO con un JSON así: {"issue":"clave_falla","confidence":"alta/media/baja","explanation":"explicación breve en español","estimated_cost_dop":número,"estimated_time":"tiempo"}. Las claves de falla posibles son: screen, battery, power, water, system, port, speaker, camera, network, overheating, other.`;
+
+  try {
+    const response = await BackendService.geminiChat(prompt, 'Responde SOLO JSON válido, sin markdown.');
+    // Parse JSON from response
+    const match = response.match(/\{[\s\S]*\}/);
+    if (match) {
+      const diag = JSON.parse(match[0]);
+      // Auto-select the issue in the dropdown
+      const issueSelect = document.getElementById('repara-issue');
+      if (diag.issue && issueSelect) {
+        issueSelect.value = diag.issue;
+        updateReparaQuote();
+      }
+      // Show diagnosis result
+      const diagEl = document.getElementById('repara-diagnosis') || (() => {
+        const el = document.createElement('div');
+        el.id = 'repara-diagnosis';
+        el.className = 'ai-diagnosis';
+        document.getElementById('repara-desc').parentNode.after(el);
+        return el;
+      })();
+      diagEl.innerHTML = `
+        <div class="ai-diagnosis__header">🤖 Diagnóstico IA <span class="ai-confidence ai-confidence--${diag.confidence}">${diag.confidence}</span></div>
+        <p>${diag.explanation || 'Análisis completado.'}</p>
+        <div class="ai-diagnosis__meta">
+          <span>💰 Estimado: RD$ ${(diag.estimated_cost_dop || 0).toLocaleString()}</span>
+          <span>⏱️ Tiempo: ${diag.estimated_time || '24-48h'}</span>
+        </div>`;
+      showToast('Diagnóstico completado ✓');
+    } else {
+      showToast('No se pudo analizar. Intenta describir con más detalle.', 'error');
+    }
+  } catch (e) {
+    showToast('Error de conexión con IA', 'error');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// IA COPY GENERATION — Generate product descriptions from admin
+// (Callable from frontend for demo, but mainly for admin panel)
+// ═══════════════════════════════════════════════════════════════
+
+async function generateProductDescription(title, category) {
+  if (!title) return null;
+  const prompt = `Genera una descripción comercial en español (máx 2 oraciones, profesional, para e-commerce) del producto: "${title}" (categoría: ${category || 'tecnología'}). Responde SOLO la descripción, sin comillas.`;
+  try {
+    const response = await BackendService.geminiChat(prompt, 'Responde solo la descripción.');
+    return response;
+  } catch (e) { return null; }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// IA INSTALA SUGGESTION — Photo analysis for service recommendation
+// ═══════════════════════════════════════════════════════════════
+
+async function aiSuggestInstalaService() {
+  const notes = document.getElementById('instala-notes').value.trim();
+  if (!notes || notes.length < 5) return showToast('Describe qué necesitas instalar o el problema', 'error');
+
+  showToast('🤖 Analizando...');
+  const services = Object.entries(instalaNames).map(([k, v]) => `${k}: ${v}`).join(', ');
+  const prompt = `El cliente necesita: "${notes}". Servicios disponibles: ${services}. Responde SOLO con JSON: {"service_key":"clave","reason":"razón breve en español"}`;
+
+  try {
+    const response = await BackendService.geminiChat(prompt, 'Responde SOLO JSON.');
+    const match = response.match(/\{[\s\S]*\}/);
+    if (match) {
+      const sug = JSON.parse(match[0]);
+      if (sug.service_key) {
+        document.getElementById('instala-service').value = sug.service_key;
+        updateInstalaPrice();
+        showToast(`🤖 Sugerencia: ${instalaNames[sug.service_key] || sug.service_key} — ${sug.reason || ''}`);
+      }
+    }
+  } catch (e) { showToast('No se pudo sugerir servicio', 'error'); }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PREDICTIVE RESTOCK — Alert when products are running low
+// ═══════════════════════════════════════════════════════════════
+
+function checkRestockAlerts() {
+  const lowStock = products.filter(p => (p.stock || 0) <= 3 && (p.sold || 0) > 10);
+  const criticalStock = products.filter(p => (p.stock || 0) === 0);
+
+  if (criticalStock.length > 0) {
+    addNotification('⚠️ Productos agotados', `${criticalStock.length} producto(s) sin stock: ${criticalStock.map(p => p.title.slice(0,20)).join(', ')}`, 'warning');
+  }
+  if (lowStock.length > 0) {
+    addNotification('📦 Restock sugerido', `${lowStock.length} producto(s) con stock bajo y alta demanda`, 'info');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// CHURN PREDICTION — Detect inactive customers (simple heuristic)
+// ═══════════════════════════════════════════════════════════════
+
+function detectChurnRisk() {
+  // Check if user had activity but hasn't purchased in 30+ days
+  const lastOrder = localStorage.getItem('telo_lastOrderDate');
+  const ordersCount = parseInt(localStorage.getItem('telo_ordersCount') || '0');
+  if (ordersCount >= 2 && lastOrder) {
+    const daysSince = Math.floor((Date.now() - new Date(lastOrder).getTime()) / 86400000);
+    if (daysSince > 30) {
+      // Show win-back offer after 5 seconds
+      setTimeout(() => {
+        if (!sessionStorage.getItem('telo_winbackShown')) {
+          sessionStorage.setItem('telo_winbackShown', '1');
+          showToast('🎁 ¡Te extrañamos! Usa cupón TELO20 para 20% OFF hoy');
+        }
+      }, 5000);
+    }
+  }
+}
+
+// Track last order date
+const _origRegisterOrderChurn = registerOrder;
+registerOrder = function(total, paymentMethod) {
+  localStorage.setItem('telo_lastOrderDate', new Date().toISOString());
+  _origRegisterOrderChurn(total, paymentMethod);
+};
+
+// ═══════════════════════════════════════════════════════════════
+// TELOINSTALA — Automatic Reminders (simulated via toast)
+// ═══════════════════════════════════════════════════════════════
+
+function checkUpcomingAppointments() {
+  // Check localStorage for pending instala bookings and remind
+  const lastBooking = localStorage.getItem('telo_lastInstalaDate');
+  if (lastBooking) {
+    const bookingDate = new Date(lastBooking);
+    const now = new Date();
+    const diffHours = (bookingDate - now) / 3600000;
+    if (diffHours > 0 && diffHours <= 24) {
+      setTimeout(() => {
+        addNotification('📅 Recordatorio', `Tu instalación es mañana. Asegúrate de tener el espacio listo.`, 'info');
+        showToast('📅 Recordatorio: Tu instalación es mañana');
+      }, 3000);
+    }
+  }
+}
+
+// Track instala booking dates
+const _origBookInstala = bookInstala;
+bookInstala = function() {
+  const date = document.getElementById('instala-date').value;
+  if (date) localStorage.setItem('telo_lastInstalaDate', date);
+  incrementActivityCount('services');
+  _origBookInstala();
+};
+
+// Track repara bookings
+const _origBookReparaActivity = bookRepara;
+bookRepara = function() {
+  incrementActivityCount('services');
+  _origBookReparaActivity();
+};
+
+// ═══════════════════════════════════════════════════════════════
+// INIT ALL AI + PREDICTIVE FEATURES
+// ═══════════════════════════════════════════════════════════════
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Delayed checks (don't block initial render)
+  setTimeout(() => {
+    checkRestockAlerts();
+    detectChurnRisk();
+    checkUpcomingAppointments();
+  }, 3000);
+});

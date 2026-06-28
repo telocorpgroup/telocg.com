@@ -739,6 +739,29 @@ async function aiSpecs() {
   }
 }
 
+async function aiDescription() {
+  const name = document.getElementById('fName').value.trim();
+  const cat = document.getElementById('fCat').value;
+  if (!name) return toast('Ingresa nombre del producto primero', 'error');
+  toast('Generando descripción con IA...');
+  try {
+    const url = `${SB_URL}/functions/v1/chat`;
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SB_ANON_KEY}` },
+      body: JSON.stringify({ message: `Genera una descripción comercial profesional en español (2-3 oraciones) para el producto: "${name}" (categoría: ${cat}). Solo la descripción, sin comillas ni prefijos.`, context: 'Eres un copywriter de e-commerce.' })
+    });
+    if (res.ok) {
+      const data = await res.json();
+      const desc = (data.reply || '').replace(/^["']|["']$/g, '').trim();
+      if (desc && desc.length > 10) {
+        document.getElementById('fDesc').value = desc;
+        toast('Descripción generada ✓');
+      } else { toast('No se pudo generar', 'error'); }
+    } else { toast('Error de conexión con IA', 'error'); }
+  } catch (e) { toast('Error: ' + e.message, 'error'); }
+}
+
 // ═══ CATEGORIES CRUD ═══
 function renderCatsPage() {
   const counts = {};

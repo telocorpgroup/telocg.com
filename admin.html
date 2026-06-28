@@ -386,7 +386,7 @@ Para crear el usuario admin: ejecuta <code>supabase-schema-migration-v4.sql</cod
 <div class="fg"><label>Margen deseado %</label><input type="number" id="fMargin" value="50" oninput="calcPrice()"></div>
 <div class="fg"><label>Descuento %</label><input type="number" id="fDiscount" value="0" oninput="calcPrice()"></div>
 <div class="fg"><label>Precio sugerido</label><input id="fSuggested" readonly style="color:var(--primary)"></div>
-<div class="fg full"><label>Descripción</label><textarea id="fDesc" rows="2"></textarea></div>
+<div class="fg full"><label>Descripción <button class="btn btn-g btn-sm" style="margin-left:8px" onclick="aiDescription()">🤖 Generar con IA</button></label><textarea id="fDesc" rows="2"></textarea></div>
 <div class="fg full"><label>Video URL</label><input id="fVideo" placeholder="YouTube o enlace directo"></div>
 <div class="fg full">
 <label>Imágenes <button class="btn btn-g btn-sm" style="margin-left:8px" onclick="toggleUrlAdd()">🔗 URL</button></label>
