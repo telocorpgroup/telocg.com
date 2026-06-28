@@ -1357,3 +1357,117 @@ function toast(msg, type = 'success') {
     }
   });
 })();
+
+// ═══════════════════════════════════════════════════════════════
+// ADMIN POLISH: New order polling + badge + daily summary
+// ═══════════════════════════════════════════════════════════════
+
+let lastOrderCount = 0;
+let orderPollingInterval = null;
+
+function startOrderPolling() {
+  // Check for new orders every 30 seconds
+  orderPollingInterval = setInterval(async () => {
+    const orders = await sbGet('orders', '?order=created_at.desc&limit=1');
+    if (orders.length > 0) {
+      const currentCount = orders.length;
+      if (lastOrderCount > 0 && currentCount > lastOrderCount) {
+        toast('🔔 ¡Nueva orden recibida!');
+        // Update badge
+        const badge = document.getElementById('admin-new-orders-badge');
+        if (badge) { badge.textContent = currentCount - lastOrderCount; badge.hidden = false; }
+      }
+      lastOrderCount = currentCount;
+    }
+  }, 30000);
+}
+
+async function renderDailySummary() {
+  const today = new Date().toISOString().slice(0, 10);
+  const orders = await sbGet('orders', '?order=created_at.desc');
+  const todayOrders = orders.filter(o => o.created_at && o.created_at.slice(0, 10) === today);
+  const pendingOrders = orders.filter(o => o.status === 'pending');
+  const todayRevenue = todayOrders.reduce((s, o) => s + (o.total || 0), 0);
+
+  const summaryEl = document.getElementById('daily-summary');
+  if (summaryEl) {
+    summaryEl.innerHTML = `
+      <div class="daily-stat"><span class="daily-stat__val">${todayOrders.length}</span><span class="daily-stat__label">Ventas hoy</span></div>
+      <div class="daily-stat"><span class="daily-stat__val" style="color:var(--primary)">RD$ ${todayRevenue.toLocaleString()}</span><span class="daily-stat__label">Revenue hoy</span></div>
+      <div class="daily-stat"><span class="daily-stat__val" style="color:var(--danger)">${pendingOrders.length}</span><span class="daily-stat__label">Pendientes</span></div>`;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ADMIN POLISH: Order filters (by status/date)
+// ═══════════════════════════════════════════════════════════════
+
+async function filterOrders(status) {
+  let query = '?order=created_at.desc';
+  if (status && status !== 'all') query += `&status=eq.${status}`;
+  const orders = await sbGet('orders', query);
+  renderDashOrders(orders);
+  toast(`Mostrando: ${status === 'all' ? 'Todas' : status} (${orders.length})`);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ADMIN POLISH: Send CardNET link template
+// ═══════════════════════════════════════════════════════════════
+
+function sendCardnetLink(orderId, total, phone) {
+  const msg = `Hola 👋 Aquí está tu link de pago por RD$ ${Number(total).toLocaleString()} para tu pedido TeloSales.\n\n💳 Link de pago: [PEGAR LINK CARDNET AQUÍ]\n\nUna vez pagues, te confirmamos y enviamos en 24-48h. ¡Gracias!`;
+  const cleanPhone = (phone || '').replace(/\D/g, '');
+  if (cleanPhone) {
+    window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`, '_blank');
+  } else {
+    // Copy to clipboard if no phone
+    navigator.clipboard.writeText(msg).then(() => toast('Mensaje copiado — pega en WhatsApp'));
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ADMIN POLISH: Print order for dispatch
+// ═══════════════════════════════════════════════════════════════
+
+async function printOrder(orderId) {
+  const orders = await sbGet('orders');
+  const o = orders.find(x => x.id === orderId);
+  if (!o) return toast('Orden no encontrada', 'error');
+
+  const cust = o.customer || {};
+  const items = (o.items || []).map(i => `<tr><td>${i.title || 'Producto'}</td><td>${i.qty || 1}</td><td>RD$ ${(i.price || 0).toLocaleString()}</td></tr>`).join('');
+
+  const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Orden ${o.id.slice(0,8)}</title>
+  <style>body{font-family:system-ui;max-width:400px;margin:20px auto;font-size:12px}
+  h2{text-align:center;margin:0}table{width:100%;border-collapse:collapse;margin:10px 0}
+  td{padding:4px;border-bottom:1px solid #eee}.total{font-size:16px;font-weight:bold;text-align:right}
+  .footer{text-align:center;color:#666;margin-top:16px;font-size:10px}
+  @media print{body{margin:0}}</style></head><body>
+  <h2>TeloSales — Orden</h2>
+  <p><strong>Fecha:</strong> ${o.created_at ? new Date(o.created_at).toLocaleString('es-DO') : ''}</p>
+  <p><strong>Cliente:</strong> ${cust.name || '—'}</p>
+  <p><strong>Tel:</strong> ${cust.phone || '—'}</p>
+  <p><strong>Dirección:</strong> ${cust.address || '—'} ${cust.city || ''}</p>
+  <p><strong>Método:</strong> ${o.payment_method || '—'} · <strong>Estado:</strong> ${o.status || 'pending'}</p>
+  <table><tr><th>Producto</th><th>Qty</th><th>Precio</th></tr>${items}</table>
+  <p class="total">Total: RD$ ${(o.total || 0).toLocaleString()}</p>
+  ${o.notes ? `<p><strong>Notas:</strong> ${o.notes}</p>` : ''}
+  <div class="footer">TeloCorp Group · +1(809)903-8707 · telocg.com</div>
+  <script>window.print()</script></body></html>`;
+
+  const win = window.open('', '_blank');
+  win.document.write(html);
+  win.document.close();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ADMIN INIT POLLING
+// ═══════════════════════════════════════════════════════════════
+
+// Start polling after init
+const _origInit = init;
+init = async function() {
+  await _origInit();
+  startOrderPolling();
+  renderDailySummary();
+};

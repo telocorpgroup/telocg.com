@@ -3659,3 +3659,229 @@ document.addEventListener('DOMContentLoaded', () => {
   initPushNotifications();
   setTimeout(renderServicePackages, 1500);
 });
+
+// ═══════════════════════════════════════════════════════════════
+// POLISH #1: Phone validation (DR format)
+// ═══════════════════════════════════════════════════════════════
+
+function validateDRPhone(phone) {
+  const cleaned = phone.replace(/\D/g, '');
+  // Valid: 8091234567, 18091234567, 8291234567, 8491234567
+  return /^(1)?(809|829|849)\d{7}$/.test(cleaned);
+}
+
+function formatDRPhone(phone) {
+  const cleaned = phone.replace(/\D/g, '');
+  if (cleaned.length === 10) return `+1${cleaned}`;
+  if (cleaned.length === 11 && cleaned.startsWith('1')) return `+${cleaned}`;
+  return phone;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// POLISH #2-3: Loading states + error handling
+// ═══════════════════════════════════════════════════════════════
+
+function showLoadingState(containerId, count = 4) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  el.innerHTML = Array(count).fill(0).map(() => `
+    <div class="skeleton-card">
+      <div class="skeleton skeleton--img"></div>
+      <div class="skeleton skeleton--text"></div>
+      <div class="skeleton skeleton--text skeleton--short"></div>
+    </div>`).join('');
+}
+
+function showErrorState(containerId, message) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  el.innerHTML = `<div class="error-state"><span class="error-state__icon">⚠️</span><p>${message}</p><button class="btn btn--ghost btn--sm" onclick="location.reload()">Reintentar</button></div>`;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// POLISH #4: Offline fallback
+// ═══════════════════════════════════════════════════════════════
+
+function showOfflineBanner() {
+  if (document.getElementById('offline-banner')) return;
+  const banner = document.createElement('div');
+  banner.id = 'offline-banner';
+  banner.className = 'offline-banner';
+  banner.innerHTML = '📡 Sin conexión — Algunas funciones no disponibles';
+  document.body.prepend(banner);
+}
+
+function hideOfflineBanner() {
+  const banner = document.getElementById('offline-banner');
+  if (banner) banner.remove();
+}
+
+window.addEventListener('offline', showOfflineBanner);
+window.addEventListener('online', () => { hideOfflineBanner(); showToast('Conexión restaurada ✓'); });
+
+// ═══════════════════════════════════════════════════════════════
+// POLISH #5: Accessibility improvements
+// ═══════════════════════════════════════════════════════════════
+
+function announceToScreenReader(message) {
+  let announcer = document.getElementById('sr-announcer');
+  if (!announcer) {
+    announcer = document.createElement('div');
+    announcer.id = 'sr-announcer';
+    announcer.setAttribute('aria-live', 'polite');
+    announcer.setAttribute('aria-atomic', 'true');
+    announcer.className = 'sr-only';
+    document.body.appendChild(announcer);
+  }
+  announcer.textContent = '';
+  setTimeout(() => { announcer.textContent = message; }, 100);
+}
+
+// Patch showToast to also announce
+const _origShowToast = showToast;
+showToast = function(message, type) {
+  _origShowToast(message, type);
+  announceToScreenReader(message);
+};
+
+// ═══════════════════════════════════════════════════════════════
+// POLISH #6: View transitions (fade/slide)
+// ═══════════════════════════════════════════════════════════════
+
+const _origSwitchView = switchView;
+switchView = function(viewId) {
+  const current = document.querySelector('.view.active');
+  if (current) {
+    current.style.opacity = '0';
+    current.style.transform = 'translateY(8px)';
+    setTimeout(() => {
+      _origSwitchView(viewId);
+      const newView = document.querySelector('.view.active');
+      if (newView) {
+        newView.style.opacity = '0';
+        newView.style.transform = 'translateY(8px)';
+        requestAnimationFrame(() => {
+          newView.style.transition = 'opacity .2s, transform .2s';
+          newView.style.opacity = '1';
+          newView.style.transform = 'translateY(0)';
+        });
+      }
+    }, 150);
+  } else {
+    _origSwitchView(viewId);
+  }
+};
+
+// ═══════════════════════════════════════════════════════════════
+// POLISH #9: Dark/Light mode toggle
+// ═══════════════════════════════════════════════════════════════
+
+function initThemeToggle() {
+  const saved = localStorage.getItem('telo_theme');
+  if (saved === 'light') document.documentElement.classList.add('light-mode');
+}
+
+function toggleTheme() {
+  const isLight = document.documentElement.classList.toggle('light-mode');
+  localStorage.setItem('telo_theme', isLight ? 'light' : 'dark');
+  showToast(isLight ? '☀️ Modo claro' : '🌙 Modo oscuro');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// POLISH #10: Sticky add-to-cart on mobile PDP
+// ═══════════════════════════════════════════════════════════════
+
+function initStickyAddToCart() {
+  const modal = document.getElementById('product-modal');
+  if (!modal) return;
+  const observer = new MutationObserver(() => {
+    if (modal.classList.contains('active') && window.innerWidth <= 768) {
+      let sticky = document.getElementById('sticky-atc');
+      if (!sticky) {
+        sticky = document.createElement('div');
+        sticky.id = 'sticky-atc';
+        sticky.className = 'sticky-atc';
+        modal.querySelector('.modal-content, .product-detail')?.appendChild(sticky);
+      }
+      const titleEl = modal.querySelector('.product-detail__title');
+      const priceEl = modal.querySelector('.product-detail__price');
+      if (titleEl && priceEl) {
+        sticky.innerHTML = `<span class="sticky-atc__price">${priceEl.textContent}</span><button class="btn btn--primary btn--sm" onclick="document.querySelector('.product-detail__actions .btn--primary')?.click()">Agregar</button>`;
+      }
+    }
+  });
+  observer.observe(modal, { attributes: true, attributeFilter: ['class'] });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// POLISH #17: Honeypot anti-spam for forms
+// ═══════════════════════════════════════════════════════════════
+
+function addHoneypot(formId) {
+  const form = document.getElementById(formId);
+  if (!form || form.querySelector('.hp-field')) return;
+  const hp = document.createElement('input');
+  hp.type = 'text';
+  hp.name = 'website_url';
+  hp.className = 'hp-field';
+  hp.tabIndex = -1;
+  hp.autocomplete = 'off';
+  form.appendChild(hp);
+}
+
+function isSpamSubmission(formId) {
+  const form = document.getElementById(formId);
+  const hp = form?.querySelector('.hp-field');
+  return hp && hp.value.length > 0; // bots fill hidden fields
+}
+
+// ═══════════════════════════════════════════════════════════════
+// POLISH #19: PWA Install Prompt
+// ═══════════════════════════════════════════════════════════════
+
+let deferredInstallPrompt = null;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  // Show install banner after 30s if user is engaged
+  setTimeout(showInstallBanner, 30000);
+});
+
+function showInstallBanner() {
+  if (!deferredInstallPrompt) return;
+  if (localStorage.getItem('telo_installDismissed')) return;
+  const banner = document.createElement('div');
+  banner.className = 'install-banner';
+  banner.innerHTML = `<div class="install-banner__content"><strong>📱 Instala la App</strong><span>Accede más rápido desde tu pantalla de inicio</span></div><div class="install-banner__actions"><button class="btn btn--primary btn--sm" onclick="installPWA()">Instalar</button><button class="btn btn--ghost btn--xs" onclick="dismissInstall(this.parentNode.parentNode)">No gracias</button></div>`;
+  document.body.appendChild(banner);
+}
+
+async function installPWA() {
+  if (!deferredInstallPrompt) return;
+  deferredInstallPrompt.prompt();
+  const result = await deferredInstallPrompt.userChoice;
+  if (result.outcome === 'accepted') showToast('App instalada ✓');
+  deferredInstallPrompt = null;
+  document.querySelector('.install-banner')?.remove();
+}
+
+function dismissInstall(el) {
+  el?.remove();
+  localStorage.setItem('telo_installDismissed', '1');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// INIT ALL POLISH FEATURES
+// ═══════════════════════════════════════════════════════════════
+
+document.addEventListener('DOMContentLoaded', () => {
+  initThemeToggle();
+  initStickyAddToCart();
+  addHoneypot('contact-form');
+  addHoneypot('profile-form');
+
+  // Show loading state before products load
+  showLoadingState('products-grid');
+  showLoadingState('courses-grid', 3);
+});
