@@ -9,7 +9,7 @@
 // ═══ CONFIG (solo datos públicos, nunca secretos) ═══
 const SB_URL = 'https://bhdictzvboiojyxorfiq.supabase.co';
 const SB_ANON_KEY = 'sb_publishable_AgpNN0k_KfW0moe6f1CKXg_qP2GKJCm';
-const BASE_IMG = 'https://telocg.com/TeloCorp/images/';
+const BASE_IMG = ''; // Images served from CDN (ImgBB/wsrv.nl) — stored as full URLs in product.images
 
 // Cliente Supabase (cargado vía UMD en el HTML)
 let sb = null;
@@ -591,7 +591,7 @@ function renderSales() {
   const getImg = p => (p.images && p.images[0]) || p.image || '';
 
   document.getElementById('salesBody').innerHTML = list.map(p => `<tr>
-    <td><img src="${getImg(p)}" onerror="this.style.visibility='hidden'"></td>
+    <td><img src="${getImg(p)}" loading="lazy" onerror="this.style.visibility='hidden'"></td>
     <td><b>${p.title || p.name}</b>${p.discount ? ` <span class="tag tag-r">-${p.discount}%</span>` : ''}</td>
     <td><span class="tag tag-o">${p.category}</span></td>
     <td>RD$ ${(p.price || 0).toLocaleString()}</td>
@@ -604,7 +604,7 @@ function renderSales() {
     </td></tr>`).join('') || '<tr><td colspan="8" style="text-align:center;color:var(--dim)">Sin productos</td></tr>';
 
   document.getElementById('salesMList').innerHTML = list.map(p => `<div class="m-card">
-    <img src="${getImg(p)}" onerror="this.style.visibility='hidden'">
+    <img src="${getImg(p)}" loading="lazy" onerror="this.style.visibility='hidden'">
     <div class="m-card-info"><h4>${p.title || p.name}</h4><small>RD$ ${(p.price || 0).toLocaleString()} · Stock: ${p.stock || 0}</small></div>
     <div class="acts">
       <button class="btn btn-g btn-sm" onclick="editProd('${p.id}')">✏️</button>
@@ -638,9 +638,24 @@ function openProductModal(p = null) {
 
   calcPrice();
   document.getElementById('prodModal').classList.add('on');
+  // Accessibility: trap focus inside modal
+  const modal = document.getElementById('prodModal');
+  modal.setAttribute('role', 'dialog');
+  modal.setAttribute('aria-modal', 'true');
+  modal.setAttribute('aria-label', editId ? 'Editar Producto' : 'Nuevo Producto');
+  setTimeout(() => { const first = modal.querySelector('input, select, button'); if (first) first.focus(); }, 50);
 }
 
 function closeProdModal() { document.getElementById('prodModal').classList.remove('on'); editId = null; }
+function closeCourseModal() { document.getElementById('courseModal').classList.remove('on'); editCourseId = null; }
+
+// Escape key closes admin modals
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    if (document.getElementById('prodModal')?.classList.contains('on')) closeProdModal();
+    if (document.getElementById('courseModal')?.classList.contains('on')) closeCourseModal();
+  }
+});
 function editProd(id) { const p = products.find(x => x.id === id); if (p) openProductModal(p); }
 
 async function delProd(id) {
@@ -1050,9 +1065,14 @@ function openCourseModal(c = null) {
   const quiz = c && c.quiz ? (typeof c.quiz === 'string' ? c.quiz : JSON.stringify(c.quiz, null, 2)) : '[]';
   document.getElementById('cQuiz').value = quiz;
   document.getElementById('courseModal').classList.add('on');
+  // Accessibility: focus first field
+  const cmodal = document.getElementById('courseModal');
+  cmodal.setAttribute('role', 'dialog');
+  cmodal.setAttribute('aria-modal', 'true');
+  cmodal.setAttribute('aria-label', editCourseId ? 'Editar Curso' : 'Nuevo Curso');
+  setTimeout(() => { const first = cmodal.querySelector('input, select'); if (first) first.focus(); }, 50);
 }
 
-function closeCourseModal() { document.getElementById('courseModal').classList.remove('on'); editCourseId = null; }
 function editCourse(id) { const c = courses.find(x => x.id === id); if (c) openCourseModal(c); }
 
 async function delCourse(id) {
@@ -1314,12 +1334,19 @@ async function exportOrdersCSV() {
   toast(`${orders.length} órdenes exportadas ✓`);
 }
 
-// ═══ TOAST ═══
+// ═══ TOAST (accessible: aria-live announces to screen readers) ═══
 function toast(msg, type = 'success') {
+  const container = document.getElementById('toasts');
+  if (!container.getAttribute('aria-live')) {
+    container.setAttribute('aria-live', 'polite');
+    container.setAttribute('aria-atomic', 'false');
+    container.setAttribute('role', 'status');
+  }
   const t = document.createElement('div');
   t.className = 'toast' + (type === 'error' ? ' toast-error' : '');
+  t.setAttribute('role', type === 'error' ? 'alert' : 'status');
   t.textContent = msg;
-  document.getElementById('toasts').appendChild(t);
+  container.appendChild(t);
   setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 3000);
 }
 

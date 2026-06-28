@@ -9,7 +9,6 @@ Guía de deploy y configuración de las Edge Functions del ecosistema TeloCorp.
 | `chat` | Proxy de Gemini 2.0 Flash para TeloAsistente | `GEMINI_API_KEY` |
 | `upload-image` | Proxy de ImgBB para subir imágenes de productos | `IMGBB_API_KEY` |
 | `ai-specs` | Generación de especificaciones de producto con Gemini | `GEMINI_API_KEY` |
-| `create-checkout` | Crea sesión de Stripe Checkout | `STRIPE_SECRET_KEY` |
 | `notify-whatsapp` | Genera notificaciones WhatsApp al admin por cada solicitud de servicio | — (sin secret) |
 
 ## 🔧 Deploy
@@ -24,24 +23,15 @@ supabase login
 ```bash
 supabase secrets set GEMINI_API_KEY=tu_key_aqui --project-ref bhdictzvboiojyxorfiq
 supabase secrets set IMGBB_API_KEY=tu_key_aqui --project-ref bhdictzvboiojyxorfiq
-supabase secrets set STRIPE_SECRET_KEY=sk_test_xxx --project-ref bhdictzvboiojyxorfiq
 ```
 
 ### Deploy de todas las funciones
 
-**⚠️ IMPORTANTE:** La ruta del workspace contiene caracteres especiales (OneDrive + acentos).
-Copia la carpeta `supabase/` a una ruta sin espacios antes de deployar:
-
 ```bash
-# 1. Copiar a ruta limpia
-xcopy /E /I "supabase" "C:\temp\sb-deploy\supabase"
-
-# 2. Deployar desde ahí
-cd C:\temp\sb-deploy
+cd C:\dev\telocorp
 supabase functions deploy chat --project-ref bhdictzvboiojyxorfiq --no-verify-jwt
 supabase functions deploy upload-image --project-ref bhdictzvboiojyxorfiq --no-verify-jwt
 supabase functions deploy ai-specs --project-ref bhdictzvboiojyxorfiq --no-verify-jwt
-supabase functions deploy create-checkout --project-ref bhdictzvboiojyxorfiq --no-verify-jwt
 supabase functions deploy notify-whatsapp --project-ref bhdictzvboiojyxorfiq --no-verify-jwt
 ```
 

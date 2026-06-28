@@ -21,13 +21,6 @@ entrypoint = "./functions/upload-image/index.ts"
 # For example, if you want to serve static HTML pages in your function:
 # static_files = [ "./functions/upload-image/*.html" ]
 
-[functions.create-checkout]
-enabled = false
-verify_jwt = false
-import_map = "./functions/create-checkout/deno.json"
-entrypoint = "./functions/create-checkout/index.ts"
-# DESACTIVADA: Stripe reemplazado por link de pago CardNET vía WhatsApp
-
 [functions.ai-specs]
 enabled = true
 verify_jwt = false

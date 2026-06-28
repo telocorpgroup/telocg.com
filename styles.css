@@ -1326,3 +1326,62 @@ textarea.input-control { resize: vertical; min-height: 80px; }
 .daily-stat { text-align: center; }
 .daily-stat__val { display: block; font-size: 1.5rem; font-weight: 800; }
 .daily-stat__label { font-size: 0.65rem; color: var(--dim); text-transform: uppercase; }
+
+/* ═══════════════════════════════════════════════════════════════
+   Accessibility & Performance Enhancements (v4.2)
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Respect user's reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .product-card:hover,
+  .service-card:hover,
+  .course-card:hover,
+  .path-card:hover {
+    transform: none;
+  }
+}
+
+/* Image loading state (placeholder while lazy images load) */
+.product-card__image img[loading="lazy"] {
+  background: linear-gradient(135deg, #0f172a 25%, #1e293b 50%, #0f172a 75%);
+  background-size: 200% 100%;
+}
+
+/* Focus visible improvements for keyboard navigation */
+.product-card:focus-visible,
+.service-card:focus-visible,
+.course-card:focus-visible,
+.path-card:focus-visible {
+  outline: 2px solid var(--c-primary);
+  outline-offset: 3px;
+  transform: translateY(-2px);
+}
+
+/* Toast accessibility - ensure toasts are visible and readable */
+.toast-container[aria-live] {
+  z-index: 9999;
+}
+
+/* Modal overlay — prevent background scroll */
+body.modal-open {
+  overflow: hidden;
+}
+
+/* High contrast mode support */
+@media (forced-colors: active) {
+  .btn--primary {
+    border: 2px solid ButtonText;
+  }
+  .product-badge {
+    border: 1px solid;
+  }
+  .status-pill {
+    border: 1px solid;
+  }
+}
