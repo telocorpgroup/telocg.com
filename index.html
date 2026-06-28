@@ -512,6 +512,9 @@
                   <input type="text" id="lleva-dest-input" class="input-control" placeholder="Escribe la dirección de entrega..." autocomplete="off">
                   <input type="hidden" id="lleva-dest-lat"><input type="hidden" id="lleva-dest-lng">
                 </div>
+                <!-- Multi-parada waypoints -->
+                <div id="lleva-waypoints-container"></div>
+                <button type="button" class="btn btn--ghost btn--xs" onclick="addLlevaWaypoint()" style="margin-bottom:8px">+ Agregar parada intermedia</button>
                 <div class="form-group">
                   <label for="lleva-item">¿Qué envías?</label>
                   <input type="text" id="lleva-item" class="input-control" placeholder="Ej. Documentos, Electrónicos">
@@ -656,6 +659,7 @@
                 <input type="tel" id="repara-contact" class="input-control" placeholder="+1 (809) 000-0000">
               </div>
               <button class="btn btn--primary btn--full" id="repara-submit">Reservar Reparación</button>
+              <button class="btn btn--ghost btn--full" onclick="generateReparaQuotePDF()" style="margin-top:6px">📄 Generar Cotización PDF</button>
               <button class="btn btn--ghost btn--full" onclick="checkWarrantyStatus()" style="margin-top:6px">🛡️ Consultar Garantía / Estado</button>
               <a href="https://wa.me/18099038707?text=Hola%20TeloRepara%2C%20necesito%20una%20reparaci%C3%B3n" target="_blank" class="btn btn--whatsapp btn--full">💬 Cotizar por WhatsApp</a>
             </div>
@@ -766,9 +770,15 @@
                 </div>
               </div>
               <button class="btn btn--primary btn--full" id="instala-submit">Agendar Instalación</button>
+              <button class="btn btn--ghost btn--full" onclick="checkInstalaBookingStatus()" style="margin-top:6px">📋 Consultar Estado de mi Cita</button>
               <a href="https://wa.me/18099038707?text=Hola%20TeloInstala%2C%20necesito%20una%20instalaci%C3%B3n" target="_blank" class="btn btn--whatsapp btn--full">💬 Agendar por WhatsApp</a>
             </div>
             <div class="instala__right">
+              <!-- Service Packages -->
+              <div class="card">
+                <h3 class="card__title">📦 Paquetes con Descuento</h3>
+                <div id="instala-packages"></div>
+              </div>
               <div class="card" id="instala-confirmation" hidden>
                 <h3 class="card__title">Cita Confirmada ✓</h3>
                 <div class="confirmation-details" id="instala-details"></div>
