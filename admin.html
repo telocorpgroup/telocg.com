@@ -166,7 +166,17 @@ Para crear el usuario admin: ejecuta <code>supabase-schema-migration-v4.sql</cod
 <!-- DASHBOARD -->
 <div class="page on" id="pg-dashboard">
 <h2 class="page-title">📊 Dashboard General</h2>
+<!-- Daily Summary -->
+<div class="stats" id="daily-summary" style="margin-bottom:12px"></div>
 <div class="stats" id="dashStats"></div>
+<!-- Order Filters -->
+<div style="display:flex;gap:6px;margin:12px 0;flex-wrap:wrap">
+  <button class="btn btn-g btn-sm" onclick="filterOrders('all')">Todas</button>
+  <button class="btn btn-g btn-sm" onclick="filterOrders('pending')">⏳ Pendientes</button>
+  <button class="btn btn-g btn-sm" onclick="filterOrders('confirmed')">✓ Confirmadas</button>
+  <button class="btn btn-g btn-sm" onclick="filterOrders('shipped')">📦 Enviadas</button>
+  <button class="btn btn-g btn-sm" onclick="filterOrders('delivered')">✅ Entregadas</button>
+</div>
 <!-- Gráficos -->
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px" class="charts-grid">
   <div class="tbl-wrap chart-card" style="padding:16px">
