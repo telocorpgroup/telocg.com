@@ -1183,20 +1183,9 @@ function postForumMessage() {
   const input = document.getElementById('forum-input');
   const text = input.value.trim();
   if (!text) return;
-  const forum = document.getElementById('forum-messages');
-  const msg = document.createElement('div');
-  msg.className = 'chat-msg chat-msg--user';
-  msg.innerHTML = `<strong>Tú:</strong> ${text}`;
-  forum.appendChild(msg);
   input.value = '';
-  forum.scrollTop = forum.scrollHeight;
-  setTimeout(() => {
-    const reply = document.createElement('div');
-    reply.className = 'chat-msg chat-msg--bot';
-    reply.innerHTML = `<strong>Instructor:</strong> ¡Buena pregunta! Lo revisaremos en la próxima sesión en vivo. 🙌`;
-    forum.appendChild(reply);
-    forum.scrollTop = forum.scrollHeight;
-  }, 1200);
+  // Use IA Tutor instead of fake responses
+  askIaTutor(text);
 }
 
 function downloadNotes() {
@@ -3121,4 +3110,245 @@ document.addEventListener('DOMContentLoaded', () => {
     detectChurnRisk();
     checkUpcomingAppointments();
   }, 3000);
+});
+
+// ═══════════════════════════════════════════════════════════════
+// CLIENT AUTH — Login/Register with Supabase Auth (storefront)
+// ═══════════════════════════════════════════════════════════════
+
+let clientSession = null;
+let clientUser = null;
+
+async function initClientAuth() {
+  // Create a separate Supabase client reference for storefront auth
+  if (!window.supabase) return;
+  const sbClient = window._sbClient || (window._sbClient = window.supabase.createClient(
+    BackendService.config.supabaseUrl, BackendService.config.supabaseKey
+  ));
+
+  // Check for existing session
+  const { data } = await sbClient.auth.getSession();
+  if (data.session) {
+    clientSession = data.session;
+    clientUser = data.session.user;
+    onClientLogin();
+  }
+
+  // Listen for auth changes
+  sbClient.auth.onAuthStateChange((event, session) => {
+    if (event === 'SIGNED_IN' && session) {
+      clientSession = session;
+      clientUser = session.user;
+      onClientLogin();
+    } else if (event === 'SIGNED_OUT') {
+      clientSession = null;
+      clientUser = null;
+      onClientLogout();
+    }
+  });
+}
+
+function onClientLogin() {
+  // Update profile from auth user
+  if (clientUser) {
+    const meta = clientUser.user_metadata || {};
+    if (meta.name && !State.userProfile.name) State.userProfile.name = meta.name;
+    if (clientUser.email && !State.userProfile.email) State.userProfile.email = clientUser.email;
+    State.save();
+    loadProfile();
+  }
+  // Update UI
+  const loginBtn = document.getElementById('client-login-btn');
+  const logoutBtn = document.getElementById('client-logout-btn');
+  if (loginBtn) loginBtn.hidden = true;
+  if (logoutBtn) logoutBtn.hidden = false;
+  showToast(`Bienvenido, ${State.userProfile.name || clientUser?.email || 'usuario'} 👋`);
+}
+
+function onClientLogout() {
+  const loginBtn = document.getElementById('client-login-btn');
+  const logoutBtn = document.getElementById('client-logout-btn');
+  if (loginBtn) loginBtn.hidden = false;
+  if (logoutBtn) logoutBtn.hidden = true;
+}
+
+async function clientLogin() {
+  const email = prompt('Email:');
+  if (!email) return;
+  const password = prompt('Contraseña:');
+  if (!password) return;
+
+  const sbClient = window._sbClient;
+  if (!sbClient) return showToast('Error de conexión', 'error');
+
+  const { data, error } = await sbClient.auth.signInWithPassword({ email, password });
+  if (error) {
+    // Try to sign up if login failed
+    if (error.message.includes('Invalid login')) {
+      const name = prompt('No tienes cuenta. ¿Tu nombre para registrarte?');
+      if (!name) return;
+      const { data: signUpData, error: signUpErr } = await sbClient.auth.signUp({
+        email, password, options: { data: { name } }
+      });
+      if (signUpErr) return showToast(signUpErr.message, 'error');
+      showToast('Cuenta creada ✓ Revisa tu email para confirmar');
+    } else {
+      showToast(error.message, 'error');
+    }
+  }
+}
+
+async function clientLogout() {
+  const sbClient = window._sbClient;
+  if (sbClient) await sbClient.auth.signOut();
+  showToast('Sesión cerrada');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// REVIEWS SYSTEM — Verified customer reviews for services
+// ═══════════════════════════════════════════════════════════════
+
+async function submitReview(type, entityId, rating, text) {
+  if (!rating || rating < 1 || rating > 5) return showToast('Selecciona una calificación (1-5)', 'error');
+  if (!text || text.length < 5) return showToast('Escribe al menos una línea de reseña', 'error');
+
+  const review = {
+    type, // 'product', 'instala', 'repara', 'course'
+    entity_id: entityId,
+    rating,
+    text,
+    customer_name: State.userProfile.name || 'Cliente',
+    customer_email: State.userProfile.email || clientUser?.email || '',
+    verified: !!clientUser, // true if logged in
+    created_at: new Date().toISOString()
+  };
+
+  await BackendService.supabaseQuery('leads', 'POST', {
+    name: review.customer_name,
+    email: review.customer_email,
+    department: `review_${type}`,
+    message: JSON.stringify({ entity_id: entityId, rating, text, verified: review.verified })
+  });
+
+  showToast('¡Gracias por tu reseña! ⭐');
+  return review;
+}
+
+function renderReviewForm(containerId, type, entityId) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = `
+    <div class="review-form">
+      <h4>⭐ Deja tu opinión</h4>
+      <div class="review-form__stars" id="rf-stars-${containerId}">
+        ${[1,2,3,4,5].map(i => `<button class="rf-star" data-val="${i}" onclick="selectReviewStar('${containerId}',${i})">☆</button>`).join('')}
+      </div>
+      <textarea id="rf-text-${containerId}" class="input-control" rows="2" placeholder="¿Cómo fue tu experiencia?"></textarea>
+      <button class="btn btn--primary btn--sm" onclick="submitReviewFromForm('${containerId}','${type}','${entityId}')">Enviar Reseña</button>
+    </div>`;
+}
+
+function selectReviewStar(containerId, val) {
+  const stars = document.querySelectorAll(`#rf-stars-${containerId} .rf-star`);
+  stars.forEach((s, i) => { s.textContent = i < val ? '★' : '☆'; s.classList.toggle('active', i < val); });
+  document.getElementById(`rf-stars-${containerId}`).dataset.selected = val;
+}
+
+async function submitReviewFromForm(containerId, type, entityId) {
+  const starsEl = document.getElementById(`rf-stars-${containerId}`);
+  const rating = parseInt(starsEl?.dataset.selected || '0');
+  const text = document.getElementById(`rf-text-${containerId}`)?.value?.trim() || '';
+  const result = await submitReview(type, entityId, rating, text);
+  if (result) {
+    const container = document.getElementById(containerId);
+    if (container) container.innerHTML = `<div class="review-form__thanks">✅ ¡Reseña enviada! Gracias por tu feedback.</div>`;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// AUTO-MERCHANDISING — Smart product ordering by score
+// ═══════════════════════════════════════════════════════════════
+
+function autoMerchandiseProducts() {
+  // Score = (sold * 0.4) + (rating * 0.3) + (discount_boost * 0.2) + (recency * 0.1)
+  products.forEach(p => {
+    const soldScore = Math.min(1, (p.sold || 0) / 500); // normalize to 0-1
+    const ratingScore = (p.rating || 5) / 5;
+    const discountBoost = p.discount ? 0.8 : 0;
+    const stockUrgency = (p.stock || 10) <= 5 ? 0.9 : 0;
+    p._merchandiseScore = (soldScore * 0.35) + (ratingScore * 0.25) + (discountBoost * 0.2) + (stockUrgency * 0.2);
+  });
+
+  // Only reorder if sort is "featured" (default)
+  if (currentSort === 'featured') {
+    products.sort((a, b) => (b._merchandiseScore || 0) - (a._merchandiseScore || 0));
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// IA TUTOR — TeloEduca contextual chatbot per course
+// ═══════════════════════════════════════════════════════════════
+
+async function askIaTutor(question) {
+  const course = State.currentCourse;
+  if (!course) return showToast('Abre un curso primero', 'error');
+  if (!question || question.length < 3) return;
+
+  const lessonTitle = course.lessons[State.currentLesson] || '';
+  const allLessons = course.lessons.join(', ');
+  const context = `Eres un tutor experto del curso "${course.title}" (instructor: ${course.instructor}). El estudiante está en la lección "${lessonTitle}". Temario completo: ${allLessons}. Responde de forma concisa, educativa y en español. Si no sabes algo, dilo honestamente.`;
+
+  const forum = document.getElementById('forum-messages');
+  const userMsg = document.createElement('div');
+  userMsg.className = 'chat-msg chat-msg--user';
+  userMsg.innerHTML = `<strong>Tú:</strong> ${question}`;
+  forum.appendChild(userMsg);
+
+  const botMsg = document.createElement('div');
+  botMsg.className = 'chat-msg chat-msg--bot';
+  botMsg.innerHTML = '<strong>🤖 Tutor IA:</strong> Pensando...';
+  forum.appendChild(botMsg);
+  forum.scrollTop = forum.scrollHeight;
+
+  const response = await BackendService.geminiChat(question, context);
+  botMsg.innerHTML = `<strong>🤖 Tutor IA:</strong> ${response}`;
+  forum.scrollTop = forum.scrollHeight;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// CROSS-SERVICE: TeloRepara solicita recogida vía TeloLleva
+// ═══════════════════════════════════════════════════════════════
+
+function requestPickupViaLleva(address, item) {
+  // Pre-fill TeloLleva with repair pickup data
+  switchView('lleva');
+  setTimeout(() => {
+    const originInput = document.getElementById('lleva-origin-input');
+    const destInput = document.getElementById('lleva-dest-input');
+    const itemInput = document.getElementById('lleva-item');
+    if (originInput) originInput.value = address || '';
+    if (destInput) destInput.value = 'Taller TeloRepara, Santo Domingo';
+    if (itemInput) itemInput.value = item || 'Dispositivo para reparación';
+    showToast('Formulario pre-llenado — solicita la recogida');
+  }, 300);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// INIT NEW FEATURES
+// ═══════════════════════════════════════════════════════════════
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Client auth (loads Supabase JS if available)
+  setTimeout(initClientAuth, 1000);
+
+  // Auto-merchandise on product load
+  setTimeout(() => { autoMerchandiseProducts(); renderProducts(); }, 1500);
+});
+
+// Init review forms when entering service views
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    renderReviewForm('instala-review-form', 'instala', 'general');
+    renderReviewForm('repara-review-form', 'repara', 'general');
+  }, 2000);
 });

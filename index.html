@@ -693,6 +693,10 @@
                 <h3 class="card__title">📋 Historial de Reparaciones</h3>
                 <div class="crm-list" id="repara-crm-list"><p class="text-muted text-center">Sin reparaciones previas registradas.</p></div>
               </div>
+              <div class="card">
+                <h3 class="card__title">⭐ Califica tu experiencia</h3>
+                <div id="repara-review-form"></div>
+              </div>
             </div>
           </div>
         </section>
@@ -772,6 +776,10 @@
               <div class="card">
                 <h3 class="card__title">📋 Historial de Instalaciones</h3>
                 <div class="crm-list" id="instala-crm-list"><p class="text-muted text-center">Sin instalaciones previas registradas.</p></div>
+              </div>
+              <div class="card">
+                <h3 class="card__title">⭐ Califica tu experiencia</h3>
+                <div id="instala-review-form"></div>
               </div>
             </div>
           </div>
@@ -872,6 +880,10 @@
                 <div class="profile-header__avatar" id="profile-avatar">👤</div>
                 <h3 id="profile-display-name">Usuario</h3>
                 <p id="profile-display-email" class="text-muted">Sin registro</p>
+                <div class="profile-auth-btns">
+                  <button class="btn btn--primary btn--sm" id="client-login-btn" onclick="clientLogin()">🔐 Iniciar Sesión</button>
+                  <button class="btn btn--ghost btn--sm" id="client-logout-btn" onclick="clientLogout()" hidden>Cerrar Sesión</button>
+                </div>
               </div>
               <!-- Personal Activity Dashboard -->
               <div class="profile-dashboard" id="profile-dashboard">
